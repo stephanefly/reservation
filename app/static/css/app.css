@@ -1,3 +1,13 @@
 body {
-    background-image: url('static/img/background.jpg');
+    background-image: url('/static/img/background.jpg');
+    background-size: cover;
+    backdrop-filter: brightness(0.8);
 }
+
+.container {
+    max-width: 1200px;
+    background-color: #f9f7f2;
+    border-radius: 10px;
+    padding: 50px;
+}
+

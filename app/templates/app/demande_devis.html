@@ -1,8 +1,68 @@
 {% extends 'app/index.html' %}
 
 {% block content %}
-<main>
-    <h1>Formulaire devis</h1>
-    <!-- Formulaire -->
-</main>
+<form method="post">
+   <div class="row">
+      <h1 class="text-center mb-4">Formulaire d'Événement</h1>
+   </div>
+   {% csrf_token %}
+   <div class="row justify-content-evenly" style="padding:15px">
+      <div class="col-5">
+         <input type="radio" id="id_personne" class="custom-radio" name="type" value="personne" checked>
+         <label for="id_personne">Particulier</label>
+      </div>
+      <div class="col-5">
+         <input type="radio" id="id_entreprise" class="custom-radio" name="type" value="entreprise">
+         <label for="id_entreprise">Entreprise</label>
+      </div>
+   </div>
+   <div class="row" id="nomPrenomRow">
+      <label for="id_nom" class="form-label">Nom :</label>
+      <input type="text" class="form-control" id="id_nom" name="nom" required>
+      <label for="id_prenom" class="form-label">Prénom :</label>
+      <input type="text" class="form-control" id="id_prenom" name="prenom" required>
+   </div>
+   <div class="row" id="raisonSocialeRow" style="display:none;">
+      <label for="id_raison_sociale" class="form-label">Raison Sociale :</label>
+      <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale">
+   </div>
+   <div class="row">
+      <label for="id_date_evenement" class="form-label">Date de l'événement :</label>
+      <input type="date" class="form-control" id="id_date_evenement" name="date_evenement" required>
+   </div>
+   <div class="row">
+      <label for="id_adresse_evenement" class="form-label">Adresse de l'événement :</label>
+      <textarea class="form-control" id="id_adresse_evenement" name="adresse_evenement" rows="2" required></textarea>
+   </div>
+   <div class="row">
+      <label for="id_ville" class="form-label">Ville :</label>
+      <input class="form-control" id="id_ville" name="ville" required>
+   </div>
+      <div class="row">
+      <label for="id_code_postal" class="form-label">Code Postal :</label>
+      <input class="form-control" id="id_code_postal" name="code_postal" required>
+   </div>
+   <div class="row">
+      <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
+      <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required>
+   </div>
+   <button type="submit" class="btn btn-primary">Soumettre</button>
+</form>
+<script>
+   var personneRadio = document.getElementById('id_personne');
+   var entrepriseRadio = document.getElementById('id_entreprise');
+   var nomPrenomRow = document.getElementById('nomPrenomRow');
+   var raisonSocialeRow = document.getElementById('raisonSocialeRow');
+
+   personneRadio.addEventListener('change', function() {
+       nomPrenomRow.style.display = 'block';
+       raisonSocialeRow.style.display = 'none';
+   });
+
+   entrepriseRadio.addEventListener('change', function() {
+       nomPrenomRow.style.display = 'none';
+       raisonSocialeRow.style.display = 'block';
+   });
+
+</script>
 {% endblock %}
