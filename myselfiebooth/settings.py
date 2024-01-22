@@ -92,9 +92,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'reservation',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',   # Ou l'adresse IP de votre serveur MySQL
+        'USER': 'stephanefly',
+        'PASSWORD': 'mydatabase2778!',
+        'HOST': 'stephanefly.mysql.pythonanywhere-services.com',   # Ou l'adresse IP de votre serveur MySQL
         'PORT': '3306',        # Le port par défaut de MySQL
     }
 }
