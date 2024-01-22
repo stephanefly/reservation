@@ -6,16 +6,54 @@
       <h1 class="text-center mb-4">Formulaire d'Événement</h1>
    </div>
    {% csrf_token %}
-   <div class="row justify-content-evenly" style="padding:15px">
-      <div class="col-5">
-         <input type="radio" id="id_personne" class="custom-radio" name="type" value="personne" checked>
-         <label for="id_personne" style="font-size:20px">Particulier</label>
-      </div>
-      <div class="col-5">
-         <input type="radio" id="id_entreprise" class="custom-radio" name="type" value="entreprise">
-         <label for="id_entreprise" style="font-size:20px">Entreprise</label>
-      </div>
+
+   <style>
+   .custom-radio-container {
+       display: flex;
+       justify-content: center;
+       padding: 15px;
+   }
+
+   .custom-radio-button {
+       display: flex;
+       align-items: center;
+       border: 2px solid #897943;
+       border-radius: 10px;
+       padding: 10px 20px;
+       margin: 0 10px;
+       background-image: linear-gradient(to bottom, #ffef96, #5a4300);;
+       transition: all 0.3s ease;
+   }
+
+   .custom-radio-button input[type="radio"] {
+       display: none; /* Cache le bouton radio d'origine */
+   }
+
+   .custom-radio-button label {
+       font-size: 20px;
+       font-weight: bold;
+       color: black;
+       cursor: pointer;
+       text-align: center;
+   }
+
+   .custom-radio-button input[type="radio"]:checked + label {
+       color: white;
+       border-color: #897943;
+   }
+   </style>
+
+   <div class="custom-radio-container">
+       <div class="custom-radio-button">
+           <input type="radio" id="id_personne" name="type" value="personne" checked>
+           <label for="id_personne">Particulier</label>
+       </div>
+       <div class="custom-radio-button">
+           <input type="radio" id="id_entreprise" name="type" value="entreprise">
+           <label for="id_entreprise">Entreprise</label>
+       </div>
    </div>
+
    <div class="row" id="nomPrenomRow">
       <label for="id_nom" class="form-label">Nom :</label>
       <input type="text" class="form-control" id="id_nom" name="nom" required>
@@ -52,7 +90,11 @@
        <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
        <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required pattern="^0[1-9][0-9]{8}$" title="Veuillez entrer un numéro de téléphone valide (commence par 0).">
    </div>
-   <button type="submit" class="btn btn-primary" style="margin:10px">Soumettre</button>
+   <div class="d-flex justify-content-center">
+<button type="submit">
+    Valider
+</button>
+   </div>
 </form>
 <script>
    var personneRadio = document.getElementById('id_personne');
@@ -72,7 +114,20 @@
 
 </script>
 <style>
-h1 {
+button {
+    margin: 20px;
+    background-image: linear-gradient(to bottom, #ffef96, #5a4300);
+    color: white;
+    border: 1px solid goldenrod;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-shadow: 1px 1px 2px black;
+    box-shadow: 2px 2px 4px grey;
+    font-size: 22px;
+}
+
+h1, label, .form-label {
   margin-bottom: 10px;
   margin-top: 10px;
   font-family: "Arial Black", Gadget, sans-serif;
@@ -84,28 +139,5 @@ h1 {
   font-weight : bold;
 }
 
-label {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-family: "Arial Black", Gadget, sans-serif;
-  letter-spacing: -1px;
-  word-spacing: 0.6px;
-  font-weight: 400;
-  color: white;
-  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-  font-weight : bold;
-}
-
-.form-label {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-family: "Arial Black", Gadget, sans-serif;
-  letter-spacing: -1px;
-  word-spacing: 0.6px;
-  font-weight: 400;
-  color: white;
-  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-  font-weight : bold;
-}
 </style>
 {% endblock %}
