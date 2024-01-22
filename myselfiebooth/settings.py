@@ -81,23 +81,23 @@ WSGI_APPLICATION = 'myselfiebooth.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'stephanefly$reservation',
-#         'USER': 'stephanefly',
-#         'PASSWORD': 'mydatabase2778!',
-#         'HOST': 'stephanefly.mysql.pythonanywhere-services.com',   # Ou l'adresse IP de votre serveur MySQL
-#         'PORT': '3306',        # Le port par défaut de MySQL
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'stephanefly$reservation',
+        'USER': 'stephanefly',
+        'PASSWORD': 'mydatabase2778!',
+        'HOST': 'stephanefly.mysql.pythonanywhere-services.com',   # Ou l'adresse IP de votre serveur MySQL
+        'PORT': '3306',        # Le port par défaut de MySQL
+    }
+}
 
 
 # Password validation
