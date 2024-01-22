@@ -1,7 +1,7 @@
 {% extends 'app/index.html' %}
 
 {% block content %}
-<form method="post">
+<form method="post" id="monFormulaire" action="#">
    <div class="row">
       <h1 class="text-center mb-4">Formulaire d'Événement</h1>
    </div>
@@ -26,27 +26,33 @@
       <label for="id_raison_sociale" class="form-label">Raison Sociale :</label>
       <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale">
    </div>
+<div class="row">
+    <label for="id_mail" class="form-label">Mail :</label>
+    <input type="email" class="form-control" id="id_mail" name="mail" required title="Veuillez entrer une adresse e-mail valide se terminant par une extension de domaine (ex : .com, .fr).">
+</div>
+
    <div class="row">
       <label for="id_date_evenement" class="form-label">Date de l'événement :</label>
-      <input type="date" class="form-control" id="id_date_evenement" name="date_evenement" required>
+      <input type="date" class="form-control" id="id_date_evenement" name="date_evenement"
+             required min="{{ today_date }}" max="{{ date_dans_deux_ans }}">
    </div>
    <div class="row">
-      <label for="id_adresse_evenement" class="form-label">Adresse de l'événement :</label>
-      <textarea class="form-control" id="id_adresse_evenement" name="adresse_evenement" rows="2" required></textarea>
+      <label for="id_adresse_evenement" class="form-label">Adresse de l'événement (avec le nom de la salle si possible):</label>
+      <input type="text" class="form-control" id="id_adresse_evenement" name="adresse_evenement" required >
    </div>
    <div class="row">
-      <label for="id_ville" class="form-label">Ville :</label>
-      <input class="form-control" id="id_ville" name="ville" required>
-   </div>
-      <div class="row">
-      <label for="id_code_postal" class="form-label">Code Postal :</label>
-      <input class="form-control" id="id_code_postal" name="code_postal" required>
+    <label for="id_ville_evenement" class="form-label">Ville de l'événement :</label>
+    <input type="text" class="form-control" id="id_ville_evenement" name="ville_evenement" required>
    </div>
    <div class="row">
-      <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
-      <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required>
+       <label for="id_code_postal_evenement" class="form-label">Code Postal de l'événement :</label>
+       <input type="text" class="form-control" id="id_code_postal_evenement" name="code_postal_evenement" required pattern="^\d{5}$" title="Veuillez entrer un code postal valide">
    </div>
-   <button type="submit" class="btn btn-primary">Soumettre</button>
+   <div class="row">
+       <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
+       <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required pattern="^0[1-9][0-9]{8}$" title="Veuillez entrer un numéro de téléphone valide (commence par 0).">
+   </div>
+   <button type="submit" class="btn btn-primary" style="margin:10px">Soumettre</button>
 </form>
 <script>
    var personneRadio = document.getElementById('id_personne');
@@ -65,4 +71,5 @@
    });
 
 </script>
+
 {% endblock %}

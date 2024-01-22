@@ -11,3 +11,7 @@ body {
     padding: 50px;
 }
 
+.form-label {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
