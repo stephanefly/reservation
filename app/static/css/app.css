@@ -14,4 +14,7 @@ body {
 .form-label {
   margin-bottom: 10px;
   margin-top: 10px;
+  font-family: fantasy;
+  color: white;
+   text-shadow: 2px 0 black, 0 1px black, 2px 0 black, 0 1px black;
 }

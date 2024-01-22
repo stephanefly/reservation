@@ -1,6 +1,6 @@
 {% extends 'app/index.html' %}
-
 {% block content %}
+
 <form method="post" id="monFormulaire" action="#">
    <div class="row">
       <h1 class="text-center mb-4">Formulaire d'Événement</h1>
@@ -37,7 +37,7 @@
              required min="{{ today_date }}" max="{{ date_dans_deux_ans }}">
    </div>
    <div class="row">
-      <label for="id_adresse_evenement" class="form-label">Adresse de l'événement (avec le nom de la salle si possible):</label>
+      <label for="id_adresse_evenement" class="form-label">Adresse de l'événement <br>(avec le nom de la salle si possible):</label>
       <input type="text" class="form-control" id="id_adresse_evenement" name="adresse_evenement" required >
    </div>
    <div class="row">
@@ -71,5 +71,33 @@
    });
 
 </script>
+<style>
+h1 {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-family: fantasy;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+}
 
+label {
+  font-size: 15px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-family: fantasy;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+}
+
+.form-label {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-family: fantasy;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+}
+</style>
 {% endblock %}
