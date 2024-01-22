@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'myselfiebooth.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'reservation',
+        'NAME': 'stephanefly$reservation',
         'USER': 'stephanefly',
         'PASSWORD': 'mydatabase2778!',
         'HOST': 'stephanefly.mysql.pythonanywhere-services.com',   # Ou l'adresse IP de votre serveur MySQL
