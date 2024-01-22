@@ -26,3 +26,11 @@ body {
   color: white;
   text-shadow: 2px 0 black, 0 1px black, 2px 0 black, 0 1px black;
 }
+
+footer {
+    position: fixed;
+    bottom : auto;
+    width: 100%;
+    background-color: #6cf;
+    text-align: center;
+}
