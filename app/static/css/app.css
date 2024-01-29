@@ -2,7 +2,16 @@ body {
     background-image: url('/static/img/background.jpg');
     background-size: cover;
     backdrop-filter: brightness(0.8);
+    height: 100%; /* Donne une hauteur minimale de 100% à la page */
+    margin: 0; /* Enlève les marges par défaut */
+    display: flex;
+    flex-direction: column;
 }
+
+main {
+    flex: 1; /* Permet au contenu principal de s'étendre et de remplir l'espace disponible */
+}
+
 
 .container {
     max-width: 1200px;
@@ -28,8 +37,6 @@ body {
 }
 
 footer {
-    position: fixed;
-    bottom : auto;
     width: 100%;
     background-color: #6cf;
     text-align: center;

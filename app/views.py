@@ -3,6 +3,8 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import EventForm
 from datetime import datetime, timedelta
 
+from .models import Event
+
 
 def demande_devis(request):
     today_date = datetime.now().date()
@@ -30,3 +32,9 @@ def demande_devis(request):
 
 def remerciement(request):
     return render(request, 'app/remerciement.html')
+
+def info_lst_devis(request):
+
+    all_event = Event.objects.all()
+
+    return render(request, 'app/lst_devis.html', {'all_event': all_event,})

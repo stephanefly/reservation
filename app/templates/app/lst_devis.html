@@ -1,0 +1,48 @@
+{% extends 'app/index.html' %}
+{% load static %}
+{% block content %}
+
+<h3>Liste des devis</h3>
+<br>
+<table id="table" class="table table-bordered table-striped">
+    <thead>
+        <th style="display: none">ID</th>
+        <th>Nom</th>
+        <th>prenom</th>
+        <th>date_evenement</th>
+    </thead>
+    <tbody>
+    {% for event in all_event %}
+        <tr>
+            <td style="display: none">{{piece.id}}</td>
+            <td>{{event.nom}}</td>
+            <td>{{event.prenom}}</td>
+            <td>{{event.date_evenement}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#table').DataTable({
+        order: [[0, 'desc']],
+        columns: [
+            {
+                data: 'id',
+            },
+            {
+                data: 'program',
+            },
+            {
+                data: 'factory',
+            },
+            {
+                data: 'factory',
+            }
+        ]
+    });
+});
+</script>
+
+{% endblock %}
