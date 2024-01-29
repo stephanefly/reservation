@@ -1,13 +1,8 @@
-#DATABASES:
-#    default:
-#        ENGINE: 'django.db.backends.mysql'
-#        NAME: 'atacv2'
-#        USER: 'root'
-#        PASSWORD: 'root'
-#        HOST: '127.0.0.1'
-#        PORT: '3306'
-
 DATABASES:
     default:
-        ENGINE: 'django.db.backends.sqlite3'
-        NAME: 'C:\Users\s575264\PycharmProjects\reservation\db.sqlite3'
+        ENGINE: 'django.db.backends.mysql'
+        NAME: 'reservation'
+        USER: 'root'
+        PASSWORD: 'root'
+        HOST: '127.0.0.1'
+        PORT: '3306'
