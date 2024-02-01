@@ -187,22 +187,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
 </script>
 
 <style>
-/* Style du conteneur des images */
-.image-select-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
 /* Style de base des images sélectionnables */
 .selectable-image {
-    max-width: 250px;
+    max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
     height: auto;
     cursor: pointer;
     border: 2px solid transparent;
     margin: 10px;
     position: relative;
+    display: block; /* Chaque image prendra sa propre ligne sur les petits écrans */
 }
+
+/* Style du conteneur des images */
+.image-select-container {
+    display: flex;
+    flex-direction: column; /* Empile les images verticalement par défaut */
+    justify-content: center;
+    align-items: center;
+}
+
+@media (min-width: 768px) { /* Pour les écrans d'au moins 768px de large */
+    .image-select-container {
+        flex-direction: row; /* Aligner les images horizontalement pour les écrans plus larges */
+        flex-wrap: wrap; /* Permet aux images de s'enrouler sur plusieurs lignes si nécessaire */
+    }
+    .selectable-image {
+        max-width: calc(33.333% - 20px); /* Ajuste cette valeur pour contrôler le nombre d'images par ligne, ici 3 images par ligne avec une marge */
+    }
+}
+
 
 /* Style de l'image lorsqu'elle est sélectionnée */
 .selectable-image.selected {
