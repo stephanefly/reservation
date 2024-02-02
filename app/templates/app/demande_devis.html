@@ -2,242 +2,237 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
 <form method="post" id="monFormulaire">
    <div class="row">
       <h1 class="text-center mb-4">Formulaire d'Événement</h1>
    </div>
    {% csrf_token %}
 
-   <style>
-   .custom-radio-container {
-       display: flex;
-       justify-content: center;
-       padding: 15px;
-   }
-
-   .custom-radio-button {
-       display: flex;
-       align-items: center;
-       border: 2px solid #897943;
-       border-radius: 10px;
-       padding: 10px 20px;
-       margin: 0 10px;
-       background-image: linear-gradient(to bottom, #ffef96, #5a4300);;
-       transition: all 0.3s ease;
-   }
-
-   .custom-radio-button input[type="radio"] {
-       display: none; /* Cache le bouton radio d'origine */
-   }
-
-   .custom-radio-button label {
-       font-size: 20px;
-       font-weight: bold;
-       color: black;
-       cursor: pointer;
-       text-align: center;
-   }
-
-   .custom-radio-button input[type="radio"]:checked + label {
-       color: white;
-       border-color: #897943;
-   }
-   </style>
-    <style>
-button {
-    margin: 20px;
-    background-image: linear-gradient(to bottom, #ffef96, #5a4300);
-    color: white;
-    border: 1px solid goldenrod;
-    font-weight: bold;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-shadow: 1px 1px 2px black;
-    box-shadow: 2px 2px 4px grey;
-    font-size: 22px;
-}
-
-h1, label, .form-label {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-family: "Arial Black", Gadget, sans-serif;
-  letter-spacing: -1px;
-  word-spacing: 0.6px;
-  font-weight: 400;
-  color: white;
-  text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-  font-weight : bold;
-}
-</style>
-    <script>
-   var personneRadio = document.getElementById('id_personne');
-   var entrepriseRadio = document.getElementById('id_entreprise');
-   var nomPrenomRow = document.getElementById('nomPrenomRow');
-   var raisonSocialeRow = document.getElementById('raisonSocialeRow');
-
-   personneRadio.addEventListener('change', function() {
-       nomPrenomRow.style.display = 'block';
-       raisonSocialeRow.style.display = 'none';
-   });
-
-   entrepriseRadio.addEventListener('change', function() {
-       nomPrenomRow.style.display = 'none';
-       raisonSocialeRow.style.display = 'block';
-   });
-</script>
+   <script></script>
    <div class="custom-radio-container">
-       <div class="custom-radio-button">
-           <input type="radio" id="id_personne" name="type" value="personne" checked>
-           <label for="id_personne">Particulier</label>
-       </div>
-       <div class="custom-radio-button">
-           <input type="radio" id="id_entreprise" name="type" value="entreprise">
-           <label for="id_entreprise">Entreprise</label>
-       </div>
+      <div class="custom-radio-button">
+         <input type="radio" id="id_personne" name="type" value="personne" checked>
+         <label for="id_personne">Particulier</label>
+      </div>
+      <div class="custom-radio-button">
+         <input type="radio" id="id_entreprise" name="type" value="entreprise">
+         <label for="id_entreprise">Entreprise</label>
+      </div>
    </div>
-
    <div class="row" id="nomPrenomRow">
       <label for="id_nom" class="form-label">Nom :</label>
-      <input type="text" class="form-control" id="id_nom" name="nom" required>
+      <input type="text" class="form-control" id="id_nom" name="nom" required value="{{ form.nom }}">
       <label for="id_prenom" class="form-label">Prénom :</label>
-      <input type="text" class="form-control" id="id_prenom" name="prenom" required>
+      <input type="text" class="form-control" id="id_prenom" name="prenom" required value="{{ form.prenom }}">
    </div>
    <div class="row" id="raisonSocialeRow" style="display:none;">
       <label for="id_raison_sociale" class="form-label">Raison Sociale :</label>
-      <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale">
+      <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale" value="{{ form.raison_sociale }}">
    </div>
-    <div class="row">
-        <label for="id_mail" class="form-label">Mail :</label>
-        <input type="email" class="form-control" id="id_mail" name="mail" required title="Veuillez entrer une adresse e-mail valide se terminant par une extension de domaine (ex : .com, .fr).">
-    </div>
    <div class="row">
-       <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
-       <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required pattern="^0[1-9][0-9]{8}$" title="Veuillez entrer un numéro de téléphone valide (commence par 0).">
+      <label for="id_mail" class="form-label">Mail :</label>
+      <input type="email" class="form-control" id="id_mail" name="mail" required title="Veuillez entrer une adresse e-mail valide se terminant par une extension de domaine (ex : .com, .fr)." value="{{ form.mail }}">
+   </div>
+   <div class="row">
+      <label for="id_numero_telephone" class="form-label">Numéro de téléphone :</label>
+      <input type="text" class="form-control" id="id_numero_telephone" name="numero_telephone" required pattern="^0[1-9][0-9]{8}$" title="Veuillez entrer un numéro de téléphone valide (commence par 0)." value="{{ form.numero_telephone }}">
    </div>
    <div class="row">
       <label for="id_date_evenement" class="form-label">Date de l'événement :</label>
       <input type="date" class="form-control" id="id_date_evenement" name="date_evenement"
-             required min="{{ today_date }}" max="{{ date_dans_deux_ans }}">
+         required min="{{ form.today_date }}" max="{{ form.date_dans_deux_ans }}" value="{{ form.date_evenement }}">
    </div>
    <div class="row">
       <label for="id_adresse_evenement" class="form-label">Adresse de l'événement <br>(avec le nom de la salle si possible):</label>
-      <input type="text" class="form-control" id="id_adresse_evenement" name="adresse_evenement" required >
+      <input type="text" class="form-control" id="id_adresse_evenement" name="adresse_evenement" required value="{{ form.adresse_evenement }}">
    </div>
    <div class="row">
-    <label for="id_ville_evenement" class="form-label">Ville de l'événement :</label>
-    <input type="text" class="form-control" id="id_ville_evenement" name="ville_evenement" required>
+      <label for="id_ville_evenement" class="form-label">Ville de l'événement :</label>
+      <input type="text" class="form-control" id="id_ville_evenement" name="ville_evenement" required value="{{ form.ville_evenement }}">
    </div>
    <div class="row">
-       <label for="id_code_postal_evenement" class="form-label">Code Postal de l'événement :</label>
-       <input type="text" class="form-control" id="id_code_postal_evenement" name="code_postal_evenement" required pattern="^\d{5}$" title="Veuillez entrer un code postal valide">
+      <label for="id_code_postal_evenement" class="form-label">Code Postal de l'événement :</label>
+      <input type="text" class="form-control" id="id_code_postal_evenement" name="code_postal_evenement" required pattern="^\d{5}$" title="Veuillez entrer un code postal valide" value="{{ form.code_postal_evenement }}">
    </div>
-    <div class="row">
-        <label for="client_how_find" class="form-label">Comment avez-vous trouvé ?</label>
-        <select class="form-select" id="client_how_find" name="client_how_find" required>
-            <option value="INSTAGRAM">INSTAGRAM</option>
-            <option value="SITE INTERNET">SITE INTERNET</option>
-            <option value="LEBONCOIN">LEBONCOIN</option>
-            <option value="RECOMMENDATION">RECOMMENDATION</option>
-        </select><br>
-    </div>
-<br>
-<div class="image-select-container">
-    <img src="static/img/miroirbooth.jpeg" alt="Photobooth" class="selectable-image" data-value="Photobooth">
-    <img src="static/img/miroirbooth.jpeg" alt="Miroirbooth" class="selectable-image" data-value="Miroirbooth">
-    <img src="static/img/miroirbooth.jpeg" alt="360Booth" class="selectable-image" data-value="360Booth">
-</div>
-<input type="hidden" id="selectedImages" name="selectedImages">
-<br>
+   <div class="row">
+      <label for="client_how_find" class="form-label">Comment avez-vous trouvé ?</label>
+      <select class="form-select" id="client_how_find" name="client_how_find" required>
+         <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' %}selected{% endif %}>INSTAGRAM</option>
+         <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>SITE INTERNET</option>
+         <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>LEBONCOIN</option>
+         <option value="RECOMMENDATION" {% if form.client_how_find == 'RECOMMENDATION' %}selected{% endif %}>RECOMMENDATION</option>
+      </select>
+      <br>
+   </div>
+   <br>
+   <div class="image-select-container">
+      <img src="static/img/miroirbooth.jpeg" alt="Photobooth" class="selectable-image" data-value="Photobooth">
+      <img src="static/img/miroirbooth.jpeg" alt="Miroirbooth" class="selectable-image" data-value="Miroirbooth">
+      <img src="static/img/miroirbooth.jpeg" alt="360Booth" class="selectable-image" data-value="360Booth">
+   </div>
+   <input type="hidden" id="selectedImages" name="selectedImages">
+   <br>
+   <div class="container mt-3">
+      <div class="d-flex justify-content-center">
+         <label class="form-label">
+         <u>OPTIONS</u>
+         </label>
+      </div>
+      <div class="form-check form-switch">
+         <div class="row mt-3">
+            <div class="col">
+               <input class="form-check-input" type="checkbox" checked disabled>
+               <label class="form-label">
+               Personnalisation Modèle
+               </label>
+            </div>
+            <div class="col">
+               <input class="form-check-input" type="checkbox" checked disabled>
+               <label class="form-label">
+               Galerie Photos/Videos
+               </label>
+            </div>
+         </div>
+         <br>
+         <div class="row">
+            <div class="col">
+               <input class="form-check-input" type="checkbox" value="0" name="Murfloral" id="Murfloral">
+               <label class="form-label" for="Murfloral">
+               Mur floral ou Backdrop (50€ ou offert avec le pack Miroirbooth + 360Booth)
+               </label>
+            </div>
+         </div>
+         <br>
+         <div class="row">
+            <div class="col">
+               <label for="MagnetsRange" class="form-label">Magnets Photos (50€/100) : <span id="MagnetsNumber">0</span></label>
+               <input type="range" class="form-range" min="0" max="600" step="100" value="0" name="magnets_range" id="MagnetsRange">
+            </div>
+         </div>
+         <br>
+         <br><br>
+         <input class="form-check-input" type="checkbox" value="1" name="livraison" id="livraisonInstallation" checked>
+         <label class="form-label" for="livraisonInstallation">
+         Livraison - Installation - Animateur
+         </label>
+         <div class="row mt-3">
+            <div class="col">
+               <label for="heureRange" class="form-label">Heures : <span id="heureValue">5</span> h</label>
+               <input type="range" class="form-range" min="3" max="7" step="1" value="5" name="heure_range" id="heureRange">
+            </div>
+         </div>
+      </div>
+   </div>
+   <br>
    <div class="d-flex justify-content-center">
-        <button type="submit">
-            Valider
-        </button>
+      <button type="submit">
+      Valider
+      </button>
    </div>
-
 </form>
 
-
-<script>
-document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('.selectable-image').forEach(item => {
-        // Créez un élément pour la coche avec FontAwesome
-        let tickElement = document.createElement('i');
-        tickElement.classList.add('fas', 'fa-check-circle', 'tick');
-        item.appendChild(tickElement);
-
-        item.addEventListener('click', function() {
-            this.classList.toggle('selected'); // Ajoute ou enlève la classe 'selected'
-
-            let selected = document.getElementById('selectedImages');
-            let value = this.getAttribute('data-value');
-
-            let selectedValues = selected.value ? selected.value.split(',') : [];
-            if (selectedValues.includes(value)) {
-                selectedValues = selectedValues.filter(val => val !== value);
-            } else {
-                selectedValues.push(value);
-            }
-
-            selected.value = selectedValues.join(',');
-        });
-    });
-});
-
-</script>
+<script src="{% static 'js/formulaire.js' %}"></script>
 
 <style>
-/* Style de base des images sélectionnables */
-.selectable-image {
-    max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
-    height: auto;
-    cursor: pointer;
-    border: 2px solid transparent;
-    margin: 10px;
-    position: relative;
-    display: block; /* Chaque image prendra sa propre ligne sur les petits écrans */
-}
-
-/* Style du conteneur des images */
-.image-select-container {
-    display: flex;
-    flex-direction: column; /* Empile les images verticalement par défaut */
-    justify-content: center;
-    align-items: center;
-}
-
-@media (min-width: 768px) { /* Pour les écrans d'au moins 768px de large */
-    .image-select-container {
-        flex-direction: row; /* Aligner les images horizontalement pour les écrans plus larges */
-        flex-wrap: wrap; /* Permet aux images de s'enrouler sur plusieurs lignes si nécessaire */
-    }
-    .selectable-image {
-        max-width: calc(33.333% - 20px); /* Ajuste cette valeur pour contrôler le nombre d'images par ligne, ici 3 images par ligne avec une marge */
-    }
-}
 
 
-/* Style de l'image lorsqu'elle est sélectionnée */
-.selectable-image.selected {
-    border: 8px solid #f4dc7f;
-    border-radius: 10px 20px 30px 40px;
-}
-
-/* Style de la coche (tick) avec FontAwesome */
-.selectable-image .tick {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    color: green;
-    display: none;
-    z-index: 100;
-}
-
-/* Affichage de la coche lorsque l'image est sélectionnée */
-.selectable-image.selected .tick {
-    display: block;
-}
-
+          .custom-radio-container {
+      display: flex;
+      justify-content: center;
+      padding: 15px;
+      }
+      .custom-radio-button {
+      display: flex;
+      align-items: center;
+      border: 2px solid #897943;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-image: linear-gradient(to bottom, #ffef96, #5a4300);;
+      transition: all 0.3s ease;
+      }
+      .custom-radio-button input[type="radio"] {
+      display: none; /* Cache le bouton radio d'origine */
+      }
+      .custom-radio-button label {
+      font-size: 20px;
+      font-weight: bold;
+      color: black;
+      cursor: pointer;
+      text-align: center;
+      }
+      .custom-radio-button input[type="radio"]:checked + label {
+      color: white;
+      border-color: #897943;
+      }
+             button {
+      margin: 20px;
+      background-image: linear-gradient(to bottom, #ffef96, #5a4300);
+      color: white;
+      border: 1px solid goldenrod;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-shadow: 1px 1px 2px black;
+      box-shadow: 2px 2px 4px grey;
+      font-size: 22px;
+      }
+      h1, label, .form-label {
+      margin-bottom: 10px;
+      margin-top: 10px;
+      font-family: "Arial Black", Gadget, sans-serif;
+      letter-spacing: -1px;
+      word-spacing: 0.6px;
+      font-weight: 400;
+      color: white;
+      text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+      font-weight : bold;
+      }
+   /* Style de base des images sélectionnables */
+   .selectable-image {
+   max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
+   height: auto;
+   cursor: pointer;
+   border: 2px solid transparent;
+   margin: 10px;
+   position: relative;
+   display: block; /* Chaque image prendra sa propre ligne sur les petits écrans */
+   }
+   /* Style du conteneur des images */
+   .image-select-container {
+   display: flex;
+   flex-direction: column; /* Empile les images verticalement par défaut */
+   justify-content: center;
+   align-items: center;
+   }
+   @media (min-width: 768px) { /* Pour les écrans d'au moins 768px de large */
+   .image-select-container {
+   flex-direction: row; /* Aligner les images horizontalement pour les écrans plus larges */
+   flex-wrap: wrap; /* Permet aux images de s'enrouler sur plusieurs lignes si nécessaire */
+   }
+   .selectable-image {
+   max-width: calc(33.333% - 20px); /* Ajuste cette valeur pour contrôler le nombre d'images par ligne, ici 3 images par ligne avec une marge */
+   }
+   }
+   /* Style de l'image lorsqu'elle est sélectionnée */
+   .selectable-image.selected {
+   border: 8px solid #f4dc7f;
+   border-radius: 10px 20px 30px 40px;
+   }
+   /* Style de la coche (tick) avec FontAwesome */
+   .selectable-image .tick {
+   position: absolute;
+   top: 10px;
+   left: 10px;
+   font-size: 24px;
+   color: green;
+   display: none;
+   z-index: 100;
+   }
+   /* Affichage de la coche lorsque l'image est sélectionnée */
+   .selectable-image.selected .tick {
+   display: block;
+   }
 </style>
+
 {% endblock %}
