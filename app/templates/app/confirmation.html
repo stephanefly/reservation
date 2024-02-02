@@ -1,25 +1,24 @@
 {% extends 'app/index.html' %}
 {% block content %}
             <div class="card">
-                <div class="card-header bg-primary text-white" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
+                <div class="card-header bg-primary text-white"
+                     style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
                     <h2 class="text-center">Confirmez vos informations</h2>
                 </div>
                 <div class="card-body">
                     <form method="post" action="{% url 'confirmation' %}">
                         {% csrf_token %}
                         <div class="row">
-
-                                <div class="form-group">
-                                    <label for="nom">Nom:</label>
-                                    <p>{{ form_data.nom }}</p>
-                                </div>
+                            <div class="form-group">
+                                <label for="nom">Nom:</label>
+                                <p>{{ form_data.nom }}</p>
+                            </div>
                         </div>
                         <div class="row">
-                                <div class="form-group">
-                                    <label for="prenom">Prénom:</label>
-                                    <p>{{ form_data.prenom }}</p>
-                                </div>
-
+                            <div class="form-group">
+                                <label for="prenom">Prénom:</label>
+                                <p>{{ form_data.prenom }}</p>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="raison_sociale">Raison Sociale:</label>
@@ -49,12 +48,12 @@
                             <label for="code_postal_evenement">Code Postal de l'événement:</label>
                             <p>{{ form_data.code_postal_evenement }}</p>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label for="client_how_find">Comment avez-vous trouvé ? :</label>
                             <p>{{ form_data.client_how_find }}</p>
                         </div>
                         <div class="form-group">
-                            <label for="selectedImages">Images sélectionnées:</label>
+                            <label for="selectedImages">Produit(s) sélectionné(s):</label>
                             <p>{{ form_data.selectedImages }}</p>
                         </div>
                         <div class="form-group">
@@ -82,7 +81,9 @@
                             <p>{{ form_data.heure_range }} h</p>
                         </div>
                         <div class="text-center">
-                            <input type="submit" value="Confirmer" class="btn btn-success"/>
+                            <input type="submit" value="Confirmer" class="btn btn-success"
+                            style="background-image: linear-gradient(to bottom, #ffef96, #5a4300);
+                            border: 1px solid goldenrod;"/>
                             <a href="{% url 'demande_devis' %}" class="btn btn-secondary">Modifier</a>
                         </div>
                     </form>

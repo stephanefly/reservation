@@ -36,6 +36,16 @@ function setupSelectableImages() {
     });
 }
 
+// Mise à jour du texte de l'élément span en fonction de la valeur du slider
+function setupMagnetsSlider() {
+    var slider_magnet = document.getElementById("MagnetsRange");
+    var output_magnet = document.getElementById("MagnetsNumber");
+
+    slider_magnet.oninput = function() {
+        output_magnet.textContent = this.value;
+    };
+}
+
 // Gestion des sliders
 function setupSliders() {
     var slider = document.getElementById("heureRange");
@@ -47,16 +57,35 @@ function setupSliders() {
     };
 }
 
-// Mise à jour du texte de l'élément span en fonction de la valeur du slider
-function setupMagnetsSlider() {
-    var slider_magnet = document.getElementById("MagnetsRange");
-    var output_magnet = document.getElementById("MagnetsNumber");
+function rangeLivraison() {
+    var livraisonInstallationCheckbox = document.getElementById('livraisonInstallation');
+    var heureRangeSlider = document.getElementById('heureRange');
+    var heureValueSpan = document.getElementById('heureValue');
 
-    slider_magnet.oninput = function() {
-        output_magnet.textContent = this.value;
-    };
+    // Fonction pour mettre à jour l'état du slider et du texte
+    function updateSliderState() {
+        if (livraisonInstallationCheckbox.checked) {
+            heureRangeSlider.disabled = false; // Active le slider
+            heureValueSpan.innerHTML = heureRangeSlider.value; // Affiche les heures
+        } else {
+            heureRangeSlider.disabled = true; // Désactive le slider
+            heureValueSpan.innerHTML = 'toute la soirée - -  '; // Change le texte
+        }
+    }
+
+    // Événement change sur la case à cocher
+    livraisonInstallationCheckbox.addEventListener('change', updateSliderState);
+
+    // Événement input sur le slider pour mettre à jour le texte des heures
+    heureRangeSlider.addEventListener('input', function() {
+        if (livraisonInstallationCheckbox.checked) {
+            heureValueSpan.innerHTML = this.value;
+        }
+    });
+
+    // Met à jour l'état initial du slider et du texte
+    updateSliderState();
 }
-
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
@@ -64,4 +93,5 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSelectableImages();
     setupSliders();
     setupMagnetsSlider();
+    rangeLivraison();
 });
