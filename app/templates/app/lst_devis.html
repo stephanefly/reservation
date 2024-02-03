@@ -6,18 +6,20 @@
 <br>
 <table id="table" class="table table-bordered table-striped">
     <thead>
-        <th style="display: none">ID</th>
+        <th>ID</th>
         <th>Nom</th>
-        <th>prenom</th>
         <th>date_evenement</th>
+        <th>prix</th>
+        <th>Status</th>
     </thead>
     <tbody>
     {% for event in all_event %}
         <tr>
-            <td style="display: none">{{piece.id}}</td>
-            <td>{{event.nom}}</td>
-            <td>{{event.prenom}}</td>
-            <td>{{event.date_evenement}}</td>
+            <td >{{event.id}}</td>
+            <td>{{event.client.prenom}} {{event.client.nom}}</td>
+            <td>{{event.event_details.date_evenement}}</td>
+            <td>{{event.prix_proposed}}</td>
+            <td>{{event.status}}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -32,14 +34,17 @@ $(document).ready(function () {
                 data: 'id',
             },
             {
-                data: 'program',
+                data: 'nom',
             },
             {
-                data: 'factory',
+                data: 'date',
             },
             {
-                data: 'factory',
-            }
+                data: 'prix',
+            },
+            {
+                data: 'status',
+            },
         ]
     });
 });

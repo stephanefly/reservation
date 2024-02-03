@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from datetime import datetime, timedelta
 from django.http import QueryDict
-from .models import Client, EventDetails, Event
+from .models import Client, Event
+from threading import Thread
+
+from .module.post_form import initialize_event
 
 
 def demande_devis(request):
@@ -33,46 +36,32 @@ def confirmation(request):
 
     if request.method == 'POST':
 
-        client_mail = request.POST.get('mail')
-        client_mail = request.POST.get('mail')
-        client_mail = request.POST.get('mail')
-        client_telephone = request.POST.get('numero_telephone')
-        client_how_find = request.POST.get('client_how_find')
-
-        event_date = request.POST.get('date_evenement')
-        event_adresse = request.POST.get('adresse_evenement')
-        event_ville = request.POST.get('ville_evenement')
-        event_code_postal = request.POST.get('code_postal_evenement')
-
-        image = request.POST.get('selectedImages')
-        livraison = request.POST.get('livraison')
-        heure_range = request.POST.get('heure_range')
-
-        # # Création de l'objet Client
-        # client = Client(
-        #     nom=client_nom,
-        #     prenom=client_prenom,
-        #     mail=client_mail,
-        #     numero_telephone=client_telephone,
-        #     how_find=client_how_find
-        # )
-        # client.save()
-        #
-        # # Création de l'objet EventDetails
-        # event_details = EventDetails(
-        #     date_evenement=event_date,
-        #     adresse_evenement=event_adresse,
-        #     ville_evenement=event_ville,
-        #     code_postal_evenement=event_code_postal
-        # )
-        # event_details.save()
-
-        # event = Event(
-        #     client=client,
-        #     event_details = event_details,
-        #     service_details =
-        #     status = 'Initied',
-        #     )
+        post_data = {
+            "client": {
+                "nom": request.POST.get('nom'),
+                "prenom": request.POST.get('prenom'),
+                "mail": request.POST.get('mail'),
+                "telephone": request.POST.get('numero_telephone'),
+                "how_find": request.POST.get('client_how_find'),
+            },
+            "event": {
+                "date": request.POST.get('date_evenement'),
+                "adresse": request.POST.get('adresse_evenement'),
+                "ville": request.POST.get('ville_evenement'),
+                "code_postal": request.POST.get('code_postal_evenement'),
+            },
+            "product": request.POST.get('selectedImages'),
+            "options": {
+                "murfloral": True if request.POST.get('murfloral') else False,
+                "phonebooth": True if request.POST.get('phonebooth') else False,
+                "magnets_range": int(request.POST.get('magnets_range', 0)) if int(request.POST.get('magnets_range', 0))>0 else None,
+                "livraison": True if request.POST.get('livraison') else False,
+                "heure_range": int(request.POST.get('heure_range', 0)) if request.POST.get('heure_range', 0) else None,
+            }
+        }
+        print(post_data)
+        thread = Thread(target=initialize_event, args=(post_data,))
+        thread.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
@@ -83,5 +72,5 @@ def remerciement(request):
     return render(request, 'app/remerciement.html')
 
 def info_lst_devis(request):
-    all_event = Client.objects.all()
+    all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})

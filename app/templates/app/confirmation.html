@@ -1,93 +1,112 @@
 {% extends 'app/index.html' %}
 {% block content %}
-            <div class="card">
-                <div class="card-header bg-primary text-white"
-                     style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
-                    <h2 class="text-center">Confirmez vos informations</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" action="{% url 'confirmation' %}">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="form-group">
-                                <label for="nom">Nom:</label>
-                                <p>{{ form_data.nom }}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group">
-                                <label for="prenom">Prénom:</label>
-                                <p>{{ form_data.prenom }}</p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="raison_sociale">Raison Sociale:</label>
-                            <p>{{ form_data.raison_sociale }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="mail">Mail:</label>
-                            <p>{{ form_data.mail }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="numero_telephone">Numéro de téléphone:</label>
-                            <p>{{ form_data.numero_telephone }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="date_evenement">Date de l'événement:</label>
-                            <p>{{ form_data.date_evenement }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="adresse_evenement">Adresse de l'événement:</label>
-                            <p>{{ form_data.adresse_evenement }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="ville_evenement">Ville de l'événement:</label>
-                            <p>{{ form_data.ville_evenement }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="code_postal_evenement">Code Postal de l'événement:</label>
-                            <p>{{ form_data.code_postal_evenement }}</p>
-                        </div>
-                        <div class="form-group" style="display:none;">
-                            <label for="client_how_find">Comment avez-vous trouvé ? :</label>
-                            <p>{{ form_data.client_how_find }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="selectedImages">Produit(s) sélectionné(s):</label>
-                            <p>{{ form_data.selectedImages }}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="personnalisation_modele">Personnalisation Modèle:</label>
-                            <p>{% if form_data.personnalisation_modele %}Oui{% else %}Non{% endif %}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="galerie_photos_videos">Galerie Photos/Videos:</label>
-                            <p>{% if form_data.galerie_photos_videos %}Oui{% else %}Non{% endif %}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="murfloral">Mur floral ou Backdrop:</label>
-                            <p>{% if form_data.murfloral %}Oui{% else %}Non{% endif %}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="magnets_range">Magnets Photos:</label>
-                            <p>{{ form_data.magnets_range }} (50€/100)</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="livraison">Livraison - Installation - Animateur:</label>
-                            <p>{% if form_data.livraison %}Oui{% else %}Non{% endif %}</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="heure_range">Heures:</label>
-                            <p>{{ form_data.heure_range }} h</p>
-                        </div>
-                        <div class="text-center">
-                            <input type="submit" value="Confirmer" class="btn btn-success"
-                            style="background-image: linear-gradient(to bottom, #ffef96, #5a4300);
-                            border: 1px solid goldenrod;"/>
-                            <a href="{% url 'demande_devis' %}" class="btn btn-secondary">Modifier</a>
-                        </div>
-                    </form>
-                </div>
+<div class="card">
+    <div class="card-header bg-primary text-white" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
+        <h2 class="text-center">Confirmez vos informations</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'confirmation' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <strong><label for="nom">Nom:</label></strong>
+                <p>{{ form_data.nom }}</p>
+                <input type="hidden" name="nom" value="{{ form_data.nom }}">
             </div>
-
+            <div class="form-group">
+                <strong><label for="prenom">Prénom:</label></strong>
+                <p>{{ form_data.prenom }}</p>
+                <input type="hidden" name="prenom" value="{{ form_data.prenom }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="raison_sociale">Raison Sociale:</label></strong>
+                <p>{{ form_data.raison_sociale }}</p>
+                <input type="hidden" name="raison_sociale" value="{{ form_data.raison_sociale }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="mail">Mail:</label></strong>
+                <p>{{ form_data.mail }}</p>
+                <input type="hidden" name="mail" value="{{ form_data.mail }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="numero_telephone">Numéro de téléphone:</label></strong>
+                <p>{{ form_data.numero_telephone }}</p>
+                <input type="hidden" name="numero_telephone" value="{{ form_data.numero_telephone }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="date_evenement">Date de l'événement:</label></strong>
+                <p>{{ form_data.date_evenement }}</p>
+                <input type="hidden" name="date_evenement" value="{{ form_data.date_evenement }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="adresse_evenement">Adresse de l'événement:</label></strong>
+                <p>{{ form_data.adresse_evenement }}</p>
+                <input type="hidden" name="adresse_evenement" value="{{ form_data.adresse_evenement }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="ville_evenement">Ville de l'événement:</label></strong>
+                <p>{{ form_data.ville_evenement }}</p>
+                <input type="hidden" name="ville_evenement" value="{{ form_data.ville_evenement }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="code_postal_evenement">Code Postal de l'événement:</label></strong>
+                <p>{{ form_data.code_postal_evenement }}</p>
+                <input type="hidden" name="code_postal_evenement" value="{{ form_data.code_postal_evenement }}">
+            </div>
+            <!-- Si le champ client_how_find est censé être visible, retirez style="display:none;" et ajustez en conséquence -->
+            <div class="form-group" style="display:none;">
+                <strong><label for="client_how_find">Comment avez-vous trouvé ? :</label></strong>
+                <p>{{ form_data.client_how_find }}</p>
+                <input type="hidden" name="client_how_find" value="{{ form_data.client_how_find }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="selectedImages">Produit(s) sélectionné(s):</label></strong>
+                <p>{{ form_data.selectedImages }}</p>
+                <input type="hidden" name="selectedImages" value="{{ form_data.selectedImages }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="personnalisation_modele">Personnalisation Modèle:</label></strong>
+                <p>Oui</p>
+            </div>
+            <div class="form-group">
+                <strong><label for="galerie_photos_videos">Galerie Photos/Videos:</label></strong>
+                <p>Oui</p>
+            </div>
+            <div class="form-group">
+                <strong><label for="murfloral">Mur floral ou Backdrop:</label></strong>
+                <p>{% if form_data.murfloral %}Oui{% else %}Non{% endif %}</p>
+                <input type="hidden" name="murfloral" value="{{ form_data.murfloral }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="phonebooth">PhoneBooth:</label></strong>
+                <p>{% if form_data.phonebooth %}Oui{% else %}Non{% endif %}</p>
+                <input type="hidden" name="phonebooth" value="{{ form_data.phonebooth }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="magnets_range">Magnets Photos:</label></strong>
+                <p>{{ form_data.magnets_range }}</p>
+                <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="livraison">Livraison - Installation - Animateur:</label></strong>
+                <p>{% if form_data.livraison %}Oui{% else %}Non{% endif %}</p>
+                <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
+            </div>
+            <div class="form-group">
+                <strong><label for="heure_range">Heures:</label></strong>
+                    <p>
+                        {% if form_data.livraison %}
+                            {{ form_data.heure_range }} h
+                        {% else %}
+                            Toute la soirée !
+                        {% endif %}
+                    </p>
+                <input type="hidden" name="heure_range" value="{{ form_data.heure_range }}">
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Confirmer" class="btn btn-success" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300); border: 1px solid goldenrod;"/>
+                <a href="{% url 'demande_devis' %}" class="btn btn-secondary">Modifier</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

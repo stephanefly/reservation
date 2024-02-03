@@ -1,6 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+
 class Client(models.Model):
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
@@ -18,26 +19,34 @@ class Client(models.Model):
     def __str__(self):
         return f"{self.prenom} {self.nom}"
 
+
 class EventDetails(models.Model):
     date_evenement = models.DateField()
     adresse_evenement = models.CharField(max_length=100)
     ville_evenement = models.CharField(max_length=100)
     code_postal_evenement = models.IntegerField()
 
-class ServiceDetails(models.Model):
-    PRODUIT = [
-        ('Photobooth', 'Photobooth'),
-        ('Miroirbooth', 'Miroirbooth'),
-        ('360Booth', '360Booth'),
-    ]
-    produit = models.CharField(max_length=255, default='', choices=PRODUIT, null=True)
-    livraison = models.BooleanField(default=False)
+
+class EventProduct(models.Model):
+    photobooth = models.BooleanField(default=False)
+    miroirbooth = models.BooleanField(default=False)
+    videobooth = models.BooleanField(default=False)
+
+
+class EventOption(models.Model):
     mur_floral = models.BooleanField(default=False)
+    phonebooth = models.BooleanField(default=False)
+    magnets = models.IntegerField(null=True, blank=True)
+    livraison = models.BooleanField(default=False)
+    duree = models.IntegerField(null=True, blank=True)
+
 
 class Event(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     event_details = models.ForeignKey(EventDetails, on_delete=models.CASCADE)
-    service_details = models.ForeignKey(ServiceDetails, on_delete=models.CASCADE)
+    event_product = models.ForeignKey(EventProduct, on_delete=models.CASCADE, null=True)
+    event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
+
     prix_brut = models.IntegerField()
     prix_proposed = models.IntegerField(null=True, blank=True)
     prix_valided = models.IntegerField(null=True, blank=True)
@@ -52,4 +61,4 @@ class Event(models.Model):
         ('Prio', 'Prio'),
         ('Refused', 'Refused'),
     ]
-    status = models.CharField(max_length=255, default='', choices=STATUS, null=True)
+    status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
