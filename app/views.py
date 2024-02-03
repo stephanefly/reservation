@@ -33,18 +33,20 @@ def confirmation(request):
 
     if request.method == 'POST':
 
-        # client_mail = request.POST.get('mail')
-        # client_telephone = request.POST.get('numero_telephone')
-        # client_how_find = request.POST.get('client_how_find')
-        #
-        # event_date = request.POST.get('date_evenement')
-        # event_adresse = request.POST.get('adresse_evenement')
-        # event_ville = request.POST.get('ville_evenement')
-        # event_code_postal = request.POST.get('code_postal_evenement')
+        client_mail = request.POST.get('mail')
+        client_mail = request.POST.get('mail')
+        client_mail = request.POST.get('mail')
+        client_telephone = request.POST.get('numero_telephone')
+        client_how_find = request.POST.get('client_how_find')
 
-        # image = request.POST.get('selectedImages')
-        # livraison = request.POST.get('livraison')
-        # heure_range = request.POST.get('heure_range')
+        event_date = request.POST.get('date_evenement')
+        event_adresse = request.POST.get('adresse_evenement')
+        event_ville = request.POST.get('ville_evenement')
+        event_code_postal = request.POST.get('code_postal_evenement')
+
+        image = request.POST.get('selectedImages')
+        livraison = request.POST.get('livraison')
+        heure_range = request.POST.get('heure_range')
 
         # # Création de l'objet Client
         # client = Client(
