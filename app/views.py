@@ -6,6 +6,7 @@ from .models import Client, Event
 from threading import Thread
 
 from .module.post_form import initialize_event
+from .module.trello.create_card import create_card
 
 
 def demande_devis(request):
@@ -60,8 +61,10 @@ def confirmation(request):
             }
         }
         print(post_data)
-        thread = Thread(target=initialize_event, args=(post_data,))
-        thread.start()
+        # thread_bdd = Thread(target=initialize_event, args=(post_data,))
+        # thread_bdd.start()
+        thread_trello = Thread(target=create_card, args=(post_data,))
+        thread_trello.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 

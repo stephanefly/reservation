@@ -16,7 +16,7 @@ def initialize_event(post_data):
             nom=client_data['nom'],
             prenom=client_data['prenom'],
             mail=client_data['mail'],
-            numero_telephone=client_data['telephone'],
+            numero_telephone=client_data['telephone'].strip(),
             how_find=client_data['how_find']
         )
         client.save()
