@@ -1,4 +1,4 @@
 venv
 .idea
 donnees
-.\myselfiebooth\settings.yaml
+/myselfiebooth/settings.yaml
