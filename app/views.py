@@ -5,9 +5,13 @@ from django.http import QueryDict
 from .models import Client, Event
 from threading import Thread
 from django.views.decorators.http import require_http_methods
-
+from django.shortcuts import render
+from django.http import FileResponse
 from .module.post_form import initialize_event
 from .module.trello.create_card import create_card
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from io import BytesIO
 
 
 def demande_devis(request):
@@ -65,8 +69,8 @@ def confirmation(request):
         print(post_data)
         # thread_bdd = Thread(target=initialize_event, args=(post_data,))
         # thread_bdd.start()
-        thread_trello = Thread(target=create_card, args=(post_data,))
-        thread_trello.start()
+        # thread_trello = Thread(target=create_card, args=(post_data,))
+        # thread_trello.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
@@ -119,7 +123,7 @@ def update_event(request, id):
     # Mise à jour des options de l'événement
     event_option.mur_floral = request.POST.get('mur_floral') == 'on'
     event_option.phonebooth = request.POST.get('phonebooth') == 'on'
-    magnets_value = request.POST.get('magnets', None)
+    event_option.magnets_value = request.POST.get('magnets', None)
     event_option.livraison = request.POST.get('livraison') == 'on'
     event_option.duree = request.POST.get('duree', None)
     event_option.save()
@@ -131,3 +135,73 @@ def update_event(request, id):
 
     # Rediriger vers la page de détails de l'événement mise à jour ou toute autre page appropriée
     return redirect('info_event', id=event.id)
+
+
+def generate_pdf(request, event_id):
+    # Récupérez les données de l'événement en fonction de l'event_id
+    event = Event.objects.get(id=event_id)
+
+    # Créez un objet BytesIO pour stocker le PDF en mémoire
+    buffer = BytesIO()
+
+    # Créez un objet Canvas pour générer le PDF
+    pdf = canvas.Canvas(buffer)
+
+    # Informations sur la facture
+    client_name = "Nom du Client"
+    invoice_date = datetime.now().strftime("%d/%m/%Y")
+    invoice_number = "2024001"
+    items = [
+        {"description": "Service Photobooth", "quantity": 1, "price": 200},
+        {"description": "Location Miroirbooth", "quantity": 2, "price": 150},
+        {"description": "Location 360booth", "quantity": 1, "price": 300},
+    ]
+
+    # Titre de la facture
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(200, 750, "FACTURE")
+
+    # Informations du client
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(50, 700, f"Client : {client_name}")
+    pdf.drawString(50, 680, f"Date : {invoice_date}")
+    pdf.drawString(50, 660, f"Numéro de Facture : {invoice_number}")
+
+    # Tableau des articles
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, 620, "Description")
+    pdf.drawString(250, 620, "Quantité")
+    pdf.drawString(350, 620, "Prix unitaire")
+    pdf.drawString(450, 620, "Total")
+
+    y_position = 600
+    total_amount = 0
+
+    for item in items:
+        description = item["description"]
+        quantity = item["quantity"]
+        price = item["price"]
+        total_item = quantity * price
+
+        pdf.drawString(50, y_position, description)
+        pdf.drawString(250, y_position, str(quantity))
+        pdf.drawString(350, y_position, f"${price}")
+        pdf.drawString(450, y_position, f"${total_item}")
+
+        y_position -= 20
+        total_amount += total_item
+
+    # Total de la facture
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(350, y_position - 20, "Montant Total :")
+    pdf.drawString(450, y_position - 20, f"${total_amount}")
+
+    # Terminez le PDF
+    pdf.showPage()
+    pdf.save()
+
+    # Réinitialisez le tampon et renvoyez le PDF en tant que réponse HTTP
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
+    return response

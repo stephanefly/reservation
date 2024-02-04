@@ -59,4 +59,8 @@ body {
 
     <button type="submit">Sauvegarder les modifications</button>
 </form>
+<form method="POST" action="{% url 'generate_pdf' event.id %}">
+    {% csrf_token %}
+    <button type="submit">Générer la Facture PDF</button>
+</form>
 {% endblock %}
