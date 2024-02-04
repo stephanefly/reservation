@@ -57,7 +57,7 @@ def get_data_card(post_data):
       duree = str(options_data['heure_range']) +'h'
       data['idLabels'].append(get_id_label(duree))
    else:
-      # mettre ramassageclient
+      data['idLabels'].append(get_id_label("LOCATION"))
       pass
 
    # CODE POSTAL
@@ -70,6 +70,8 @@ def get_data_card(post_data):
    # OPTION
    if options_data['murfloral']==1:
       data['idLabels'].append(get_id_label("Mur Floral"))
+   if options_data['phonebooth'] == 1:
+      data['idLabels'].append(get_id_label("Phonebooth"))
    if options_data['magnets_range']:
       data['idLabels'].append(get_id_label("Magnets"))
 

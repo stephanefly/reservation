@@ -32,6 +32,7 @@ function setupSelectableImages() {
             }
 
             selected.value = selectedValues.join(',');
+            disableLivraison();
         });
     });
 }
@@ -56,6 +57,7 @@ function setupSliders() {
         output.innerHTML = this.value;
     };
 }
+
 
 function rangeLivraison() {
     var livraisonInstallationCheckbox = document.getElementById('livraisonInstallation');
@@ -87,6 +89,20 @@ function rangeLivraison() {
     updateSliderState();
 }
 
+
+function disableLivraison() {
+    var selectedValues = document.getElementById('selectedImages').value;
+    var livraisonCheckbox = document.getElementById('livraisonInstallation');
+
+    if (selectedValues.includes("Miroirbooth") || selectedValues.includes("360Booth")) {
+        livraisonCheckbox.checked = true;
+        livraisonCheckbox.disabled = true; // Assure que le checkbox est activé pour permettre la désélection manuelle si nécessaire
+    } else if (!selectedValues.includes("Photobooth")) {
+        livraisonCheckbox.disabled = false;
+    }
+    rangeLivraison();
+}
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     setupClientTypeToggle();
@@ -94,4 +110,5 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSliders();
     setupMagnetsSlider();
     rangeLivraison();
+    disableLivraison();
 });

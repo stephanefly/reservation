@@ -1,0 +1,62 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<style>
+body {
+    background-image: None;
+}
+
+</style>
+<form method="POST" action="{% url 'update_event' event.id %}">
+    {% csrf_token %}
+
+    <h2>Informations sur l'Événement</h2>
+    <div>
+        <h3>Client</h3>
+        <label>Nom: <input type="text" name="client_nom" value="{{ event.client.nom }}"></label><br>
+        <label>Prénom: <input type="text" name="client_prenom" value="{{ event.client.prenom }}"></label><br>
+        <label>Email: <input type="email" name="client_mail" value="{{ event.client.mail }}"></label><br>
+        <label>Téléphone: <input type="text" name="client_numero_telephone" value="{{ event.client.numero_telephone }}"></label><br>
+        <label>Comment avez-vous trouvé ?:
+            <select name="client_how_find">
+                {% for choice, display in event.client.HOW_FIND %}
+                    <option value="{{ choice }}" {% if choice == event.client.how_find %}selected{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+        </label><br>
+    </div>
+
+    <div>
+        <h3>Détails de l'Événement</h3>
+        <label>Date: <input type="date" name="date_evenement" value="{{ event.event_details.date_evenement|date:'Y-m-d' }}"></label><br>
+        <label>Adresse: <input type="text" name="adresse_evenement" value="{{ event.event_details.adresse_evenement }}"></label><br>
+        <label>Ville: <input type="text" name="ville_evenement" value="{{ event.event_details.ville_evenement }}"></label><br>
+        <label>Code Postal: <input type="text" name="code_postal_evenement" value="{{ event.event_details.code_postal_evenement }}"></label><br>
+    </div>
+
+    <div>
+        <h3>Produits de l'Événement</h3>
+        <label><input type="checkbox" name="photobooth" {% if event.event_product.photobooth %}checked{% endif %}> Photobooth</label><br>
+        <label><input type="checkbox" name="miroirbooth" {% if event.event_product.miroirbooth %}checked{% endif %}> Miroirbooth</label><br>
+        <label><input type="checkbox" name="videobooth" {% if event.event_product.videobooth %}checked{% endif %}> Videobooth</label><br>
+    </div>
+
+    <div>
+        <h3>Options de l'Événement</h3>
+        <label><input type="checkbox" name="mur_floral" {% if event.event_option.mur_floral %}checked{% endif %}> Mur Floral</label><br>
+        <label><input type="checkbox" name="phonebooth" {% if event.event_option.phonebooth %}checked{% endif %}> Phonebooth</label><br>
+        <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
+        <label><input type="checkbox" name="livraison" {% if event.event_option.livraison %}checked{% endif %}> Livraison</label><br>
+        <label>Durée: <input type="number" name="duree" value="{{ event.event_option.duree }}"> heures</label><br>
+    </div>
+
+    <div>
+        <h3>Autres Informations</h3>
+        <label>Prix Brut: <input type="number" name="prix_brut" value="{{ event.prix_brut }}"></label><br>
+        <label>Prix Proposé: <input type="number" name="prix_proposed" value="{{ event.prix_brut }}"></label><br>
+        <br>
+        <!-- Notez que vous ne pouvez pas modifier created_at et signer_at ici car ils sont gérés automatiquement -->
+    </div>
+
+    <button type="submit">Sauvegarder les modifications</button>
+</form>
+{% endblock %}
