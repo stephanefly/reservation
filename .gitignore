@@ -2,3 +2,4 @@ venv
 .idea
 donnees
 /myselfiebooth/settings.yaml
+/facture.pdf

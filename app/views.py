@@ -69,8 +69,8 @@ def confirmation(request):
         print(post_data)
         # thread_bdd = Thread(target=initialize_event, args=(post_data,))
         # thread_bdd.start()
-        # thread_trello = Thread(target=create_card, args=(post_data,))
-        # thread_trello.start()
+        thread_trello = Thread(target=create_card, args=(post_data,))
+        thread_trello.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
