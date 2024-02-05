@@ -12,7 +12,7 @@ def generate_devis_pdf():
     # Ajouter des images pour les logos
     pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
     pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
-    # pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\Logo-transparent.png", 30, 70, 550, 550)
+    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\Logo-transparent.png", 30, 120, 550, 550)
 
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Times-Bold", 22)
