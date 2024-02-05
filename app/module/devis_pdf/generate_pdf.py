@@ -15,11 +15,11 @@ def generate_devis_pdf():
     width, height = A4
 
     # Dessiner l'image avec la transparence réglée
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\logo-white.jpg", 40, 180, 500, 500)
+    pdf.drawImage(r"\app\module\devis_pdf\logo-white.jpg", 40, 180, 500, 500)
 
     # Ajouter des images pour les logos
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
+    pdf.drawImage(r"app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
+    pdf.drawImage(r"app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
 
 
     # Ajouter des zones de texte pour les en-têtes
