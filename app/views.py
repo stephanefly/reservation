@@ -104,13 +104,7 @@ def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
 
-    # Créez un objet BytesIO pour stocker le PDF en mémoire
-    buffer = BytesIO()
-
-    # Créez un objet Canvas pour générer le PDF
-    pdf = canvas.Canvas(buffer)
-
-    pdf_pret = generate_devis_pdf(pdf)
+    buffer = generate_devis_pdf()
 
     # Réinitialisez le tampon et renvoyez le PDF en tant que réponse HTTP
     buffer.seek(0)

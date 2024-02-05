@@ -5,21 +5,29 @@ from reportlab.lib import colors
 from io import BytesIO
 
 def generate_devis_pdf():
+
+    # Créez un objet BytesIO pour stocker le PDF en mémoire
     buffer = BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=A4)
+
+    # Créez un objet Canvas pour générer le PDF
+    pdf = canvas.Canvas(buffer)
+
     width, height = A4
 
+    # Dessiner l'image avec la transparence réglée
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\logo-white.jpg", 40, 180, 500, 500)
+
     # Ajouter des images pour les logos
-    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
-    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
-    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\Logo-transparent.png", 30, 120, 550, 550)
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
+
 
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Times-Bold", 22)
     pdf.drawString(50, height - 125, "DEVIS n°XXX")
     pdf.setFont("Helvetica", 12)
     pdf.setFillColor(colors.darkslategrey)
-    pdf.drawString(50, height - 145, "Etabli le XXX/XXX/XXX")
+    pdf.drawString(50, height - 145, "Établi le XXX/XXX/XXX")
 
     pdf.setFont("Helvetica-Bold", 14)
     pdf.setFillColor(colors.black)
@@ -38,20 +46,20 @@ def generate_devis_pdf():
     pdf.drawString(330, height - 205, "06XXX")
     pdf.drawString(330, height - 220, "XXX@XXX.fr")
 
-    pdf.setFont("Helvetica", 11)
+    pdf.setFont("Helvetica", 10)
     pdf.setFillColor(colors.black)
     pdf.drawString(50, height - 270 , "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
     # ----------------------------------------------------------------------------------------
 
     # Ajouter un tableau pour les articles
-    data = [['Description', 'Prix unitaire', 'QTÉ', 'Réduction', 'TOTAL'],
+    data = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total'],
             ['XXX XXX', 'XXX', '1', "XXX€",'XXX€'],
             ['Livraison - Installation \n XXX/XXX/XXX \n 77XXXXXX XXX ', '0€', '1', "",'0€'],
             ['Personnalisation', '0€', '1', "",'0€'],
             ['Galerie Web', '0€', '1',"", '0€'],
             ]
 
-    table = Table(data, colWidths=[210, 80, 70, 80, 105])
+    table = Table(data, colWidths=[210, 80, 70, 80, 100])
     table_style = [
         ('BACKGROUND', (0, 0), (-1, 0), colors.black),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
@@ -61,10 +69,6 @@ def generate_devis_pdf():
         ('TOPPADDING', (0, 0), (-1, -1), 10),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]
-
-    # Alternance de la couleur de fond pour une ligne sur deux, à partir de la deuxième ligne de données
-    for i in range(1, len(data), 2):
-        table_style.append(('BACKGROUND', (0, i+1), (-1, i+1), colors.ghostwhite))
 
     # Ajout de lignes horizontales après chaque ligne de la table
     for i in range(len(data)):
@@ -95,11 +99,11 @@ def generate_devis_pdf():
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(65, height - 625, "Modalité de payement:")
     pdf.setFillColor(colors.black)
-    pdf.setFont("Helvetica", 9)
+    pdf.setFont("Helvetica", 10)
     pdf.setFillColor(colors.darkslategrey)
     pdf.drawString(65, height - 640, "Un acompte de XXX euros est à verser pour confirmer la réservation avant le XX/XX/XXXX.")
-    pdf.drawString(65, height - 652, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
-    pdf.drawString(65, height - 664, "Vous pouvez payer par virement (RIB à droite), Paylib, Paypal (paypal.me/3dmouvstudio)")
+    pdf.drawString(65, height - 654, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
+    pdf.drawString(65, height - 668, "Vous pouvez payer par virement (RIB à droite), Paylib, Paypal (paypal.me/3dmouvstudio)")
 
     pdf.setFont("Helvetica-Bold", 12)
     pdf.setFillColor(colors.black)
@@ -115,11 +119,11 @@ def generate_devis_pdf():
     pdf.showPage()
     pdf.save()
     buffer.seek(0)
-    return buffer.getvalue()
+    return buffer
 
-# Sauvegarder le PDF dans un fichier
-pdf_content = generate_devis_pdf()
-
-
-with open(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\facture3.pdf", "wb") as f:
-    f.write(pdf_content)
+# # Sauvegarder le PDF dans un fichier
+# pdf_content = generate_devis_pdf()
+#
+#
+# with open(r"facture3.pdf", "wb") as f:
+#     f.write(pdf_content)
