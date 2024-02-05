@@ -12,72 +12,85 @@ def generate_devis_pdf():
     # Ajouter des images pour les logos
     pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
     pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
-    # pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\Logo-transparent.png", 50, 120, 550, 550)
+    # pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\Logo-transparent.png", 50, 120, 550, 550)
 
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Times-Bold", 22)
-    pdf.drawString(50, height - 130, "DEVIS n°...")
+    pdf.drawString(50, height - 125, "DEVIS n°...")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(50, height - 150, "Etabli le XX/XX/XX")
+    pdf.drawString(50, height - 145, "Etabli le XX/XX/XX")
 
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(80, height - 190, "MySelfieBooth")
+    pdf.drawString(50, height - 190, "MySelfieBooth")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(80, height - 210, "0699733998")
-    pdf.drawString(80, height - 230, "contact@myselfiebooth-paris.fr")
-    pdf.drawString(80, height - 250, "www.myselfiebooth-paris.fr")
+    pdf.drawString(50, height - 205, "0699733998")
+    pdf.drawString(50, height - 220, "contact@myselfiebooth-paris.fr")
+    pdf.drawString(50, height - 235, "www.myselfiebooth-paris.fr")
 
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(350, height - 190, "Client Nom")
+    pdf.drawString(330, height - 190, "Client Nom")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(350, height - 210, "0699733998")
-    pdf.drawString(350, height - 230, "contact@myselfiebooth-paris.fr")
+    pdf.drawString(330, height - 205, "0699733998")
+    pdf.drawString(330, height - 220, "contact@myselfiebooth-paris.fr")
 
     pdf.setFont("Helvetica", 11)
-    pdf.drawString(50, height - 300, "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
-    pdf.drawString(50, height - 320, "Créateur de souvenir !")
-
+    pdf.drawString(50, height - 280, "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
 
     # Ajouter un tableau pour les articles
-    data = [['Description', 'Prix unitaire HT', 'QTÉ', 'TOTAL HT'],
-            # Ajoutez ici les lignes de détails de vos articles
+    data = [['Description', 'Prix unitaire', 'QTÉ', 'Réduction', 'TOTAL'],
+            ['Photobooth Tirage Illimtés 5h', '450€', '1', "",'450€'],
+            ['Livraison - Installation \n 18/03/2024 \n 77000 Mareuil-les-Meaux ', '0€', '1', "",'0€'],
+            ['Personnalisation', '0€', '1', "",'0€'],
+            ['Galerie Web', '0€', '1',"", '0€'],
            ]
 
-    table = Table(data, colWidths=[260, 110, 60, 110])
-    table.setStyle(TableStyle([
-                         ('BACKGROUND', (0, 0), (-1, 0), colors.black),
-                         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                         ('GRID', (0,0), (-1,-1), 1, colors.gold),
-                     ]))
+    table = Table(data, colWidths=[210, 80, 70, 80, 110])
+    table_style = [
+        ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]
+
+    # Alternance de la couleur de fond pour une ligne sur deux, à partir de la deuxième ligne de données
+    for i in range(1, len(data), 2):
+        table_style.append(('BACKGROUND', (0, i), (-1, i), colors.lightgoldenrodyellow))
+        table_style.append(('BACKGROUND', (0, i+1), (-1, i+1), colors.ghostwhite))
+
+    # Ajout de lignes horizontales après chaque ligne de la table
+    for i in range(len(data)):
+        table_style.append(('LINEBELOW', (0, i), (-1, i), 1, colors.grey))
+
+    table.setStyle(TableStyle(table_style))
+
     table.wrapOn(pdf, width, height)
-    table.drawOn(pdf, 30, height - 360)
+    print(len(data))
+    regul_height = height - (380 + len(data)*20)
+    print(regul_height)
+    table.drawOn(pdf, 30, regul_height)
 
     # Ajouter les totaux et les conditions
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(400, height - 500, "TOTAL HT :")
-    pdf.drawString(500, height - 500, "$0.00")
+    pdf.drawString(400, height - 520, "TOTAL :")
+    pdf.drawString(500, height - 520, "$0.00")
 
     # Ajouter les totaux et les conditions
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(50, height - 650, "NOTE:")
-    pdf.setFont("Helvetica", 10)
-    pdf.drawString(50, height - 670, "Un acompte de 100 euros est à verser pour confirmer la réservation,")
-    pdf.drawString(50, height - 685, "avant le 30/10/2022.")
-    pdf.drawString(50, height - 705, "Le reste est à payer au moment de la livraison ou au moins 2 jours ")
-    pdf.drawString(50, height - 720, "avant l'évènement par virement.")
-    pdf.drawString(50, height - 740, "Vous pouvez payer par virement (Info du RIB dans le devis), Paylib,")
-    pdf.drawString(50, height - 755, "Paypal (paypal.me/3dmouvstudio) ou Lydia.")
+    pdf.drawString(65, height - 635, "Modalité de payement:")
+    pdf.setFont("Helvetica", 9)
+    pdf.drawString(65, height - 650, "Un acompte de 100 euros est à verser pour confirmer la réservation avant le 30/10/2022.")
+    pdf.drawString(65, height - 665, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
+    pdf.drawString(65, height - 680, "Vous pouvez payer par virement (RIB à droite), Paylib, Paypal (paypal.me/3dmouvstudio)")
 
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(390, height - 680, "RIB:")
+    pdf.drawString(65, height - 710, "RIB:")
     pdf.setFont("Helvetica", 8)
-    pdf.drawString(390, height - 700, "TITULAIRE DU COMPTE : M STEPHANE FAURE")
-    pdf.drawString(390, height - 715, "IBAN : FR58 3000 2069 5100 0000 6909 N52")
-    pdf.drawString(390, height - 730, "BIC : CRLYFRPP")
+    pdf.drawString(65, height - 725, "TITULAIRE DU COMPTE : M STEPHANE FAURE")
+    pdf.drawString(65, height - 740, "IBAN : FR58 3000 2069 5100 0000 6909 N52")
+    pdf.drawString(65, height - 755, "BIC : CRLYFRPP")
 
 
     # Finaliser le PDF
@@ -90,5 +103,5 @@ def generate_devis_pdf():
 pdf_content = generate_devis_pdf()
 
 
-with open(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\facture2.pdf", "wb") as f:
+with open(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\facture3.pdf", "wb") as f:
     f.write(pdf_content)
