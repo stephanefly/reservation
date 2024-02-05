@@ -10,7 +10,7 @@ def generate_devis_pdf():
     width, height = A4
 
     # Ajouter des images pour les logos
-    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\static\img\logo.png", 100, 200, 500, 500)
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\Logo-transparent.png", 100, 200, 500, 500)
 
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Helvetica-Bold", 18)
@@ -61,5 +61,5 @@ def generate_devis_pdf():
 pdf_content = generate_devis_pdf()
 
 
-with open("facture.pdf", "wb") as f:
+with open("facture2.pdf", "wb") as f:
     f.write(pdf_content)
