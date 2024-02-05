@@ -28,6 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config.get('SECRET_KEY')
 KEY_TRELLO = config.get('key'),
 TOKEN_TRELLO = config.get('token')
+PDF_REPERTORY = config.get('PDF_REPERTORY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
