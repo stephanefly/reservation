@@ -10,30 +10,32 @@ def generate_devis_pdf():
     width, height = A4
 
     # Ajouter des images pour les logos
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande.jpg", 0, 770, 600, 65)
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
+    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande.jpg", 0, 780, 600, 65)
+    pdf.drawImage(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
     # pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\Logo-transparent.png", 50, 120, 550, 550)
 
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Times-Bold", 22)
     pdf.drawString(50, height - 130, "DEVIS n°...")
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(50, height - 150, "Etabli le XX/XX/XX")
 
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(80, height - 180, "MySelfieBooth")
+    pdf.drawString(80, height - 190, "MySelfieBooth")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(80, height - 200, "0699733998")
-    pdf.drawString(80, height - 220, "contact@myselfiebooth-paris.fr")
-    pdf.drawString(80, height - 240, "www.myselfiebooth-paris.fr")
+    pdf.drawString(80, height - 210, "0699733998")
+    pdf.drawString(80, height - 230, "contact@myselfiebooth-paris.fr")
+    pdf.drawString(80, height - 250, "www.myselfiebooth-paris.fr")
 
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(350, height - 180, "Client Nom")
+    pdf.drawString(350, height - 190, "Client Nom")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(350, height - 200, "0699733998")
-    pdf.drawString(350, height - 220, "contact@myselfiebooth-paris.fr")
+    pdf.drawString(350, height - 210, "0699733998")
+    pdf.drawString(350, height - 230, "contact@myselfiebooth-paris.fr")
 
     pdf.setFont("Helvetica", 11)
-    pdf.drawString(50, height - 290, "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
-    pdf.drawString(50, height - 310, "Créateur de souvenir !")
+    pdf.drawString(50, height - 300, "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
+    pdf.drawString(50, height - 320, "Créateur de souvenir !")
 
 
     # Ajouter un tableau pour les articles
@@ -52,12 +54,31 @@ def generate_devis_pdf():
                          ('GRID', (0,0), (-1,-1), 1, colors.gold),
                      ]))
     table.wrapOn(pdf, width, height)
-    table.drawOn(pdf, 30, height - 350)
+    table.drawOn(pdf, 30, height - 360)
 
     # Ajouter les totaux et les conditions
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(400, height - 500, "TOTAL HT :")
     pdf.drawString(500, height - 500, "$0.00")
+
+    # Ajouter les totaux et les conditions
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, height - 650, "NOTE:")
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, height - 670, "Un acompte de 100 euros est à verser pour confirmer la réservation,")
+    pdf.drawString(50, height - 685, "avant le 30/10/2022.")
+    pdf.drawString(50, height - 705, "Le reste est à payer au moment de la livraison ou au moins 2 jours ")
+    pdf.drawString(50, height - 720, "avant l'évènement par virement.")
+    pdf.drawString(50, height - 740, "Vous pouvez payer par virement (Info du RIB dans le devis), Paylib,")
+    pdf.drawString(50, height - 755, "Paypal (paypal.me/3dmouvstudio) ou Lydia.")
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(390, height - 680, "RIB:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(390, height - 700, "TITULAIRE DU COMPTE : M STEPHANE FAURE")
+    pdf.drawString(390, height - 715, "IBAN : FR58 3000 2069 5100 0000 6909 N52")
+    pdf.drawString(390, height - 730, "BIC : CRLYFRPP")
+
 
     # Finaliser le PDF
     pdf.showPage()
@@ -69,5 +90,5 @@ def generate_devis_pdf():
 pdf_content = generate_devis_pdf()
 
 
-with open("facture2.pdf", "wb") as f:
+with open(r"C:\Users\s575264\PycharmProjects\reservation\app\module\devis_pdf\facture2.pdf", "wb") as f:
     f.write(pdf_content)
