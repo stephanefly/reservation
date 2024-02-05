@@ -10,41 +10,49 @@ def generate_devis_pdf():
     width, height = A4
 
     # Ajouter des images pour les logos
-    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\Logo-transparent.png", 100, 200, 500, 500)
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande.jpg", 0, 770, 600, 65)
+    pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\bande-bas.jpg", 0, 0, 600, 65)
+    # pdf.drawImage(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\devis_pdf\Logo-transparent.png", 50, 120, 550, 550)
 
     # Ajouter des zones de texte pour les en-têtes
-    pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(50, height - 50, "MONIER ÉLECTRICITÉ")
+    pdf.setFont("Times-Bold", 22)
+    pdf.drawString(50, height - 130, "DEVIS n°...")
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(80, height - 180, "MySelfieBooth")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(50, height - 70, "DEVIS ESTIMATIF")
+    pdf.drawString(80, height - 200, "0699733998")
+    pdf.drawString(80, height - 220, "contact@myselfiebooth-paris.fr")
+    pdf.drawString(80, height - 240, "www.myselfiebooth-paris.fr")
 
-    # Informations du client
-    pdf.drawString(50, height - 120, "Monsieur Lionel TEST")
-    pdf.drawString(50, height - 140, "Rue de la Paix")
-    pdf.drawString(50, height - 160, "34000 MONTPELLIER")
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(350, height - 180, "Client Nom")
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(350, height - 200, "0699733998")
+    pdf.drawString(350, height - 220, "contact@myselfiebooth-paris.fr")
 
-    # Informations du devis
-    pdf.drawString(400, height - 120, "Référence : 1234")
-    pdf.drawString(400, height - 140, "Le : 12/04/2013")
-    pdf.drawString(400, height - 160, "Objet : Exemple de Devis")
+    pdf.setFont("Helvetica", 11)
+    pdf.drawString(50, height - 290, "Location de PHOTOBOOTH - MIROIRBOOTH - 360BOOTH")
+    pdf.drawString(50, height - 310, "Créateur de souvenir !")
+
 
     # Ajouter un tableau pour les articles
-    data = [['N°', 'LIBELLÉ', 'U', 'P.U. HT', 'QTÉ', 'TOTAL HT'],
+    data = [['Description', 'Prix unitaire HT', 'QTÉ', 'TOTAL HT'],
             # Ajoutez ici les lignes de détails de vos articles
            ]
 
-    table = Table(data, colWidths=[50, 180, 50, 80, 50, 100])
+    table = Table(data, colWidths=[260, 110, 60, 110])
     table.setStyle(TableStyle([
-                         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                         ('BACKGROUND', (0, 0), (-1, 0), colors.black),
                          ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                          ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                          ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                          ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
                          ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                         ('GRID', (0,0), (-1,-1), 1, colors.black),
+                         ('GRID', (0,0), (-1,-1), 1, colors.gold),
                      ]))
     table.wrapOn(pdf, width, height)
-    table.drawOn(pdf, 50, height - 400)
+    table.drawOn(pdf, 30, height - 350)
 
     # Ajouter les totaux et les conditions
     pdf.setFont("Helvetica-Bold", 12)
