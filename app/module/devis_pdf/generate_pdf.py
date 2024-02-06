@@ -20,7 +20,7 @@ def generate_devis_pdf(event):
     width, height = A4
 
     # Dessiner l'image avec la transparence réglée
-    # pdf.drawImage(os.path.join(PDF_REPERTORY, "logo-white.jpg"), 40, 180, 500, 500)
+    pdf.drawImage(os.path.join(PDF_REPERTORY, "logo-white.jpg"), 40, 180, 500, 500)
 
     # Ajouter des images pour les logos
     pdf.drawImage(os.path.join(PDF_REPERTORY, "bande.jpg"), 0, 780, 600, 65)
