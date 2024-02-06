@@ -48,6 +48,9 @@ class Event(models.Model):
     event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
 
     prix_brut = models.IntegerField()
+    reduc_product = models.IntegerField(null=True, blank=True)
+    reduc_all = models.IntegerField(null=True, blank=True)
+
     prix_proposed = models.IntegerField(null=True, blank=True)
     prix_valided = models.IntegerField(null=True, blank=True)
 
@@ -62,3 +65,66 @@ class Event(models.Model):
         ('Refused', 'Refused'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
+
+    def prix_brut_calculs(self):
+        # Définition des prix de base pour chaque produit pour 5 heures
+        prix_photobooth_5h = 450  # Prix hypothétique du photobooth pour 5h
+        prix_miroirbooth_5h = 600  # Prix hypothétique du miroirbooth pour 5h
+        prix_videobooth_5h = 500  # Prix hypothétique du videobooth pour 5h
+
+        # Prix spécial pour le combo Miroirbooth + Videobooth
+        prix_combo_miroir_videobooth = 1100  # Prix combiné pour Miroirbooth et Videobooth avant réduction
+        reduction_combo = 200  # Réduction appliquée au prix du combo
+
+        # Réduction supplémentaire pour les durées de 5 heures
+        reduction_5h = 50  # Réduction de 50 euros pour les événements de 5 heures
+
+        # Définition des prix de base pour chaque produit pour 3 heures
+        prix_photobooth_3h = 350  # Prix hypothétique du photobooth pour 3h
+        prix_miroirbooth_3h = 450  # Prix hypothétique du miroirbooth pour 3h
+        prix_videobooth_3h = 400  # Prix hypothétique du videobooth pour 3h
+
+        # Vérifier la durée de l'événement dans les options de l'événement
+        duree_evenement = self.event_option.duree if self.event_option.duree else 5  # Utilise 5h par défaut si non spécifié
+
+        # Sélectionner les prix en fonction de la durée
+        if duree_evenement == 3:
+            prix_photobooth = prix_photobooth_3h
+            prix_miroirbooth = prix_miroirbooth_3h
+            prix_videobooth = prix_videobooth_3h
+        else:  # Utiliser les prix pour 5 heures par défaut si la durée est différente de 3 heures
+            prix_photobooth = prix_photobooth_5h
+            prix_miroirbooth = prix_miroirbooth_5h
+            prix_videobooth = prix_videobooth_5h
+
+        # Initialisation du prix brut
+        prix_brut = 0
+
+        # Vérification de la sélection de Miroirbooth et Videobooth pour appliquer le prix spécial du combo
+        if self.event_product.miroirbooth and self.event_product.videobooth:
+            prix_brut += prix_combo_miroir_videobooth - reduction_combo
+            # Si Photobooth est également sélectionné, ajouter son prix
+            if self.event_product.photobooth:
+                prix_brut += prix_photobooth
+        else:
+            # Calcul du prix brut en fonction des produits sélectionnés sans le combo spécial
+            if self.event_product.photobooth:
+                prix_brut += prix_photobooth
+            if self.event_product.miroirbooth:
+                prix_brut += prix_miroirbooth
+            if self.event_product.videobooth:
+                prix_brut += prix_videobooth
+
+        # Appliquer la réduction supplémentaire pour les événements de 5 heures
+        if duree_evenement == 5:
+            prix_brut -= reduction_5h
+
+        # Mise à jour du champ reduc de l'objet Event avec le montant total de la réduction
+        self.reduc_product = reduction_combo + reduction_5h
+
+        # Mise à jour du prix brut de l'événement
+        self.prix_brut = prix_brut
+        self.save()  # Enregistrement des modifications dans la base de données
+
+        # Retourne le prix brut pour une utilisation ultérieure si nécessaire
+        return prix_brut

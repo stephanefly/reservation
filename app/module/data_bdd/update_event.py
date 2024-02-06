@@ -39,6 +39,7 @@ def update_data(event, request):
 
     # Mise à jour des autres informations de l'événement
     event.prix_brut = request.POST.get('prix_brut')
+    event.reduc = request.POST.get('reduc')
     event.prix_proposed = request.POST.get('prix_proposed')
     event.save()
 

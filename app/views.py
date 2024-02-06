@@ -6,6 +6,7 @@ from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 
+from .module.data_bdd.post_form import initialize_event
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from .module.trello.create_card import create_card
@@ -67,10 +68,10 @@ def confirmation(request):
             }
         }
         print(post_data)
-        # thread_bdd = Thread(target=initialize_event, args=(post_data,))
-        # thread_bdd.start()
-        thread_trello = Thread(target=create_card, args=(post_data,))
-        thread_trello.start()
+        thread_bdd = Thread(target=initialize_event, args=(post_data,))
+        thread_bdd.start()
+        # thread_trello = Thread(target=create_card, args=(post_data,))
+        # thread_trello.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
@@ -104,13 +105,7 @@ def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
 
-    # Créez un objet BytesIO pour stocker le PDF en mémoire
-    buffer = BytesIO()
-
-    # Créez un objet Canvas pour générer le PDF
-    pdf = canvas.Canvas(buffer)
-
-    pdf_pret = generate_devis_pdf(pdf)
+    buffer = generate_devis_pdf(event)
 
     # Réinitialisez le tampon et renvoyez le PDF en tant que réponse HTTP
     buffer.seek(0)

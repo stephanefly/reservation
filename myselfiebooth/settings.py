@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import yaml
 
+
 with open(r'myselfiebooth/settings.yaml', 'r') as yaml_file:
     config = yaml.safe_load(yaml_file)
 
@@ -28,6 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config.get('SECRET_KEY')
 KEY_TRELLO = config.get('key'),
 TOKEN_TRELLO = config.get('token')
+PDF_REPERTORY = config.get('PDF_REPERTORY')
+
+TITULAIRE_DU_COMPTE_A = config.get('TITULAIRE_DU_COMPTE_A')
+IBAN_A = config.get('IBAN_A')
+BIC_A = config.get('BIC_A')
+
+TITULAIRE_DU_COMPTE_B = config.get('TITULAIRE_DU_COMPTE_B')
+IBAN_B = config.get('IBAN_B')
+BIC_B = config.get('BIC_B')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

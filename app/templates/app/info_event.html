@@ -52,7 +52,9 @@ body {
     <div>
         <h3>Autres Informations</h3>
         <label>Prix Brut: <input type="number" name="prix_brut" value="{{ event.prix_brut }}"></label><br>
-        <label>Prix Proposé: <input type="number" name="prix_proposed" value="{{ event.prix_brut }}"></label><br>
+        <label>Reduc: <input type="number" name="reduc" value="{{ event.reduc }}"></label><br>
+        <label>Prix Proposé: <input type="number" name="prix_proposed" value="{{ event.prix_proposed }}"></label><br>
+        <label>Prix Validé: {{ event.prix_valided }}</label><br>
         <br>
         <!-- Notez que vous ne pouvez pas modifier created_at et signer_at ici car ils sont gérés automatiquement -->
     </div>
