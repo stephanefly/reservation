@@ -149,7 +149,7 @@ def make_tableau_devis(event):
     # Initialisation du tableau de devis avec l'en-tête
     data_tableau_devis = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total']]
 
-    ligne_forfait, acompte = prix_ligne_product(event, data_tableau_devis)
+    ligne_forfait, acompte, total = prix_ligne_product(event, data_tableau_devis)
     data_tableau_devis.append(ligne_forfait)
 
     # Ajout de la ligne de livraison avec les détails de l'événement
@@ -185,14 +185,15 @@ def prix_ligne_product(event, data_tableau_devis):
     else:
         acompte = "50"
 
-    total = str(event.prix_brut - event.reduc)
+    total = str(event.prix_brut - event.reduc_product)
+
     # Ajout de la ligne du produit avec les détails de l'événement
     ligne_forfait = [
         "\n".join(produits_descriptions) + "\nDurée " + str(event.event_option.duree) + "h",
         str(event.prix_brut)+ " €",
         '1',
-        str(event.reduc)+ " €",
+        str(event.reduc_product)+ " €",
         total + " €",
     ]
 
-    return ligne_forfait, acompte
+    return ligne_forfait, total, acompte

@@ -39,8 +39,20 @@ def update_data(event, request):
 
     # Mise à jour des autres informations de l'événement
     event.prix_brut = request.POST.get('prix_brut')
-    event.reduc = request.POST.get('reduc')
-    event.prix_proposed = request.POST.get('prix_proposed')
+
+    def parse_int(value):
+        return int(value) if value.strip() else None
+
+    # Utilisez la fonction parse_int pour convertir les valeurs en entier ou en None si elles sont vides
+    reduc_product = parse_int(request.POST.get('reduc_product', ''))
+    reduc_all = parse_int(request.POST.get('reduc_all', ''))
+    prix_proposed = parse_int(request.POST.get('prix_proposed', ''))
+
+    # Mise à jour des valeurs de l'objet Event
+    event.reduc_product = reduc_product
+    event.reduc_all = reduc_all
+    event.prix_proposed = prix_proposed
+
     event.save()
 
     return event

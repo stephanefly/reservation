@@ -42,6 +42,10 @@ class EventOption(models.Model):
 
 
 class Event(models.Model):
+    def __init__(self, *args, **kwargs):
+        super(Event, self).__init__(*args, **kwargs)
+        self.prix_brut_calculs()
+
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     event_details = models.ForeignKey(EventDetails, on_delete=models.CASCADE)
     event_product = models.ForeignKey(EventProduct, on_delete=models.CASCADE, null=True)
