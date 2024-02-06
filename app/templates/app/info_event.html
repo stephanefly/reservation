@@ -42,9 +42,16 @@ body {
 
     <div>
         <h3>Options de l'Événement</h3>
+
         <label><input type="checkbox" name="mur_floral" {% if event.event_option.mur_floral %}checked{% endif %}> Mur Floral</label><br>
+        <label>Mur Floral Reduc<input type="number" name="mur_floral_reduc_prix" value="{{ event.event_option.mur_floral_reduc_prix }}"></label><br>
+
         <label><input type="checkbox" name="phonebooth" {% if event.event_option.phonebooth %}checked{% endif %}> Phonebooth</label><br>
+        <label>Phonebooth Reduc<input type="number" name="phonebooth_reduc_prix" value="{{ event.event_option.phonebooth_reduc_prix }}"></label><br>
+
         <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
+        <label>magnets Reduc<input type="number" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
+
         <label><input type="checkbox" name="livraison" {% if event.event_option.livraison %}checked{% endif %}> Livraison</label><br>
         <label>Durée: <input type="number" name="duree" value="{{ event.event_option.duree }}"> heures</label><br>
     </div>

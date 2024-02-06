@@ -29,10 +29,20 @@ def update_data(event, request):
     event_product.videobooth = request.POST.get('videobooth') == 'on'
     event_product.save()
 
+
+    def parse_int(value):
+        return int(value) if value.strip() else None
+
     # Mise à jour des options de l'événement
     event_option.mur_floral = request.POST.get('mur_floral') == 'on'
+    event_option.mur_floral_reduc_prix = parse_int(request.POST.get('mur_floral_reduc_prix'))
+
     event_option.phonebooth = request.POST.get('phonebooth') == 'on'
-    event_option.magnets_value = request.POST.get('magnets', None)
+    event_option.phonebooth_reduc_prix = parse_int(request.POST.get('phonebooth_reduc_prix'))
+
+    event_option.magnets = request.POST.get('magnets')
+    event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
+
     event_option.livraison = request.POST.get('livraison') == 'on'
     event_option.duree = request.POST.get('duree', None)
     event_option.save()
@@ -40,18 +50,10 @@ def update_data(event, request):
     # Mise à jour des autres informations de l'événement
     event.prix_brut = request.POST.get('prix_brut')
 
-    def parse_int(value):
-        return int(value) if value.strip() else None
-
-    # Utilisez la fonction parse_int pour convertir les valeurs en entier ou en None si elles sont vides
-    reduc_product = parse_int(request.POST.get('reduc_product', ''))
-    reduc_all = parse_int(request.POST.get('reduc_all', ''))
-    prix_proposed = parse_int(request.POST.get('prix_proposed', ''))
-
     # Mise à jour des valeurs de l'objet Event
-    event.reduc_product = reduc_product
-    event.reduc_all = reduc_all
-    event.prix_proposed = prix_proposed
+    event.reduc_product = parse_int(request.POST.get('reduc_product', ''))
+    event.reduc_all = parse_int(request.POST.get('reduc_all', ''))
+    event.prix_proposed = parse_int(request.POST.get('prix_proposed', ''))
 
     event.save()
 

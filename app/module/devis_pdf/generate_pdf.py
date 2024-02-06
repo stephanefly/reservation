@@ -5,6 +5,8 @@ from reportlab.lib import colors
 from io import BytesIO
 import os
 from datetime import datetime, timedelta
+
+from app.module.devis_pdf.make_table import make_tableau_devis
 from myselfiebooth.settings import PDF_REPERTORY, TITULAIRE_DU_COMPTE_A, IBAN_A, BIC_A, BIC_B, TITULAIRE_DU_COMPTE_B, \
     IBAN_B
 
@@ -20,11 +22,11 @@ def generate_devis_pdf(event):
     width, height = A4
 
     # Dessiner l'image avec la transparence réglée
-    pdf.drawImage(os.path.join(PDF_REPERTORY, "logo-white.jpg"), 40, 180, 500, 500)
+    pdf.drawImage(os.path.join(PDF_REPERTORY, "img/logo-white.jpg"), 40, 180, 500, 500)
 
     # Ajouter des images pour les logos
-    pdf.drawImage(os.path.join(PDF_REPERTORY, "bande.jpg"), 0, 780, 600, 65)
-    pdf.drawImage(os.path.join(PDF_REPERTORY, "bande-bas.jpg"), 0, 0, 600, 65)
+    pdf.drawImage(os.path.join(PDF_REPERTORY, "img/bande.jpg"), 0, 780, 600, 65)
+    pdf.drawImage(os.path.join(PDF_REPERTORY, "img/bande-bas.jpg"), 0, 0, 600, 65)
 
     # ----------------------------------------------------------------------------------------
     # Ajouter des zones de texte pour les en-têtes
@@ -122,6 +124,7 @@ def generate_devis_pdf(event):
     pdf.drawString(65, height - 710, "RIB:")
     pdf.setFont("Helvetica", 9)
     pdf.setFillColor(colors.darkslategrey)
+
     # Logique pour déterminer quel RIB utiliser, ici on utilise un flag pour l'exemple
     utiliser_rib_a = True  # ou une condition/fonction qui détermine quel RIB utiliser
     if utiliser_rib_a:
@@ -144,56 +147,3 @@ def generate_devis_pdf(event):
     buffer.seek(0)
     return buffer
 
-def make_tableau_devis(event):
-
-    # Initialisation du tableau de devis avec l'en-tête
-    data_tableau_devis = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total']]
-
-    ligne_forfait, acompte, total = prix_ligne_product(event, data_tableau_devis)
-    data_tableau_devis.append(ligne_forfait)
-
-    # Ajout de la ligne de livraison avec les détails de l'événement
-    livraison_details = "\n".join([
-        str(event.event_details.date_evenement.strftime('%d/%m/%Y')),
-        str(event.event_details.adresse_evenement),
-        str(event.event_details.code_postal_evenement) + " " + str(event.event_details.ville_evenement)
-    ])
-    data_tableau_devis.append(["Livraison - Installation \n" + livraison_details, '0 €', '1', "", '0 €'])
-
-    # Ajout des lignes fixes pour la personnalisation et la galerie web
-    data_tableau_devis += [
-        ['Personnalisation', '0 €', '1', "", '0 €'],
-        ['Galerie Web', '0 €', '1', "", '0 €']
-    ]
-
-    return data_tableau_devis, acompte
-
-def prix_ligne_product(event, data_tableau_devis):
-    # Liste pour garder une trace des descriptions de produits
-    produits_descriptions = []
-
-    # Ajout des descriptions de produit en fonction des produits sélectionnés
-    if event.event_product.photobooth:
-        produits_descriptions.append("Photobooth Tirages Illimités ")
-    if event.event_product.miroirbooth:
-        produits_descriptions.append("Miroibooth Tirages Illimités ")
-    if event.event_product.videobooth:
-        produits_descriptions.append("360VidéoBooth Vidéos Illimités ")
-
-    if len(produits_descriptions) > 1:
-        acompte = "100"
-    else:
-        acompte = "50"
-
-    total = str(event.prix_brut - event.reduc_product)
-
-    # Ajout de la ligne du produit avec les détails de l'événement
-    ligne_forfait = [
-        "\n".join(produits_descriptions) + "\nDurée " + str(event.event_option.duree) + "h",
-        str(event.prix_brut)+ " €",
-        '1',
-        str(event.reduc_product)+ " €",
-        total + " €",
-    ]
-
-    return ligne_forfait, total, acompte
