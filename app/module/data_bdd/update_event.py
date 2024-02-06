@@ -40,7 +40,7 @@ def update_data(event, request):
     event_option.phonebooth = request.POST.get('phonebooth') == 'on'
     event_option.phonebooth_reduc_prix = parse_int(request.POST.get('phonebooth_reduc_prix'))
 
-    event_option.magnets = request.POST.get('magnets')
+    event_option.magnets = parse_int(request.POST.get('magnets', 0))
     event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
 
     event_option.livraison = request.POST.get('livraison') == 'on'

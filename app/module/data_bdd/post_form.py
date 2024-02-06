@@ -60,14 +60,36 @@ def initialize_event(post_data):
         )
         event_option.save()
         # -------------------------------------------------------------
+
+
         # Création de l'objet Event
         event = Event(
             client=client,
             event_details=event_details,
             event_product=event_product,
             event_option=event_option,
-            prix_brut=0,  # Définissez une valeur initiale ou récupérez-la de post_data si disponible
-            # prix_proposed et prix_valided peuvent rester à None si non spécifiés initialement
-            # status='Initied',  # Ou un autre statut initial selon la logique de votre application
+            prix_brut=0,
         )
+        event.prix_brut = prix_brut_calculs(event)
         event.save()
+
+def prix_brut_calculs(event):
+    prix_brut = 0
+
+    # Prix de base pour chaque produit pour des durées de 5 et 3 heures
+    prix_photobooth_5h, prix_miroirbooth_5h, prix_360booth_5h = 450, 600, 500
+
+    # Ajoutez le prix de chaque produit sélectionné
+    if event.event_product.photobooth:
+        prix_brut += prix_photobooth_5h
+    if event.event_product.miroirbooth:
+        prix_brut += prix_miroirbooth_5h
+    if event.event_product.videobooth:
+        prix_brut += prix_360booth_5h
+
+    if prix_brut == 450:
+        event.reduc_product = 50
+    if prix_brut == 1100:
+        event.reduc_product = 250
+
+    return prix_brut

@@ -59,7 +59,7 @@ def generate_devis_pdf(event):
     # ----------------------------------------------------------------------------------------
 
     # Ajouter un tableau pour les articles
-    data_tableau_devis, acompte = make_tableau_devis(event)
+    data_tableau_devis, total_brut_devis, acompte = make_tableau_devis(event)
 
     table = Table(data_tableau_devis, colWidths=[210, 80, 70, 80, 95])
     table_style = [
@@ -90,18 +90,25 @@ def generate_devis_pdf(event):
     table.drawOn(pdf, 30, y_position)
 
     # Ajouter les totaux et les conditions
-    pdf.setFont("Helvetica", 10)
-    pdf.setFillColor(colors.darkslategrey)
-    pdf.drawString(447, y_position - 18, "sous-total :")
-    pdf.drawString(507, y_position - 18, "100 €")
-    pdf.setFont("Helvetica", 10)
-    pdf.setFillColor(colors.darkslategrey)
-    pdf.drawString(375.5, y_position - 33, "Remises supplémentaires :")
-    pdf.drawString(505.8, y_position - 33, "-100 €")
-    pdf.setFont("Helvetica", 12)
-    pdf.setFillColor(colors.black)
-    pdf.drawString(463, y_position - 50, "Total :")
-    pdf.drawString(507, y_position - 50, "100 €")
+    if event.reduc_all :
+        pdf.setFont("Helvetica", 10)
+        pdf.setFillColor(colors.darkslategrey)
+        pdf.drawString(447, y_position - 20, "sous-total :")
+        pdf.drawString(507, y_position - 20, str(total_brut_devis) + " €")
+        pdf.setFont("Helvetica", 10)
+        pdf.setFillColor(colors.darkslategrey)
+        pdf.drawString(375.5, y_position - 37, "Remises supplémentaires :")
+        pdf.drawString(505.8, y_position - 37, "-" + str(event.reduc_all) +" €")
+        total_devis = str(total_brut_devis - event.reduc_all)
+        pdf.setFont("Helvetica", 12)
+        pdf.setFillColor(colors.black)
+        pdf.drawString(463, y_position - 55, "Total :")
+        pdf.drawString(507, y_position - 55, total_devis + " €")
+    else:
+        pdf.setFont("Helvetica", 12)
+        pdf.setFillColor(colors.black)
+        pdf.drawString(463, y_position - 25, "Total :")
+        pdf.drawString(507, y_position - 25, str(total_brut_devis) + " €")
 
     # ----------------------------------------------------------------------------------------
 
