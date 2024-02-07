@@ -114,7 +114,6 @@ def generate_pdf(request, event_id):
     return response
 
 
-# Vue Django
 def envoi_mail_devis(request, event_id):
 
     event = Event.objects.get(id=event_id)
@@ -124,10 +123,10 @@ def envoi_mail_devis(request, event_id):
         event.save()
         return HttpResponse("""
         Email envoyé avec succès. <br><br>
-        <button onclick="location.href='http://127.0.0.1:8000/lst_devis'">Retour à la liste des devis</button>
+        <button action="{% url 'info_lst_devis' %}>Retour à la liste des devis</button>
         """)
     else:
         return HttpResponse("""
         Échec de l'envoi de l'email. <br><br>
-        <button onclick="location.href='http://127.0.0.1:8000/lst_devis'">Retour à la liste des devis</button>
+        <button action="{% url 'info_lst_devis' %}>Retour à la liste des devis</button>
         """, status=500)

@@ -16,36 +16,29 @@ def send_email(event):
 
         # Configuration du serveur SMTP
         server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
-        server.login("contact@myselfiebooth-paris.fr", MP)
+        server.login("stephane.faure@3dmouvstudio.com", MP)
 
         # Configuration de l'email
         msg = MIMEMultipart('alternative')
-        msg['Subject'] = "Sujet de l'email"
-        msg['From'] = "contact@myselfiebooth-paris.fr"
+        msg['Subject'] = "MySelfieBooth - Votre devis - " + event.client
+        msg['From'] = "stephane.faure@3dmouvstudio.com"
         msg['To'] = recipient_email
 
         # Corps de l'email
-        html = f"""\
-                <html>
-                  <body>
-                    <p>Cher {name},</p>
-                    <p>Votre corps de l'email ici.</p>
-                    <p>Cordialement,<br />Votre nom ici...</p>
-                  </body>
-                </html>
-                """
+        html = r"img\template_mail.html"
         msg.attach(MIMEText(html, 'html'))
 
         buffer = generate_devis_pdf(event)
 
         # Attacher le PDF
+        pdf_name = 'Devis-' + event.client + ".pdf"
         buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
-        part = MIMEApplication(buffer.read(), Name="devis.pdf")
-        part['Content-Disposition'] = 'attachment; filename="devis.pdf"'
+        part = MIMEApplication(buffer.read(), Name=pdf_name)
+        part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
+
         msg.attach(part)
 
-        server.sendmail("contact@myselfiebooth-paris.fr", recipient_email, msg.as_string())
-
+        server.sendmail("stephane.faure@3dmouvstudio.com", recipient_email, msg.as_string())
 
         return True
     except Exception as e:
