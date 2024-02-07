@@ -15,7 +15,6 @@ from .module.trello.create_card import create_card
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from io import BytesIO
-import win32com.client as win32
 
 
 
