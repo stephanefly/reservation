@@ -39,6 +39,7 @@ TITULAIRE_DU_COMPTE_B = config.get('TITULAIRE_DU_COMPTE_B')
 IBAN_B = config.get('IBAN_B')
 BIC_B = config.get('BIC_B')
 
+MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
 MP = config.get('MP')
 
 # SECURITY WARNING: don't run with debug turned on in production!

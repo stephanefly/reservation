@@ -3,26 +3,22 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from app.module.devis_pdf.generate_pdf import generate_devis_pdf
-from myselfiebooth.settings import MP
+from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH
 from email.mime.application import MIMEApplication
 
 
 def send_email(event):
 
     try:
-
-        name = "NomDuDestinataire"
-        recipient_email = "faure_stephane@hotmail.fr"
-
         # Configuration du serveur SMTP
         server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
-        server.login("stephane.faure@3dmouvstudio.com", MP)
+        server.login(MAIL_MYSELFIEBOOTH, MP)
 
         # Configuration de l'email
         msg = MIMEMultipart('alternative')
         msg['Subject'] = "MySelfieBooth - Votre devis - " + event.client
-        msg['From'] = "stephane.faure@3dmouvstudio.com"
-        msg['To'] = recipient_email
+        msg['From'] = MAIL_MYSELFIEBOOTH
+        msg['To'] = event.client.mail
 
         # Corps de l'email
         html = r"img\template_mail.html"
@@ -38,7 +34,7 @@ def send_email(event):
 
         msg.attach(part)
 
-        server.sendmail("stephane.faure@3dmouvstudio.com", recipient_email, msg.as_string())
+        server.sendmail(MAIL_MYSELFIEBOOTH, event.client.mail, msg.as_string())
 
         return True
     except Exception as e:
