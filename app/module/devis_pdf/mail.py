@@ -41,4 +41,5 @@ def send_email(event):
         print(f"Erreur lors de l'envoi de l'email: {e}")
         return False
     finally:
-        server.quit()
+        if 'server' in locals() or 'server' in globals():
+            server.quit()
