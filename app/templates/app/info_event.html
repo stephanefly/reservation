@@ -71,6 +71,10 @@ body {
 </form>
 <form method="POST" action="{% url 'generate_pdf' event.id %}">
     {% csrf_token %}
-    <button type="submit">Générer la Facture PDF</button>
+    <button type="submit">Générer la DEVIS</button>
+</form>
+<form method="POST" action="{% url 'envoi_mail_devis' event.id %}">
+{% csrf_token %}
+<button type="submit">Envoi DEVIS</button>
 </form>
 {% endblock %}
