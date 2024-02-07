@@ -8,6 +8,7 @@ from email.mime.application import MIMEApplication
 
 
 def send_email(event):
+    server = None  # Initialisez server à None pour garantir qu'elle a une valeur
 
     try:
         # Configuration du serveur SMTP
@@ -41,5 +42,6 @@ def send_email(event):
         print(f"Erreur lors de l'envoi de l'email: {e}")
         return False
     finally:
-        if 'server' in locals() or 'server' in globals():
+        # Fermez server proprement si elle a été initialisée
+        if server is not None:
             server.quit()
