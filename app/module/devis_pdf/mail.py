@@ -8,40 +8,31 @@ from email.mime.application import MIMEApplication
 
 
 def send_email(event):
-    server = None  # Initialisez server à None pour garantir qu'elle a une valeur
 
-    try:
-        # Configuration du serveur SMTP
-        server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
-        server.login(MAIL_MYSELFIEBOOTH, MP)
+    # Configuration du serveur SMTP
+    server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
+    server.login(MAIL_MYSELFIEBOOTH, MP)
 
-        # Configuration de l'email
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client)
-        msg['From'] = MAIL_MYSELFIEBOOTH
-        msg['To'] = event.client.mail
+    # Configuration de l'email
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client)
+    msg['From'] = MAIL_MYSELFIEBOOTH
+    msg['To'] = event.client.mail
 
-        # Corps de l'email
-        html = r"img\template_mail.html"
-        msg.attach(MIMEText(html, 'html'))
+    # Corps de l'email
+    html = r"img\template_mail.html"
+    msg.attach(MIMEText(html, 'html'))
 
-        buffer = generate_devis_pdf(event)
+    buffer = generate_devis_pdf(event)
 
-        # Attacher le PDF
-        pdf_name = 'Devis-' +  str(event.client) + ".pdf"
-        buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
-        part = MIMEApplication(buffer.read(), Name=pdf_name)
-        part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
+    # Attacher le PDF
+    pdf_name = 'Devis-' +  str(event.client) + ".pdf"
+    buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
+    part = MIMEApplication(buffer.read(), Name=pdf_name)
+    part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
 
-        msg.attach(part)
+    msg.attach(part)
 
-        server.sendmail(MAIL_MYSELFIEBOOTH,  str(event.client.mail), msg.as_string())
+    server.sendmail(MAIL_MYSELFIEBOOTH,  str(event.client.mail), msg.as_string())
 
-        return True
-    except Exception as e:
-        print(f"Erreur lors de l'envoi de l'email: {e}")
-        return False
-    finally:
-        # Fermez server proprement si elle a été initialisée
-        if server is not None:
-            server.quit()
+    return True
