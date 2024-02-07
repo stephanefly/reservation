@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta
 from django.http import QueryDict
+
+from myselfiebooth.settings import MP
 from .models import Event
 from threading import Thread
 from django.views.decorators.http import require_http_methods
@@ -117,43 +119,44 @@ def generate_pdf(request, event_id):
     response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
     return response
 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+def envoi_mail_devis(request, event_id):
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
 
-# Connexion sécurisée au serveur SMTP via SSL
-server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
+    # Connexion sécurisée au serveur SMTP via SSL
+    server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
 
-try:
-    name = "Name"  # Remplissez le nom ici
-    server.login("stephane.faure@3dmouvstudio.com", "votre_mot_de_passe")
+    try:
+        name = "Name"  # Remplissez le nom ici
+        server.login("stephane.faure@3dmouvstudio.com", MP)
 
-    TOADDR = "stephane.faure@safrangroup.com"
-    FromADDR = "stephane.faure@3dmouvstudio.com"
+        TOADDR = "stephane.faure@safrangroup.com"
+        FromADDR = "stephane.faure@3dmouvstudio.com"
 
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Sujet de l'email"
-    msg['From'] = FromADDR
-    msg['To'] = TOADDR
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = "Sujet de l'email"
+        msg['From'] = FromADDR
+        msg['To'] = TOADDR
 
-    # Corps de l'email
-    html = """\
-            <html>
-              <body>
-                <p><span style="color: rgb(0,0,0);">Cher {0},</span></p>
-               <p>
-                  Votre corps de l'email ici.
-                </p>
-                <p>Cordialement,<br />
-                Votre nom ici...
-                </p>
-                </body>
-            </html>
-            """.format(name.split()[0])
-    msg.attach(MIMEText(html, 'html'))
-    server.sendmail(FromADDR, TOADDR, msg.as_string())
-except Exception as e:
-    # Afficher les messages d'erreur
-    print(e)
-finally:
-    server.quit()
+        # Corps de l'email
+        html = """\
+                <html>
+                  <body>
+                    <p><span style="color: rgb(0,0,0);">Cher {0},</span></p>
+                   <p>
+                      Votre corps de l'email ici.
+                    </p>
+                    <p>Cordialement,<br />
+                    Votre nom ici...
+                    </p>
+                    </body>
+                </html>
+                """.format(name.split()[0])
+        msg.attach(MIMEText(html, 'html'))
+        server.sendmail(FromADDR, TOADDR, msg.as_string())
+    except Exception as e:
+        # Afficher les messages d'erreur
+        print(e)
+    finally:
+        server.quit()

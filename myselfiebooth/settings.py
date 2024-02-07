@@ -39,6 +39,8 @@ TITULAIRE_DU_COMPTE_B = config.get('TITULAIRE_DU_COMPTE_B')
 IBAN_B = config.get('IBAN_B')
 BIC_B = config.get('BIC_B')
 
+MP = config.get('MP')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
