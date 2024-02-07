@@ -1,22 +1,16 @@
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta
 from django.http import QueryDict
-
-from myselfiebooth.settings import MP
 from .models import Event
 from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from django.core.mail import EmailMessage
 from .module.data_bdd.post_form import initialize_event
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
-from .module.trello.create_card import create_card
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from io import BytesIO
 
-
+from .module.devis_pdf.mail import send_email
 
 
 def demande_devis(request):
@@ -102,6 +96,7 @@ def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
 
+
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
 
@@ -118,44 +113,21 @@ def generate_pdf(request, event_id):
     response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
     return response
 
+
+# Vue Django
 def envoi_mail_devis(request, event_id):
-    import smtplib
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
 
-    # Connexion sécurisée au serveur SMTP via SSL
-    server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
+    event = Event.objects.get(id=event_id)
 
-    try:
-        name = "Name"  # Remplissez le nom ici
-        server.login("stephane.faure@3dmouvstudio.com", MP)
-
-        TOADDR = "stephane.faure@safrangroup.com"
-        FromADDR = "stephane.faure@3dmouvstudio.com"
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = "Sujet de l'email"
-        msg['From'] = FromADDR
-        msg['To'] = TOADDR
-
-        # Corps de l'email
-        html = """\
-                <html>
-                  <body>
-                    <p><span style="color: rgb(0,0,0);">Cher {0},</span></p>
-                   <p>
-                      Votre corps de l'email ici.
-                    </p>
-                    <p>Cordialement,<br />
-                    Votre nom ici...
-                    </p>
-                    </body>
-                </html>
-                """.format(name.split()[0])
-        msg.attach(MIMEText(html, 'html'))
-        server.sendmail(FromADDR, TOADDR, msg.as_string())
-    except Exception as e:
-        # Afficher les messages d'erreur
-        print(e)
-    finally:
-        server.quit()
+    if send_email(event):
+        event.status = 'Sended'
+        event.save()
+        return HttpResponse("""
+        Email envoyé avec succès. <br><br>
+        <button onclick="location.href='http://127.0.0.1:8000/lst_devis'">Retour à la liste des devis</button>
+        """)
+    else:
+        return HttpResponse("""
+        Échec de l'envoi de l'email. <br><br>
+        <button onclick="location.href='http://127.0.0.1:8000/lst_devis'">Retour à la liste des devis</button>
+        """, status=500)

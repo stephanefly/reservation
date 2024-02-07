@@ -75,9 +75,10 @@ class Event(models.Model):
 
     STATUS = [
         ('Initied', 'Initied'),
-        ('Send', 'Send'),
+        ('Sended', 'Sended'),
         ('OK', 'OK'),
         ('Prio', 'Prio'),
         ('Refused', 'Refused'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
+

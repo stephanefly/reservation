@@ -29,9 +29,11 @@ def update_data(event, request):
     event_product.videobooth = request.POST.get('videobooth') == 'on'
     event_product.save()
 
-
-    def parse_int(value):
-        return int(value) if value.strip() else None
+    def parse_int(value, default=0):
+        try:
+            return int(value) if value is not None and value.strip() != '' else default
+        except (ValueError, TypeError):
+            return default
 
     # Mise à jour des options de l'événement
     event_option.mur_floral = request.POST.get('mur_floral') == 'on'
@@ -47,13 +49,13 @@ def update_data(event, request):
     event_option.duree = request.POST.get('duree', None)
     event_option.save()
 
-    # Mise à jour des autres informations de l'événement
-    event.prix_brut = request.POST.get('prix_brut')
 
-    # Mise à jour des valeurs de l'objet Event
-    event.reduc_product = parse_int(request.POST.get('reduc_product', ''))
-    event.reduc_all = parse_int(request.POST.get('reduc_all', ''))
-    event.prix_proposed = parse_int(request.POST.get('prix_proposed', ''))
+    event.prix_brut = parse_int(request.POST.get('prix_brut'))
+    event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
+    event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
+    event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
+
+    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all
 
     event.save()
 
