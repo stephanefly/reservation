@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 
 from app.module.devis_pdf.generate_pdf import generate_devis_pdf
-from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY
+from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE
 from email.mime.application import MIMEApplication
 
 
@@ -22,6 +22,7 @@ def send_email(event):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client)
     msg['From'] = MAIL_MYSELFIEBOOTH
+    msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
 
     # Corps de l'e-mail au format HTML

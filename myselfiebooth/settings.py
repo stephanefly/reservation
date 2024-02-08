@@ -40,6 +40,7 @@ IBAN_B = config.get('IBAN_B')
 BIC_B = config.get('BIC_B')
 
 MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
+MAIL_COPIE = config.get('MAIL_COPIE')
 MP = config.get('MP')
 
 # SECURITY WARNING: don't run with debug turned on in production!

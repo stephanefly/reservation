@@ -130,3 +130,7 @@ def envoi_mail_devis(request, event_id):
         Échec de l'envoi de l'email. <br><br>
         <button action="{% url 'info_lst_devis' %}>Retour à la liste des devis</button>
         """, status=500)
+
+
+def preparation_presta(request):
+    return render(request, 'preparation_presta\PRESTA-S06-2024.html')

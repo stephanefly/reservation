@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Planning Événements Groupés par Date</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .date-section {
+            background-color: #e9e9e9;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .event {
+            background-color: white;
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .date-header {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .header {
+            color: #333;
+            border-bottom: 1px solid #dcdcdc;
+            margin-bottom: 10px;
+        }
+        .detail {
+            margin-bottom: 5px;
+        }
+        .note, .confirm {
+            font-style: italic;
+            color: #555;
+        }
+        .confirm { /* Nouvelle classe pour le texte à confirmer */
+            color: red;
+        }
+		        /* Couleurs pour chaque équipe */
+        .team-stephanecorentin { background-color: #fff6c8; }
+        .team-ulrich { background-color: #ADD8E6; }
+        .team-cartier { background-color: #c3ffbb; }
+        .team-stephaneulrich { background-color: #f1e0ff; }
+
+    </style>
+</head>
+<body>
+
+<div class="date-section">
+    <div class="date-header">Samedi 10/02/2024</div>
+  
+    <div class="event team-stephanecorentin">
+        <div class="header">TEAM : Stéphane & Corentin</div>
+        <div class="detail">Client : Fidèle SYLVESTER (indien/sri)</div>
+        <div class="detail">Soir 19h-00h</div>
+        <div class="detail">Presta : Pack Miroir-360booth 5h</div>
+        <div class="detail">Lieu : Voilier 91, 91180 Saint-Germain-Lès-Arpajon</div>
+        <div class="note">Note : Mur Floral<br> Tu viens me chercher en camion vers 15h30, on fait la presta et je te déposerai après la Presta</div>
+    </div>
+
+    <div class="event team-ulrich">
+        <div class="header">TEAM : Ulrich</div>
+        <div class="detail">Client : Sarah Seknagi (juif)</div>
+        <div class="detail">Prêt à 20h30</div>
+        <div class="detail">Presta : Photobooth (4h)</div>
+        <div class="detail">Lieu : La Central, 2 Rue du Pré des Aulnes, 77340 Pontault-Combault</div>
+        <div class="note">Note : <br>
+		Mur Floral Blanc à donner à Calvin avant<br>
+		Magnets pour 100 tirages, normalement t'a dû recevoir les magnets chez toi, tu découpe 4 bout et colle aux coins des photos</div>
+    </div>
+
+    <div class="event team-cartier">
+        <div class="header">TEAM : Team Cartier</div>
+        <div class="detail">Client : Norman Stelinda (indien/sri)</div>
+        <div class="detail">Prêt à 18h30</div>
+        <div class="detail">Presta : Photobooth (5h)</div>
+        <div class="detail">Lieu : Château de Venise, 30 route de groslay 95200 Sarcelles</div>
+        <div class="note">Note : Mur Floral Blanc<br>
+		1. Récup du photobooth + Structure + Mur floral Rouge à Buc vers 14h30<br>
+		2. Echange de Mur Floral Rouge VS Mur Floral Blanc chez Ulrich à Noisy le sec<br>
+		3. Presta prêt à 18h30 à Sarcelles<br>
+		</div>
+    </div>
+
+</div>
+
+<div class="date-section">
+    <div class="date-header">Dimanche 11/02/2024</div>
+    
+	Je pense qu'on peut enchainer les deux presta comme c'est à 20min et c'est le matin et soir
+    <div class="event team-stephaneulrich">
+        <div class="header">TEAM : Stéphane & Ulrich</div>
+        <div class="detail">Client : Lashmi Baskara (indien/sri)</div>
+        <div class="detail">Matin 9h30</div>
+        <div class="detail">Presta : Photobooth (5h)</div>
+        <div class="detail">Lieu : Palmier d’or, 5 rue Saint Claude, 77340 Pontault-Combault</div>
+        <div class="note">Note : Mur Végétal et Mur Rouge à me donner</div>
+    </div>
+
+    <div class="event team-stephaneulrich">
+        <div class="header">TEAM : Stéphane & Ulrich</div>
+        <div class="detail">Client : Roddy Real (africain)</div>
+        <div class="detail "> A partir à 20h30</div>
+        <div class="detail">Presta : Pack Miroir-360booth 3h</div>
+        <div class="detail">Lieu : Salle Lokus 2000 rue Henri Papin 77550 Réau</div>
+    </div>
+
+</div>
+
+</body>
+</html>
