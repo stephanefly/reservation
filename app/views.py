@@ -11,6 +11,7 @@ from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
 
 from .module.devis_pdf.mail import send_email
+from .module.trello.create_card import create_card
 
 
 def demande_devis(request):
@@ -65,12 +66,11 @@ def confirmation(request):
                 "heure_range": int(request.POST.get('heure_range', 0)) if request.POST.get('heure_range', 0) else None,
             }
         }
-        print(post_data)
-        initialize_event(post_data)
-        # thread_bdd = Thread(target=initialize_event, args=(post_data,))
-        # thread_bdd.start()
-        # thread_trello = Thread(target=create_card, args=(post_data,))
-        # thread_trello.start()
+
+        thread_bdd = Thread(target=initialize_event, args=(post_data,))
+        thread_bdd.start()
+        thread_trello = Thread(target=create_card, args=(post_data,))
+        thread_trello.start()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
