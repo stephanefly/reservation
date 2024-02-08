@@ -133,4 +133,4 @@ def envoi_mail_devis(request, event_id):
 
 
 def preparation_presta(request):
-    return render(request, 'preparation_presta\PRESTA-S06-2024.html')
+    return render(request, 'preparation_presta/PRESTA-S06-2024.html')
