@@ -45,7 +45,7 @@ MP = config.get('MP')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['reservation.myselfiebooth-paris.fr']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
