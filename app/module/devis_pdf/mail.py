@@ -4,6 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
+
 
 from app.module.devis_pdf.generate_pdf import generate_devis_pdf
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY
@@ -28,13 +30,10 @@ def send_email(event):
         html_message = fichier_html.read()
     soup = BeautifulSoup(html_message, 'html.parser')
 
-    element_client = soup.find('a', class_='client_nom')
-    element_client.string = str(event.client)
-    element_client = soup.find('a', class_='date_event')
-    element_client.string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
+    soup_completed = complete_mail(event, soup)
 
     # Attachez le contenu HTML à l'e-mail
-    msg.attach(MIMEText(soup.prettify(), 'html'))
+    msg.attach(MIMEText(soup_completed.prettify(), 'html'))
 
     buffer = generate_devis_pdf(event)
 
@@ -49,3 +48,25 @@ def send_email(event):
     server.sendmail(MAIL_MYSELFIEBOOTH,  str(event.client.mail), msg.as_string())
 
     return True
+
+
+def complete_mail(event, soup):
+
+    soup.find('a', class_='client_nom').string = str(event.client)
+    soup.find('a', class_='date_event').string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
+
+    if event.prix_brut > event.prix_proposed:
+        soup.find('a', class_='txt_reduc').string = " et bénéficier de la reservation"
+
+    if event.prix_proposed >= 600:
+        soup.find('a', class_='acompte').string = "100 €"
+    elif event.prix_proposed >= 1000:
+        soup.find('a', class_='acompte').string = "150 €"
+    else:
+        soup.find('a', class_='acompte').string = "50 €"
+
+    # Ajouter 10 jours à la date de l'événement
+    date_j_plus_10 = datetime.now() + timedelta(days=8)
+    soup.find('a', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
+
+    return soup
