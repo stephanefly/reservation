@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 
 from app.module.devis_pdf.generate_pdf import generate_devis_pdf
-from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE
+from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE, MAIL_BCC
 from email.mime.application import MIMEApplication
 
 
@@ -46,7 +46,7 @@ def send_email(event):
 
     msg.attach(part)
 
-    server.sendmail(MAIL_MYSELFIEBOOTH,  str(event.client.mail), msg.as_string())
+    server.sendmail(MAIL_MYSELFIEBOOTH,  [msg['To']] + [MAIL_BCC], msg.as_string())
 
     return True
 
