@@ -67,8 +67,8 @@ def confirmation(request):
             }
         }
 
-        thread_bdd = Thread(target=initialize_event, args=(post_data,))
-        thread_bdd.start()
+        initialize_event(post_data)
+
         thread_trello = Thread(target=create_card, args=(post_data,))
         thread_trello.start()
 
