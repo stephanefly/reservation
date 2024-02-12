@@ -80,7 +80,7 @@ def remerciement(request):
     return render(request, 'app/remerciement.html')
 
 
-def info_lst_devis(request):
+def lst_devis(request):
     all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 

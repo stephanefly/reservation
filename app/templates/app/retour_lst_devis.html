@@ -2,14 +2,18 @@
 {% block content %}
 
     {% if mail %}
-        <div class="row d-flex justify-content-center">
+        <h1 class="row d-flex">
             Email envoyé avec succès. 
-        </div>
+        </h1>
     {% else %}
-        <div class="row d-flex justify-content-center">
+        <h1 class="row d-flex">
             Échec de l'envoi de l'email. 
-        </div>
+        </h1>
     {% endif %}
         <br><br>
-    <button action="{% url 'info_lst_devis' %}">Retour à la liste des devis</button>
+    <form method="POST" action="{% url 'lst_devis' %}">
+    {% csrf_token %}
+    <button type="submit">
+        Retour à la liste des devis</button>
+    </form>
 {% endblock %}
