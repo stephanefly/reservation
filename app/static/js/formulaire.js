@@ -16,6 +16,17 @@ function setupClientTypeToggle() {
     });
 }
 
+// Mise à jour du texte de l'élément span en fonction de la valeur du slider
+function setupMagnetsSlider() {
+    var slider_magnet = document.getElementById("MagnetsRange");
+    var output_magnet = document.getElementById("MagnetsNumber");
+
+    slider_magnet.oninput = function() {
+        output_magnet.textContent = this.value;
+    };
+}
+
+
 // Gestion des images sélectionnables
 function setupSelectableImages() {
     document.querySelectorAll('.selectable-image').forEach(function(item) {
@@ -37,26 +48,15 @@ function setupSelectableImages() {
     });
 }
 
-// Mise à jour du texte de l'élément span en fonction de la valeur du slider
-function setupMagnetsSlider() {
-    var slider_magnet = document.getElementById("MagnetsRange");
-    var output_magnet = document.getElementById("MagnetsNumber");
 
-    slider_magnet.oninput = function() {
-        output_magnet.textContent = this.value;
-    };
-}
-
-// Gestion des sliders
-function setupSliders() {
+document.addEventListener("DOMContentLoaded", function() {
     var slider = document.getElementById("heureRange");
     var output = document.getElementById("heureValue");
 
-    output.innerHTML = slider.value;
     slider.oninput = function() {
         output.innerHTML = this.value;
     };
-}
+});
 
 
 function rangeLivraison() {
@@ -90,19 +90,6 @@ function rangeLivraison() {
 }
 
 
-function disableLivraison() {
-    var selectedValues = document.getElementById('selectedImages').value;
-    var livraisonCheckbox = document.getElementById('livraisonInstallation');
-
-    if (selectedValues.includes("Miroirbooth") || selectedValues.includes("360Booth")) {
-        livraisonCheckbox.checked = true;
-        livraisonCheckbox.disabled = true; // Assure que le checkbox est activé pour permettre la désélection manuelle si nécessaire
-    } else if (!selectedValues.includes("Photobooth")) {
-        livraisonCheckbox.disabled = false;
-    }
-    rangeLivraison();
-}
-
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     setupClientTypeToggle();
@@ -110,5 +97,4 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSliders();
     setupMagnetsSlider();
     rangeLivraison();
-    disableLivraison();
 });

@@ -62,11 +62,10 @@ def confirmation(request):
                 "murfloral": True if request.POST.get('murfloral') else False,
                 "phonebooth": True if request.POST.get('phonebooth') else False,
                 "magnets_range": int(request.POST.get('magnets_range', 0)) if int(request.POST.get('magnets_range', 0))>0 else None,
-                "livraison": True if request.POST.get('livraison') else False,
-                "heure_range": int(request.POST.get('heure_range', 0)) if request.POST.get('heure_range', 0) else None,
+                "livraison": True if request.POST.get('livraisonInstallation') else False,
+                "heure_range": int(request.POST.get('heure_range', 0))
             }
         }
-
         initialize_event(post_data)
 
         create_card(post_data)
