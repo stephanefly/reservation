@@ -45,17 +45,17 @@ def confirmation(request):
 
         post_data = {
             "client": {
-                "nom": request.POST.get('nom'),
-                "prenom": request.POST.get('prenom'),
-                "mail": request.POST.get('mail'),
-                "telephone": request.POST.get('numero_telephone'),
+                "nom": request.POST.get('nom').strip(),
+                "prenom": request.POST.get('prenom').strip(),
+                "mail": request.POST.get('mail').strip(),
+                "telephone": request.POST.get('numero_telephone').strip(),
                 "how_find": request.POST.get('client_how_find'),
             },
             "event": {
                 "date": request.POST.get('date_evenement'),
                 "adresse": request.POST.get('adresse_evenement'),
                 "ville": request.POST.get('ville_evenement'),
-                "code_postal": request.POST.get('code_postal_evenement'),
+                "code_postal": request.POST.get('code_postal_evenement').strip(),
             },
             "product": request.POST.get('selectedImages'),
             "options": {
