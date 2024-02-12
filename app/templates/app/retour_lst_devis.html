@@ -1,0 +1,15 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+    {% if mail %}
+        <div class="row d-flex justify-content-center">
+            Email envoyé avec succès. 
+        </div>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            Échec de l'envoi de l'email. 
+        </div>
+    {% endif %}
+        <br><br>
+    <button action="{% url 'info_lst_devis' %}">Retour à la liste des devis</button>
+{% endblock %}

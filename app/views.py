@@ -120,15 +120,9 @@ def envoi_mail_devis(request, event_id):
     if send_email(event):
         event.status = 'Sended'
         event.save()
-        return HttpResponse("""
-        Email envoyé avec succès. <br><br>
-        <button action="{% url 'info_lst_devis' %}>Retour à la liste des devis</button>
-        """)
+        return render(request, 'app/retour_lst_devis.html', {'mail': True})
     else:
-        return HttpResponse("""
-        Échec de l'envoi de l'email. <br><br>
-        <button action="{% url 'info_lst_devis' %}>Retour à la liste des devis</button>
-        """, status=500)
+        return render(request, 'app/retour_lst_devis.html', {'mail': False}, status=500)
 
 
 def preparation_presta(request):
