@@ -40,7 +40,7 @@ def get_data_card(post_data):
 
    data['name'] = client_data["prenom"] + " " + client_data["nom"]
    data['due'] = datetime.strptime(event_data["date"], '%Y-%m-%d')
-   data['des'] = ""
+   data['des'] = str(post_data)
 
    # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option
    data['idLabels'] = []
