@@ -58,17 +58,17 @@ def confirmation(request):
 def remerciement(request):
     return render(request, 'app/remerciement.html')
 
-@login_required
+
 def lst_devis(request):
     all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 
-@login_required
+
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
     return render(request, 'app/info_event.html', {'event': event})
 
-@login_required
+
 @require_http_methods(["POST"])
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
@@ -77,7 +77,7 @@ def update_event(request, id):
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
 
-@login_required
+
 def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
@@ -91,13 +91,11 @@ def generate_pdf(request, event_id):
     return response
 
 # Vue qui affiche la page de confirmation
-@login_required
 def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
     return render(request, 'app/confirmation_envoi_mail.html', {'event': event})
 
 # Vue modifiée pour l'envoi de l'email
-@login_required
 def envoi_mail_devis(request, event_id):
     if request.method == 'POST':  # Assurez-vous que la confirmation a été faite
         event = Event.objects.get(id=event_id)
