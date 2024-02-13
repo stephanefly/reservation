@@ -20,7 +20,7 @@ def send_email(event):
 
     # Configuration de l'email
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client)
+    msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client.nom)
     msg['From'] = MAIL_MYSELFIEBOOTH
     msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
@@ -39,7 +39,7 @@ def send_email(event):
     buffer = generate_devis_pdf(event)
 
     # Attacher le PDF
-    pdf_name = 'Devis-' +  str(event.client) + ".pdf"
+    pdf_name = 'Devis-' +  str(event.client.nom) + ".pdf"
     buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
     part = MIMEApplication(buffer.read(), Name=pdf_name)
     part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
