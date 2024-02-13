@@ -7,8 +7,8 @@
     <div class="card-body">
         <form method="post" action="{% url 'confirmation' %}">
             {% csrf_token %}
-        
-        
+
+
             {% if form_data.type == 'personne' %}
             <div class="form-group">
                 <strong><label for="nom">Nom:</label></strong>
@@ -27,8 +27,8 @@
                 <input type="hidden" name="raison_sociale" value="{{ form_data.raison_sociale }}">
             </div>
             {% endif %}
-        
-        
+
+
             <div class="form-group">
                 <strong><label for="mail">Mail:</label></strong>
                 <p>{{ form_data.mail }}</p>

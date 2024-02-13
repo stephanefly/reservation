@@ -1,0 +1,13 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<style>
+body {
+    background-color: #f5f5f5; /* Couleur de fond plus douce */
+}
+</style>
+<form action="{% url 'envoi_mail_devis' event.id %}" method="post">
+  {% csrf_token %}
+  <p>Êtes-vous sûr de vouloir envoyer le devis pour l'événement "{{ event.nom }}" ?</p>
+  <input type="submit" value="Confirmer l'envoi">
+</form>
+{% endblock %}

@@ -5,7 +5,7 @@ from .models import Event
 from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from .module.data_bdd.post_form import initialize_event
+from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
@@ -43,36 +43,8 @@ def confirmation(request):
 
     if request.method == 'POST':
 
-        if request.POST.get('raison_sociale'):
-            nom = request.POST.get('raison_sociale').strip()
-            raison_sociale = True
-        else:
-            nom = request.POST.get('nom').strip() + " " + request.POST.get('prenom').strip()
-            raison_sociale = False
+        post_data = get_confirmation_data(request)
 
-        post_data = {
-            "client": {
-                "nom": nom,
-                "raison_sociale": raison_sociale,
-                "mail": request.POST.get('mail').strip(),
-                "telephone": request.POST.get('numero_telephone').strip(),
-                "how_find": request.POST.get('client_how_find'),
-            },
-            "event": {
-                "date": request.POST.get('date_evenement'),
-                "adresse": request.POST.get('adresse_evenement'),
-                "ville": request.POST.get('ville_evenement'),
-                "code_postal": request.POST.get('code_postal_evenement').strip(),
-            },
-            "product": request.POST.get('selectedImages'),
-            "options": {
-                "murfloral": True if request.POST.get('murfloral') else False,
-                "phonebooth": True if request.POST.get('phonebooth') else False,
-                "magnets_range": int(request.POST.get('magnets_range', 0)) if int(request.POST.get('magnets_range', 0))>0 else None,
-                "livraison": True if request.POST.get('livraisonInstallation') else False,
-                "heure_range": int(request.POST.get('heure_range', 0))
-            }
-        }
         initialize_event(post_data)
 
         create_card(post_data)
@@ -101,10 +73,8 @@ def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
 
-
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
-
 
 def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
@@ -119,17 +89,24 @@ def generate_pdf(request, event_id):
     return response
 
 
-def envoi_mail_devis(request, event_id):
-
+# Vue qui affiche la page de confirmation
+def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
+    return render(request, 'app/confirmation_envoi_mail.html', {'event': event})
 
-    if send_email(event):
-        event.status = 'Sended'
-        event.save()
-        return render(request, 'app/retour_lst_devis.html', {'mail': True})
+# Vue modifiée pour l'envoi de l'email
+def envoi_mail_devis(request, event_id):
+    if request.method == 'POST':  # Assurez-vous que la confirmation a été faite
+        event = Event.objects.get(id=event_id)
+        if send_email(event):
+            event.status = 'Sended'
+            event.save()
+            return render(request, 'app/retour_lst_devis.html', {'mail': True})
+        else:
+            return render(request, 'app/retour_lst_devis.html', {'mail': False}, status=500)
     else:
-        return render(request, 'app/retour_lst_devis.html', {'mail': False}, status=500)
-
+        # Redirigez vers la page de confirmation si la méthode n'est pas POST
+        return redirect('confirmation_envoi_mail', event_id=event_id)
 
 def preparation_presta(request):
     return render(request, 'preparation_presta/PRESTA-S06-2024.html')

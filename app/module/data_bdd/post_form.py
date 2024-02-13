@@ -1,6 +1,40 @@
 from app.models import Client, EventDetails, EventProduct, EventOption, Event
 from django.db import transaction
 
+def get_confirmation_data(request):
+    if request.POST.get('raison_sociale'):
+        nom = request.POST.get('raison_sociale').strip()
+        raison_sociale = True
+    else:
+        nom = request.POST.get('nom').strip() + " " + request.POST.get('prenom').strip()
+        raison_sociale = False
+
+    post_data = {
+        "client": {
+            "nom": nom,
+            "raison_sociale": raison_sociale,
+            "mail": request.POST.get('mail').strip(),
+            "telephone": request.POST.get('numero_telephone').strip(),
+            "how_find": request.POST.get('client_how_find'),
+        },
+        "event": {
+            "date": request.POST.get('date_evenement'),
+            "adresse": request.POST.get('adresse_evenement'),
+            "ville": request.POST.get('ville_evenement'),
+            "code_postal": request.POST.get('code_postal_evenement').strip(),
+        },
+        "product": request.POST.get('selectedImages'),
+        "options": {
+            "murfloral": True if request.POST.get('murfloral') else False,
+            "phonebooth": True if request.POST.get('phonebooth') else False,
+            "magnets_range": int(request.POST.get('magnets_range', 0)) if int(
+                request.POST.get('magnets_range', 0)) > 0 else None,
+            "livraison": True if request.POST.get('livraisonInstallation') else False,
+            "heure_range": int(request.POST.get('heure_range', 0))
+        }
+    }
+    return post_data
+
 def initialize_event(post_data):
     print(post_data)
 

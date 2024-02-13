@@ -44,7 +44,7 @@ def get_data_card(post_data):
    # DESCRIPTION
    data['des'] = format_dict_excluding_product_options(post_data)
 
-   # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option
+   # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option, ENTREPIRSE
    data['idLabels'] = []
 
    # PRODUIT
@@ -76,6 +76,10 @@ def get_data_card(post_data):
       data['idLabels'].append(get_id_label("Phonebooth"))
    if options_data['magnets_range']:
       data['idLabels'].append(get_id_label("Magnets"))
+
+   # ENTREPRISE
+   if client_data['raison_sociale']:
+      data['idLabels'].append(get_id_label('ENTREPRISE'))
 
    print(data)
 

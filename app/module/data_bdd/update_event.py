@@ -53,9 +53,9 @@ def update_data(event, request):
     event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
     event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
-
     event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all
 
+    event.status = 'Calculed'
     event.save()
 
     return event
