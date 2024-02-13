@@ -53,7 +53,7 @@ def send_email(event):
 
 def complete_mail(event, soup):
 
-    soup.find('a', class_='client_nom').string = str(event.client)
+    soup.find('a', class_='client_nom').string = str(event.client.nom)
     soup.find('a', class_='date_event').string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
 
     if event.prix_brut > event.prix_proposed:
