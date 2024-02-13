@@ -9,7 +9,7 @@ from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
-
+from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
 from .module.trello.create_card import create_card
 
@@ -39,6 +39,7 @@ def demande_devis(request):
         'form': initial_data  # Utilisez initial_data pour préremplir le formulaire
     })
 
+
 def confirmation(request):
 
     if request.method == 'POST':
@@ -57,17 +58,17 @@ def confirmation(request):
 def remerciement(request):
     return render(request, 'app/remerciement.html')
 
-
+@login_required
 def lst_devis(request):
     all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 
-
+@login_required
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
     return render(request, 'app/info_event.html', {'event': event})
 
-
+@login_required
 @require_http_methods(["POST"])
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
@@ -76,6 +77,7 @@ def update_event(request, id):
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
 
+@login_required
 def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
@@ -88,13 +90,14 @@ def generate_pdf(request, event_id):
     response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
     return response
 
-
 # Vue qui affiche la page de confirmation
+@login_required
 def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
     return render(request, 'app/confirmation_envoi_mail.html', {'event': event})
 
 # Vue modifiée pour l'envoi de l'email
+@login_required
 def envoi_mail_devis(request, event_id):
     if request.method == 'POST':  # Assurez-vous que la confirmation a été faite
         event = Event.objects.get(id=event_id)

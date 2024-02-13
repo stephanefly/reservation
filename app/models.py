@@ -43,11 +43,17 @@ class EventOption(models.Model):
     def prix_base_phonebooth(self):
         return 50
 
+    livreor = models.BooleanField(default=False)
+    livreor_reduc_prix = models.IntegerField(null=True, default=False)
+
+    def prix_base_livreor(self):
+        return 70
+
     magnets = models.IntegerField(null=True, blank=True)
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
 
     def prix_base_magnets(self, magnets):
-        return (magnets / 50)*20
+        return (magnets // 50) * 20
 
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)

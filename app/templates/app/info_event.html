@@ -118,6 +118,9 @@ button:hover {
         <label><input type="checkbox" name="phonebooth" {% if event.event_option.phonebooth %}checked{% endif %}> Phonebooth</label><br>
         <label>Phonebooth Reduc<input type="number" name="phonebooth_reduc_prix" value="{{ event.event_option.phonebooth_reduc_prix }}"></label><br>
 
+        <label><input type="checkbox" name="livreor" {% if event.event_option.livreor %}checked{% endif %}> Livre d'or</label><br>
+        <label>Livre D'or Reduc<input type="number" name="livreor_reduc_prix" value="{{ event.event_option.livreor_reduc_prix }}"></label><br>
+    
         <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
         <label>magnets Reduc<input type="number" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
 

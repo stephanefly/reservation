@@ -42,7 +42,7 @@ def get_data_card(post_data):
    data['due'] = datetime.strptime(event_data["date"], '%Y-%m-%d')
 
    # DESCRIPTION
-   data['des'] = format_dict_excluding_product_options(post_data)
+   data['des'] = post_data
 
    # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option, ENTREPIRSE
    data['idLabels'] = []
@@ -74,6 +74,8 @@ def get_data_card(post_data):
       data['idLabels'].append(get_id_label("Mur Floral"))
    if options_data['phonebooth'] == 1:
       data['idLabels'].append(get_id_label("Phonebooth"))
+   if options_data['livreor'] == 1:
+      data['idLabels'].append(get_id_label("Livre d'or"))
    if options_data['magnets_range']:
       data['idLabels'].append(get_id_label("Magnets"))
 
@@ -84,9 +86,3 @@ def get_data_card(post_data):
    print(data)
 
    return data
-
-def format_dict_excluding_product_options(data):
-   filtered_data = {k: v for k, v in data.items() if k not in ['product', 'options']}
-   return '\n'.join(f"- {k.capitalize()}:" + (''.join(
-      f"\n  - {ik}: {'Oui' if iv is True else 'Non' if iv is False else iv if iv is not None else 'Non spécifié'}"
-      for ik, iv in v.items()) if isinstance(v, dict) else f"\n  - {v}") for k, v in filtered_data.items())

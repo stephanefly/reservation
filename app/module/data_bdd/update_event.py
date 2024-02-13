@@ -1,6 +1,46 @@
 from django.http import request
 
 
+def parse_int(value, default=0):
+    try:
+        return int(value) if value is not None and value.strip() != '' else default
+    except (ValueError, TypeError):
+        return default
+
+
+def update_event_option(request, event_option):
+    # Définition des options avec leurs méthodes de prix de base et clés POST
+    options = [
+        {"name": "mur_floral", "prix_base_method": event_option.prix_base_mur_floral, "prix_brut": "mur_floral_reduc_prix"},
+        {"name": "phonebooth", "prix_base_method": event_option.prix_base_phonebooth, "prix_brut": "phonebooth_reduc_prix"},
+        {"name": "livreor", "prix_base_method": event_option.prix_base_livreor, "prix_brut": "livreor_reduc_prix"},
+        # Magnets retiré de cette liste
+        # Ajoutez d'autres options ici si nécessaire
+    ]
+
+    total_option = 0
+    for option in options:
+        option_active = request.POST.get(option["name"]) == 'on'
+        reduc_prix = parse_int(request.POST.get(option["prix_brut"], 0))
+
+        if option_active:
+            setattr(event_option, option["name"], option_active)
+            setattr(event_option, f"{option['name']}_reduc_prix", reduc_prix)
+
+            prix_base = option["prix_base_method"]()
+            total_option += prix_base - reduc_prix
+
+    # Traitement spécifique pour les magnets après la boucle des autres options
+    event_option.magnets = parse_int(request.POST.get('magnets', 0))
+    event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
+    if event_option.magnets:
+        # Assurez-vous que la méthode prix_base_magnets est bien définie pour accepter un paramètre dans votre modèle.
+        total_option += event_option.prix_base_magnets(event_option.magnets) - event_option.magnets_reduc_prix
+
+    event_option.save()
+    return total_option
+
+
 def update_data(event, request):
 
     client = event.client
@@ -28,32 +68,20 @@ def update_data(event, request):
     event_product.videobooth = request.POST.get('videobooth') == 'on'
     event_product.save()
 
-    def parse_int(value, default=0):
-        try:
-            return int(value) if value is not None and value.strip() != '' else default
-        except (ValueError, TypeError):
-            return default
+    # Mise à jour des options de l'événement et calcul du total
+    total_option = update_event_option(request, event_option)
 
-    # Mise à jour des options de l'événement
-    event_option.mur_floral = request.POST.get('mur_floral') == 'on'
-    event_option.mur_floral_reduc_prix = parse_int(request.POST.get('mur_floral_reduc_prix'))
-
-    event_option.phonebooth = request.POST.get('phonebooth') == 'on'
-    event_option.phonebooth_reduc_prix = parse_int(request.POST.get('phonebooth_reduc_prix'))
-
-    event_option.magnets = parse_int(request.POST.get('magnets', 0))
-    event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
-
+    # LIVRAISON
     event_option.livraison = request.POST.get('livraison') == 'on'
     event_option.duree = request.POST.get('duree', None)
     event_option.save()
 
-
     event.prix_brut = parse_int(request.POST.get('prix_brut'))
     event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
+
     event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
-    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all
+    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option
 
     event.status = 'Calculed'
     event.save()

@@ -27,6 +27,7 @@ def get_confirmation_data(request):
         "options": {
             "murfloral": True if request.POST.get('murfloral') else False,
             "phonebooth": True if request.POST.get('phonebooth') else False,
+            "livreor": True if request.POST.get('livreor') else False,
             "magnets_range": int(request.POST.get('magnets_range', 0)) if int(
                 request.POST.get('magnets_range', 0)) > 0 else None,
             "livraison": True if request.POST.get('livraisonInstallation') else False,
@@ -88,6 +89,7 @@ def initialize_event(post_data):
         event_option = EventOption(
             mur_floral=options_data['murfloral'],
             phonebooth=options_data['phonebooth'],
+            livreor=options_data['livreor'],
             magnets=options_data['magnets_range'],
             livraison=options_data['livraison'],
             duree=options_data['heure_range'], # Utilisez une logique appropriée pour déterminer la valeur booléenne
