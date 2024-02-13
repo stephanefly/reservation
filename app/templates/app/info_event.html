@@ -12,8 +12,10 @@ body {
     <h2>Informations sur l'Événement</h2>
     <div>
         <h3>Client</h3>
+    
+        <label><input type="checkbox" name="raison_sociale" {% if event.client.raison_sociale %}checked{% endif %}>Entreprise</label><br>
+    
         <label>Nom: <input type="text" name="client_nom" value="{{ event.client.nom }}"></label><br>
-        <label>Prénom: <input type="text" name="client_prenom" value="{{ event.client.prenom }}"></label><br>
         <label>Email: <input type="email" name="client_mail" value="{{ event.client.mail }}"></label><br>
         <label>Téléphone: <input type="text" name="client_numero_telephone" value="{{ event.client.numero_telephone }}"></label><br>
         <label>Comment avez-vous trouvé ?:

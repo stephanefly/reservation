@@ -8,7 +8,7 @@
    </div>
    {% csrf_token %}
 
-   <script></script>
+
    <div class="custom-radio-container">
       <div class="custom-radio-button">
          <input type="radio" id="id_personne" name="type" value="personne" checked>
@@ -16,7 +16,7 @@
       </div>
       <div class="custom-radio-button">
          <input type="radio" id="id_entreprise" name="type" value="entreprise">
-         <label for="id_entreprise">Entreprise</label>
+         <label for="id_entreprise">Entreprise </label>
       </div>
    </div>
    <div class="row" id="nomPrenomRow">
@@ -27,8 +27,11 @@
    </div>
    <div class="row" id="raisonSocialeRow" style="display:none;">
       <label for="id_raison_sociale" class="form-label">Raison Sociale :</label>
-      <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale" value="{{ form.raison_sociale }}">
+      <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale" required value="{{ form.raison_sociale }}">
    </div>
+
+
+
    <div class="row">
       <label for="id_mail" class="form-label">Mail :</label>
       <input type="email" class="form-control" id="id_mail" name="mail" required title="Veuillez entrer une adresse e-mail valide se terminant par une extension de domaine (ex : .com, .fr)." value="{{ form.mail }}">

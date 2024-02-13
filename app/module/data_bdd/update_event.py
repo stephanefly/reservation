@@ -10,7 +10,6 @@ def update_data(event, request):
 
     # Mise à jour des informations du client
     client.nom = request.POST.get('client_nom')
-    client.prenom = request.POST.get('client_prenom')
     client.mail = request.POST.get('client_mail')
     client.numero_telephone = request.POST.get('client_numero_telephone')
     client.how_find = request.POST.get('client_how_find')

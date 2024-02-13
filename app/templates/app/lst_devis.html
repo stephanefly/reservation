@@ -21,7 +21,7 @@ body {
     {% for event in all_event %}
         <tr onclick="location.href='{% url 'info_event' event.id %}';" style="cursor:pointer;">
             <td style="display: none" >{{event.id}}</td>
-            <td>{{event.client.prenom}} {{event.client.nom}}</td>
+            <td>{{event.client.nom}}</td>
             <td>{{event.event_details.date_evenement|date:"D d/m/Y" }}</td>
             <td>{{event.prix_proposed}}</td>
             <td>{{event.status}}</td>

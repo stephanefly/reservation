@@ -38,7 +38,7 @@ def get_data_card(post_data):
    product_data = post_data['product']
    options_data = post_data['options']
 
-   data['name'] = client_data["prenom"] + " " + client_data["nom"]
+   data['name'] = client_data["nom"]
    data['due'] = datetime.strptime(event_data["date"], '%Y-%m-%d')
 
    # DESCRIPTION

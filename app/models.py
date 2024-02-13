@@ -4,7 +4,6 @@ from django.db import models
 
 class Client(models.Model):
     nom = models.CharField(max_length=100)
-    prenom = models.CharField(max_length=100)
     mail = models.CharField(max_length=100)
     numero_telephone = models.CharField(max_length=15)
 
@@ -15,9 +14,7 @@ class Client(models.Model):
         ('RECOMMENDATION', 'RECOMMENDATION'),
     ]
     how_find = models.CharField(max_length=255, default='', choices=HOW_FIND, null=True)
-
-    def __str__(self):
-        return f"{self.prenom} {self.nom}"
+    raison_sociale = models.BooleanField(default=False)
 
 
 class EventDetails(models.Model):

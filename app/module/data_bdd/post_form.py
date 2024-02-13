@@ -14,10 +14,10 @@ def initialize_event(post_data):
         # Création et sauvegarde de l'objet Client
         client = Client(
             nom=client_data['nom'],
-            prenom=client_data['prenom'],
             mail=client_data['mail'],
             numero_telephone=client_data['telephone'].strip(),
-            how_find=client_data['how_find']
+            how_find=client_data['how_find'],
+            raison_sociale=client_data['raison_sociale'],
         )
         client.save()
         # -------------------------------------------------------------

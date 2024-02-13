@@ -23,6 +23,7 @@ def demande_devis(request):
     if request.method == 'POST':
         form_data = request.POST.dict()
         request.session['demande_devis_data'] = form_data
+        print(form_data)
         return render(request, 'app/confirmation.html', {'form_data': form_data})
 
     # Vérifiez d'abord s'il y a des données préremplies dans la session
@@ -38,15 +39,21 @@ def demande_devis(request):
         'form': initial_data  # Utilisez initial_data pour préremplir le formulaire
     })
 
-
 def confirmation(request):
 
     if request.method == 'POST':
 
+        if request.POST.get('raison_sociale'):
+            nom = request.POST.get('raison_sociale').strip()
+            raison_sociale = True
+        else:
+            nom = request.POST.get('nom').strip() + " " + request.POST.get('prenom').strip()
+            raison_sociale = False
+
         post_data = {
             "client": {
-                "nom": request.POST.get('nom').strip(),
-                "prenom": request.POST.get('prenom').strip(),
+                "nom": nom,
+                "raison_sociale": raison_sociale,
                 "mail": request.POST.get('mail').strip(),
                 "telephone": request.POST.get('numero_telephone').strip(),
                 "how_find": request.POST.get('client_how_find'),

@@ -47,8 +47,8 @@ def generate_devis_pdf(event):
     # ----------------------------------------------------------------------------------------
     pdf.setFont("Helvetica-Bold", 14)
     pdf.setFillColor(colors.black)
-    nom_prenom_client = str(event.client.prenom) + " " + str(event.client.nom)
-    pdf.drawString(330, height - 180, nom_prenom_client)
+    nom_client = str(event.client.nom)
+    pdf.drawString(330, height - 180, nom_client)
     pdf.setFont("Helvetica", 12)
     pdf.setFillColor(colors.darkslategrey)
     num_client = str(event.client.numero_telephone)
