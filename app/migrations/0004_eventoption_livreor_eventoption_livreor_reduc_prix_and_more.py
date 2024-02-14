@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0003_remove_client_prenom'),
+        ('app', '0003_alter_event_status'),
     ]
 
     operations = [
@@ -19,10 +19,5 @@ class Migration(migrations.Migration):
             model_name='eventoption',
             name='livreor_reduc_prix',
             field=models.IntegerField(default=False, null=True),
-        ),
-        migrations.AlterField(
-            model_name='event',
-            name='status',
-            field=models.CharField(choices=[('Initied', 'Initied'), ('Calculed', 'Calculed'), ('Sended', 'Sended'), ('OK', 'OK'), ('Refused', 'Refused')], default='Initied', max_length=255, null=True),
         ),
     ]
