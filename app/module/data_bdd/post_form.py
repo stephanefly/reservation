@@ -6,7 +6,7 @@ def get_confirmation_data(request):
         nom = request.POST.get('raison_sociale').strip()
         raison_sociale = True
     else:
-        nom = request.POST.get('nom').strip() + " " + request.POST.get('prenom').strip()
+        nom = request.POST.get('prenom').strip() + " " + request.POST.get('nom').strip()
         raison_sociale = False
 
     post_data = {
@@ -30,7 +30,7 @@ def get_confirmation_data(request):
             "livreor": True if request.POST.get('livreor') else False,
             "magnets_range": int(request.POST.get('magnets_range', 0)) if int(
                 request.POST.get('magnets_range', 0)) > 0 else None,
-            "livraison": True if request.POST.get('livraisonInstallation') else False,
+            "livraison": True if request.POST.get('livraison') else False,
             "heure_range": int(request.POST.get('heure_range', 0))
         }
     }

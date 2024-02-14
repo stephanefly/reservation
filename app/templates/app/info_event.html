@@ -29,7 +29,17 @@ input[type="text"], input[type="email"], input[type="date"], input[type="number"
     /* box-sizing: border-box; */ /* Assure que le padding et la bordure sont inclus dans la largeur totale */
 }
 .button-save {
-    background-color: #02720b; /* Vert */
+    background-color: #5621b4; /* Vert */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+        color: white;
+}
+
+.button-valid {
+    background-color: #01690a; /* Vert */
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -50,6 +60,16 @@ input[type="text"], input[type="email"], input[type="date"], input[type="number"
 
 .button-send {
     background-color: #9f9319; /* Rouge */
+        padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    color: white;
+}
+
+.button-del {
+    background-color: #9f0000; /* Rouge */
         padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -79,9 +99,10 @@ button:hover {
     <h2>Informations sur l'Événement</h2>
     <div>
         <h3>Client</h3>
-    
+        <label><b>Created at :</b> {{ event.created_at|date:'d-m-Y' }}</label><br>
+        <label><b>Signed at: </b> {{ event.signer_at|date:'d-m-Y' }}</label><br>
+        <br>
         <label><input type="checkbox" name="raison_sociale" {% if event.client.raison_sociale %}checked{% endif %}>Entreprise</label><br>
-    
         <label>Nom: <input type="text" name="client_nom" value="{{ event.client.nom }}"></label><br>
         <label>Email: <input type="email" name="client_mail" value="{{ event.client.mail }}"></label><br>
         <label>Téléphone: <input type="text" name="client_numero_telephone" value="{{ event.client.numero_telephone }}"></label><br>
@@ -151,8 +172,18 @@ button:hover {
         {% csrf_token %}
         <button type="submit" class="button-send">Envoi DEVIS</button>
     </form>
+        <form method="POST" action="{% url 'validation_devis' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="button-valid">Valider DEVIS</button>
+    </form>
     {% endif %}
-
+    
+<form method="POST" action="{% url 'confirmation_del_devis' event.id %}">
+    {% csrf_token %}
+    <button type="submit" class="button-del">
+    Suprimer l'Event</button>
+</form>
+    
 <form method="POST" action="{% url 'lst_devis' %}">
     {% csrf_token %}
     <button type="submit" class="button-back">

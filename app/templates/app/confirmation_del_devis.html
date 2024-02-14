@@ -1,0 +1,13 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<style>
+body {
+    background-color: #f5f5f5; /* Couleur de fond plus douce */
+}
+</style>
+<form action="{% url 'del_devis' event.id %}" method="post">
+  {% csrf_token %}
+  <p>Êtes-vous sûr de vouloir supprimer l'event: {{ event.nom }}" ?</p>
+  <input type="submit" value="Confirmer la suppression">
+</form>
+{% endblock %}

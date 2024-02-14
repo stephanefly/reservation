@@ -12,10 +12,11 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
 from .module.trello.create_card import create_card
+from .module.trello.move_card import to_acompte_ok, to_list_devis_fait
 
+today_date = datetime.now().date()
 
 def demande_devis(request):
-    today_date = datetime.now().date()
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
     today_date_str = today_date.strftime("%Y-%m-%d")
     date_dans_deux_ans_str = date_dans_deux_ans.strftime("%Y-%m-%d")
@@ -78,6 +79,46 @@ def update_event(request, id):
     return redirect('info_event', id=event.id)
 
 
+@require_http_methods(["POST"])
+def validation_devis(request, id):
+    event = get_object_or_404(Event, id=id)
+
+    # MAJ BDD
+    event.signer_at = today_date
+    event.status = 'Acompte OK'
+    event.prix_valided = event.prix_proposed
+    event.save()
+
+    # MAJ TRELLO
+    to_acompte_ok(event)
+
+    # Rediriger vers la page de détails de l'événement mise à jour
+    return redirect('info_event', id=event.id)
+
+
+# Vue qui affiche la page de confirmation
+def confirmation_del_devis(request, event_id):
+    event = Event.objects.get(id=event_id)
+    return render(request, 'app/confirmation_del_devis.html', {'event': event})
+
+
+@require_http_methods(["POST"])
+def del_devis(request, id):
+    event = get_object_or_404(Event, id=id)
+    if event.client:
+        event.client.delete()
+    if event.event_details:
+        event.event_details.delete()
+    if event.event_option:
+        event.event_option.delete()
+    if event.event_product:
+        event.event_product.delete()
+    # Maintenant, supprimez l'événement lui-même
+    event.delete()
+
+    return redirect('lst_devis')
+
+
 def generate_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
@@ -90,24 +131,33 @@ def generate_pdf(request, event_id):
     response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
     return response
 
+
 # Vue qui affiche la page de confirmation
 def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
     return render(request, 'app/confirmation_envoi_mail.html', {'event': event})
+
 
 # Vue modifiée pour l'envoi de l'email
 def envoi_mail_devis(request, event_id):
     if request.method == 'POST':  # Assurez-vous que la confirmation a été faite
         event = Event.objects.get(id=event_id)
         if send_email(event):
+
+            # MAJ BDD
             event.status = 'Sended'
             event.save()
+
+            # MAJ TRELLO
+            to_list_devis_fait(event)
+
             return render(request, 'app/retour_lst_devis.html', {'mail': True})
         else:
             return render(request, 'app/retour_lst_devis.html', {'mail': False}, status=500)
     else:
         # Redirigez vers la page de confirmation si la méthode n'est pas POST
         return redirect('confirmation_envoi_mail', event_id=event_id)
+
 
 def preparation_presta(request):
     return render(request, 'preparation_presta/PRESTA-S06-2024.html')

@@ -13,7 +13,7 @@ body {
     <thead>
         <th style="display: none">ID</th>
         <th>NOM</th>
-        <th>DATE</th>
+        <th>DATE-EVENT</th>
         <th>PRIX</th>
         <th>STATUS</th>
     </thead>
@@ -24,7 +24,7 @@ body {
             <td>{{event.client.nom}}</td>
             <td>{{event.event_details.date_evenement|date:"D d/m/Y" }}</td>
             <td>{{event.prix_proposed}}</td>
-            <td>{{event.status}}</td>
+            <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -32,6 +32,26 @@ body {
 
 
 <script type="text/javascript">
+document.querySelectorAll('.status-cell').forEach(function(cell) {
+    var status = cell.getAttribute('data-status');
+    var color = ''; // Couleur par défaut
+    switch (status) {
+        case 'Calculed':
+            color = 'rgba(255,136,0,0.65)'; // Jaune à 50% de transparence
+            break;
+        case 'Acompte OK':
+            color = 'rgba(0, 128, 0, 0.65)'; // Vert à 50% de transparence
+            break;
+        case 'Initied':
+            color = 'rgba(255, 105, 180, 0.65)'; // Rose (pink) à 50% de transparence
+            break;
+        case 'Sended':
+            color = 'rgba(0,102,255,0.6)'; // Orange à 50% de transparence
+            break;
+    }
+    cell.style.backgroundColor = color;
+});
+
 $(document).ready(function () {
     $('#table').DataTable({
         responsive: true, // Active la fonctionnalité responsive
