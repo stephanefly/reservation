@@ -10,7 +10,7 @@ function setupClientTypeToggle() {
     function updateFormFields() {
         // Vérifier si le bouton radio 'entreprise' est sélectionné
         if (entrepriseRadio.checked) {
-            // Masquer les champs 'Nom' et 'Prénom'
+            // Masquer les champs 'Nom' et 'Prénom' c vfdw
             nomPrenomRow.style.display = 'none';
             // Retirer l'attribut 'required' pour 'Nom' et 'Prénom'
             nomInput.removeAttribute('required');
