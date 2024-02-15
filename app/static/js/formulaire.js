@@ -37,6 +37,7 @@ function setupClientTypeToggle() {
     // Appel initial pour configurer l'état correct du formulaire dès le chargement de la page
     updateFormFields();
 }
+
 function setupMagnetsSlider() {
     var slider_magnet = document.getElementById("MagnetsRange");
     var output_magnet = document.getElementById("MagnetsNumber");
@@ -45,7 +46,6 @@ function setupMagnetsSlider() {
         output_magnet.textContent = this.value;
     };
 }
-
 
 function setupSliders() {
     var slider = document.getElementById("heureRange");
