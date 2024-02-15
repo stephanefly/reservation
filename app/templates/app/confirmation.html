@@ -101,7 +101,7 @@
             <div class="form-group">
                 <strong><label for="livraison">Livraison - Installation - Animateur:</label></strong>
                 <p>
-                    {% if form_data.livraison %}
+                    {% if form_data.heure_range %}
                         Oui
                     {% else %}
                         Non
@@ -111,7 +111,7 @@
             <div class="form-group">
                 <strong><label for="heure_range">Heures:</label></strong>
                     <p>
-                        {% if form_data.livraison %}
+                        {% if form_data.heure_range %}
                             {{ form_data.heure_range }} h
                         {% else %}
                             Toute la soirée !
