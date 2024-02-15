@@ -49,11 +49,11 @@ def launch_import_data(json_filename, data_trello):
                 data_client_to_import['status'] = 'Sended'
 
             date_create = datetime.datetime.utcfromtimestamp(client['createdAt'])
-            data_client_to_import['created_at'] = date_create
+            data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
 
             try:
                 date_signed = datetime.datetime.utcfromtimestamp(client['signer_at'])
-                data_client_to_import['signer_at'] = date_signed
+                data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
             except:
                 data_client_to_import['signer_at'] = None
 
@@ -62,12 +62,48 @@ def launch_import_data(json_filename, data_trello):
             for card_trello in data_trello:
                 if card_trello['name'] == data_client_to_import['nom']:
 
+                    data_client_to_import['livraison'] = True
+
                     for label in card_trello['labels']:
                         if label['color'] == 'sky':
                             data_client_to_import['how_find'] = label['name']
 
-                    data_client_to_import['date_evenement'] = card_trello['due']
+                        if label['color'] == 'blue_dark':
+                            data_client_to_import['photobooth'] = False
+                            if label['name']=='Photobooth':
+                                data_client_to_import['photobooth'] = True
 
+                            data_client_to_import['miroirbooth'] = False
+                            if label['name']=='Miroirbooth':
+                                data_client_to_import['miroirbooth'] = True
+
+                            data_client_to_import['videobooth'] = False
+                            if label['name']=='360Booth':
+                                data_client_to_import['videobooth'] = True
+
+                        if label['color'] == 'blue':
+
+                            data_client_to_import['mur_floral'] = False
+                            if label['name'] == 'Mur Floral':
+                                data_client_to_import['mur_floral'] = True
+
+                            data_client_to_import['phonebooth'] = False
+                            if label['name'] == 'Phonebooth':
+                                data_client_to_import['phonebooth'] = True
+
+                            data_client_to_import['livreor'] = False
+                            if label['name'] == 'Livre d\'or':
+                                data_client_to_import['livreor'] = True
+
+                            data_client_to_import['magnets'] = False
+                            if label['name'] == 'Livre d\'or':
+                                data_client_to_import['livreor'] = True
+
+                        if label['color'] == 'yellow_dark':
+                                data_client_to_import['duree'] = label['name']
+
+                    date_due = datetime.datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
+                    data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
 
 
 
