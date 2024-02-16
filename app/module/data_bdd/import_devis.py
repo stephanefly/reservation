@@ -51,10 +51,10 @@ def launch_import_data(json_filename, data_trello):
             date_create = datetime.datetime.utcfromtimestamp(client['createdAt'])
             data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
 
-            try:
-                date_signed = datetime.datetime.utcfromtimestamp(client['signer_at'])
+            if client['signedAt']:
+                date_signed = datetime.datetime.utcfromtimestamp(client['signedAt'])
                 data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
-            except:
+            else:
                 data_client_to_import['signer_at'] = None
 
             #  -----------------------------------------------------------
