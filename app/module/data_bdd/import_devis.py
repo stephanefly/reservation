@@ -1,12 +1,12 @@
 import csv
 import json
-import datetime
+from datetime import datetime, timezone
 # from app.models import Client, EventDetails, EventOption, Event, EventProduct
 # from django.db import transaction
 import re
 import fitz  # PyMuPDF
 import json
-from babel.dates import parse_date
+
 
 def launch_import_data(data, data_trello, event_locations):
 
@@ -40,18 +40,9 @@ def launch_import_data(data, data_trello, event_locations):
         data_client_to_import['reduc_all'] = client['reductionAmount']
         data_client_to_import['prix_proposed'] = client['price']
 
-        if not client['uid'] == "Provisoire":
-            data_client_to_import['prix_valided'] = client['price']
-            data_client_to_import['status'] = 'Acompte OK'
-        else:
-            data_client_to_import['prix_valided'] = None
-            data_client_to_import['status'] = 'Sended'
-
-        date_create = datetime.datetime.utcfromtimestamp(client['createdAt'])
-        data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
 
         if client['signedAt']:
-            date_signed = datetime.datetime.utcfromtimestamp(client['signedAt'])
+            date_signed = datetime.utcfromtimestamp(client['signedAt'])
             data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
         else:
             data_client_to_import['signer_at'] = None
@@ -101,8 +92,19 @@ def launch_import_data(data, data_trello, event_locations):
                     if label['color'] == 'yellow_dark':
                             data_client_to_import['duree'] = label['name']
 
-                date_due = datetime.datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
+                date_due = datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
                 data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
+
+
+                # Obtenez l'heure actuelle, en utilisant le fuseau horaire UTC
+                now = datetime.now(timezone.utc)
+                if date_due <= now:
+                    # Si la date de l'événement est postérieure à l'heure actuelle
+                    data_client_to_import['status'] = 'Presta FINI' if client['uid'] != "Provisoire" else 'Refused'
+                else:
+                    # Si la date de l'événement est antérieure ou égale à l'heure actuelle
+                    data_client_to_import['status'] = 'Acompte OK' if client['uid'] != "Provisoire" else 'Sended'
+
 
         #  -----------------------------------------------------------
         # DEVIS -----------------------------------------------------------
@@ -116,6 +118,10 @@ def launch_import_data(data, data_trello, event_locations):
                 except:pass
                 try:
                     data_client_to_import['code_postal_evenement'] = value["code_postal"]
+                except:pass
+
+                try:
+                    data_client_to_import['created_at'] = value["created_at"]
                 except:pass
 
 
@@ -133,15 +139,6 @@ def recup_devis_data(pdf_path):
             lines = text.split('\n')
             recipient_name = ""
             info = {}
-
-            daate_strin = "07 février 2024"
-            # Conversion de la date en utilisant babel
-            date_obj = parse_date(daate_strin, locale='fr_FR')
-
-            # Affichage de la date
-            print(date_obj)
-
-
 
             for line in lines:
                 if line == 'Destinataire':
@@ -164,28 +161,56 @@ def recup_devis_data(pdf_path):
                         event_locations[postal_code] = words_after_postal_code
                         info["ville"] = " ".join(words_after_postal_code)
 
-                event_locations[recipient_name] = info
+            try:
+                # Dictionnaire de mapping des mois français aux mois anglais
+                mois_mapping = {
+                    "janvier": "January",
+                    "février": "February",
+                    "mars": "March",
+                    "avril": "April",
+                    "mai": "May",
+                    "juin": "June",
+                    "juillet": "July",
+                    "août": "August",
+                    "septembre": "September",
+                    "octobre": "October",
+                    "novembre": "November",
+                    "décembre": "December"
+                }
+                # Remplacer le nom du mois français par son équivalent anglais
+                date_string = lines[1]
+                for mois_fr, mois_en in mois_mapping.items():
+                    if mois_fr in lines[1]:
+                        date_string = date_string.replace(mois_fr, mois_en)
+                        break
+                date_format = "%d %B %Y"
+                date_obj = datetime.strptime(date_string, date_format)
+                date_str = date_obj.strftime("%Y-%m-%d")
+                info["created_at"] = date_str
+
+            except:pass
+            event_locations[recipient_name] = info
 
     return event_locations
 
 
 def upload_all_data():
 
-    pdf_path = r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.pdf"
+    pdf_path = r"app\module\data_bdd\devis.pdf"
     event_locations = recup_devis_data(pdf_path)
-    print(event_locations)
-    with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\card.json', 'r',
+
+    with open(r'app\module\data_bdd\card.json', 'r',
               encoding='utf-8') as file:
         data_trello = json.load(file)
-    with open(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.json", 'r',
+    with open(r"app\module\data_bdd\devis.json", 'r',
               encoding='utf-8') as file:
         json_devis = json.load(file)
 
     event = launch_import_data(json_devis, data_trello, event_locations)
 
-    # for nom, data in event.items():
-    #     print(data)
-    #
+    for nom, data in event.items():
+        print(data)
+
         # with transaction.atomic():
         #     client = Client(
         #         nom=data['nom'],
