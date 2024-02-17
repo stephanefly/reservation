@@ -18,3 +18,10 @@ sqlparse==0.4.4
 typing-extensions==4.9.0
 tzdata==2023.4
 urllib3==2.2.0
+cffi==1.16.0
+charset-normalizer==3.3.2
+cryptography==42.0.3
+pdfminer.six==20231228
+pycparser==2.21
+PyMuPDF==1.23.22
+PyMuPDFb==1.23.22
