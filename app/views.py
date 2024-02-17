@@ -5,6 +5,8 @@ from .models import Event
 from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
+
+from .module.data_bdd.import_devis import upload_all_data
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
@@ -15,6 +17,9 @@ from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait
 
 today_date = datetime.now().date()
+
+def import_data_devis(request):
+    upload_all_data()
 
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)

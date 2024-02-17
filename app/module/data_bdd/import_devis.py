@@ -1,7 +1,6 @@
 import csv
 import json
 import datetime
-# from app.module.trello.get_trello_data import get_data_card
 # from app.models import Client, EventDetails, EventOption, Event, EventProduct
 # from django.db import transaction
 import re
@@ -9,120 +8,118 @@ import fitz  # PyMuPDF
 import json
 
 
-def launch_import_data(json_filename, data_trello, event_locations):
-    with open(json_filename, 'r', encoding='utf-8') as file:
-        data = json.load(file)
+def launch_import_data(data, data_trello, event_locations):
 
-        data_to_import = {}
+    data_to_import = {}
 
-        for client in data["quotations"]:
-            data_client_to_import = {}
+    for client in data["quotations"]:
+        data_client_to_import = {}
 
-            #  -----------------------------------------------------------
-            # DEVIS JSON ---------------------------------------------------
-            try:
-                data_client_to_import['nom'] = client['recipient']['name'].strip().replace("  ", " ")
-                data_client_to_import['raison_sociale'] = False
-            except:
-                data_client_to_import['nom'] = client['recipient']['company'].strip()
-                data_client_to_import['raison_sociale'] = True
+        #  -----------------------------------------------------------
+        # DEVIS JSON ---------------------------------------------------
+        try:
+            data_client_to_import['nom'] = client['recipient']['name'].strip().replace("  ", " ")
+            data_client_to_import['raison_sociale'] = False
+        except:
+            data_client_to_import['nom'] = client['recipient']['company'].strip()
+            data_client_to_import['raison_sociale'] = True
 
-            # Vérification de la présence de l'email du destinataire et attribution en conséquence
-            if client.get('recipient', {}).get('email', '') != '':
-                data_client_to_import['mail'] = client['recipient']['email']
-            else:
-                data_client_to_import['mail'] = "contact@myselfiebooth-paris.fr"
+        # Vérification de la présence de l'email du destinataire et attribution en conséquence
+        if client.get('recipient', {}).get('email', '') != '':
+            data_client_to_import['mail'] = client['recipient']['email']
+        else:
+            data_client_to_import['mail'] = "contact@myselfiebooth-paris.fr"
 
-            phones = client.get('recipient', {}).get('phones', [])
-            if phones and phones[0] != '':
-                data_client_to_import['numero_telephone'] = phones[0].replace(" ", "").replace(".", "")
-            else:
-                data_client_to_import['numero_telephone'] = "0699733998"
+        phones = client.get('recipient', {}).get('phones', [])
+        if phones and phones[0] != '':
+            data_client_to_import['numero_telephone'] = phones[0].replace(" ", "").replace(".", "")
+        else:
+            data_client_to_import['numero_telephone'] = "0699733998"
 
-            data_client_to_import['prix_brut'] = client['pricePretax']
-            data_client_to_import['reduc_all'] = client['reductionAmount']
-            data_client_to_import['prix_proposed'] = client['price']
-            if not client['uid'] == "Provisoire":
-                data_client_to_import['prix_valided'] = client['price']
-                data_client_to_import['status'] = 'Acompte OK'
-            else:
-                data_client_to_import['prix_valided'] = None
-                data_client_to_import['status'] = 'Sended'
+        data_client_to_import['prix_brut'] = client['pricePretax']
+        data_client_to_import['reduc_all'] = client['reductionAmount']
+        data_client_to_import['prix_proposed'] = client['price']
+        if not client['uid'] == "Provisoire":
+            data_client_to_import['prix_valided'] = client['price']
+            data_client_to_import['status'] = 'Acompte OK'
+        else:
+            data_client_to_import['prix_valided'] = None
+            data_client_to_import['status'] = 'Sended'
 
-            date_create = datetime.datetime.utcfromtimestamp(client['createdAt'])
-            data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
+        date_create = datetime.datetime.utcfromtimestamp(client['createdAt'])
+        data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
 
-            if client['signedAt']:
-                date_signed = datetime.datetime.utcfromtimestamp(client['signedAt'])
-                data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
-            else:
-                data_client_to_import['signer_at'] = None
+        if client['signedAt']:
+            date_signed = datetime.datetime.utcfromtimestamp(client['signedAt'])
+            data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
+        else:
+            data_client_to_import['signer_at'] = None
 
-            #  -----------------------------------------------------------
-            # TRELLO -----------------------------------------------------------
-            for card_trello in data_trello:
-                if card_trello['name'] == data_client_to_import['nom']:
+        #  -----------------------------------------------------------
+        # TRELLO -----------------------------------------------------------
+        for card_trello in data_trello:
+            if card_trello['name'] == data_client_to_import['nom']:
 
-                    data_client_to_import['livraison'] = True
+                data_client_to_import['livraison'] = True
 
-                    for label in card_trello['labels']:
-                        if label['color'] == 'sky':
-                            data_client_to_import['how_find'] = label['name']
+                for label in card_trello['labels']:
+                    if label['color'] == 'sky':
+                        data_client_to_import['how_find'] = label['name']
 
-                        if label['color'] == 'blue_dark':
-                            data_client_to_import['photobooth'] = False
-                            if label['name']=='Photobooth':
-                                data_client_to_import['photobooth'] = True
+                    if label['color'] == 'blue_dark':
+                        data_client_to_import['photobooth'] = False
+                        if label['name']=='Photobooth':
+                            data_client_to_import['photobooth'] = True
 
-                            data_client_to_import['miroirbooth'] = False
-                            if label['name']=='Miroirbooth':
-                                data_client_to_import['miroirbooth'] = True
+                        data_client_to_import['miroirbooth'] = False
+                        if label['name']=='Miroirbooth':
+                            data_client_to_import['miroirbooth'] = True
 
-                            data_client_to_import['videobooth'] = False
-                            if label['name']=='360Booth':
-                                data_client_to_import['videobooth'] = True
+                        data_client_to_import['videobooth'] = False
+                        if label['name']=='360Booth':
+                            data_client_to_import['videobooth'] = True
 
-                        if label['color'] == 'blue':
+                    if label['color'] == 'blue':
 
-                            data_client_to_import['mur_floral'] = False
-                            if label['name'] == 'Mur Floral':
-                                data_client_to_import['mur_floral'] = True
+                        data_client_to_import['mur_floral'] = False
+                        if label['name'] == 'Mur Floral':
+                            data_client_to_import['mur_floral'] = True
 
-                            data_client_to_import['phonebooth'] = False
-                            if label['name'] == 'Phonebooth':
-                                data_client_to_import['phonebooth'] = True
+                        data_client_to_import['phonebooth'] = False
+                        if label['name'] == 'Phonebooth':
+                            data_client_to_import['phonebooth'] = True
 
-                            data_client_to_import['livreor'] = False
-                            if label['name'] == 'Livre d\'or':
-                                data_client_to_import['livreor'] = True
+                        data_client_to_import['livreor'] = False
+                        if label['name'] == 'Livre d\'or':
+                            data_client_to_import['livreor'] = True
 
-                            data_client_to_import['magnets'] = False
-                            if label['name'] == 'Livre d\'or':
-                                data_client_to_import['livreor'] = True
+                        data_client_to_import['magnets'] = False
+                        if label['name'] == 'Livre d\'or':
+                            data_client_to_import['livreor'] = True
 
-                        if label['color'] == 'yellow_dark':
-                                data_client_to_import['duree'] = label['name']
+                    if label['color'] == 'yellow_dark':
+                            data_client_to_import['duree'] = label['name']
 
-                    date_due = datetime.datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
-                    data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
+                date_due = datetime.datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
+                data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
 
-            #  -----------------------------------------------------------
-            # DEVIS -----------------------------------------------------------
-            for key, value in event_locations.items():
-                if key == data_client_to_import['nom']:
-                    try:
-                        data_client_to_import['adresse_evenement'] = value["adresse"]
-                    except:pass
-                    try:
-                        data_client_to_import['ville_evenement'] = value["ville"]
-                    except:pass
-                    try:
-                        data_client_to_import['code_postal_evenement'] = value["code_postal"]
-                    except:pass
+        #  -----------------------------------------------------------
+        # DEVIS -----------------------------------------------------------
+        for key, value in event_locations.items():
+            if key == data_client_to_import['nom']:
+                try:
+                    data_client_to_import['adresse_evenement'] = value["adresse"]
+                except:pass
+                try:
+                    data_client_to_import['ville_evenement'] = value["ville"]
+                except:pass
+                try:
+                    data_client_to_import['code_postal_evenement'] = value["code_postal"]
+                except:pass
 
 
-            data_to_import[data_client_to_import['nom']] = data_client_to_import
-        print(str(len(data["quotations"])) + " / " + str(len(data_to_import)))
+        data_to_import[data_client_to_import['nom']] = data_client_to_import
+    print(str(len(data["quotations"])) + " / " + str(len(data_to_import)))
     return data_to_import
 
 
@@ -161,63 +158,95 @@ def recup_devis_data(pdf_path):
 
     return event_locations
 
-pdf_path = r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.pdf"
-event_locations = recup_devis_data(pdf_path)
 
+def upload_all_data():
 
-with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\card.json', 'r', encoding='utf-8') as file:
-    data_trello = json.load(file)
-data = launch_import_data(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.json", data_trello, event_locations)
-print(data)
+    pdf_path = r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.pdf"
+    event_locations = recup_devis_data(pdf_path)
+    with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\card.json', 'r',
+              encoding='utf-8') as file:
+        data_trello = json.load(file)
+    with open(r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.json", 'r',
+              encoding='utf-8') as file:
+        json_devis = json.load(file)
 
+    event = launch_import_data(json_devis, data_trello, event_locations)
 
-# def upload_all_data(data):
-#     with transaction.atomic():
-#         client = Client(
-#             nom=data['recipient']['name'],
-#             mail=data['recipient']['email'],
-#             numero_telephone=data['recipient']['phones'],
-#             how_find=data['how_find'],
-#             raison_sociale=""
-#         )
-#         client.save()
-#
-#         event_details = EventDetails(
-#             date_evenement=data['date_evenement'],
-#             adresse_evenement=data['adresse_evenement'],
-#             ville_evenement=data['ville_evenement'],
-#             code_postal_evenement=data['code_postal_evenement'],
-#         )
-#         event_details.save()
-#
-#         event_product = EventProduct(
-#             photobooth=data['photobooth'],
-#             miroirbooth=data['miroirbooth'],
-#             videobooth=data['videobooth'],
-#         )
-#         event_product.save()
-#
-#         event_option = EventOption(
-#             mur_floral=data['mur_floral'],
-#             phonebooth=data['phonebooth'],
-#             livreor=data['livreor'],
-#             magnets=data['magnets'],
-#             duree=data['duree'],
-#         )
-#         event_option.save()
-#
-#         event = Event(
-#             client=client,
-#             event_details=event_details,
-#             event_product=event_product,
-#             event_option=event_option,
-#             duree=data['duree'],
-#             prix_brut=data['pricePretax'],
-#             reduc_all=data['reductionAmount'],
-#             prix_proposed=data['prix_proposed'],
-#             prix_valided=data['prix_valided'],
-#             created_at=data['created_at'],
-#             signer_at=data['signer_at'],
-#             status=data['status'],
-#         )
-#         event.save()
+    for nom, data in event.items():
+        print(data)
+
+        with transaction.atomic():
+            client = Client(
+                nom=data['nom'],
+                mail=data['mail'],
+                numero_telephone=data['numero_telephone'],
+                how_find=data['how_find'],
+                raison_sociale=""
+            )
+            client.save()
+
+            event_details = EventDetails(
+                date_evenement=data['date_evenement'])
+            try:
+                event_details.adresse_evenement=data['adresse_evenement']
+            except:
+                event_details.adresse_evenement = ""
+
+            try:
+                event_details.ville_evenement=data['ville_evenement']
+            except:
+                event_details.ville_evenement = ""
+
+            try:
+                event_details.code_postal_evenement=data['code_postal_evenement']
+            except:
+                event_details.code_postal_evenement = ""
+
+            event_details.save()
+
+            event_product = EventProduct(
+                photobooth=data['photobooth'],
+                miroirbooth=data['miroirbooth'],
+                videobooth=data['videobooth'],
+            )
+            event_product.save()
+
+            event_option = EventOption()
+            try:
+                event_option.mur_floral = data['mur_floral']
+            except:
+                event_option.mur_floral = False
+            try:
+                event_option.mur_floral = data['phonebooth']
+            except:
+                event_option.mur_floral = False
+            try:
+                event_option.mur_floral = data['livreor']
+            except:
+                event_option.mur_floral = False
+            try:
+                event_option.mur_floral = data['magnets']
+            except:
+                event_option.mur_floral = False
+            try:
+                event_option.mur_floral = data['duree']
+            except:
+                event_option.mur_floral = "5h"
+            event_option.save()
+
+            event = Event(
+                client=client,
+                event_details=event_details,
+                event_product=event_product,
+                event_option=event_option,
+                prix_brut=data['prix_brut'],
+                reduc_all=data['reduc_all'],
+                prix_proposed=data['prix_proposed'],
+                prix_valided=data['prix_valided'],
+                created_at=data['created_at'],
+                signer_at=data['signer_at'],
+                status=data['status'],
+            )
+            event.save()
+
+upload_all_data()
