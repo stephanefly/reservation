@@ -6,7 +6,7 @@ import datetime
 import re
 import fitz  # PyMuPDF
 import json
-
+from babel.dates import parse_date
 
 def launch_import_data(data, data_trello, event_locations):
 
@@ -39,6 +39,7 @@ def launch_import_data(data, data_trello, event_locations):
         data_client_to_import['prix_brut'] = client['pricePretax']
         data_client_to_import['reduc_all'] = client['reductionAmount']
         data_client_to_import['prix_proposed'] = client['price']
+
         if not client['uid'] == "Provisoire":
             data_client_to_import['prix_valided'] = client['price']
             data_client_to_import['status'] = 'Acompte OK'
@@ -133,10 +134,19 @@ def recup_devis_data(pdf_path):
             recipient_name = ""
             info = {}
 
+            daate_strin = "07 février 2024"
+            # Conversion de la date en utilisant babel
+            date_obj = parse_date(daate_strin, locale='fr_FR')
+
+            # Affichage de la date
+            print(date_obj)
+
+
+
             for line in lines:
                 if line == 'Destinataire':
-                    # print(lines[lines.index(line) + 1].strip())
                     recipient_name = lines[lines.index(line) + 1].strip()
+
                 if 'Mise en Place' in line:
                     event_location_index = lines.index(line) + 5
                     event_location = lines[event_location_index].strip()
@@ -163,6 +173,7 @@ def upload_all_data():
 
     pdf_path = r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.pdf"
     event_locations = recup_devis_data(pdf_path)
+    print(event_locations)
     with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\card.json', 'r',
               encoding='utf-8') as file:
         data_trello = json.load(file)
@@ -172,81 +183,81 @@ def upload_all_data():
 
     event = launch_import_data(json_devis, data_trello, event_locations)
 
-    for nom, data in event.items():
-        print(data)
-
-        with transaction.atomic():
-            client = Client(
-                nom=data['nom'],
-                mail=data['mail'],
-                numero_telephone=data['numero_telephone'],
-                how_find=data['how_find'],
-                raison_sociale=""
-            )
-            client.save()
-
-            event_details = EventDetails(
-                date_evenement=data['date_evenement'])
-            try:
-                event_details.adresse_evenement=data['adresse_evenement']
-            except:
-                event_details.adresse_evenement = ""
-
-            try:
-                event_details.ville_evenement=data['ville_evenement']
-            except:
-                event_details.ville_evenement = ""
-
-            try:
-                event_details.code_postal_evenement=data['code_postal_evenement']
-            except:
-                event_details.code_postal_evenement = ""
-
-            event_details.save()
-
-            event_product = EventProduct(
-                photobooth=data['photobooth'],
-                miroirbooth=data['miroirbooth'],
-                videobooth=data['videobooth'],
-            )
-            event_product.save()
-
-            event_option = EventOption()
-            try:
-                event_option.mur_floral = data['mur_floral']
-            except:
-                event_option.mur_floral = False
-            try:
-                event_option.mur_floral = data['phonebooth']
-            except:
-                event_option.mur_floral = False
-            try:
-                event_option.mur_floral = data['livreor']
-            except:
-                event_option.mur_floral = False
-            try:
-                event_option.mur_floral = data['magnets']
-            except:
-                event_option.mur_floral = False
-            try:
-                event_option.mur_floral = data['duree']
-            except:
-                event_option.mur_floral = "5h"
-            event_option.save()
-
-            event = Event(
-                client=client,
-                event_details=event_details,
-                event_product=event_product,
-                event_option=event_option,
-                prix_brut=data['prix_brut'],
-                reduc_all=data['reduc_all'],
-                prix_proposed=data['prix_proposed'],
-                prix_valided=data['prix_valided'],
-                created_at=data['created_at'],
-                signer_at=data['signer_at'],
-                status=data['status'],
-            )
-            event.save()
+    # for nom, data in event.items():
+    #     print(data)
+    #
+        # with transaction.atomic():
+        #     client = Client(
+        #         nom=data['nom'],
+        #         mail=data['mail'],
+        #         numero_telephone=data['numero_telephone'],
+        #         how_find=data['how_find'],
+        #         raison_sociale=""
+        #     )
+        #     client.save()
+        #
+        #     event_details = EventDetails(
+        #         date_evenement=data['date_evenement'])
+        #     try:
+        #         event_details.adresse_evenement=data['adresse_evenement']
+        #     except:
+        #         event_details.adresse_evenement = ""
+        #
+        #     try:
+        #         event_details.ville_evenement=data['ville_evenement']
+        #     except:
+        #         event_details.ville_evenement = ""
+        #
+        #     try:
+        #         event_details.code_postal_evenement=data['code_postal_evenement']
+        #     except:
+        #         event_details.code_postal_evenement = ""
+        #
+        #     event_details.save()
+        #
+        #     event_product = EventProduct(
+        #         photobooth=data['photobooth'],
+        #         miroirbooth=data['miroirbooth'],
+        #         videobooth=data['videobooth'],
+        #     )
+        #     event_product.save()
+        #
+        #     event_option = EventOption()
+        #     try:
+        #         event_option.mur_floral = data['mur_floral']
+        #     except:
+        #         event_option.mur_floral = False
+        #     try:
+        #         event_option.mur_floral = data['phonebooth']
+        #     except:
+        #         event_option.mur_floral = False
+        #     try:
+        #         event_option.mur_floral = data['livreor']
+        #     except:
+        #         event_option.mur_floral = False
+        #     try:
+        #         event_option.mur_floral = data['magnets']
+        #     except:
+        #         event_option.mur_floral = False
+        #     try:
+        #         event_option.mur_floral = data['duree']
+        #     except:
+        #         event_option.mur_floral = "5h"
+        #     event_option.save()
+        #
+        #     event = Event(
+        #         client=client,
+        #         event_details=event_details,
+        #         event_product=event_product,
+        #         event_option=event_option,
+        #         prix_brut=data['prix_brut'],
+        #         reduc_all=data['reduc_all'],
+        #         prix_proposed=data['prix_proposed'],
+        #         prix_valided=data['prix_valided'],
+        #         created_at=data['created_at'],
+        #         signer_at=data['signer_at'],
+        #         status=data['status'],
+        #     )
+        #     event.save()
 
 upload_all_data()
