@@ -20,6 +20,8 @@ today_date = datetime.now().date()
 
 def import_data_devis(request):
     upload_all_data()
+    all_event = Event.objects.all()
+    return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
