@@ -13,6 +13,7 @@ body {
     <thead>
         <th style="display: none">ID</th>
         <th>NOM</th>
+        <th>Create_at</th>
         <th>DATE-EVENT</th>
         <th>PRIX</th>
         <th>STATUS</th>
@@ -22,6 +23,7 @@ body {
         <tr onclick="location.href='{% url 'info_event' event.id %}';" style="cursor:pointer;">
             <td style="display: none" >{{event.id}}</td>
             <td>{{event.client.nom}}</td>
+            <td>{{event.created_at|date:"d/m/Y"}}</td>
             <td>{{event.event_details.date_evenement|date:"D d/m/Y" }}</td>
             <td>{{event.prix_proposed}}</td>
             <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
@@ -37,16 +39,22 @@ document.querySelectorAll('.status-cell').forEach(function(cell) {
     var color = ''; // Couleur par défaut
     switch (status) {
         case 'Calculed':
-            color = 'rgba(255,136,0,0.65)'; // Jaune à 50% de transparence
+            color = 'rgba(232,183,133,0.65)'; // Jaune à 50% de transparence
             break;
         case 'Acompte OK':
-            color = 'rgba(0, 128, 0, 0.65)'; // Vert à 50% de transparence
+            color = 'rgba(141,217,141,0.65)'; // Vert à 50% de transparence
             break;
         case 'Initied':
             color = 'rgba(255, 105, 180, 0.65)'; // Rose (pink) à 50% de transparence
             break;
         case 'Sended':
-            color = 'rgba(0,102,255,0.6)'; // Orange à 50% de transparence
+            color = 'rgba(80,139,243,0.6)'; // Orange à 50% de transparence
+            break;
+        case 'Presta FINI':
+            color = 'rgba(46,127,0,0.65)'; // Jaune à 50% de transparence
+            break;
+        case 'Refused':
+            color = 'rgba(215,99,99,0.76)'; // Jaune à 50% de transparence
             break;
     }
     cell.style.backgroundColor = color;
@@ -55,7 +63,6 @@ document.querySelectorAll('.status-cell').forEach(function(cell) {
 $(document).ready(function () {
     $('#table').DataTable({
         responsive: true, // Active la fonctionnalité responsive
-        order: [[0, 'desc']],
         lengthChange: false,
         paging: false,
         searching: true,
@@ -63,6 +70,7 @@ $(document).ready(function () {
         columns: [
             { data: 'id' },
             { data: 'nom' },
+            { data: 'created_at' },
             { data: 'date' },
             { data: 'prix' },
             { data: 'status' },

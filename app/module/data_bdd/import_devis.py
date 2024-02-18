@@ -40,9 +40,6 @@ def launch_import_data(data, data_trello, event_locations):
         data_client_to_import['reduc_all'] = client['reductionAmount']
         data_client_to_import['prix_proposed'] = client['price']
 
-        date_create = datetime.utcfromtimestamp(client['createdAt'])
-        data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
-
         if client['signedAt']:
             date_signed = datetime.utcfromtimestamp(client['signedAt'])
             data_client_to_import['signer_at'] = date_signed.strftime("%Y-%m-%d")
@@ -132,7 +129,6 @@ def launch_import_data(data, data_trello, event_locations):
                 try:
                     data_client_to_import['code_postal_evenement'] = value["code_postal"]
                 except:pass
-
                 try:
                     data_client_to_import['created_at'] = value["created_at"]
                 except:pass
@@ -153,8 +149,11 @@ def recup_devis_data(pdf_path):
             recipient_name = ""
             info = {}
 
+            if not "Devis" in str(lines[0]):
+                continue
 
             for line in lines:
+                print(lines[0])
                 if line == 'Destinataire':
                     recipient_name = lines[lines.index(line) + 1].strip()
 
@@ -175,34 +174,33 @@ def recup_devis_data(pdf_path):
                         event_locations[postal_code] = words_after_postal_code
                         info["ville"] = " ".join(words_after_postal_code)
 
-            try:
-                # Dictionnaire de mapping des mois français aux mois anglais
-                mois_mapping = {
-                    "janvier": "January",
-                    "février": "February",
-                    "mars": "March",
-                    "avril": "April",
-                    "mai": "May",
-                    "juin": "June",
-                    "juillet": "July",
-                    "août": "August",
-                    "septembre": "September",
-                    "octobre": "October",
-                    "novembre": "November",
-                    "décembre": "December"
-                }
-                # Remplacer le nom du mois français par son équivalent anglais
-                date_string = lines[1]
-                for mois_fr, mois_en in mois_mapping.items():
-                    if mois_fr in lines[1]:
-                        date_string = date_string.replace(mois_fr, mois_en)
-                        break
-                date_format = "%d %B %Y"
-                date_obj = datetime.strptime(date_string, date_format)
-                date_str = date_obj.strftime("%Y-%m-%d")
-                info["created_at"] = date_str
+            # Dictionnaire de mapping des mois français aux mois anglais
+            mois_mapping = {
+                "janvier": "January",
+                "février": "February",
+                "mars": "March",
+                "avril": "April",
+                "mai": "May",
+                "juin": "June",
+                "juillet": "July",
+                "août": "August",
+                "septembre": "September",
+                "octobre": "October",
+                "novembre": "November",
+                "décembre": "December"
+            }
+            # Remplacer le nom du mois français par son équivalent anglais
+            date_string = lines[1]
+            for mois_fr, mois_en in mois_mapping.items():
+                if mois_fr in lines[1]:
+                    date_string = date_string.replace(mois_fr, mois_en)
+                    break
 
-            except:pass
+            date_format = "%d %B %Y"
+            date_obj = datetime.strptime(date_string, date_format)
+            date_str = date_obj.strftime("%Y-%m-%d")
+            info["created_at"] = date_str
+
             event_locations[recipient_name] = info
 
     return event_locations
@@ -261,7 +259,12 @@ def upload_all_data():
 
         if Client.objects.filter(nom=nom):
             for client in Client.objects.filter(nom=nom):
-                Event.objects.filter(client=client).delete()
+                event = Event.objects.get(client=client)
+                event.event_details.delete()
+                event.event_product.delete()
+                event.event_option.delete()
+                client.delete()
+                event.delete()
 
         with transaction.atomic():
             client = Client(
@@ -341,13 +344,14 @@ def upload_all_data():
                 reduc_all=data['reduc_all'],
                 prix_proposed=data['prix_proposed'],
                 prix_valided=data['prix_valided'],
-                created_at=data['created_at'],
                 signer_at=data['signer_at'],
                 status=data['status'],
             )
             event.save()
-            print(nom)
-            print('Event saved')
+            client = Client.objects.get(nom=data['nom'])
+            try:
+                Event.objects.filter(client=client).update(created_at=data['created_at'])
+            except:pass
 
         if Client.objects.filter(nom=nom).exists():
             i+=1
