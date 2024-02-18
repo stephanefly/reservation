@@ -43,4 +43,4 @@ def to_refused(event):
     move_card_to_list(event, '63c72153d70f3f04062df9d4')  # ID de la liste pour les cartes refusées
 
 def to_list_devis_fait(event):
-    move_card_to_list(event, '63c72130ff073200c0878506')  # DEVIS FAIT
+    move_card_to_list(event, '65c6aecbe90021ebb7b9595b')  # AUTO-ENVOI
