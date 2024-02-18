@@ -248,7 +248,7 @@ def upload_all_data():
 
     pdf_path = r"C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\devis.pdf"
     event_locations = recup_devis_data(pdf_path)
-    print(event_locations)
+
     with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\app\module\data_bdd\card.json', 'r',
               encoding='utf-8') as file:
         data_trello = json.load(file)
@@ -259,6 +259,7 @@ def upload_all_data():
     event = launch_import_data(json_devis, data_trello, event_locations)
 
     event = correction(event)
+    print(event)
 
     # for nom, data in event.items():
     #     print(data)
