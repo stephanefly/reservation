@@ -62,13 +62,16 @@ document.querySelectorAll('.status-cell').forEach(function(cell) {
 
 $(document).ready(function () {
     $('#table').DataTable({
-        responsive: true, // Active la fonctionnalité responsive
+        responsive: true,
         lengthChange: false,
         paging: false,
         searching: true,
         info: false,
+        columnDefs: [
+            { type: 'date-eu', targets: 2 } // Suppose que la colonne des dates est la troisième (index 2)
+        ],
         columns: [
-            { data: 'id' },
+            { data: 'id', visible: false }, // ID est caché
             { data: 'nom' },
             { data: 'created_at' },
             { data: 'date' },
@@ -77,6 +80,7 @@ $(document).ready(function () {
         ]
     });
 });
+
 
 </script>
 
