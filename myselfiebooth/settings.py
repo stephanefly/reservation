@@ -74,7 +74,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myselfiebooth.middleware.BackendAuthMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'myselfiebooth.urls'
 

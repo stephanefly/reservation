@@ -68,7 +68,7 @@ def launch_import_data(data, data_trello, event_locations):
                     if label['color'] == 'sky':
                         data_client_to_import['how_find'] = label['name']
 
-                    if label['color'] == 'blue_dark':
+                    elif label['color'] == 'blue_dark':
 
                         if label['name'] == 'Photobooth':
                             data_client_to_import['photobooth'] = True
@@ -78,10 +78,8 @@ def launch_import_data(data, data_trello, event_locations):
 
                         if label['name'] == '360Booth':
                             data_client_to_import['videobooth'] = True
-                    else:
-                        data_client_to_import['photobooth'] = True
 
-                    if label['color'] == 'blue':
+                    elif label['color'] == 'blue':
 
                         if label['name'] == 'Mur Floral':
                             data_client_to_import['mur_floral'] = True
@@ -95,14 +93,13 @@ def launch_import_data(data, data_trello, event_locations):
                         if label['name'] == 'Livre d\'or':
                             data_client_to_import['livreor'] = True
 
-                    if label['color'] == 'yellow_dark':
+                    elif label['color'] == 'yellow_dark':
                         if label['name'] == "LOCATION":
                             data_client_to_import['duree'] = 0
-                        else:
+                        try :
                             data_client_to_import['duree'] = int(label['name'].replace("h",""))
-
-                    else:
-                        data_client_to_import['duree'] = 5
+                        except:
+                            data_client_to_import['duree'] = 5
 
                 date_due = datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
                 data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
@@ -267,8 +264,6 @@ def clear_devis_json(json_devis):
 
 def upload_all_data():
 
-
-
     pdf_path = r"app\module\data_bdd\devis.pdf"
     event_locations = recup_devis_data(pdf_path)
 
@@ -282,6 +277,7 @@ def upload_all_data():
     clear_devis_json(json_devis)
 
     event_presta = launch_import_data(json_devis, data_trello, event_locations)
+    print(event_presta)
 
     # event = correction(event)
     i=0
@@ -374,15 +370,20 @@ def upload_all_data():
                 reduc_all=data['reduc_all'],
                 prix_proposed=data['prix_proposed'],
                 prix_valided=data['prix_valided'],
-                signer_at=data['signer_at'],
                 status=data['status'],
             )
             event.save()
             client = Client.objects.get(nom=data['nom'])
             try:
-                naive_datetime = datetime(2023, 1, 25)  # Exemple de datetime naïve
+                date = data['created_at'].split("-")
+                naive_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))  # Exemple de datetime naïve
                 aware_datetime = make_aware(naive_datetime)
-                Event.objects.filter(client=client).update(created_at=data['created_at'])
+                Event.objects.filter(client=client).update(created_at=aware_datetime)
+
+                date_sign = data['signer_at'].split("-")
+                naive_datetime_sign = datetime(int(date_sign[0]), int(date_sign[1]), int(date_sign[2]))  # Exemple de datetime naïve
+                aware_datetime_sign = make_aware(naive_datetime_sign)
+                Event.objects.filter(client=client).update(created_at=aware_datetime_sign)
             except:pass
 
         if Client.objects.filter(nom=nom).exists():

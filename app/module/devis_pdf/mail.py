@@ -20,7 +20,7 @@ def send_email(event):
 
     # Configuration de l'email
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "MySelfieBooth - Votre devis - " + str(event.client.nom)
+    msg['Subject'] = "📸 MySelfieBooth - Votre devis - " + str(event.client.nom) + " ✨"
     msg['From'] = MAIL_MYSELFIEBOOTH
     msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
