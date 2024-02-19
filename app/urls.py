@@ -10,7 +10,7 @@ urlpatterns = [
     path('', demande_devis, name='demande_devis'),
     path('remerciement', remerciement, name='remerciement'),
     path('confirmation/', confirmation, name='confirmation'),
-    path("login/", auth_views.LoginView.as_view(template_name="app\login.html"), name="login"),
+    path("login/", auth_views.LoginView.as_view(template_name="app/login.html"), name="login"),
     # BACKEND
     path('backend/lst_devis/', lst_devis, name='lst_devis'),
     path('backend/info-event/<int:id>/', info_event, name='info_event'),
