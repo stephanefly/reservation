@@ -1366,45 +1366,6 @@
          "url":"https://www.facture.net/quotations/1350624"
       },
       {
-         "id":1350541,
-         "uid":"D2311272",
-         "pricePretax":350.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"currency",
-         "reductionAmount":0.0,
-         "price":350.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Un acompte de 50 euros est à verser pour confirmer la réservation avant le 30/11/2023. Le reste est à payer par espèces au moment de la livraison ou au moins une semaine avant l'évènement par virement.\nVous pouvez payer par virement (Info RIB dans le devis), Paylib, Paypal (paypal.me/3dmouvstudio) ou Lydia.\nTITULAIRE DU COMPTE : STEPHANE FAURE\nIBAN : FR76 3000 3012 9500 0508 3654 688\nBIC : SOGEFRPP",
-         "recipient":{
-            "city":"",
-            "name":"EDEN \u0026 You",
-            "email":"liakayollande@yahoo.fr",
-            "phones":[
-               "07 57 77 21 34"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1701287102,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTE5NzQ4NjEsInB1ciI6ImJsb2JfaWQifX0=--4ddccfe1e832a954980f6627d751131994d18dc2/D2311272.pdf",
-         "url":"https://www.facture.net/quotations/1350541"
-      },
-      {
          "id":1346651,
          "uid":"D2401289",
          "pricePretax":400.0,
@@ -2339,45 +2300,6 @@
          ],
          "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTMxNjUzMDAsInB1ciI6ImJsb2JfaWQifX0=--a2a04435a21c09958a2ba6d1b275d6698599b285/D2402316.pdf",
          "url":"https://www.facture.net/quotations/1272159"
-      },
-      {
-         "id":1272152,
-         "uid":"D2310251",
-         "pricePretax":500.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"currency",
-         "reductionAmount":0.0,
-         "price":500.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Un acompte de 50 euros est à verser pour confirmer la réservation avant le 20/10/2023.\nLe reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement par virement.\nVous pouvez payer par virement (Info RIB dans le devis), Paylib, Paypal (paypal.me/3dmouvstudio) ou Lydia.\n\nTITULAIRE DU COMPTE : STEPHANE FAURE\nIBAN : FR76 3000 3012 9500 0508 3654 688\nBIC : SOGEFRPP\n",
-         "recipient":{
-            "city":"",
-            "name":"Faïza Alvi",
-            "email":"alvifaiza@hotmail.fr",
-            "phones":[
-               "0769235796"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1697551146,
-         "signedAt":1697493600,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTEzMzE3MzEsInB1ciI6ImJsb2JfaWQifX0=--f975594d5d61ceb92077f2ab1f7738ee96539358/D2310251.pdf",
-         "url":"https://www.facture.net/quotations/1272152"
       },
       {
          "id":1272148,
@@ -4954,45 +4876,6 @@
          "url":"https://www.facture.net/quotations/1088329"
       },
       {
-         "id":1088328,
-         "uid":"Provisoire",
-         "pricePretax":450.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":50.0,
-         "reductionUnit":"currency",
-         "reductionAmount":50.0,
-         "price":400.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Le solde est du au moment de la livraison en espèce\n\n\n",
-         "recipient":{
-            "city":"",
-            "name":"Dounya Bekhti",
-            "email":"b8dounya@live.fr",
-            "phones":[
-               "0625541153"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":0,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6OTM3OTkzOCwicHVyIjoiYmxvYl9pZCJ9fQ==--f5f3cb175f1b8df87727c986613b723eaa241f28/Provisoire.pdf",
-         "url":"https://www.facture.net/quotations/1088328"
-      },
-      {
          "id":1088326,
          "uid":"D2305196",
          "pricePretax":350.0,
@@ -6475,45 +6358,6 @@
          "url":"https://www.facture.net/quotations/981148"
       },
       {
-         "id":978780,
-         "uid":"D2303164",
-         "pricePretax":1000.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":200.0,
-         "reductionUnit":"currency",
-         "reductionAmount":200.0,
-         "price":800.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Un acompte de 50 euros est à verser pour confirmer la réservation.\nLe reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement par virement.\nVous pouvez payer par virement (Info RIB dans le devis), Paylib, Paypal (paypal.me/3dmouvstudio) ou Lydia.\n\nTITULAIRE DU COMPTE : M STEPHANE FAURE\nIBAN : FR58 3000 2069 5100 0000 6909 N52\nBIC : CRLYFRPP",
-         "recipient":{
-            "city":"",
-            "name":"Naïtélianne KAYOSSI",
-            "email":"lianne.deco@gmail.com",
-            "phones":[
-               "06 80 73 47 67"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1677655470,
-         "signedAt":1677625200,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6ODM2Njc3OSwicHVyIjoiYmxvYl9pZCJ9fQ==--31943d30ae162e481b22998f8c49dc48ced24c4c/D2303164.pdf",
-         "url":"https://www.facture.net/quotations/978780"
-      },
-      {
          "id":976350,
          "uid":"D2302163",
          "pricePretax":500.0,
@@ -6545,7 +6389,7 @@
             ]
          },
          "createdAt":1677516089,
-         "signedAt":null,
+         "signedAt":1677625200,
          "tags":[
 
          ],
@@ -8309,52 +8153,6 @@
          "url":"https://www.facture.net/quotations/876869"
       },
       {
-         "id":874763,
-         "uid":"D2212130",
-         "pricePretax":520.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"currency",
-         "reductionAmount":0.0,
-         "price":520.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Virement bancaire",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Vous pouvez payer par virement (Info RIB dans le devis).\r\n\r\nTITULAIRE DU COMPTE : M STEPHANE FAURE\r\nIBAN : FR58 3000 2069 5100 0000 6909 N52\r\nBIC : CRLYFRPP\r\n\r\nTVA non applicable, art. 293 B du CGI\r\n\r\n",
-         "recipient":{
-            "city":"Le chesnay",
-            "name":"Françoise LECAS",
-            "email":"",
-            "phones":[
-               "01 39 63 93 06"
-            ],
-            "street":"177 rue de Versailles ",
-            "company":"Centre hospitalier de versailles",
-            "website":"",
-            "language":"fr",
-            "zip_code":"78157",
-            "individual":false,
-            "vat_number":"",
-            "company_number":"",
-            "company_phones":[
-               "01 39 63 93 06"
-            ],
-            "activity_number":"",
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1669973487,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzM0MzI1MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ba81d8aae257eb6f3b3d9d4a09ded7a0a5c3e93/D2212130.pdf",
-         "url":"https://www.facture.net/quotations/874763"
-      },
-      {
          "id":868702,
          "uid":"D2211126",
          "pricePretax":500.0,
@@ -9602,53 +9400,6 @@
          ],
          "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NjU0MzIxNiwicHVyIjoiYmxvYl9pZCJ9fQ==--46a1b2ae014a674ee5fde4bc8ec3f5232b33761c/D2209108.pdf",
          "url":"https://www.facture.net/quotations/789463"
-      },
-      {
-         "id":787449,
-         "uid":"D2209106",
-         "pricePretax":450.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":70.0,
-         "reductionUnit":"currency",
-         "reductionAmount":70.0,
-         "price":380.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Un acompte de 50 euros est à verser pour confirmer la réservation.\r\nVous pouvez payer par virement (Info RIB dans le devis), Paylib, Paypal (paypal.me/3dmouvstudio) ou Lydia. \r\nLe reste est à payé au moment de la livraison.\r\n\r\nTITULAIRE DU COMPTE : M STEPHANE FAURE\r\nIBAN : FR58 3000 2069 5100 0000 6909 N52\r\nBIC : CRLYFRPP\r\n\r\n\r\n",
-         "recipient":{
-            "city":"Lançon-Provence",
-            "name":"Elsa Rocha",
-            "email":"e.rocha@pbc-agence.com",
-            "phones":[
-               "0769918409 "
-            ],
-            "street":"5 Rue Nostradamus",
-            "company":"PBC l'Agence",
-            "country":"France",
-            "website":"",
-            "language":"fr",
-            "zip_code":"13680",
-            "individual":false,
-            "vat_number":"",
-            "company_number":"",
-            "company_phones":[
-
-            ],
-            "activity_number":"",
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1663658164,
-         "signedAt":1663624800,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NjUyNzQwNCwicHVyIjoiYmxvYl9pZCJ9fQ==--034cc93d9979503ff773ca1ed88c0234ab807c4f/D2209106.pdf",
-         "url":"https://www.facture.net/quotations/787449"
       },
       {
          "id":785932,
@@ -10977,45 +10728,6 @@
          ],
          "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NTc4OTk5NiwicHVyIjoiYmxvYl9pZCJ9fQ==--455640c175c646f254ebc43ab6d3f11bf52243b3/D2206082.pdf",
          "url":"https://www.facture.net/quotations/710955"
-      },
-      {
-         "id":709413,
-         "uid":"D2206081",
-         "pricePretax":450.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"currency",
-         "reductionAmount":0.0,
-         "price":450.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Un acompte de 50 euros est à verser pour confirmer la réservation.\r\nLe reste est à payé au moment de la livraison.\r\n\r\n\r\n",
-         "recipient":{
-            "city":"",
-            "name":"Sujan Gnanakumar",
-            "email":"sujan.g@live.com",
-            "phones":[
-               "0668495441"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1656068919,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NTc4OTIwNiwicHVyIjoiYmxvYl9pZCJ9fQ==--04bef3154728c9ad2e4eb76f1418be427c622059/D2206081.pdf",
-         "url":"https://www.facture.net/quotations/709413"
       },
       {
          "id":705801,
@@ -12908,7 +12620,7 @@
          "notes":"Pour finaliser la reservation : Un acompte de 50 euros est à verser avant le 20 Décembre.\r\nLe reste est à payé au moment de la livraison.\r\n\r\n\r\n\r\n",
          "recipient":{
             "city":"",
-            "name":"Mieraah Shanmugarasa",
+            "name":"Mieraah Shanmugarasa2",
             "email":"mieraah@msn.com",
             "phones":[
                "0633278235"
@@ -13025,7 +12737,7 @@
          "notes":"Pour bénéficier de la réduction : Un acompte de 50 euros est à verser pour confirmer la réservation avant le 30 Décembre.\r\nLe reste est à payé au moment de la livraison.\r\n\r\n\r\n",
          "recipient":{
             "city":"",
-            "name":"Shaman  HETTIARACHCHILAGE",
+            "name":"Shaman HETTIARACHCHILAGE",
             "email":"shaman.hett@icloud.com",
             "phones":[
                "0666508801"
@@ -13202,84 +12914,6 @@
          ],
          "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NDAzNDE3NSwicHVyIjoiYmxvYl9pZCJ9fQ==--cb7d3fa5a594c09da865e2c96ec3ded6d506f258/D2111036.pdf",
          "url":"https://www.facture.net/quotations/520465"
-      },
-      {
-         "id":520462,
-         "uid":"D2111035",
-         "pricePretax":350.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":50.0,
-         "reductionUnit":"currency",
-         "reductionAmount":50.0,
-         "price":300.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Pour bénéficier de la réduction : Un acompte de 50 euros est à verser pour confirmer la réservation avant le 15 Décembre.\r\nLe reste est à payé au moment de la livraison.\r\nEn cas d'annulation à cause du Covid, nous reporterons la prestation ou rembourserons l'accompte de le prestation\r\n\r\n\r\n",
-         "recipient":{
-            "city":"",
-            "name":"Sarah Bouajila",
-            "email":"sarahb98@outlook.fr",
-            "phones":[
-               "0783192369"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1637834135,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NDAzNDE1NywicHVyIjoiYmxvYl9pZCJ9fQ==--747b9211382d2936569679a735e12b11d9988731/D2111035.pdf",
-         "url":"https://www.facture.net/quotations/520462"
-      },
-      {
-         "id":516924,
-         "uid":"D2111034",
-         "pricePretax":350.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":50.0,
-         "reductionUnit":"currency",
-         "reductionAmount":50.0,
-         "price":300.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Pour bénéficier de la réduction : Un acompte de 50 euros est à verser pour confirmer la réservation avant le 15 Décembre.\r\nLe reste est à payé au moment de la livraison.\r\nEn cas d'annulation à cause du Covid, nous reporterons la prestation ou rembourserons l'accompte de le prestation\r\n\r\n\r\n",
-         "recipient":{
-            "city":"",
-            "name":"Sarah Bouajila",
-            "email":"sarahb98@outlook.fr",
-            "phones":[
-               "0783192369"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1637834019,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NDAzNDEyMCwicHVyIjoiYmxvYl9pZCJ9fQ==--bce9ca9a6c4ee7bec04659b0ecdd47bf31a576aa/D2111034.pdf",
-         "url":"https://www.facture.net/quotations/516924"
       },
       {
          "id":514340,
@@ -14296,45 +13930,6 @@
          "url":"https://www.facture.net/quotations/400209"
       },
       {
-         "id":400194,
-         "uid":"D2106010",
-         "pricePretax":270.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"percent",
-         "reductionAmount":0.0,
-         "price":270.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Pour bénéficier de la reduction, un acompte de 50 euros est à verser pour confirmer la réservation avant le 15 Juin 2021.\r\nLe reste (290 euros) et un chèque de caution de 500 euros vous sera demandé au moment de la livraison.\r\nLe chèque de caution vous sera restitué si le Photobooth ne montre aucune dégradation.\r\n\r\nCOVID-19 : Report GRATUIT !\r\nNous vous permettons de reporter gratuitement votre commande si elle est annulée pour cause de nouvelle crise sanitaire, pas de date limite de report.\r\n",
-         "recipient":{
-            "city":"",
-            "name":"Claire Chevalier",
-            "email":"chevalier_claire@hotmail.com",
-            "phones":[
-               "0673303535"
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1622669723,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6Mjk2MzY3NiwicHVyIjoiYmxvYl9pZCJ9fQ==--d0889fbe5c94fe16c591bbc75b6a76ef6d7018c4/D2106010.pdf",
-         "url":"https://www.facture.net/quotations/400194"
-      },
-      {
          "id":388334,
          "uid":"D2105009",
          "pricePretax":280.0,
@@ -14372,45 +13967,6 @@
          ],
          "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6Mjg2MTQ2MCwicHVyIjoiYmxvYl9pZCJ9fQ==--536ad93e6eae94d4029fd0f1bb97a42edc671986/D2105009.pdf",
          "url":"https://www.facture.net/quotations/388334"
-      },
-      {
-         "id":388281,
-         "uid":"D2105008",
-         "pricePretax":340.0,
-         "vatExempt":false,
-         "taxAmount":0.0,
-         "reduction":null,
-         "reductionUnit":"percent",
-         "reductionAmount":0.0,
-         "price":340.0,
-         "currency":"eur",
-         "paymentPeriod":"Voir détail ci après",
-         "paymentMode":"Non spécifié",
-         "moratoriumInterest":"Pas d'intérêts de retard",
-         "notes":"Acompte de 50 euros à verser pour confirmer la réservation avant le 30 Mai 2021.\r\nLe reste (290 euros) est au moment de la livraison.\r\n\r\nJe vous mets le mur florale en option, il faudra rajouter 60 euros à la livraison si vous le souhaitez.\r\n\r\nCOVID-19 : Report GRATUIT !\r\nNous vous permettons de reporter gratuitement votre commande si elle est annulée pour cause de nouvelle crise sanitaire, pas de date limite de report.",
-         "recipient":{
-            "city":"",
-            "name":"Eric ALBERT",
-            "email":"eric.albert77@gmail.com",
-            "phones":[
-
-            ],
-            "street":"",
-            "website":"",
-            "language":"fr",
-            "zip_code":"",
-            "individual":true,
-            "additional_address_lines":[
-               ""
-            ]
-         },
-         "createdAt":1621253384,
-         "signedAt":null,
-         "tags":[
-
-         ],
-         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6Mjg2MTM0NywicHVyIjoiYmxvYl9pZCJ9fQ==--829c5f8cd4a03b86f22f5e38248336b1e9160565/D2105008.pdf",
-         "url":"https://www.facture.net/quotations/388281"
       },
       {
          "id":384965,

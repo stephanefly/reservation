@@ -1,5 +1,6 @@
 import csv
-import json
+from django.utils.timezone import make_aware
+
 from datetime import datetime, timezone
 from app.models import Client, EventDetails, EventOption, Event, EventProduct
 from django.db import transaction
@@ -110,10 +111,10 @@ def launch_import_data(data, data_trello, event_locations):
                 now = datetime.now(timezone.utc)
                 if date_due <= now:
                     # Si la date de l'événement est postérieure à l'heure actuelle
-                    data_client_to_import['status'] = 'Presta FINI' if client['uid'] != "Provisoire" else 'Refused'
+                    data_client_to_import['status'] = 'Presta FINI' if client["signedAt"] else 'Refused'
                 else:
                     # Si la date de l'événement est antérieure ou égale à l'heure actuelle
-                    data_client_to_import['status'] = 'Acompte OK' if client['uid'] != "Provisoire" else 'Sended'
+                    data_client_to_import['status'] = 'Acompte OK' if client["signedAt"] else 'Sended'
 
 
         #  -----------------------------------------------------------
@@ -153,7 +154,6 @@ def recup_devis_data(pdf_path):
                 continue
 
             for line in lines:
-                print(lines[0])
                 if line == 'Destinataire':
                     recipient_name = lines[lines.index(line) + 1].strip()
 
@@ -238,7 +238,36 @@ def correction(event):
     return event_copy
 
 
+def clear_devis_json(json_devis):
+    # Dictionnaire pour regrouper les éléments par nom de destinataire
+    grouped_by_recipient = {}
+
+    for item in json_devis["quotations"]:
+        # DEVIS JSON ---------------------------------------------------
+        try:
+            recipient_name = item['recipient']['name'].strip().replace("  ", " ")
+
+        except:
+            recipient_name = item['recipient']['company'].strip()
+
+        # Vérifiez si le nom du destinataire existe déjà dans le dictionnaire
+        if recipient_name not in grouped_by_recipient:
+            grouped_by_recipient[recipient_name] = []
+
+        # Ajoutez l'élément au groupe correspondant
+        grouped_by_recipient[recipient_name].append(item)
+
+    # Pour vérifier les résultats
+
+    for name, items in grouped_by_recipient.items():
+        if len(items) >= 2:
+            print(f"Recipient: {name}, Number of Items: {len(items)}")
+    pass
+
+
 def upload_all_data():
+
+
 
     pdf_path = r"app\module\data_bdd\devis.pdf"
     event_locations = recup_devis_data(pdf_path)
@@ -250,12 +279,13 @@ def upload_all_data():
               encoding='utf-8') as file:
         json_devis = json.load(file)
 
+    clear_devis_json(json_devis)
+
     event_presta = launch_import_data(json_devis, data_trello, event_locations)
 
     # event = correction(event)
     i=0
     for nom, data in event_presta.items():
-        print(nom)
 
         if Client.objects.filter(nom=nom):
             for client in Client.objects.filter(nom=nom):
@@ -278,7 +308,7 @@ def upload_all_data():
             client.save()
 
             event_details = EventDetails(
-                date_evenement=data['date_evenement'])
+                date_evenement=data['date_evenement'],)
             try:
                 event_details.adresse_evenement=data['adresse_evenement']
             except:
@@ -350,6 +380,8 @@ def upload_all_data():
             event.save()
             client = Client.objects.get(nom=data['nom'])
             try:
+                naive_datetime = datetime(2023, 1, 25)  # Exemple de datetime naïve
+                aware_datetime = make_aware(naive_datetime)
                 Event.objects.filter(client=client).update(created_at=data['created_at'])
             except:pass
 
