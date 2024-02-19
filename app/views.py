@@ -20,7 +20,7 @@ today_date = datetime.now().date()
 
 def import_data_devis(request):
     upload_all_data()
-    all_event = Event.objects.all().order_by('-created_at')
+    all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 
 def demande_devis(request):
@@ -68,9 +68,7 @@ def remerciement(request):
 
 
 def lst_devis(request):
-    all_event = Event.objects.all().order_by('-created_at')
-    for event in all_event:
-        print(event.client.nom)
+    all_event = Event.objects.all()
     return render(request, 'app/lst_devis.html', {'all_event': all_event,})
 
 
