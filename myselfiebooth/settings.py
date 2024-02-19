@@ -77,7 +77,7 @@ MIDDLEWARE = [
     'myselfiebooth.middleware.BackendAuthMiddleware',
 ]
 
-
+LOGIN_REDIRECT_URL = 'backend/lst_devis/'
 
 ROOT_URLCONF = 'myselfiebooth.urls'
 
