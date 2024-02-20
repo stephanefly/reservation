@@ -1006,7 +1006,7 @@
                ""
             ]
          },
-         "createdAt":1702549731,
+         "createdAt":1700519930,
          "signedAt":1702508400,
          "tags":[
 
@@ -1515,6 +1515,45 @@
          },
          "createdAt":1700519930,
          "signedAt":1700434800,
+         "tags":[
+
+         ],
+         "fileUrl":"https://www.facture.net/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTE4MzIyOTIsInB1ciI6ImJsb2JfaWQifX0=--86af07b58d77f128603eb2685f9ce7f1783b1f13/D2311267.pdf",
+         "url":"https://www.facture.net/quotations/1332217"
+      },
+      {
+         "id":1332217,
+         "uid":"D2311267",
+         "pricePretax":600.0,
+         "vatExempt":false,
+         "taxAmount":0.0,
+         "reduction":null,
+         "reductionUnit":"currency",
+         "reductionAmount":0.0,
+         "price":300.0,
+         "currency":"eur",
+         "paymentPeriod":"Voir détail ci après",
+         "paymentMode":"Non spécifié",
+         "moratoriumInterest":"Pas d'intérêts de retard",
+         "notes":"Un acompte de 100 euros est à verser pour confirmer la reservation.\nLe reste est à payer par espèces au moment de la livraison ou au moins une semaine avant l'évènement par virement.\nVous pouvez payer par virement (Info RIB dans le devis), Paylib, Paypal (paypal.me/3dmouvstudio) ou Lydia.\nTITULAIRE DU COMPTE : STEPHANE FAURE\nIBAN : FR76 3000 3012 9500 0508 3654 688\nBIC : SOGEFRPP",
+         "recipient":{
+            "city":"",
+            "name":"Lubliner Art2",
+            "email":"contact@parisprivate.fr",
+            "phones":[
+               "0645852007"
+            ],
+            "street":"",
+            "website":"",
+            "language":"fr",
+            "zip_code":"",
+            "individual":true,
+            "additional_address_lines":[
+               ""
+            ]
+         },
+         "createdAt":1700519930,
+         "signedAt":1700519930,
          "tags":[
 
          ],
@@ -2917,7 +2956,7 @@
                ""
             ]
          },
-         "createdAt":1708126534,
+         "createdAt":1695419381,
          "signedAt":null,
          "tags":[
 
@@ -4502,7 +4541,7 @@
          "notes":null,
          "recipient":{
             "city":"",
-            "name":"Gourm  Event13062023-2",
+            "name":"Gourm Event13062023-2",
             "email":"",
             "phones":[
 
@@ -4516,8 +4555,8 @@
                ""
             ]
          },
-         "createdAt":1686299858,
-         "signedAt":1686261600,
+         "createdAt":1685536879,
+         "signedAt":1685484000,
          "tags":[
 
          ],

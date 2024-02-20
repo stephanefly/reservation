@@ -7,7 +7,7 @@ body {
 </style>
 <form action="{% url 'envoi_mail_devis' event.id %}" method="post">
   {% csrf_token %}
-  <p>Êtes-vous sûr de vouloir envoyer le devis pour l'événement "{{ event.nom }}" ?</p>
+  <p>Êtes-vous sûr de vouloir envoyer le devis pour l'événement <span>"{{ event.client.nom }}"</span> ?</p>
   <input type="submit" value="Confirmer l'envoi">
 </form>
 {% endblock %}

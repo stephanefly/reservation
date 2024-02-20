@@ -7,7 +7,7 @@ body {
 </style>
 <form action="{% url 'del_devis' event.id %}" method="post">
   {% csrf_token %}
-  <p>Êtes-vous sûr de vouloir supprimer l'event: {{ event.nom }}" ?</p>
+  <p>Êtes-vous sûr de vouloir supprimer l'event: <span>"{{ event.client.nom }}"</span> ?</p>
   <input type="submit" value="Confirmer la suppression">
 </form>
 {% endblock %}

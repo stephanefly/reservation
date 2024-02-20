@@ -23,7 +23,7 @@ body {
         <tr onclick="location.href='{% url 'info_event' event.id %}';" style="cursor:pointer;">
             <td style="display: none" >{{event.id}}</td>
             <td>{{event.client.nom}}</td>
-            <td>{{event.created_at|date:"d/m/Y"}}</td>
+            <td>{{ event.created_at|date:"Y-m-d" }}</td>
             <td>{{event.event_details.date_evenement|date:"D d/m/Y" }}</td>
             <td>{{event.prix_proposed}}</td>
             <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
@@ -67,19 +67,24 @@ $(document).ready(function () {
         paging: false,
         searching: true,
         info: false,
+        order: [[2, 'desc']], // Ajoutez cette ligne pour trier par la colonne des dates par ordre décroissant
         columnDefs: [
-            { type: 'date-eu', targets: 2 } // Suppose que la colonne des dates est la troisième (index 2)
+            {
+                targets: 2, // Index de la colonne des dates (en commençant par 0)
+                type: 'date' // Définit le type de la colonne pour le tri
+            }
         ],
         columns: [
-            { data: 'id', visible: false }, // ID est caché
+            { data: 'id', visible: false },
             { data: 'nom' },
             { data: 'created_at' },
-            { data: 'date' },
+            { data: 'date_event' },
             { data: 'prix' },
             { data: 'status' },
         ]
     });
 });
+
 
 
 </script>

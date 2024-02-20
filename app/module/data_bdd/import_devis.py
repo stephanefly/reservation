@@ -1,13 +1,87 @@
 import csv
 from django.utils.timezone import make_aware
-
+from datetime import datetime, timedelta
 from datetime import datetime, timezone
 from app.models import Client, EventDetails, EventOption, Event, EventProduct
 from django.db import transaction
 import re
 import fitz  # PyMuPDF
 import json
+import random
 
+def recup_devis_data(pdf_path):
+
+    event_locations = {}
+    with fitz.open(pdf_path) as doc:
+        for page in doc:
+            text = page.get_text("text")
+            lines = text.split('\n')
+            recipient_name = ""
+            info = {}
+
+            if not "Devis" in str(lines[0]):
+                continue
+
+            for line in lines:
+                if line == 'Destinataire':
+                    recipient_name = lines[lines.index(line) + 1].strip()
+
+                if 'Mise en Place' in line:
+                    event_location_index = lines.index(line) + 5
+                    event_location = lines[event_location_index].strip()
+                    if event_location != 'Total':
+                        info = {"adresse":event_location}
+
+                if re.search(r'\b\d{5}\b', line):
+                    postal_code = re.search(r'\b\d{5}\b', line).group()
+                    if postal_code != '77176':
+                        info["code_postal"]=postal_code
+
+                        # Trouver l'index du code postal dans l'adresse
+                        postal_code_index = line.find(postal_code)
+                        words_after_postal_code = line[postal_code_index + len(postal_code):].strip().split()
+                        event_locations[postal_code] = words_after_postal_code
+                        info["ville"] = " ".join(words_after_postal_code)
+
+            # Dictionnaire de mapping des mois français aux mois anglais
+            mois_mapping = {
+                "janvier": "January",
+                "février": "February",
+                "mars": "March",
+                "avril": "April",
+                "mai": "May",
+                "juin": "June",
+                "juillet": "July",
+                "août": "August",
+                "septembre": "September",
+                "octobre": "October",
+                "novembre": "November",
+                "décembre": "December"
+            }
+            # Remplacer le nom du mois français par son équivalent anglais
+            date_string = lines[1]
+            for mois_fr, mois_en in mois_mapping.items():
+                if mois_fr in lines[1]:
+                    date_string = date_string.replace(mois_fr, mois_en)
+                    break
+
+            date_format = "%d %B %Y"
+            date_obj = datetime.strptime(date_string, date_format)
+
+            # Définir la période de temps durant laquelle les dates seront ajustées
+            start_date = datetime(2024, 2, 14)
+            end_date = datetime(2024, 2, 20)
+            if start_date <= date_obj <= end_date:
+                start_of_2023 = datetime(2023, 1, 1)
+                end_of_2023 = datetime(2023, 12, 31)
+                date_obj = start_of_2023 + timedelta(days=random.randint(0, (end_of_2023 - start_of_2023).days))
+
+
+            date_str = date_obj.strftime("%Y-%m-%d")
+            info["created_at"] = date_str
+            event_locations[recipient_name] = info
+
+    return event_locations
 
 def launch_import_data(data, data_trello, event_locations):
 
@@ -127,9 +201,12 @@ def launch_import_data(data, data_trello, event_locations):
                 try:
                     data_client_to_import['code_postal_evenement'] = value["code_postal"]
                 except:pass
-                try:
+
+                if not value["created_at"]:
+                    date_create = datetime.utcfromtimestamp(client["created_at"])
+                    data_client_to_import['created_at'] = date_create.strftime("%Y-%m-%d")
+                else:
                     data_client_to_import['created_at'] = value["created_at"]
-                except:pass
 
 
         data_to_import[data_client_to_import['nom']] = data_client_to_import
@@ -137,135 +214,7 @@ def launch_import_data(data, data_trello, event_locations):
     return data_to_import
 
 
-def recup_devis_data(pdf_path):
-
-    event_locations = {}
-    with fitz.open(pdf_path) as doc:
-        for page in doc:
-            text = page.get_text("text")
-            lines = text.split('\n')
-            recipient_name = ""
-            info = {}
-
-            if not "Devis" in str(lines[0]):
-                continue
-
-            for line in lines:
-                if line == 'Destinataire':
-                    recipient_name = lines[lines.index(line) + 1].strip()
-
-                if 'Mise en Place' in line:
-                    event_location_index = lines.index(line) + 5
-                    event_location = lines[event_location_index].strip()
-                    if event_location != 'Total':
-                        info = {"adresse":event_location}
-
-                if re.search(r'\b\d{5}\b', line):
-                    postal_code = re.search(r'\b\d{5}\b', line).group()
-                    if postal_code != '77176':
-                        info["code_postal"]=postal_code
-
-                        # Trouver l'index du code postal dans l'adresse
-                        postal_code_index = line.find(postal_code)
-                        words_after_postal_code = line[postal_code_index + len(postal_code):].strip().split()
-                        event_locations[postal_code] = words_after_postal_code
-                        info["ville"] = " ".join(words_after_postal_code)
-
-            # Dictionnaire de mapping des mois français aux mois anglais
-            mois_mapping = {
-                "janvier": "January",
-                "février": "February",
-                "mars": "March",
-                "avril": "April",
-                "mai": "May",
-                "juin": "June",
-                "juillet": "July",
-                "août": "August",
-                "septembre": "September",
-                "octobre": "October",
-                "novembre": "November",
-                "décembre": "December"
-            }
-            # Remplacer le nom du mois français par son équivalent anglais
-            date_string = lines[1]
-            for mois_fr, mois_en in mois_mapping.items():
-                if mois_fr in lines[1]:
-                    date_string = date_string.replace(mois_fr, mois_en)
-                    break
-
-            date_format = "%d %B %Y"
-            date_obj = datetime.strptime(date_string, date_format)
-            date_str = date_obj.strftime("%Y-%m-%d")
-            info["created_at"] = date_str
-
-            event_locations[recipient_name] = info
-
-    return event_locations
-
-
-def correction(event):
-
-    # Liste des clés de données attendues pour chaque client
-    expected_keys = [
-        "nom", "raison_sociale", "mail", "numero_telephone", "prix_brut", "reduc_all",
-        "prix_proposed", "status", "created_at", "livraison",
-        "photobooth", "miroirbooth", "videobooth", "mur_floral", "phonebooth", "livreor",
-        "magnets", "duree", "how_find", "date_evenement"
-    ]
-
-    i = 0
-    event_copy = event.copy()
-
-    # Itérez à travers chaque élément du dictionnaire
-    for nom, data in event.items():
-        missing_keys = [key for key in expected_keys if key not in data]
-
-        # Si des clés manquantes sont trouvées
-        if missing_keys:
-            print(f"Nom: {nom}")
-            print("Données manquantes:")
-            for key in missing_keys:
-                print(f"  {key}")
-            print()  # Ajouter une ligne vide après l'affichage des données manquantes
-
-            # Supprimer l'élément du dictionnaire copié
-            event_copy.pop(nom)
-
-    print(i)
-    return event_copy
-
-
-def clear_devis_json(json_devis):
-    # Dictionnaire pour regrouper les éléments par nom de destinataire
-    grouped_by_recipient = {}
-
-    for item in json_devis["quotations"]:
-        # DEVIS JSON ---------------------------------------------------
-        try:
-            recipient_name = item['recipient']['name'].strip().replace("  ", " ")
-
-        except:
-            recipient_name = item['recipient']['company'].strip()
-
-        # Vérifiez si le nom du destinataire existe déjà dans le dictionnaire
-        if recipient_name not in grouped_by_recipient:
-            grouped_by_recipient[recipient_name] = []
-
-        # Ajoutez l'élément au groupe correspondant
-        grouped_by_recipient[recipient_name].append(item)
-
-    # Pour vérifier les résultats
-
-    for name, items in grouped_by_recipient.items():
-        if len(items) >= 2:
-            print(f"Recipient: {name}, Number of Items: {len(items)}")
-    pass
-
-
 def upload_all_data():
-
-    pdf_path = r"app\module\data_bdd\devis.pdf"
-    event_locations = recup_devis_data(pdf_path)
 
     with open(r'app\module\data_bdd\card.json', 'r',
               encoding='utf-8') as file:
@@ -273,13 +222,12 @@ def upload_all_data():
     with open(r"app\module\data_bdd\devis.json", 'r',
               encoding='utf-8') as file:
         json_devis = json.load(file)
+    pdf_path = r"app\module\data_bdd\devis.pdf"
 
-    clear_devis_json(json_devis)
+    event_locations = recup_devis_data(pdf_path)
 
     event_presta = launch_import_data(json_devis, data_trello, event_locations)
-    print(event_presta)
 
-    # event = correction(event)
     i=0
     for nom, data in event_presta.items():
 
@@ -380,6 +328,12 @@ def upload_all_data():
                 aware_datetime = make_aware(naive_datetime)
                 Event.objects.filter(client=client).update(created_at=aware_datetime)
 
+            except:
+                date = data['signer_at'].split("-")
+                naive_datetime = datetime(int(date[0]), int(date[1]), int(date[2]))  # Exemple de datetime naïve
+                aware_datetime = make_aware(naive_datetime)
+                Event.objects.filter(client=client).update(created_at=aware_datetime)
+            try:
                 date_sign = data['signer_at'].split("-")
                 naive_datetime_sign = datetime(int(date_sign[0]), int(date_sign[1]), int(date_sign[2]))  # Exemple de datetime naïve
                 aware_datetime_sign = make_aware(naive_datetime_sign)
