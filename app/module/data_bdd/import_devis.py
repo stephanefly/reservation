@@ -216,13 +216,13 @@ def launch_import_data(data, data_trello, event_locations):
 
 def upload_all_data():
 
-    with open(r'app\module\data_bdd\card.json', 'r',
+    with open(r'app/module/data_bdd/card.json', 'r',
               encoding='utf-8') as file:
         data_trello = json.load(file)
-    with open(r"app\module\data_bdd\devis.json", 'r',
+    with open(r"app/module/data_bdd/devis.json", 'r',
               encoding='utf-8') as file:
         json_devis = json.load(file)
-    pdf_path = r"app\module\data_bdd\devis.pdf"
+    pdf_path = r"app/module/data_bdd/devis.pdf"
 
     event_locations = recup_devis_data(pdf_path)
 
