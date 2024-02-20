@@ -68,6 +68,16 @@ input[type="text"], input[type="email"], input[type="date"], input[type="number"
     color: white;
 }
 
+.button-refused {
+    background-color: #e06d6d; /* Rouge */
+        padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    color: #fffdfd;
+}
+
 .button-del {
     background-color: #9f0000; /* Rouge */
         padding: 10px 15px;
@@ -175,6 +185,10 @@ button:hover {
         <form method="POST" action="{% url 'validation_devis' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-valid">Valider DEVIS</button>
+    </form>
+    <form method="POST" action="{% url 'refused_devis' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="button-refused">Refuser DEVIS</button>
     </form>
     {% endif %}
     

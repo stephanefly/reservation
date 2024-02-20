@@ -76,7 +76,7 @@ def update_data(event, request):
     event_option.livreor = request.POST.get('livreor') == 'on'
     event_option.mur_floral = request.POST.get('mur_floral') == 'on'
     event_option.phonebooth = request.POST.get('phonebooth') == 'on'
-    event_option.magnets = request.POST.get('magnets', None)
+    event_option.magnets = request.POST.get('magnets', '0')
     event_option.duree = request.POST.get('duree', None)
     event_option.save()
 

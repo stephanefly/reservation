@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
 from .module.trello.create_card import create_card
-from .module.trello.move_card import to_acompte_ok, to_list_devis_fait
+from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 
 today_date = datetime.now().date()
 
@@ -103,6 +103,18 @@ def validation_devis(request, id):
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
 
+@require_http_methods(["POST"])
+def refused_devis(request, id):
+    event = get_object_or_404(Event, id=id)
+    # MAJ BDD
+    event.status = 'Refused'
+    event.save()
+
+    # MAJ TRELLO
+    to_refused(event)
+
+    # Rediriger vers la page de détails de l'événement mise à jour
+    return redirect('info_event', id=event.id)
 
 # Vue qui affiche la page de confirmation
 def confirmation_del_devis(request, event_id):
