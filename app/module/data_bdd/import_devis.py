@@ -337,7 +337,7 @@ def upload_all_data():
                 date_sign = data['signer_at'].split("-")
                 naive_datetime_sign = datetime(int(date_sign[0]), int(date_sign[1]), int(date_sign[2]))  # Exemple de datetime naïve
                 aware_datetime_sign = make_aware(naive_datetime_sign)
-                Event.objects.filter(client=client).update(created_at=aware_datetime_sign)
+                Event.objects.filter(client=client).update(signer_at=aware_datetime_sign)
             except:pass
 
         if Client.objects.filter(nom=nom).exists():
