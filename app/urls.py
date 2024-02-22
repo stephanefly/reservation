@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import demande_devis, remerciement, lst_devis, confirmation, info_event, update_event, generate_pdf, \
     envoi_mail_devis, preparation_presta, confirmation_envoi_mail, validation_devis, del_devis, confirmation_del_devis, \
-    import_data_devis, refused_devis
+    import_data_devis, refused_devis, graph
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 
@@ -24,4 +24,5 @@ urlpatterns = [
     path('backend/envoi_mail_devis/<int:event_id>/', envoi_mail_devis, name='envoi_mail_devis'),
     path('backend/preparation_presta/', preparation_presta, name='preparation_presta'),
     path('backend/import_data_devis/', import_data_devis, name='import_data_devis'),
+    path('backend/graph/', graph, name='graph'),
 ]

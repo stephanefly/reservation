@@ -138,6 +138,19 @@ def launch_import_data(data, data_trello, event_locations):
                 data_client_to_import['magnets'] = False
                 data_client_to_import['how_find'] = "INSTAGRAM"
 
+                date_due = datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
+                data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
+
+                # Obtenez l'heure actuelle, en utilisant le fuseau horaire UTC
+                now = datetime.now(timezone.utc)
+                if date_due <= now:
+                    # Si la date de l'événement est postérieure à l'heure actuelle
+                    data_client_to_import['status'] = 'Presta FINI' if client["signedAt"] else 'Refused'
+                else:
+                    # Si la date de l'événement est antérieure ou égale à l'heure actuelle
+                    data_client_to_import['status'] = 'Acompte OK' if client["signedAt"] else 'Sended'
+
+
                 for label in card_trello['labels']:
                     if label['color'] == 'sky':
                         data_client_to_import['how_find'] = label['name']
@@ -174,19 +187,21 @@ def launch_import_data(data, data_trello, event_locations):
                             data_client_to_import['duree'] = int(label['name'].replace("h",""))
                         except:
                             data_client_to_import['duree'] = 5
+                        if label['name'] == "+50":
+                            data_client_to_import['prix_valided'] = data_client_to_import['prix_valided']+50
+                            data_client_to_import['prix_proposed'] = data_client_to_import['prix_proposed']+50
+                        if label['name'] == "+100":
+                            data_client_to_import['prix_valided'] = data_client_to_import['prix_valided']+100
+                            data_client_to_import['prix_proposed'] = data_client_to_import['prix_proposed']+100
 
-                date_due = datetime.fromisoformat(card_trello['due'].replace('Z', '+00:00'))
-                data_client_to_import['date_evenement'] = date_due.strftime("%Y-%m-%d")
+                    elif label['color'] == 'red_dark':
+                        if label['name'] == "ANNULER":
+                            data_client_to_import['status'] = "ANNULER"
 
-                # Obtenez l'heure actuelle, en utilisant le fuseau horaire UTC
-                now = datetime.now(timezone.utc)
-                if date_due <= now:
-                    # Si la date de l'événement est postérieure à l'heure actuelle
-                    data_client_to_import['status'] = 'Presta FINI' if client["signedAt"] else 'Refused'
-                else:
-                    # Si la date de l'événement est antérieure ou égale à l'heure actuelle
-                    data_client_to_import['status'] = 'Acompte OK' if client["signedAt"] else 'Sended'
-
+                    elif label['color'] == 'green':
+                        if label['name'] == "EVENT 1":
+                            data_client_to_import['prix_valided'] = data_client_to_import['prix_valided']/2
+                            data_client_to_import['prix_proposed'] = data_client_to_import['prix_proposed']/2
 
         #  -----------------------------------------------------------
         # DEVIS -----------------------------------------------------------

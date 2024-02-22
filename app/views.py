@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
 from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
+from .module.exploitation_trello.make_signed_graph import get_signed_data
 
 today_date = datetime.now().date()
 
@@ -181,3 +182,7 @@ def envoi_mail_devis(request, event_id):
 
 def preparation_presta(request):
     return render(request, 'preparation_presta/PRESTA-S06-2024.html')
+
+def graph(request):
+    get_signed_data()
+    return redirect('lst_devis')
