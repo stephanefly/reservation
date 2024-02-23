@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta
 from django.http import QueryDict
-from .models import Event
+
+from .forms import CostForm
+from .models import Event, Cost
 from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
@@ -76,9 +78,11 @@ def remerciement(request):
 
 def lst_devis(request):
     all_event = Event.objects.all().order_by('-created_at')
-
     return render(request, 'app/backend/lst_devis.html', {'all_event': all_event, })
 
+def lst_cost(request):
+    all_cost = Cost.objects.all().order_by('-created_at')
+    return render(request, 'app/backend/lst_cost.html', {'all_cost': all_cost, })
 
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
@@ -194,3 +198,33 @@ def graph(request):
     df_all_week = new_mise_en_week(df_ok_data)
     script, div = tracage_figure_bar_bokeh(df_all_week, today_date.strftime('%Y-%m-%d'))
     return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
+
+
+def create_cost(request):
+    if request.method == 'POST':
+        form = CostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lst_cost')  # Remplacez par l'URL de votre choix
+    else:
+        form = CostForm()
+    return render(request, 'app/backend/create_cost.html', {'form': form})
+
+def info_cost(request, id):
+    cost = get_object_or_404(Cost, pk=id)
+    form = CostForm(instance=cost)
+    return render(request, 'app/backend/info_cost.html',
+                  {'cost': cost, 'form': form, 'id':id})
+@require_http_methods(["POST"])
+def edit_cost(request, id):
+    cost = get_object_or_404(Cost, pk=id)
+    form = CostForm(request.POST, instance=cost)
+    if form.is_valid():
+        form.save()
+        return redirect('lst_cost')
+
+@require_http_methods(["POST"])
+def delete_cost(request, id):
+    cost = get_object_or_404(Cost, pk=id)
+    cost.delete()
+    return redirect('lst_cost')

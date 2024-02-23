@@ -1,0 +1,15 @@
+{% extends 'app/backend/base.html' %} <!-- Adaptez ceci à votre structure de templates -->
+{% block content %}
+
+<div class="container justify-content-center">
+    <h2>Ajouter un nouveau Cost</h2>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Soumettre</button>
+        <a href="{% url 'lst_cost' %}" class="btn btn-secondary">Retour</a>
+    </form>
+</div>
+
+{% endblock %}

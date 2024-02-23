@@ -1,7 +1,5 @@
 from django.urls import path
-from .views import demande_devis, remerciement, lst_devis, confirmation, info_event, update_event, generate_pdf, \
-    envoi_mail_devis, preparation_presta, confirmation_envoi_mail, validation_devis, del_devis, confirmation_del_devis, \
-    import_data_devis, refused_devis, graph, import_data_avoir
+from .views import *
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 
@@ -13,6 +11,11 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name="app/backend/login.html"), name="login"),
     # BACKEND
     path('backend/lst_devis/', lst_devis, name='lst_devis'),
+    path('backend/lst_cost/', lst_cost, name='lst_cost'),
+    path('backend/create_cost/', create_cost, name='create_cost'),
+    path('backend/info_cost/<int:id>/', info_cost, name='info_cost'),
+    path('backend/edit_cost/<int:id>/', edit_cost, name='edit_cost'),
+    path('backend/delete_cost/<int:id>/', delete_cost, name='delete_cost'),
     path('backend/info-event/<int:id>/', info_event, name='info_event'),
     path('backend/event/update/<int:id>/', update_event, name='update_event'),
     path('backend/generate-pdf/<int:event_id>/', generate_pdf, name='generate_pdf'),

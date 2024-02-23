@@ -1,0 +1,18 @@
+{% extends 'app/backend/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Modifier Cost</h2>
+    <form action="{% url 'edit_cost' cost.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
+
+    <!-- Bouton de suppression -->
+    <form action="{% url 'delete_cost' cost.id %}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce cost ?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+</div>
+{% endblock %}

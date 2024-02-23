@@ -1,0 +1,56 @@
+{% extends 'app/backend/base.html' %}
+{% block content %}
+
+<style>
+body {
+    background-image: None;
+}
+</style>
+<h3>Liste des devis</h3>
+<br>
+    <a href="{% url 'create_cost' %}" class="btn btn-primary">Ajouter un Cost</a>
+<br>
+<table id="table" class="table table-bordered table-striped" style="background-color:white">
+    <thead>
+        <th style="display: none">ID</th>
+        <th>NOM</th>
+        <th>Create_at</th>
+        <th>Type</th>
+        <th>Coût</th>
+    </thead>
+    <tbody>
+    {% for cost in all_cost %}
+        <tr onclick="location.href='{% url 'info_cost' cost.id %}';" style="cursor:pointer;">
+            <td style="display: none">{{cost.id}}</td>
+            <td>{{cost.name_cost}}</td>
+            <td>{{cost.created_at|date:"Y-m-d" }}</td>
+            <td>{{cost.type_cost }}</td>
+            <td>{{cost.price_cost }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#table').DataTable({
+        responsive: true,
+        lengthChange: false,
+        paging: false,
+        searching: true,
+        info: false,
+        order: [[2, 'desc']], // Tri par la colonne des dates par ordre décroissant
+        columnDefs: [
+            {
+                targets: 2,
+                type: 'date'
+            }
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
+        }
+    });
+});
+</script>
+
+{% endblock %}
