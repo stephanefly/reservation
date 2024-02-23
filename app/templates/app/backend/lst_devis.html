@@ -1,4 +1,4 @@
-{% extends 'app/base.html' %}
+{% extends 'app/backend/base.html' %}
 {% block content %}
 
 <style>
@@ -14,6 +14,7 @@ body {
         <th style="display: none">ID</th>
         <th>NOM</th>
         <th>Create_at</th>
+        <th>J</th>
         <th>DATE-EVENT</th>
         <th>PRIX</th>
         <th>STATUS</th>
@@ -24,7 +25,8 @@ body {
             <td style="display: none" >{{event.id}}</td>
             <td>{{event.client.nom}}</td>
             <td>{{ event.created_at|date:"Y-m-d" }}</td>
-            <td>{{event.event_details.date_evenement|date:"D d/m/Y" }}</td>
+            <td>{{event.event_details.date_evenement|date:"D" }}</td>
+            <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
             <td>{{event.prix_proposed}}</td>
             <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
         </tr>
@@ -75,12 +77,17 @@ $(document).ready(function () {
             {
                 targets: 2, // Index de la colonne des dates (en commençant par 0)
                 type: 'date' // Définit le type de la colonne pour le tri
+            },
+            {
+                targets: 4, // Index de la colonne des dates (en commençant par 0)
+                type: 'date' // Définit le type de la colonne pour le tri
             }
         ],
         columns: [
             { data: 'id', visible: false },
             { data: 'nom' },
             { data: 'created_at' },
+            { data: 'J' },
             { data: 'date_event' },
             { data: 'prix' },
             { data: 'status' },

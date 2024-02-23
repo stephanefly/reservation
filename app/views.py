@@ -13,6 +13,8 @@ from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
+from .module.exploitation_trello.lib_graph_all import tracage_figure_bar_bokeh
+from .module.exploitation_trello.mise_en_week import new_mise_en_week
 from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 from .module.exploitation_trello.make_signed_graph import get_ok_data
@@ -22,7 +24,7 @@ today_date = datetime.now().date()
 def import_data_devis(request):
     upload_all_data()
     all_event = Event.objects.all().order_by('-created_at')
-    return render(request, 'app/lst_devis.html', {'all_event': all_event,})
+    return render(request, 'app/backend/lst_devis.html', {'all_event': all_event, })
 
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
@@ -33,7 +35,7 @@ def demande_devis(request):
         form_data = request.POST.dict()
         request.session['demande_devis_data'] = form_data
         print(form_data)
-        return render(request, 'app/confirmation.html', {'form_data': form_data})
+        return render(request, 'app/frontend/confirmation.html', {'form_data': form_data})
 
     # Vérifiez d'abord s'il y a des données préremplies dans la session
     form_data = request.session.get('demande_devis_data', {})
@@ -42,7 +44,7 @@ def demande_devis(request):
     initial_data = QueryDict(mutable=True)
     initial_data.update(form_data)
 
-    return render(request, 'app/demande_devis.html', {
+    return render(request, 'app/frontend/demande_devis.html', {
         'today_date': today_date_str,
         'date_dans_deux_ans': date_dans_deux_ans_str,
         'form': initial_data  # Utilisez initial_data pour préremplir le formulaire
@@ -61,22 +63,22 @@ def confirmation(request):
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
-    return render(request, 'app/confirmation.html')
+    return render(request, 'app/frontend/confirmation.html')
 
 
 def remerciement(request):
-    return render(request, 'app/remerciement.html')
+    return render(request, 'app/frontend/remerciement.html')
 
 
 def lst_devis(request):
     all_event = Event.objects.all().order_by('-created_at')
 
-    return render(request, 'app/lst_devis.html', {'all_event': all_event,})
+    return render(request, 'app/backend/lst_devis.html', {'all_event': all_event, })
 
 
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
-    return render(request, 'app/info_event.html', {'event': event})
+    return render(request, 'app/backend/info_event.html', {'event': event})
 
 
 @require_http_methods(["POST"])
@@ -120,7 +122,7 @@ def refused_devis(request, id):
 # Vue qui affiche la page de confirmation
 def confirmation_del_devis(request, event_id):
     event = Event.objects.get(id=event_id)
-    return render(request, 'app/confirmation_del_devis.html', {'event': event})
+    return render(request, 'app/backend/confirmation_del_devis.html', {'event': event})
 
 
 @require_http_methods(["POST"])
@@ -156,7 +158,7 @@ def generate_pdf(request, event_id):
 # Vue qui affiche la page de confirmation
 def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
-    return render(request, 'app/confirmation_envoi_mail.html', {'event': event})
+    return render(request, 'app/backend/confirmation_envoi_mail.html', {'event': event})
 
 
 # Vue modifiée pour l'envoi de l'email
@@ -172,9 +174,9 @@ def envoi_mail_devis(request, event_id):
             # MAJ TRELLO
             to_list_devis_fait(event)
 
-            return render(request, 'app/retour_lst_devis.html', {'mail': True})
+            return render(request, 'app/backend/retour_lst_devis.html', {'mail': True})
         else:
-            return render(request, 'app/retour_lst_devis.html', {'mail': False}, status=500)
+            return render(request, 'app/backend/retour_lst_devis.html', {'mail': False}, status=500)
     else:
         # Redirigez vers la page de confirmation si la méthode n'est pas POST
         return redirect('confirmation_envoi_mail', event_id=event_id)
@@ -184,5 +186,7 @@ def preparation_presta(request):
     return render(request, 'preparation_presta/PRESTA-S06-2024.html')
 
 def graph(request):
-    get_ok_data()
-    return redirect('lst_devis')
+    df_ok_data = get_ok_data()
+    df_all_week = new_mise_en_week(df_ok_data)
+    script, div = tracage_figure_bar_bokeh(df_all_week, today_date.strftime('%Y-%m-%d'))
+    return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
