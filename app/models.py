@@ -87,9 +87,9 @@ class Event(models.Model):
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 
 class NameCost(models.Model):
-    names = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     def __str__(self):
-        return self.names
+        return self.name
 
 class Cost(models.Model):
     name_cost = models.ForeignKey(NameCost, on_delete=models.CASCADE)
