@@ -6,7 +6,7 @@ from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 
-from .module.data_bdd.import_devis import upload_all_data
+from app.module.import_data.import_devis import upload_all_data
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
 from .module.exploitation_trello.lib_graph_all import tracage_figure_bar_bokeh
 from .module.exploitation_trello.mise_en_week import new_mise_en_week
+from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 from .module.exploitation_trello.make_signed_graph import get_ok_data
@@ -23,8 +24,11 @@ today_date = datetime.now().date()
 
 def import_data_devis(request):
     upload_all_data()
-    all_event = Event.objects.all().order_by('-created_at')
-    return render(request, 'app/backend/lst_devis.html', {'all_event': all_event, })
+    return redirect('lst_devis')
+
+def import_data_avoir(request):
+    upload_avoir()
+    return redirect('lst_devis')
 
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)

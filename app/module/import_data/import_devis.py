@@ -1,13 +1,12 @@
-import csv
 from django.utils.timezone import make_aware
-from datetime import datetime, timedelta
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from app.models import Client, EventDetails, EventOption, Event, EventProduct
 from django.db import transaction
 import re
 import fitz  # PyMuPDF
 import json
 import random
+
 
 def recup_devis_data(pdf_path):
 
@@ -82,6 +81,7 @@ def recup_devis_data(pdf_path):
             event_locations[recipient_name] = info
 
     return event_locations
+
 
 def launch_import_data(data, data_trello, event_locations):
 

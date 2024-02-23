@@ -86,3 +86,21 @@ class Event(models.Model):
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 
+class NameCost(models.Model):
+    names = models.CharField(max_length=100)
+    def __str__(self):
+        return self.names
+
+class Cost(models.Model):
+    name_cost = models.ForeignKey(NameCost, on_delete=models.CASCADE)
+    TYPE = [
+        ('Membre', 'Membre'),
+        ('Invest', 'Invest'),
+        ('Charge', 'Charge'),
+    ]
+    type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
+    price_cost = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
