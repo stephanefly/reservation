@@ -1,13 +1,18 @@
 from datetime import datetime
-
+import json
 import pandas as pd
 import os
 from app.models import NameCost, Cost
 
 
 def upload_avoir():
-    json_path = os.path.join(os.path.dirname(__file__), 'app', 'module', 'import_data', 'avoirs.json')
-    df = pd.read_json(json_path)
+    # Ouvrir le fichier JSON et charger les données
+    with open('app/module/data_bdd/avoirs.json', 'r', encoding='utf-8') as file:
+        data_trello = json.load(file)
+
+    # Convertir les données JSON en DataFrame Pandas
+    df = pd.DataFrame(data_trello)
+
 
     names_uniques = df['Client'].unique()
     for client in names_uniques:
