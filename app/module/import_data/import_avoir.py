@@ -6,7 +6,7 @@ from app.models import NameCost, Cost
 
 
 def upload_avoir():
-    df = pd.read_csv(r'reservation/app/module/import_data/avoirs.csv', sep=";")
+    df = pd.read_csv(r'https://www.pythonanywhere.com/user/stephanefly/files/home/stephanefly/reservation/app/module/import_data/avoirs.csv', sep=";")
 
     names_uniques = df['Client'].unique()
     for client in names_uniques:
