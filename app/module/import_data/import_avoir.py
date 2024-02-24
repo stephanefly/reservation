@@ -13,7 +13,11 @@ def upload_avoir():
         NameCost.objects.create(name=client)
 
     for i in df.iloc:
-        date_obj = datetime.strptime(i['Date'], '%d/%m/%Y')
+        # Conversion de Timestamp en str
+        date_str = i['Date'].strftime('%d/%m/%Y')
+
+        # Utilisation de strptime() pour convertir la chaîne de caractères en datetime
+        date_obj = datetime.strptime(date_str, '%d/%m/%Y')
 
         cost_int = Cost.objects.create(
             name_cost=NameCost.objects.get(name=i['Client']),
