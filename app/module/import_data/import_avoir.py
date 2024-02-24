@@ -7,7 +7,7 @@ from app.models import NameCost, Cost
 
 def upload_avoir():
     # Ouvrir le fichier JSON et charger les données
-    with open('app/module/data_bdd/avoirs.json', 'r', encoding='utf-8') as file:
+    with open(r'app\module\import_data\avoirs.json', 'r', encoding='utf-8') as file:
         data_trello = json.load(file)
 
     # Convertir les données JSON en DataFrame Pandas
