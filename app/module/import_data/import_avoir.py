@@ -1,12 +1,13 @@
 from datetime import datetime
 
 import pandas as pd
-
+import os
 from app.models import NameCost, Cost
 
 
 def upload_avoir():
-    df = pd.read_json(r'app\module\import_data\avoirs.json')
+    json_path = os.path.join(os.path.dirname(__file__), 'app', 'module', 'import_data', 'avoirs.json')
+    df = pd.read_json(json_path)
 
     names_uniques = df['Client'].unique()
     for client in names_uniques:
