@@ -14,7 +14,7 @@ def make_tableau_devis(event):
         str(event.event_details.adresse_evenement),
         str(event.event_details.code_postal_evenement) + " " + str(event.event_details.ville_evenement)
     ])
-    if str(event.event_details.code_postal_evenement)[:2] in ['75','77', '27', '78', '95', '92', '94', '91']:
+    if str(event.event_details.code_postal_evenement)[:2] in ['75','77', '27', '78', '95', '92', '94', '91', '93']:
         data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, '0 €', '1', "", '0 €'])
     else:
         data_tableau_devis.append(["Livraison - Installation (Hors IDF)\n" + livraison_details, '0 €', '1', "", '50 €'])
