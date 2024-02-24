@@ -14,16 +14,13 @@ def upload_avoir():
     df = pd.DataFrame(data_avoir)
 
 
-    names_uniques = df['Client'].unique()
-    for client in names_uniques:
-        NameCost.objects.create(name=client)
+    # names_uniques = df['Client'].unique()
+    # for client in names_uniques:
+    #     NameCost.objects.create(name=client)
 
     for i in df.iloc:
         # Conversion de Timestamp en str
-        date_str = i['Date'].strftime('%d/%m/%Y')
-
-        # Utilisation de strptime() pour convertir la chaîne de caractères en datetime
-        date_obj = datetime.strptime(date_str, '%d/%m/%Y')
+        date_obj = datetime.strptime(i['Date'], '%d-%m-%Y')
 
         cost_int = Cost.objects.create(
             name_cost=NameCost.objects.get(name=i['Client']),
