@@ -31,22 +31,35 @@ class EventProduct(models.Model):
 
 
 class EventOption(models.Model):
-    mur_floral = models.BooleanField(default=False)
-    mur_floral_reduc_prix = models.IntegerField(null=True, default=False)
 
-    def prix_base_mur_floral(self):
+    MurFloral = models.BooleanField(default=False)
+    MurFloral_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_MurFloral(self):
         return 50
 
-    phonebooth = models.BooleanField(default=False)
-    phonebooth_reduc_prix = models.IntegerField(null=True, default=False)
-
-    def prix_base_phonebooth(self):
+    Phonebooth = models.BooleanField(default=False)
+    Phonebooth_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_Phonebooth(self):
         return 50
 
-    livreor = models.BooleanField(default=False)
-    livreor_reduc_prix = models.IntegerField(null=True, default=False)
+    LivreOr = models.BooleanField(default=False)
+    LivreOr_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_LivreOr(self):
+        return 70
 
-    def prix_base_livreor(self):
+    Fond360 = models.BooleanField(default=False)
+    Fond360_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_Fond360(self):
+        return 70
+
+    PanneauBienvenue = models.BooleanField(default=False)
+    PanneauBienvenue_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_PanneauBienvenue(self):
+        return 70
+
+    Holo3D = models.BooleanField(default=False)
+    Holo3D_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_Holo3D(self):
         return 70
 
     magnets = models.IntegerField(null=True, blank=True)

@@ -29,7 +29,7 @@ def get_confirmation_data(request):
         "options": request.POST.get('selectedOption'),
         "magnets_range": int(request.POST.get('magnets_range')),
         "livraison": True if request.POST.get('livraison') else False,
-        "heure_range": int(request.POST.get('heure_range', 0))
+        "heure_range": int(request.POST.get('heure_range')) if request.POST.get('heure_range') else None
     }
     return post_data
 
@@ -84,9 +84,12 @@ def initialize_event(post_data):
         # Création et sauvegarde de l'objet EventOption
         # Initialisation des attributs d'options avec les valeurs par défaut à False
         options_attrs = {
-            'mur_floral': False,
-            'phonebooth': False,
-            'livreor': False,
+            'MurFloral': False,
+            'Phonebooth': False,
+            'LivreOr': False,
+            'Fond360': False,
+            'PanneauBienvenue': False,
+            'Holo3D': False,
         }
 
         # Convertissez options_data en une liste si ce n'est pas déjà le cas
