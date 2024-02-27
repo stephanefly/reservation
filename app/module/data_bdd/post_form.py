@@ -9,6 +9,8 @@ def get_confirmation_data(request):
         nom = request.POST.get('prenom').strip() + " " + request.POST.get('nom').strip()
         raison_sociale = False
 
+    print(int(request.POST.get('magnets_range')))
+
     post_data = {
         "client": {
             "nom": nom,
@@ -24,20 +26,15 @@ def get_confirmation_data(request):
             "code_postal": request.POST.get('code_postal_evenement').strip(),
         },
         "product": request.POST.get('selectedImages'),
-        "options": {
-            "murfloral": True if request.POST.get('murfloral') else False,
-            "phonebooth": True if request.POST.get('phonebooth') else False,
-            "livreor": True if request.POST.get('livreor') else False,
-            "magnets_range": int(request.POST.get('magnets_range', 0)) if int(
-                request.POST.get('magnets_range', 0)) > 0 else None,
-            "livraison": True if request.POST.get('livraison') else False,
-            "heure_range": int(request.POST.get('heure_range', 0))
-        }
+        "options": request.POST.get('selectedOption'),
+        "magnets_range": int(request.POST.get('magnets_range')),
+        "livraison": True if request.POST.get('livraison') else False,
+        "heure_range": int(request.POST.get('heure_range', 0))
     }
     return post_data
 
 def initialize_event(post_data):
-    print(post_data)
+    print("initialize_event : " +str(post_data))
 
     with transaction.atomic():
         # -------------------------------------------------------------
@@ -85,18 +82,28 @@ def initialize_event(post_data):
         event_product.save()
         # -------------------------------------------------------------
         # Création et sauvegarde de l'objet EventOption
-        # Assumons 'duree' doit être un booléen, donc vérifions si 'heure_range' est spécifié pour définir la valeur
-        event_option = EventOption(
-            mur_floral=options_data['murfloral'],
-            phonebooth=options_data['phonebooth'],
-            livreor=options_data['livreor'],
-            magnets=options_data['magnets_range'],
-            livraison=options_data['livraison'],
-            duree=options_data['heure_range'], # Utilisez une logique appropriée pour déterminer la valeur booléenne
-        )
+        # Initialisation des attributs d'options avec les valeurs par défaut à False
+        options_attrs = {
+            'mur_floral': False,
+            'phonebooth': False,
+            'livreor': False,
+        }
+
+        # Convertissez options_data en une liste si ce n'est pas déjà le cas
+        # Assumons que options_data peut être une chaîne avec des options séparées par des virgules
+        options_list = options_data.split(',') if isinstance(options_data, str) else options_data
+        # Mise à jour des attributs en fonction de la présence des options dans options_data
+        for option in options_attrs.keys():
+            if option in options_list:
+                options_attrs[option] = True
+
+        # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
+        event_option = EventOption(**options_attrs)
+        event_option.magnets = post_data['magnets_range']
+        event_option.livraison = post_data['livraison']
+        event_option.heure_range = post_data['heure_range']
         event_option.save()
         # -------------------------------------------------------------
-
 
         # Création de l'objet Event
         event = Event(

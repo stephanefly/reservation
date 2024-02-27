@@ -77,6 +77,24 @@ function setupSelectableImages() {
     });
 }
 
+// Gestion des images sélectionnables
+function setupSelectableOption() {
+    document.querySelectorAll('.selectable-option').forEach(function(item) {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+            let selected = document.getElementById('selectedOption');
+            let value = this.getAttribute('data-value');
+            let selectedValues = selected.value ? selected.value.split(',') : [];
+
+            if (selectedValues.includes(value)) {
+                selectedValues = selectedValues.filter(function(val) { return val !== value; });
+            } else {
+                selectedValues.push(value);
+            }
+            selected.value = selectedValues.join(',');
+        });
+    });
+}
 
 function rangeLivraison() {
     var livraisonInstallationCheckbox = document.getElementById('livraisonInstallation');
@@ -158,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupClientTypeToggle();
     setupSliders();
     setupMagnetsSlider();
-    setupSelectableImages();
+    setupSelectableImages(); // Assurez-vous que c'est le bon nom de fonction
+    setupSelectableOption(); // Ajoutez cette ligne si c'est le nom correct de la fonction que vous voulez exécuter
     rangeLivraison();
     setupLivraisonLock();
 });

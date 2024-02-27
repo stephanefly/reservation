@@ -79,19 +79,9 @@
                 <p>Oui</p>
             </div>
             <div class="form-group">
-                <strong><label for="murfloral">Mur floral ou Backdrop:</label></strong>
-                <p>{% if form_data.murfloral %}Oui{% else %}Non{% endif %}</p>
-                <input type="hidden" name="murfloral" value="{{ form_data.murfloral }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="phonebooth">PhoneBooth:</label></strong>
-                <p>{% if form_data.phonebooth %}Oui{% else %}Non{% endif %}</p>
-                <input type="hidden" name="phonebooth" value="{{ form_data.phonebooth }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="livreor">Livre d'or personnalisé avec table et stylos:</label></strong>
-                <p>{% if form_data.livreor %}Oui{% else %}Non{% endif %}</p>
-                <input type="hidden" name="livreor" value="{{ form_data.livreor }}">
+                <strong><label for="selectedOption">Option(s) sélectionnée(s):</label></strong>
+                <p>{{ form_data.selectedOption}}</p>
+                <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
             </div>
             <div class="form-group">
                 <strong><label for="magnets_range">Magnets Photos:</label></strong>

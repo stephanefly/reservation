@@ -55,8 +55,8 @@ def get_data_card(post_data):
          data['idLabels'].append(label_id)
 
    # DUREE
-   if options_data['heure_range']:
-      duree = str(options_data['heure_range']) +'h'
+   if post_data['heure_range']:
+      duree = str(post_data['heure_range']) +'h'
       data['idLabels'].append(get_id_label(duree))
    else:
       data['idLabels'].append(get_id_label("LOCATION"))
@@ -70,13 +70,13 @@ def get_data_card(post_data):
    data['idLabels'].append(get_id_label(client_data['how_find']))
 
    # OPTION
-   if options_data['murfloral']==1:
-      data['idLabels'].append(get_id_label("Mur Floral"))
-   if options_data['phonebooth'] == 1:
-      data['idLabels'].append(get_id_label("Phonebooth"))
-   if options_data['livreor'] == 1:
-      data['idLabels'].append(get_id_label("Livre d'or"))
-   if options_data['magnets_range']:
+   options = options_data.split(",")
+   for option in options:
+      label_id = get_id_label(option.strip())
+      if label_id:
+         data['idLabels'].append(label_id)
+
+   if post_data['magnets_range'] != 0:
       data['idLabels'].append(get_id_label("Magnets"))
 
    # ENTREPRISE

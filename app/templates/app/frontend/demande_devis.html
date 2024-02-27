@@ -79,7 +79,18 @@
       <img src="static/img/360booth.jpg" alt="360Booth" class="selectable-image" data-value="360Booth">
    </div>
    <input type="hidden" id="selectedImages" name="selectedImages">
-   <br>
+   <br>   <div class="container mt-3">
+            <input class="form-check-input" type="checkbox" value="1" name="livraison" id="livraisonInstallation" checked>
+            <label class="form-label" for="livraisonInstallation">
+            Livraison - Installation - Animateur
+            </label>
+         <div class="row mt-3">
+            <div class="col">
+               <label for="heureRange" class="form-label">Heures : <span id="heureValue">5</span> h</label>
+               <input type="range" class="form-range" min="2" max="7" step="1" value="5" name="heure_range" id="heureRange">
+            </div>
+         </div></div>
+<br>
    <div class="container mt-3">
       <div class="d-flex justify-content-center">
          <label class="form-label">
@@ -102,49 +113,24 @@
             </div>
          </div>
          <br>
-         <div class="row">
-            <div class="col">
-               <input class="form-check-input" type="checkbox" value="1" name="murfloral" id="Murfloral">
-               <label class="form-label" for="Murfloral">
-               Mur floral ou Backdrop (50€ ou offert avec le pack Miroirbooth + 360Booth)
-               </label>
-            </div>
-         </div>
-         <div class="row">
-            <div class="col">
-               <input class="form-check-input" type="checkbox" value="1" name="phonebooth" id="PhoneBooth">
-               <label class="form-label" for="PhoneBooth">
-               PhoneBooth (50€ ou offert avec le pack Miroirbooth + 360Booth)
-               </label>
-            </div>
-         </div>
-          <div class="row">
-            <div class="col">
-               <input class="form-check-input" type="checkbox" value="1" name="livreor" id="LivreOr">
-               <label class="form-label" for="LivreOr">
-               Livre d'or personnalisé avec table et stylos
-               </label>
-            </div>
-         </div>
+             <div class="image-option-container">
+     <img src="static/img/allmur.jpg" alt="MurFloral" class="selectable-option" data-value="MurFloral">
+      <img src="static/img/phonebooth.jpg" alt="Phonebooth" class="selectable-option" data-value="Phonebooth">
+      <img src="static/img/Livre-dor.jpg" alt="LivreOr" class="selectable-option" data-value="LivreOr   ">
+      <img src="static/img/fond360.jpg" alt="Fond360" class="selectable-option" data-value="Fond360">
+     <img src="static/img/Welcomeboard.jpg" alt="PanneauBienvenue" class="selectable-option" data-value="PanneauBienvenue">
+      <img src="static/img/3dHolo.jpg" alt="Holo3D" class="selectable-option" data-value="Holo3D">
+   </div>
+   <input type="hidden" id="selectedOption" name="selectedOption">
          <br>
          <div class="row">
             <div class="col">
                <label for="MagnetsRange" class="form-label">Magnets Photos (50€/100) : <span id="MagnetsNumber">0</span></label>
-               <input type="range" class="form-range" min="0" max="600" step="50" value="0" name="magnets_range" id="MagnetsRange">
+               <input type="range" class="form-range" min="0" max="600" step="50" value=0 name="magnets_range" id="MagnetsRange">
             </div>
          </div>
          <br>
-         <br><br>
-            <input class="form-check-input" type="checkbox" value="1" name="livraison" id="livraisonInstallation" checked>
-            <label class="form-label" for="livraisonInstallation">
-            Livraison - Installation - Animateur
-            </label>
-         <div class="row mt-3">
-            <div class="col">
-               <label for="heureRange" class="form-label">Heures : <span id="heureValue">5</span> h</label>
-               <input type="range" class="form-range" min="2" max="7" step="1" value="5" name="heure_range" id="heureRange">
-            </div>
-         </div>
+         <br>
       </div>
    </div>
    <br>
@@ -257,6 +243,39 @@
    .selectable-image.selected .tick {
    display: block;
    }
+
+      /* Style de base des images sélectionnables */
+   .selectable-option {
+   max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
+   height: auto;
+   cursor: pointer;
+   border: 2px solid transparent;
+   margin: 10px;
+   position: relative;
+   display: block; /* Chaque image prendra sa propre ligne sur les petits écrans */
+   }
+   /* Style du conteneur des images */
+   .image-option-container {
+   display: flex;
+   flex-direction: column; /* Empile les images verticalement par défaut */
+   justify-content: center;
+   align-items: center;
+   }
+   @media (min-width: 768px) { /* Pour les écrans d'au moins 768px de large */
+   .image-option-container {
+   flex-direction: row; /* Aligner les images horizontalement pour les écrans plus larges */
+   flex-wrap: wrap; /* Permet aux images de s'enrouler sur plusieurs lignes si nécessaire */
+   }
+   .selectable-option {
+   max-width: calc(33.333% - 20px); /* Ajuste cette valeur pour contrôler le nombre d'images par ligne, ici 3 images par ligne avec une marge */
+   }
+   }
+   /* Style de l'image lorsqu'elle est sélectionnée */
+   .selectable-option.selected {
+   border: 8px solid #f4dc7f;
+   border-radius: 10px 20px 30px 40px;
+   }
+
 </style>
 
 {% endblock %}

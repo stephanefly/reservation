@@ -40,7 +40,7 @@ def demande_devis(request):
     if request.method == 'POST':
         form_data = request.POST.dict()
         request.session['demande_devis_data'] = form_data
-        print(form_data)
+        print("pré-confirmation " + str(form_data))
         return render(request, 'app/frontend/confirmation.html', {'form_data': form_data})
 
     # Vérifiez d'abord s'il y a des données préremplies dans la session
