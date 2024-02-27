@@ -11,9 +11,12 @@ def parse_int(value, default=0):
 def update_event_option(request, event_option):
     # Définition des options avec leurs méthodes de prix de base et clés POST
     options = [
-        {"name": "mur_floral", "prix_base_method": event_option.prix_base_mur_floral, "prix_brut": "mur_floral_reduc_prix"},
-        {"name": "phonebooth", "prix_base_method": event_option.prix_base_phonebooth, "prix_brut": "phonebooth_reduc_prix"},
-        {"name": "livreor", "prix_base_method": event_option.prix_base_livreor, "prix_brut": "livreor_reduc_prix"},
+        {"name": "MurFloral", "prix_base_method": event_option.prix_base_MurFloral, "prix_brut": "MurFloral_reduc_prix"},
+        {"name": "Phonebooth", "prix_base_method": event_option.prix_base_Phonebooth, "prix_brut": "Phonebooth_reduc_prix"},
+        {"name": "LivreOr", "prix_base_method": event_option.prix_base_LivreOr, "prix_brut": "LivreOr_reduc_prix"},
+        {"name": "Fond360", "prix_base_method": event_option.prix_base_Fond360,"prix_brut": "Fond360_reduc_prix"},
+        {"name": "PanneauBienvenue", "prix_base_method": event_option.prix_base_PanneauBienvenue,"prix_brut": "PanneauBienvenue_reduc_prix"},
+        {"name": "Holo3D", "prix_base_method": event_option.prix_base_Holo3D, "prix_brut": "Holo3D_reduc_prix"},
         # Magnets retiré de cette liste
         # Ajoutez d'autres options ici si nécessaire
     ]
@@ -72,12 +75,15 @@ def update_data(event, request):
     total_option = update_event_option(request, event_option)
 
     # LIVRAISON
-    event_option.livraison = request.POST.get('livraison') == 'on'
-    event_option.livreor = request.POST.get('livreor') == 'on'
-    event_option.mur_floral = request.POST.get('mur_floral') == 'on'
-    event_option.phonebooth = request.POST.get('phonebooth') == 'on'
+    event_option.MurFloral = request.POST.get('MurFloral') == 'on'
+    event_option.Phonebooth = request.POST.get('Phonebooth') == 'on'
+    event_option.LivreOr = request.POST.get('LivreOr') == 'on'
+    event_option.Fond360 = request.POST.get('Fond360') == 'on'
+    event_option.PanneauBienvenue = request.POST.get('PanneauBienvenue') == 'on'
+    event_option.Holo3D = request.POST.get('Holo3D') == 'on'
     event_option.magnets = request.POST.get('magnets', '0')
-    event_option.duree = request.POST.get('duree', None)
+    event_option.livraison = request.POST.get('livraison') == 'on'
+    event_option.duree = request.POST.get('duree', '0')
     event_option.save()
 
     event.prix_brut = parse_int(request.POST.get('prix_brut'))

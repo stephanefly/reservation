@@ -143,15 +143,24 @@ button:hover {
     <div>
         <h3>Options de l'Événement</h3>
 
-        <label><input type="checkbox" name="mur_floral" {% if event.event_option.mur_floral %}checked{% endif %}> Mur Floral</label><br>
-        <label>Mur Floral Reduc<input type="number" name="mur_floral_reduc_prix" value="{{ event.event_option.mur_floral_reduc_prix }}"></label><br>
+        <label><input type="checkbox" name="MurFloral" {% if event.event_option.MurFloral %}checked{% endif %}> Mur Floral</label><br>
+        <label>Mur Floral Reduc<input type="number" name="MurFloral_reduc_prix" value="{{ event.event_option.MurFloral_reduc_prix }}"></label><br>
 
-        <label><input type="checkbox" name="phonebooth" {% if event.event_option.phonebooth %}checked{% endif %}> Phonebooth</label><br>
-        <label>Phonebooth Reduc<input type="number" name="phonebooth_reduc_prix" value="{{ event.event_option.phonebooth_reduc_prix }}"></label><br>
+        <label><input type="checkbox" name="Phonebooth" {% if event.event_option.Phonebooth %}checked{% endif %}> Phonebooth</label><br>
+        <label>Phonebooth Reduc<input type="number" name="Phonebooth_reduc_prix" value="{{ event.event_option.Phonebooth_reduc_prix }}"></label><br>
 
-        <label><input type="checkbox" name="livreor" {% if event.event_option.livreor %}checked{% endif %}> Livre d'or</label><br>
-        <label>Livre D'or Reduc<input type="number" name="livreor_reduc_prix" value="{{ event.event_option.livreor_reduc_prix }}"></label><br>
-    
+        <label><input type="checkbox" name="LivreOr" {% if event.event_option.LivreOr %}checked{% endif %}> Livre d'or</label><br>
+        <label>Livre D'or Reduc<input type="number" name="LivreOr_reduc_prix" value="{{ event.event_option.LivreOr_reduc_prix }}"></label><br>
+
+        <label><input type="checkbox" name="Fond360" {% if event.event_option.Fond360 %}checked{% endif %}> Fond360</label><br>
+        <label>Fond360 Reduc<input type="number" name="Fond360_reduc_prix" value="{{ event.event_option.Fond360_reduc_prix }}"></label><br>
+
+        <label><input type="checkbox" name="PanneauBienvenue" {% if event.event_option.PanneauBienvenue %}checked{% endif %}> PanneauBienvenue</label><br>
+        <label>PanneauBienvenue Reduc<input type="number" name="PanneauBienvenue_reduc_prix" value="{{ event.event_option.PanneauBienvenue_reduc_prix }}"></label><br>
+
+        <label><input type="checkbox" name="Holo3D" {% if event.event_option.Holo3D %}checked{% endif %}> Holo3D</label><br>
+        <label>Holo3D Reduc<input type="number" name="Holo3D_reduc_prix" value="{{ event.event_option.Holo3D_reduc_prix }}"></label><br>
+
         <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
         <label>magnets Reduc<input type="number" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
 

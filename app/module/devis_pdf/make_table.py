@@ -81,9 +81,12 @@ def prix_ligne_product(event):
 
 def prix_ligne_option(event, data_tableau_devis):
     options = [
-        ("Mur Floral / Backdrop", event.event_option.mur_floral, event.event_option.prix_base_mur_floral(), event.event_option.mur_floral_reduc_prix),
-        ("PhoneBooth", event.event_option.phonebooth, event.event_option.prix_base_phonebooth(), event.event_option.phonebooth_reduc_prix),
-        ("Livre d'or personnalisé avec table et stylos", event.event_option.livreor, event.event_option.prix_base_livreor(),event.event_option.livreor_reduc_prix),
+        ("Mur Floral / Backdrop", event.event_option.MurFloral, event.event_option.prix_base_MurFloral(), event.event_option.MurFloral_reduc_prix),
+        ("PhoneBooth", event.event_option.Phonebooth, event.event_option.prix_base_Phonebooth(), event.event_option.Phonebooth_reduc_prix),
+        ("Livre d'or personnalisé avec table et stylos", event.event_option.LivreOr, event.event_option.prix_base_LivreOr(),event.event_option.LivreOr_reduc_prix),
+        ("Backdrop LightRGB 360", event.event_option.Fond360, event.event_option.prix_base_Fond360(),event.event_option.Fond360_reduc_prix),
+        ("Panneau de Bienvenue personnalisé", event.event_option.PanneauBienvenue, event.event_option.prix_base_PanneauBienvenue(),event.event_option.PanneauBienvenue_reduc_prix),
+        ("Panneau Holograme 3D", event.event_option.Holo3D,event.event_option.prix_base_Holo3D(), event.event_option.Holo3D_reduc_prix),
         ("100 Magnets", event.event_option.magnets, event.event_option.prix_base_magnets(event.event_option.magnets) if event.event_option.magnets else 0, event.event_option.magnets_reduc_prix)
     ]
 

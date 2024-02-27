@@ -104,7 +104,7 @@ def initialize_event(post_data):
         event_option = EventOption(**options_attrs)
         event_option.magnets = post_data['magnets_range']
         event_option.livraison = post_data['livraison']
-        event_option.heure_range = post_data['heure_range']
+        event_option.duree = post_data['heure_range']
         event_option.save()
         # -------------------------------------------------------------
 
