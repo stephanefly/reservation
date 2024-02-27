@@ -50,7 +50,7 @@ class EventOption(models.Model):
     Fond360 = models.BooleanField(default=False)
     Fond360_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_Fond360(self):
-        return 70
+        return 100
 
     PanneauBienvenue = models.BooleanField(default=False)
     PanneauBienvenue_reduc_prix = models.IntegerField(null=True, default=False)
@@ -60,7 +60,7 @@ class EventOption(models.Model):
     Holo3D = models.BooleanField(default=False)
     Holo3D_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_Holo3D(self):
-        return 70
+        return 50
 
     magnets = models.IntegerField(null=True, blank=True)
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
