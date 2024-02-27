@@ -50,11 +50,16 @@ def prix_ligne_product(event):
     else:
         acompte = "50"
 
+    if event.event_option.duree == 0:
+        duree = "- Toute la soirée"
+    else:
+        duree = " - " + str(event.event_option.duree) + "h"
+
     if event.reduc_product:
         total = event.prix_brut - event.reduc_product
         # Ajout de la ligne du produit avec les détails de l'événement
         ligne_forfait = [
-            "\n".join(produits_descriptions) + "\nDurée " + str(event.event_option.duree) + "h",
+            "\n".join(produits_descriptions) + "\nDurée " + str(duree),
             str(event.prix_brut)+ " €",
             '1',
             str(event.reduc_product)+ " €",
@@ -64,7 +69,7 @@ def prix_ligne_product(event):
     else:
         total = event.prix_brut
         ligne_forfait = [
-            "\n".join(produits_descriptions) + "\nDurée " + str(event.event_option.duree) + "h",
+            "\n".join(produits_descriptions) + "\nDurée " + str(duree),
             str(total) + " €",
             '1',
             "",
