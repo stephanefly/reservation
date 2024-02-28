@@ -201,8 +201,16 @@ def graph(request):
 def graph_cost(request):
     df_all_week = new_mise_en_week(get_ok_data())
     df_brut_net = mise_en_week_avoir(df_all_week, get_cost_data())
-    script, div = tracage_figure_bar_cost(df_brut_net, 2023, today_date.strftime('%Y-%m-%d'))
-    return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
+    date_now = today_date.strftime('%Y-%m-%d')
+    lst_year = [2024, 2023, 2022]
+    script = []
+    div = []
+    for year in lst_year:
+        components = tracage_figure_bar_cost(df_brut_net, year, date_now)
+        script.append(components[0])
+        div.append(components[1])
+
+    return render(request, 'app/backend/graph_cost.html', {'script': script, 'div': div})
 
 def create_cost(request):
     if request.method == 'POST':
