@@ -87,7 +87,7 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
 
     return components(layout)
 
-def tracage_figure_bar_cost(df_brut_net, date_now):
+def tracage_figure_bar_cost(df_brut_net, annee, date_now):
 
     df_brut_net['Date'] = df_brut_net['Date-Event'] - pd.Timedelta(days=6)
 
@@ -106,13 +106,14 @@ def tracage_figure_bar_cost(df_brut_net, date_now):
     produit = ["BeneficeNet", "membre", "invest", "charges"]
     colors = ['green', "blue", "violet", "red"]
 
-    graph = figure(title=f"Resultat 2023", width=1150, height=300, tools=[hover])
+    graph = figure(title=f"Resultat {annee}", width=1150, height=300, tools=[hover])
     graph.vbar_stack(produit, x='Date-Event', fill_color=colors, color="black", legend_label=produit,
                      source=source, width=datetime.timedelta(weeks=1))
     graph.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
-    graph.x_range = Range1d(pd.to_datetime(f"2023-01-01"), pd.to_datetime(f"2023-12-30"))
+    graph.x_range = Range1d(pd.to_datetime(f"{annee}-01-01"), pd.to_datetime(f"{annee}-12-30"))
     graph.y_range = Range1d(-1000, 3300)
     graph.legend.location = "top_left"
+    graph.legend.background_fill_alpha = 0.2
     graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
                                                   months=["%d %b %Y"],
                                                   years=["%d %b %Y"])
