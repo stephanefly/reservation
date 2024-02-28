@@ -42,7 +42,10 @@ def get_data_card(post_data):
    data['due'] = datetime.strptime(event_data["date"], '%Y-%m-%d')
 
    # DESCRIPTION
-   data['des'] = post_data
+   adresse = ""
+   for key, value in post_data['event'].items():
+      adresse += str(value) + str(" - ")
+   data['desc'] = adresse
 
    # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option, ENTREPIRSE
    data['idLabels'] = []
