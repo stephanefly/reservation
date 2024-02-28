@@ -15,12 +15,12 @@ from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
-from .module.exploitation_trello.lib_graph_all import tracage_figure_bar_bokeh
-from .module.exploitation_trello.mise_en_week import new_mise_en_week
+from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, tracage_figure_bar_cost
+from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
 from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
-from .module.exploitation_trello.make_signed_graph import get_ok_data
+from .module.lib_graph.get_data import get_ok_data, get_cost_data
 
 today_date = datetime.now().date()
 
@@ -194,11 +194,15 @@ def preparation_presta(request):
     return render(request, 'preparation_presta/PRESTA-S06-2024.html')
 
 def graph(request):
-    df_ok_data = get_ok_data()
-    df_all_week = new_mise_en_week(df_ok_data)
+    df_all_week = new_mise_en_week(get_ok_data())
     script, div = tracage_figure_bar_bokeh(df_all_week, today_date.strftime('%Y-%m-%d'))
     return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
 
+def graph_cost(request):
+    df_all_week = new_mise_en_week(get_ok_data())
+    df_brut_net = mise_en_week_avoir(df_all_week, get_cost_data())
+    script, div = tracage_figure_bar_cost(df_brut_net, today_date.strftime('%Y-%m-%d'))
+    return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
 
 def create_cost(request):
     if request.method == 'POST':

@@ -2,6 +2,9 @@
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
+from app.module.lib_graph.get_data import get_ok_data
+
+
 def new_mise_en_week(df_all):
 
     # Nettoyage initial et remplacement des valeurs vides par 0
@@ -37,3 +40,20 @@ def new_mise_en_week(df_all):
     df_all_grouped = pd.concat([df_all_grouped, new_row2], ignore_index=True)
 
     return df_all_grouped
+
+def mise_en_week_avoir(df_all_week, df_cost_all):
+    # Groupement par semaine et type, puis calcul de la somme des coûts pour chaque groupe
+    df_week_type_cost = df_cost_all.groupby([pd.Grouper(key='Date-Event', freq='W'), 'Type'])['Cost'].sum().unstack(
+        fill_value=0).reset_index()
+    # Calcul de la somme des coûts totaux par semaine
+    df_week_cost_sum = df_cost_all.groupby([pd.Grouper(key='Date-Event', freq='W')])['Cost'].sum().reset_index()
+    df_week_cost_all = pd.merge(df_week_cost_sum, df_week_type_cost, on='Date-Event').sort_values('Date-Event')
+    df_week_cost_all['Date-Event'] = pd.to_datetime(df_week_cost_all['Date-Event'].dt.tz_localize(None), format='%Y-%m-%d')
+
+    df_brut_net = df_all_week.join(df_week_cost_all.set_index('Date-Event'), on='Date-Event', how='outer').fillna(0)
+
+    df_brut_net = df_brut_net[['Date-Event', 'Cost', 'Prix', 'charges', 'invest', 'membre']]
+    df_brut_net['BeneficeNet'] = df_brut_net['Prix']-df_brut_net['Cost']
+
+    return df_brut_net
+

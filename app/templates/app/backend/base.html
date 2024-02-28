@@ -53,7 +53,7 @@
                 {% url 'lst_cost' as url %}
                 <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
                    style="padding-right: 25px;padding-left: 25px;">    Côuts  </a>
-                {% url 'rentable' as url %}
+                {% url 'graph_cost' as url %}
                 <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
                    style="padding-right: 25px;padding-left: 25px;">    Rentabilité  </a>
             </ul>

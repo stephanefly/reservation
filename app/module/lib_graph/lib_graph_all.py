@@ -86,3 +86,35 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
     layout = column(graph2024, graph2023, graph2022, graph2021)
 
     return components(layout)
+
+def tracage_figure_bar_cost(df_brut_net, date_now):
+
+    df_brut_net['Date'] = df_brut_net['Date-Event'] - pd.Timedelta(days=6)
+
+    source = ColumnDataSource(data=df_brut_net)
+
+    hover = HoverTool(tooltips=[
+        ("week", "@Date{%d %b %Y}"),
+        ("Brut", "@Prix €"),
+        ("Total Cost", "@Cost €"),
+        ("Membre", "@membre €"),
+        ("Invest", "@invest €"),
+        ("Charge", "@charges €"),
+        ("Net", "@BeneficeNet €")],
+        formatters={'@Date': 'datetime'})
+
+    produit = ["BeneficeNet", "membre", "invest", "charges"]
+    colors = ['green', "blue", "violet", "red"]
+
+    graph = figure(title=f"Resultat 2023", width=1150, height=300, tools=[hover])
+    graph.vbar_stack(produit, x='Date-Event', fill_color=colors, color="black", legend_label=produit,
+                     source=source, width=datetime.timedelta(weeks=1))
+    graph.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
+    graph.x_range = Range1d(pd.to_datetime(f"2023-01-01"), pd.to_datetime(f"2023-12-30"))
+    graph.y_range = Range1d(-1000, 3300)
+    graph.legend.location = "top_left"
+    graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
+                                                  months=["%d %b %Y"],
+                                                  years=["%d %b %Y"])
+
+    return components(graph)

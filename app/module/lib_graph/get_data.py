@@ -1,6 +1,6 @@
 import pandas as pd
 from django.db.models import Q
-from app.models import Event
+from app.models import Event, Cost
 
 
 def get_ok_data():
@@ -36,3 +36,18 @@ def get_ok_data():
 
     return df
 
+def get_cost_data():
+
+    pd.set_option('display.max_columns', None)
+    results = Cost.objects.all().values(
+        'type_cost',
+        'price_cost',
+        'created_at',
+    )
+    df = pd.DataFrame(results)
+    df = df.rename(columns={
+        'type_cost': 'Type',
+        'price_cost': 'Cost',
+        'created_at': 'Date-Event',
+    })
+    return df
