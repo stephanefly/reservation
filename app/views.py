@@ -4,7 +4,6 @@ from django.http import QueryDict
 
 from .forms import CostForm
 from .models import Event, Cost
-from threading import Thread
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 
@@ -13,9 +12,8 @@ from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
-from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh
+from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
 from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
