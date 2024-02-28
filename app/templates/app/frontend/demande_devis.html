@@ -8,8 +8,6 @@
       <h1 class="text-center mb-4">Formulaire d'Événement</h1>
    </div>
    {% csrf_token %}
-
-
    <div class="custom-radio-container">
       <div class="custom-radio-button">
          <input type="radio" id="id_personne" name="type" value="personne" checked>
@@ -30,9 +28,6 @@
       <label for="id_raison_sociale" class="form-label">Raison Sociale :</label>
       <input type="text" class="form-control" id="id_raison_sociale" name="raison_sociale" required value="{{ form.raison_sociale }}">
    </div>
-
-
-
    <div class="row">
       <label for="id_mail" class="form-label">Mail :</label>
       <input type="email" class="form-control" id="id_mail" name="mail" required title="Veuillez entrer une adresse e-mail valide se terminant par une extension de domaine (ex : .com, .fr)." value="{{ form.mail }}">
@@ -61,36 +56,40 @@
    <div class="row">
       <label for="client_how_find" class="form-label">Comment avez-vous trouvé ?</label>
       <select class="form-select" id="client_how_find" name="client_how_find" required>
-         <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' %}selected{% endif %}>INSTAGRAM</option>
-         <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>SITE INTERNET</option>
-         <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>LEBONCOIN</option>
-         <option value="RECOMMENDATION" {% if form.client_how_find == 'RECOMMENDATION' %}selected{% endif %}>RECOMMENDATION</option>
+      <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' %}selected{% endif %}>INSTAGRAM</option>
+      <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>SITE INTERNET</option>
+      <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>LEBONCOIN</option>
+      <option value="RECOMMENDATION" {% if form.client_how_find == 'RECOMMENDATION' %}selected{% endif %}>RECOMMENDATION</option>
       </select>
       <br>
    </div>
-   <br>      <div class="d-flex justify-content-center">
-   <label class="form-label">
+   <br>
+   <div class="d-flex justify-content-center">
+      <label class="form-label">
          <u>Choix de la prestation</u>
-      <p>(cliquer sur la ou les prestations souhaitées)</p>
-   </label></div>
+         <p>(cliquer sur la ou les prestations souhaitées)</p>
+      </label>
+   </div>
    <div class="image-select-container">
       <img src="static/img/photobooth.jpg" alt="Photobooth" class="selectable-image" data-value="Photobooth">
       <img src="static/img/miroirbooth.jpg" alt="Miroirbooth" class="selectable-image" data-value="Miroirbooth">
       <img src="static/img/360booth.jpg" alt="360Booth" class="selectable-image" data-value="360Booth">
    </div>
    <input type="hidden" id="selectedImages" name="selectedImages">
-   <br>   <div class="container mt-3">
-            <input class="form-check-input" type="checkbox" value="1" name="livraison" id="livraisonInstallation" checked>
-            <label class="form-label" for="livraisonInstallation">
-            Livraison - Installation - Animateur
-            </label>
-         <div class="row mt-3">
-            <div class="col">
-               <label for="heureRange" class="form-label">Heures : <span id="heureValue">5</span> h</label>
-               <input type="range" class="form-range" min="2" max="7" step="1" value="5" name="heure_range" id="heureRange">
-            </div>
-         </div></div>
-<br>
+   <br>
+   <div class="container mt-3">
+      <input class="form-check-input" type="checkbox" value="1" name="livraison" id="livraisonInstallation" checked>
+      <label class="form-label" for="livraisonInstallation">
+      Livraison - Installation - Animateur
+      </label>
+      <div class="row mt-3">
+         <div class="col">
+            <label for="heureRange" class="form-label">Heures : <span id="heureValue">5</span> h</label>
+            <input type="range" class="form-range" min="2" max="7" step="1" value="5" name="heure_range" id="heureRange">
+         </div>
+      </div>
+   </div>
+   <br>
    <div class="container mt-3">
       <div class="d-flex justify-content-center">
          <label class="form-label">
@@ -112,21 +111,21 @@
                </label>
             </div>
          </div>
-         <br>   <label class="form-label">
-
-         <p>Pour la reservation d'un pack Miroirbooth/360Booth:</p>
-         <p>Mur Floral et PhoneBooth offerts !</p>
-<p>(cliquer sur les options souhaitées)</p>
-      </label>
-             <div class="image-option-container">
-     <img src="static/img/allmur.jpg" alt="MurFloral" class="selectable-option" data-value="MurFloral">
-      <img src="static/img/phonebooth.jpg" alt="Phonebooth" class="selectable-option" data-value="Phonebooth">
-      <img src="static/img/Livre-dor.jpg" alt="LivreOr" class="selectable-option" data-value="LivreOr">
-      <img src="static/img/fond360.jpg" alt="Fond360" class="selectable-option" data-value="Fond360">
-     <img src="static/img/Welcomeboard.jpg" alt="PanneauBienvenue" class="selectable-option" data-value="PanneauBienvenue">
-      <img src="static/img/3dHolo.jpg" alt="Holo3D" class="selectable-option" data-value="Holo3D">
-   </div>
-   <input type="hidden" id="selectedOption" name="selectedOption">
+         <br>
+         <label class="form-label">
+            <p>Pour la reservation d'un pack Miroirbooth/360Booth:</p>
+            <p>Mur Floral et PhoneBooth offerts !</p>
+            <p>(cliquer sur les options souhaitées)</p>
+         </label>
+         <div class="image-option-container">
+            <img src="static/img/allmur.jpg" alt="MurFloral" class="selectable-option" data-value="MurFloral">
+            <img src="static/img/phonebooth.jpg" alt="Phonebooth" class="selectable-option" data-value="Phonebooth">
+            <img src="static/img/3dHolo.jpg" alt="Holo3D" class="selectable-option" data-value="Holo3D">
+            <img src="static/img/Livre-dor.jpg" alt="LivreOr" class="selectable-option" data-value="LivreOr">
+            <img src="static/img/Welcomeboard.jpg" alt="PanneauBienvenue" class="selectable-option" data-value="PanneauBienvenue">
+            <img src="static/img/fond360.jpg" alt="Fond360" class="selectable-option" data-value="Fond360">
+         </div>
+         <input type="hidden" id="selectedOption" name="selectedOption">
          <br>
          <div class="row">
             <div class="col">
@@ -145,64 +144,59 @@
       </button>
    </div>
 </form>
-
-
-
 <style>
-
-
-          .custom-radio-container {
-      display: flex;
-      justify-content: center;
-      padding: 15px;
-      }
-      .custom-radio-button {
-      display: flex;
-      align-items: center;
-      border: 2px solid #897943;
-      border-radius: 10px;
-      padding: 10px 20px;
-      margin: 0 10px;
-      background-image: linear-gradient(to bottom, #ffef96, #5a4300);;
-      transition: all 0.3s ease;
-      }
-      .custom-radio-button input[type="radio"] {
-      display: none; /* Cache le bouton radio d'origine */
-      }
-      .custom-radio-button label {
-      font-size: 20px;
-      font-weight: bold;
-      color: black;
-      cursor: pointer;
-      text-align: center;
-      }
-      .custom-radio-button input[type="radio"]:checked + label {
-      color: white;
-      border-color: #897943;
-      }
-             button {
-      margin: 20px;
-      background-image: linear-gradient(to bottom, #ffef96, #5a4300);
-      color: white;
-      border: 1px solid goldenrod;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-shadow: 1px 1px 2px black;
-      box-shadow: 2px 2px 4px grey;
-      font-size: 22px;
-      }
-      h1, label, .form-label {
-      margin-bottom: 10px;
-      margin-top: 10px;
-      font-family: "Arial Black", Gadget, sans-serif;
-      letter-spacing: -1px;
-      word-spacing: 0.6px;
-      font-weight: 400;
-      color: white;
-      text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-      font-weight : bold;
-      }
+   .custom-radio-container {
+   display: flex;
+   justify-content: center;
+   padding: 15px;
+   }
+   .custom-radio-button {
+   display: flex;
+   align-items: center;
+   border: 2px solid #897943;
+   border-radius: 10px;
+   padding: 10px 20px;
+   margin: 0 10px;
+   background-image: linear-gradient(to bottom, #ffef96, #5a4300);;
+   transition: all 0.3s ease;
+   }
+   .custom-radio-button input[type="radio"] {
+   display: none; /* Cache le bouton radio d'origine */
+   }
+   .custom-radio-button label {
+   font-size: 20px;
+   font-weight: bold;
+   color: black;
+   cursor: pointer;
+   text-align: center;
+   }
+   .custom-radio-button input[type="radio"]:checked + label {
+   color: white;
+   border-color: #897943;
+   }
+   button {
+   margin: 20px;
+   background-image: linear-gradient(to bottom, #ffef96, #5a4300);
+   color: white;
+   border: 1px solid goldenrod;
+   font-weight: bold;
+   padding: 10px 20px;
+   border-radius: 5px;
+   text-shadow: 1px 1px 2px black;
+   box-shadow: 2px 2px 4px grey;
+   font-size: 22px;
+   }
+   h1, label, .form-label {
+   margin-bottom: 10px;
+   margin-top: 10px;
+   font-family: "Arial Black", Gadget, sans-serif;
+   letter-spacing: -1px;
+   word-spacing: 0.6px;
+   font-weight: 400;
+   color: white;
+   text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+   font-weight : bold;
+   }
    /* Style de base des images sélectionnables */
    .selectable-image {
    max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
@@ -248,8 +242,7 @@
    .selectable-image.selected .tick {
    display: block;
    }
-
-      /* Style de base des images sélectionnables */
+   /* Style de base des images sélectionnables */
    .selectable-option {
    max-width: 100%; /* S'assure que l'image est responsive et s'adapte à la largeur de son conteneur */
    height: auto;
@@ -280,7 +273,5 @@
    border: 8px solid #f4dc7f;
    border-radius: 10px 20px 30px 40px;
    }
-
 </style>
-
 {% endblock %}
