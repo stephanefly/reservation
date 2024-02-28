@@ -15,7 +15,7 @@ from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .module.devis_pdf.mail import send_email
-from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, tracage_figure_bar_cost
+from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
 from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
@@ -202,14 +202,7 @@ def graph_cost(request):
     df_all_week = new_mise_en_week(get_ok_data())
     df_brut_net = mise_en_week_avoir(df_all_week, get_cost_data())
     date_now = today_date.strftime('%Y-%m-%d')
-    lst_year = [2024, 2023, 2022]
-    script = []
-    div = []
-    for year in lst_year:
-        components = tracage_figure_bar_cost(df_brut_net, year, date_now)
-        script.append(components[0])
-        div.append(components[1])
-
+    script, div = table_graph(df_brut_net, date_now)
     return render(request, 'app/backend/graph_cost.html', {'script': script, 'div': div})
 
 def create_cost(request):

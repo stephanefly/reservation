@@ -1,6 +1,6 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
-    
+
 {% for divgraph in div %}
      {{ divgraph | safe }}
 {% endfor %}
@@ -8,5 +8,5 @@
 {% for scriptgraph in script %}
     {{ scriptgraph | safe }}
 {% endfor %}
-    
+
 {% endblock %}

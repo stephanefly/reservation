@@ -1,6 +1,6 @@
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import ColumnDataSource, HoverTool, DatetimeTickFormatter, Range1d
-from bokeh.layouts import column
+from bokeh.layouts import column, grid
 import pandas as pd
 import datetime
 from bokeh.embed import components
@@ -119,3 +119,17 @@ def tracage_figure_bar_cost(df_brut_net, annee, date_now):
                                                   years=["%d %b %Y"])
 
     return components(graph)
+
+
+def table_graph(df_brut_net, date_now):
+
+    lst_year = [2024, 2023, 2022]
+    script = []
+    div = []
+    for year in lst_year:
+        components = tracage_figure_bar_cost(df_brut_net, year, date_now)
+        script.append(components[0])
+        div.append(components[1])
+
+    return script, div
+
