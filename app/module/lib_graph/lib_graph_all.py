@@ -97,13 +97,13 @@ def tracage_figure_bar_cost(df_brut_net, annee, date_now):
         ("week", "@Date{%d %b %Y}"),
         ("Brut", "@Prix €"),
         ("Total Cost", "@Cost €"),
-        ("Membre", "@membre €"),
-        ("Invest", "@invest €"),
-        ("Charge", "@charges €"),
+        ("Membre", "@Membre €"),
+        ("Invest", "@Invest €"),
+        ("Charge", "@Charge €"),
         ("Net", "@BeneficeNet €")],
         formatters={'@Date': 'datetime'})
 
-    produit = ["BeneficeNet", "membre", "invest", "charges"]
+    produit = ["BeneficeNet", "Membre", "Invest", "Charge"]
     colors = ['green', "blue", "violet", "red"]
 
     graph = figure(title=f"Resultat {annee}",width=1150, height=300, tools=[hover])
