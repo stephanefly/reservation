@@ -115,7 +115,7 @@ class Cost(models.Model):
     ]
     type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
     price_cost = models.IntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
 
 
 
