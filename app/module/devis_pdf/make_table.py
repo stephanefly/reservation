@@ -87,7 +87,7 @@ def prix_ligne_option(event, data_tableau_devis):
         ("Backdrop LightRGB 360", event.event_option.Fond360, event.event_option.prix_base_Fond360(),event.event_option.Fond360_reduc_prix),
         ("Panneau de Bienvenue personnalisé", event.event_option.PanneauBienvenue, event.event_option.prix_base_PanneauBienvenue(),event.event_option.PanneauBienvenue_reduc_prix),
         ("Panneau Holograme 3D", event.event_option.Holo3D,event.event_option.prix_base_Holo3D(), event.event_option.Holo3D_reduc_prix),
-        ("100 Magnets", event.event_option.magnets, event.event_option.prix_base_magnets(event.event_option.magnets) if event.event_option.magnets else 0, event.event_option.magnets_reduc_prix)
+        (str(event.event_option.magnets) + " Magnets", event.event_option.magnets, event.event_option.prix_base_magnets(event.event_option.magnets) if event.event_option.magnets else 0, event.event_option.magnets_reduc_prix)
     ]
 
     total=0
