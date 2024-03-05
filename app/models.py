@@ -66,7 +66,7 @@ class EventOption(models.Model):
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
 
     def prix_base_magnets(self, magnets):
-        return (magnets // 50) * 20
+        return (magnets // 50) * 25
 
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
