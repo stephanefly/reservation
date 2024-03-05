@@ -19,6 +19,7 @@ from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 from .module.lib_graph.get_data import get_ok_data, get_cost_data
+from .module.trello.update_data_card import update_data_trello
 
 today_date = datetime.now().date()
 
@@ -91,6 +92,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
+    update_data_trello(event)
 
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
@@ -218,6 +220,7 @@ def info_cost(request, id):
     form = CostForm(instance=cost)
     return render(request, 'app/backend/info_cost.html',
                   {'cost': cost, 'form': form, 'id':id})
+
 @require_http_methods(["POST"])
 def edit_cost(request, id):
     cost = get_object_or_404(Cost, pk=id)
