@@ -93,7 +93,8 @@ def update_data(event, request):
     event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
     event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option
 
-    event.status = 'Calculed'
+    if event.status == 'Initied':
+        event.status = 'Calculed'
     event.save()
 
     return event

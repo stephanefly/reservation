@@ -30,4 +30,5 @@ urlpatterns = [
     path('backend/import_data_avoir/', import_data_avoir, name='import_data_avoir'),
     path('backend/graph/', graph, name='graph'),
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
+    path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
 ]

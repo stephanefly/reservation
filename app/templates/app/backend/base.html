@@ -56,6 +56,9 @@
                 {% url 'graph_cost' as url %}
                 <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
                    style="padding-right: 25px;padding-left: 25px;">    Rentabilité  </a>
+                {% url 'graph_cost_pie' as url %}
+                <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">    Annuel  </a>
             </ul>
         </div>
     </nav>

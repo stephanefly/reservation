@@ -14,6 +14,7 @@ from .module.devis_pdf.generate_pdf import generate_devis_pdf
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
+from .module.lib_graph.lib_pie_chart import table_graph_pie
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
 from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
@@ -204,6 +205,10 @@ def graph_cost(request):
     date_now = today_date.strftime('%Y-%m-%d')
     script, div = table_graph(df_brut_net, date_now)
     return render(request, 'app/backend/graph_cost.html', {'script': script, 'div': div})
+
+def graph_cost_pie(request):
+    script, div = table_graph_pie(get_ok_data(), get_cost_data())
+    return render(request, 'app/backend/graph_cost_pie.html', {'script': script, 'div': div})
 
 def create_cost(request):
     if request.method == 'POST':
