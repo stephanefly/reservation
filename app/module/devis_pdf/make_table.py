@@ -41,7 +41,7 @@ def prix_ligne_product(event):
     if event.event_product.photobooth:
         produits_descriptions.append("Photobooth Tirages Illimités ")
     if event.event_product.miroirbooth:
-        produits_descriptions.append("Miroibooth Tirages Illimités ")
+        produits_descriptions.append("Miroirbooth Tirages Illimités ")
     if event.event_product.videobooth:
         produits_descriptions.append("360VidéoBooth Vidéos Illimités ")
 
