@@ -25,7 +25,7 @@ class EventDetails(models.Model):
     comment = models.TextField(null=True)
     comment_client = models.TextField(null=True)
     horaire = models.CharField(max_length=100, null=True)
-    url_modele = models.URLField(null=True)
+    url_modele = models.TextField(null=True)
 
 
 class EventProduct(models.Model):
