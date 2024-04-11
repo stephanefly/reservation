@@ -7,7 +7,6 @@ from .models import Event, Cost
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 
-from app.module.import_data.import_devis import upload_all_data
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
@@ -16,21 +15,13 @@ from .module.devis_pdf.mail import send_email
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.lib_pie_chart import table_graph_pie
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
-from .module.import_data.import_avoir import upload_avoir
 from .module.trello.create_card import create_card
+from .module.trello.get_trello_data import get_prio_card_name, get_all_card, get_data_card_by_name
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 from .module.lib_graph.get_data import get_ok_data, get_cost_data
-from .module.trello.update_data_card import update_data_trello
+from .module.trello.update_data_card import update_labels_trello
 
 today_date = datetime.now().date()
-
-def import_data_devis(request):
-    upload_all_data()
-    return redirect('lst_devis')
-
-def import_data_avoir(request):
-    upload_avoir()
-    return redirect('lst_devis')
 
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
@@ -63,9 +54,12 @@ def confirmation(request):
 
         post_data = get_confirmation_data(request)
 
-        initialize_event(post_data)
+        event = initialize_event(post_data)
 
-        create_card(post_data)
+        id_card = create_card(post_data)
+
+        event.id_card = id_card
+        event.save()
 
         return redirect('remerciement')  # Redirigez vers une URL de succès après la sauvegarde
 
@@ -93,7 +87,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
-    update_data_trello(event)
+    # update_labels_trello(event)
 
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
@@ -111,6 +105,7 @@ def validation_devis(request, id):
 
     # MAJ TRELLO
     to_acompte_ok(event)
+
 
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
@@ -191,9 +186,6 @@ def envoi_mail_devis(request, event_id):
         return redirect('confirmation_envoi_mail', event_id=event_id)
 
 
-def preparation_presta(request):
-    return render(request, 'preparation_presta/PRESTA-S06-2024.html')
-
 def graph(request):
     df_all_week = new_mise_en_week(get_ok_data())
     script, div = tracage_figure_bar_bokeh(df_all_week, today_date.strftime('%Y-%m-%d'))
@@ -239,3 +231,19 @@ def delete_cost(request, id):
     cost = get_object_or_404(Cost, pk=id)
     cost.delete()
     return redirect('lst_cost')
+
+def regul_id(request):
+
+    all_event = Event.objects.all()
+    for event in all_event:
+        card_trello_data = get_data_card_by_name(event.client.nom)
+        if card_trello_data:
+            event.id_card = card_trello_data['id']
+            event.save()
+
+def generete_planning(request):
+    # Va retrouver les event dans Trello Prio
+    all_trello_cards = get_prio_card_name()
+    print(all_trello_cards)
+
+    # Genere la page html

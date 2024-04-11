@@ -8,7 +8,7 @@ from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
 def create_card(post_data):
 
-   data = get_data_card(post_data)
+   data = data_to_post_on_card(post_data)
 
    url = "https://api.trello.com/1/cards"
 
@@ -28,8 +28,9 @@ def create_card(post_data):
    )
 
    print(response.text)
+   return json.loads(response.text)["id"]
 
-def get_data_card(post_data):
+def data_to_post_on_card(post_data):
 
    data = {}
 

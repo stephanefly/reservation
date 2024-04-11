@@ -1,5 +1,6 @@
 from app.models import Client, EventDetails, EventProduct, EventOption, Event
 from django.db import transaction
+from datetime import datetime
 
 def get_confirmation_data(request):
     if request.POST.get('raison_sociale'):
@@ -116,8 +117,11 @@ def initialize_event(post_data):
             event_option=event_option,
             prix_brut=0,
         )
+        event.num_devis = make_num_devis(event)
         event.prix_brut = prix_brut_calculs(event)
         event.save()
+
+        return event
 
 def prix_brut_calculs(event):
     prix_brut = 0
@@ -139,3 +143,14 @@ def prix_brut_calculs(event):
         event.reduc_product = 250
 
     return prix_brut
+
+def make_num_devis(event):
+
+    # Obtenir la date actuelle
+    today = datetime.now()
+    # Formater la date en 'YYMMDD'
+    formatted_date = today.strftime("%y%m%d")
+
+    # Concaténer la date formatée avec l'ID de l'objet
+    num_devis = formatted_date + str(event.id) + '0'
+    return num_devis

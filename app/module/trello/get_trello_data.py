@@ -70,10 +70,43 @@ def get_id_label(post_label):
       if label['name'] == post_label:
          return label['id']  # Retourner l'ID dès qu'une correspondance est trouvée
 
-
-def get_data_card_trello(name):
-   # Supposons que get_lst_labels() renvoie une liste de labels sous forme de dictionnaires
+def get_data_card_by_name(name):
    for card_json in get_lst_cards():
       if card_json['name'] == name:
-         # Retourner l'ID dès qu'une correspondance est trouvée
          return card_json
+
+def get_prio_card_name():
+
+   # PRIO : "idList": "617aa17f82103360510559e2",
+   url = "https://api.trello.com/1/lists/617aa17f82103360510559e2/cards"
+
+   query = {
+      'key': KEY_TRELLO,
+      'token': TOKEN_TRELLO,
+   }
+
+   response = requests.request(
+      "GET",
+      url,
+      params=query
+   )
+
+   lst_cards = json.loads(response.text)
+   return lst_cards
+
+def get_all_card():
+   url = "https://api.trello.com/1/boards/bm6IDBqY/cards"
+
+   query = {
+      'key': KEY_TRELLO,
+      'token': TOKEN_TRELLO,
+   }
+
+   response = requests.request(
+      "GET",
+      url,
+      params=query
+   )
+
+   all_trello_cards = json.loads(response.text)
+   return all_trello_cards

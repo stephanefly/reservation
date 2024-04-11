@@ -1,13 +1,12 @@
 import requests
 
-from app.module.trello.create_card import get_data_card
-from app.module.trello.get_trello_data import get_data_card_trello, get_id_label
+from app.module.trello.get_trello_data import get_id_label, get_data_card_by_name
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
 
-def update_data_trello(event):
+def update_labels_trello(event):
 
-   data_card = get_data_card_trello(event.client.nom)
+   data_card = get_data_card_by_name(event.client.nom)
 
    label_ids= []
 
