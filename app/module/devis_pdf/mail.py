@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
-
+from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_devis_pdf
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE, MAIL_BCC
 from email.mime.application import MIMEApplication
@@ -35,6 +35,9 @@ def send_email(event):
 
     # Attachez le contenu HTML à l'e-mail
     msg.attach(MIMEText(soup_completed.prettify(), 'html'))
+
+    # MAJ Num DEVIS
+    increment_num_devis(event)
 
     buffer = generate_devis_pdf(event)
 
@@ -71,3 +74,29 @@ def complete_mail(event, soup):
     soup.find('a', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     return soup
+
+def increment_num_devis(event):
+    if event.num_devis :
+        # Extraire le préfixe (date + id) et le chiffre à incrémenter
+        prefix = event.num_devis[:-1]  # Tout sauf le dernier caractère
+        last_digit = event.num_devis[-1:]  # Dernier caractère
+
+        # Vérifier si on doit augmenter la partie numérique à cause d'un '9'
+        if last_digit == '9':
+            # Trouver la fin de l'identifiant et le début du chiffre à incrémenter
+            start_of_increment = len(event.num_devis) - len(event.id) - 1  # Position de départ du chiffre à incrémenter
+            prefix = event.num_devis[:start_of_increment]
+            number_part = event.num_devis[start_of_increment:]
+
+            # Convertir en nombre et incrémenter
+            incremented_number = int(number_part) + 1
+            event.num_devis = prefix + str(incremented_number)
+        else:
+            # Simplement incrémenter le dernier chiffre s'il ne s'agit pas d'un '9'
+            incremented_digit = int(last_digit) + 1
+            event.num_devis = prefix + str(incremented_digit)
+    else:
+        event.num_devis = make_num_devis(event)
+    event.save()
+
+

@@ -22,6 +22,10 @@ class EventDetails(models.Model):
     adresse_evenement = models.CharField(max_length=100)
     ville_evenement = models.CharField(max_length=100)
     code_postal_evenement = models.IntegerField()
+    comment = models.TextField(null=True)
+    comment_client = models.TextField(null=True)
+    horaire = models.CharField(max_length=100, null=True)
+    url_modele = models.URLField(null=True)
 
 
 class EventProduct(models.Model):
@@ -73,6 +77,8 @@ class EventOption(models.Model):
 
 
 class Event(models.Model):
+    id_card = models.CharField(max_length=100, null=True)
+    num_devis = models.CharField(max_length=100, null=True)
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     event_details = models.ForeignKey(EventDetails, on_delete=models.CASCADE)

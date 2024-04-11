@@ -63,6 +63,10 @@ def update_data(event, request):
     event_details.adresse_evenement = request.POST.get('adresse_evenement')
     event_details.ville_evenement = request.POST.get('ville_evenement')
     event_details.code_postal_evenement = request.POST.get('code_postal_evenement')
+    event_details.comment = request.POST.get('comment')
+    print(request.POST.get('comment'))
+    event_details.horaire = request.POST.get('horaire')
+    event_details.url_modele = request.POST.get('url_modele')
     event_details.save()
 
     # Mise à jour des produits de l'événement

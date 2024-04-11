@@ -31,7 +31,7 @@ def generate_devis_pdf(event):
     # ----------------------------------------------------------------------------------------
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFont("Times-Bold", 20)
-    pdf.drawString(50, height - 125, "DEVIS n°D" + datetime.now().strftime('%y%m') +str(int(event.id)+27))
+    pdf.drawString(50, height - 125, "DEVIS n°D" + str(event.num_devis))
     pdf.setFont("Helvetica", 12)
     pdf.setFillColor(colors.darkslategrey)
     pdf.drawString(50, height - 142, "Établi le "+ datetime.now().strftime('%d/%m/%Y'))
