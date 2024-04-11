@@ -109,6 +109,9 @@ button:hover {
     <h2>Informations sur l'Événement</h2>
     <div>
         <h3>Client</h3>
+        <label><b>ID CARD:</b> {{ event.id_card }}</label><br>
+        <label><b>ID CARD:</b> {{ event.num_devis }}</label><br>
+        <br>
         <label><b>Created at :</b> {{ event.created_at|date:'d-m-Y' }}</label><br>
         <label><b>Signed at: </b> {{ event.signer_at|date:'d-m-Y' }}</label><br>
         <br>

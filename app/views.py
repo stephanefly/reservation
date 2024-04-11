@@ -232,19 +232,8 @@ def delete_cost(request, id):
     cost.delete()
     return redirect('lst_cost')
 
-def regul_id(request):
-    lst_trello_card = get_all_card()
-    all_event = Event.objects.all()
-    for event in all_event:
-        for trello_card in lst_trello_card:
-            if event.client.nom == trello_card["name"]:
-                event.id_card = trello_card['id']
-                event.save()
-    return redirect('lst_cost')
 
 def generete_planning(request):
     # Va retrouver les event dans Trello Prio
     all_trello_cards = get_prio_card_name()
     print(all_trello_cards)
-
-    # Genere la page html

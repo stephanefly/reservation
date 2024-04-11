@@ -149,7 +149,7 @@ def make_num_devis(event):
     # Obtenir la date actuelle
     today = datetime.now()
     # Formater la date en 'YYMMDD'
-    formatted_date = today.strftime("%y%m%d")
+    formatted_date = today.strftime("%y%m")
 
     # Concaténer la date formatée avec l'ID de l'objet
     num_devis = formatted_date + str(event.id) + '0'
