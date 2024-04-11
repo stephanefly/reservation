@@ -96,7 +96,9 @@ def increment_num_devis(event):
             incremented_digit = int(last_digit) + 1
             event.num_devis = prefix + str(incremented_digit)
     else:
-        event.num_devis = make_num_devis(event)
+        make_num_devis(event)
+        increment_num_devis(event)
+
     event.save()
 
 
