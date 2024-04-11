@@ -87,7 +87,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
-    # update_labels_trello(event)
+    update_labels_trello(event)
 
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
@@ -233,13 +233,14 @@ def delete_cost(request, id):
     return redirect('lst_cost')
 
 def regul_id(request):
-
+    lst_trello_card = get_all_card()
     all_event = Event.objects.all()
     for event in all_event:
-        card_trello_data = get_data_card_by_name(event.client.nom)
-        if card_trello_data:
-            event.id_card = card_trello_data['id']
-            event.save()
+        for trello_card in lst_trello_card:
+            if event.client.nom == trello_card["name"]:
+                event.id_card = trello_card['id']
+                event.save()
+    return redirect('lst_cost')
 
 def generete_planning(request):
     # Va retrouver les event dans Trello Prio
