@@ -10,6 +10,10 @@ def update_labels_trello(event):
 
    label_ids= []
 
+   for label in data_card["labels"]:
+      if label['color'] != 'blue':
+         label_ids.append(label['id'])
+
    if event.event_option.MurFloral:
       label_ids.append(get_id_label("MurFloral"))
    if event.event_option.Phonebooth:
@@ -22,8 +26,8 @@ def update_labels_trello(event):
       label_ids.append(get_id_label("PanneauBienvenue"))
    if event.event_option.Holo3D:
       label_ids.append(get_id_label("Holo3D"))
-   if event.event_option.magnets != 0:
-      label_ids.append(get_id_label("magnets"))
+   if event.event_option.magnets != "0":
+      label_ids.append(get_id_label("Magnets"))
 
    # Convertir la liste des ID d'étiquettes en une chaîne séparée par des virgules
    label_ids_str = ','.join(label_ids)
@@ -37,9 +41,14 @@ def update_labels_trello(event):
       'value': label_ids_str  # Pour mettre à jour les étiquettes, utilisez cette clé avec les ID des étiquettes
    }
 
-   response = requests.request(
-      "POST",
+   response = requests.put(
       url,
       params=query
    )
 
+
+   # Vérifier si la requête a réussi
+   if response.status_code == 200:
+      print("Carte Mise à Jours")
+   else:
+      print("Erreur lors Mise à Jours de la carte :", response.text)

@@ -31,4 +31,4 @@ urlpatterns = [
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
     # BACKEND PLANNING
     path('backend/generete_planning/', generete_planning, name='generete_planning'),
-]
+

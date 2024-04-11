@@ -70,7 +70,6 @@ def get_id_label(post_label):
       if label['name'] == post_label:
          return label['id']  # Retourner l'ID dès qu'une correspondance est trouvée
 
-
 def get_data_card_by_name(name):
    for card_json in get_lst_cards():
       if card_json['name'] == name:

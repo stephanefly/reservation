@@ -1,3 +1,4 @@
+
 from app.module.trello.get_trello_data import get_data_card_by_name
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
@@ -13,6 +14,7 @@ def move_card_to_list(event, list_id):
     :param list_id: L'ID de la liste cible où la carte doit être déplacée.
     """
     # Fonction pour obtenir l'ID de la carte basée sur le nom de l'événement
+
     card_id = get_data_card_by_name(event.client.nom)["id"]
 
     # URL de l'API pour déplacer une carte
