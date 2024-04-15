@@ -29,6 +29,7 @@ urlpatterns = [
     # BACKEND GRAPH
     path('backend/graph/', graph, name='graph'),
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
+    path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
     # BACKEND PLANNING
     path('backend/generete_planning/', generete_planning, name='generete_planning'),
 ]
