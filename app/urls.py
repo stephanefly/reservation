@@ -32,5 +32,8 @@ urlpatterns = [
     path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
     # BACKEND PLANNING
     path('backend/generete_planning/', generete_planning, name='generete_planning'),
+    # BACKEND TACHES PLANIFIES
+    path('plannif_maj_event/', plannif_maj_event, name='plannif_maj_event'),
+
 ]
 

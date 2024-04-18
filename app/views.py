@@ -1,12 +1,12 @@
 from django.shortcuts import redirect, get_object_or_404
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
 
 from .forms import CostForm
 from .models import Event, Cost
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-
+from .module.data_bdd.taches_planifs import maj_today_event
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
@@ -235,5 +235,11 @@ def delete_cost(request, id):
 
 def generete_planning(request):
     # Va retrouver les event dans Trello Prio
-    all_trello_cards = get_prio_card_name()
-    print(all_trello_cards)
+    prio_trello_cards = get_prio_card_name()
+    print(prio_trello_cards)
+
+def plannif_maj_event(request):
+    maj_today_event()
+    return redirect('lst_devis')
+
+
