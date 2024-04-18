@@ -117,6 +117,8 @@ def initialize_event(post_data):
             event_option=event_option,
             prix_brut=0,
         )
+        event.save()
+
         make_num_devis(event)
         event.prix_brut = prix_brut_calculs(event)
         event.save()
@@ -152,6 +154,5 @@ def make_num_devis(event):
     formatted_date = today.strftime("%y%m")
 
     # Concaténer la date formatée avec l'ID de l'objet
-    num_devis = formatted_date + str(event.id) + '0'
-    event.num_devis = num_devis
+    event.num_devis = formatted_date + str(event.id) + '0'
     event.save()
