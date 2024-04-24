@@ -11,7 +11,6 @@ body {
 <br>
 <table id="table" class="table table-bordered table-striped" style="background-color:white">
     <thead>
-        <th style="display: none">ID</th>
         <th>NOM</th>
         <th>Tel</th>
         <th>Create_at</th>
@@ -22,15 +21,13 @@ body {
     </thead>
     <tbody>
     {% for event in all_event %}
-        <tr onclick="location.href='{% url 'info_event' event.id %}';" style="cursor:pointer;">
-            <td style="display: none" >{{event.id}}</td>
-            <td>{{event.client.nom}}</td>
-            <td>{{event.client.numero_telephone}}</td>
-            <td>{{ event.created_at|date:"Y-m-d" }}</td>
-            <td>{{event.event_details.date_evenement|date:"D" }}</td>
-            <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td>{{event.prix_proposed}}</td>
-            <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
+        <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+        <td>{{event.client.numero_telephone}}</td>
+        <td>{{ event.created_at|date:"Y-m-d" }}</td>
+        <td>{{event.event_details.date_evenement|date:"D" }}</td>
+        <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
+        <td>{{event.prix_proposed}}</td>
+        <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -86,7 +83,6 @@ $(document).ready(function () {
             }
         ],
         columns: [
-            { data: 'id', visible: false },
             { data: 'nom' },
             { data: 'tel' },
             { data: 'created_at' },

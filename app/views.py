@@ -233,10 +233,19 @@ def delete_cost(request, id):
     return redirect('lst_cost')
 
 
-def generete_planning(request):
-    # Va retrouver les event dans Trello Prio
-    prio_trello_cards = get_prio_card_name()
-    print(prio_trello_cards)
+def tableau_de_bord(request):
+    weekday_today = today_date.weekday()
+    start_of_week = today_date - timedelta(days=weekday_today)
+    end_of_week = start_of_week + timedelta(days=12)
+
+    lst_event_prio = Event.objects.filter(
+        signer_at__isnull=False,
+        event_details__date_evenement__range=[start_of_week, end_of_week]
+    ).order_by('event_details__date_evenement')
+
+    return render(request, 'app/backend/tableau_de_bord.html', {
+        'lst_event_prio': lst_event_prio,
+    })
 
 def plannif_maj_event(request):
     maj_today_event()
