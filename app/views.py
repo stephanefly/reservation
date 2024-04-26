@@ -234,13 +234,10 @@ def delete_cost(request, id):
 
 
 def tableau_de_bord(request):
-    weekday_today = today_date.weekday()
-    start_of_week = today_date - timedelta(days=weekday_today)
-    end_of_week = start_of_week + timedelta(days=12)
 
     lst_event_prio = Event.objects.filter(
         signer_at__isnull=False,
-        event_details__date_evenement__range=[start_of_week, end_of_week]
+        event_details__date_evenement__range=[today_date, today_date + timedelta(days=12)]
     ).order_by('event_details__date_evenement')
 
     return render(request, 'app/backend/tableau_de_bord.html', {
