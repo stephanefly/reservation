@@ -75,6 +75,20 @@ class EventOption(models.Model):
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 
+class EventAcompte(models.Model):
+    montant_acompte = models.IntegerField(null=True, blank=True)
+    MOYEN_PAIEMENT = [
+        ('', ''),
+        ('PayPal', 'PayPal'),
+        ('Virement SG', 'Virement SG'),
+        ('Virement LCL', 'Virement LCL'),
+        ('Espece', 'Espece'),
+        ('Lydia', 'Lydia'),
+        ('Revolut', 'Revolut'),
+    ]
+    mode_payement = models.CharField(max_length=255, default='PayPal', choices=MOYEN_PAIEMENT, null=True, blank=True)
+    date_payement = models.DateField(null=True, blank=True)
+    montant_restant = models.IntegerField(null=True, blank=True)
 
 class Event(models.Model):
     id_card = models.CharField(max_length=100, null=True)
@@ -84,6 +98,7 @@ class Event(models.Model):
     event_details = models.ForeignKey(EventDetails, on_delete=models.CASCADE)
     event_product = models.ForeignKey(EventProduct, on_delete=models.CASCADE, null=True)
     event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
+    event_acompte = models.ForeignKey(EventAcompte, on_delete=models.CASCADE, null=True)
 
     prix_brut = models.IntegerField()
     reduc_product = models.IntegerField(null=True, blank=True)

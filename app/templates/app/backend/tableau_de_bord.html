@@ -9,6 +9,8 @@
         <th>DATE-EVENT</th>
         <th>CP</th>
         <th>PRIX</th>
+        <th>Acompte</th>
+        <th>Restant</th>
     </thead>
     <tbody>
     {% for event in lst_event_prio %}
@@ -16,7 +18,9 @@
         <td>{{event.event_details.date_evenement|date:"D" }}</td>
         <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
         <td>{{event.event_details.code_postal_evenement }}</td>
-        <td>{{event.prix_valided}}</td>
+        <td id="prix_valided">{{ event.prix_valided }}</td>
+        <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+        <td id="difference">{{ event.event_acompte.montant_restant }}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -35,13 +39,13 @@
     <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
     <table class="table table-bordered table-striped" style="background-color:white">
         <thead>
-            <th>Horraire</th>
+            <th>Horaire</th>
             <th>Adresse</th>
             <th>Ville</th>
             <th>CP</th>
         </thead>
         <tbody>
-        <td {% if not event.event_details.horaire %} style="background-color: #d51818;" {% endif %}>{{ event.event_details.horaire }}</td>
+        <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
         <td>{{ event.event_details.adresse_evenement }}</td>
         <td>{{ event.event_details.ville_evenement }}</td>
         <td>{{ event.event_details.code_postal_evenement }}</td>
@@ -55,7 +59,7 @@
             <th>360Booth</th>
         </thead>
         <tbody>
-        <td {% if not event.event_details.url_modele %} style="background-color: #d51818;" {% endif %}>{{ event.event_details.url_modele }}</td>
+        <td {% if not event.event_details.url_modele %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.url_modele }}</td>
         <td {% if event.event_product.photobooth %} style="background-color: #18a7d5;" {% endif %}>{{ event.event_product.photobooth }}</td>
         <td {% if event.event_product.miroirbooth %} style="background-color: #c0c923;" {% endif %}>{{ event.event_product.miroirbooth }}</td>
         <td {% if event.event_product.videobooth %} style="background-color: #920fc0;" {% endif %}>{{ event.event_product.videobooth }}</td>
@@ -93,5 +97,5 @@
     </table>
 {% endfor %}
 {% endwith %}
-
+    
 {% endblock %}

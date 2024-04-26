@@ -2,8 +2,8 @@ from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
 
-from .forms import CostForm
-from .models import Event, Cost
+from .forms import CostForm, ValidationForm
+from .models import Event, Cost, EventAcompte
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from .module.data_bdd.taches_planifs import maj_today_event
@@ -93,22 +93,33 @@ def update_event(request, id):
     return redirect('info_event', id=event.id)
 
 
-@require_http_methods(["POST"])
-def validation_devis(request, id):
-    event = get_object_or_404(Event, id=id)
+def confirmation_val_devis(request, id):
+    event = Event.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ValidationForm(request.POST)
+        if form.is_valid():
+            event_acompte = EventAcompte(
+                montant_acompte=form.cleaned_data.get('montant_acompte'),
+                mode_payement=form.cleaned_data.get('mode_payement'),
+                date_payement=form.cleaned_data.get('date_payement'),
+            )
+            event_acompte.save()
+            event.event_acompte = event_acompte  # Associe le nouvel objet EventAcompte à l'événement
+            event_acompte.montant_restant = event.prix_valided - int(event_acompte.montant_acompte)
+            event.signer_at = today_date
+            event.status = 'Acompte OK'
+            event.prix_valided = event.prix_proposed
+            event_acompte.save()
+            event.save()  # Sauvegarde l'objet Event avec toutes les mises à jou
 
-    # MAJ BDD
-    event.signer_at = today_date
-    event.status = 'Acompte OK'
-    event.prix_valided = event.prix_proposed
-    event.save()
+            # MAJ TRELLO
+            to_acompte_ok(event)
 
-    # MAJ TRELLO
-    to_acompte_ok(event)
+            return redirect('lst_devis')  # Remplacez par l'URL de votre choix
+    else:
+        form = ValidationForm()
+    return render(request, 'app/backend/confirmation_val_devis.html', {'form': form, 'event' : event})
 
-
-    # Rediriger vers la page de détails de l'événement mise à jour
-    return redirect('info_event', id=event.id)
 
 @require_http_methods(["POST"])
 def refused_devis(request, id):

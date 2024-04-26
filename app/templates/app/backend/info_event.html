@@ -197,7 +197,7 @@ button:hover {
         {% csrf_token %}
         <button type="submit" class="button-send">Envoi DEVIS</button>
     </form>
-        <form method="POST" action="{% url 'validation_devis' event.id %}">
+        <form method="POST" action="{% url 'confirmation_val_devis' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-valid">Valider DEVIS</button>
     </form>
