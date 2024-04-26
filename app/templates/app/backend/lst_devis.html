@@ -21,12 +21,17 @@ body {
     </thead>
     <tbody>
     {% for event in all_event %}
-        <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+        {% url 'tableau_de_bord' as url %}
+        <td><a href="{{ url }}info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
         <td>{{event.client.numero_telephone}}</td>
         <td>{{ event.created_at|date:"Y-m-d" }}</td>
         <td>{{event.event_details.date_evenement|date:"D" }}</td>
         <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
-        <td>{{event.prix_proposed}}</td>
+        {% if event.prix_valided %}
+            <td>{{event.prix_valided}}</td>
+        {% else %}
+            <td>{{event.prix_proposed}}</td>
+        {% endif %}
         <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
         </tr>
     {% endfor %}
