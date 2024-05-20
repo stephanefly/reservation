@@ -104,11 +104,11 @@ def confirmation_val_devis(request, id):
                 date_payement=form.cleaned_data.get('date_payement'),
             )
             event_acompte.save()
+            event.prix_valided = event.prix_proposed
             event.event_acompte = event_acompte  # Associe le nouvel objet EventAcompte à l'événement
-            event_acompte.montant_restant = event.prix_valided - int(event_acompte.montant_acompte)
+            event_acompte.montant_restant = event.prix_proposed - int(event_acompte.montant_acompte)
             event.signer_at = today_date
             event.status = 'Acompte OK'
-            event.prix_valided = event.prix_proposed
             event_acompte.save()
             event.save()  # Sauvegarde l'objet Event avec toutes les mises à jou
 
