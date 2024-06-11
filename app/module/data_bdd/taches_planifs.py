@@ -69,15 +69,13 @@ def get_and_delete_attachement(id_card_plannif):
         'key': KEY_TRELLO,
         'token': TOKEN_TRELLO,
     }
-    print(url)
+
     response = requests.get(
         url,
         params=query
     )
-    print(response)
 
     attachments = json.loads(response.text)
-    print(attachments)
 
     # URL de l'API pour supprimer une pièce jointe
     url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments/{attachments[0]['id']}"
@@ -88,7 +86,7 @@ def get_and_delete_attachement(id_card_plannif):
 def make_planning():
 
     # Paramètres pour créer une carte
-    id_card_plannif = "666849763ceda7f88c19f0b6",
+    id_card_plannif = "666849763ceda7f88c19f0b6"
 
     file_path = create_html_planning()
 
