@@ -38,10 +38,7 @@ def create_html_planning():
     return file_path
 
 
-def attach_html_planning(file_path):
-
-    # Paramètres pour créer une carte
-    id_card_plannif = "666849763ceda7f88c19f0b6",
+def attach_html_planning(file_path, id_card_plannif):
 
     # URL pour ajouter une pièce jointe à la carte
     url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments"
@@ -62,10 +59,38 @@ def attach_html_planning(file_path):
         )
 
 
+def get_and_delete_attachement(id_card_plannif):
+
+    # URL de l'API pour obtenir les pièces jointes
+    url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments"
+
+    query = {
+        'key': KEY_TRELLO,
+        'token': TOKEN_TRELLO,
+    }
+
+    response = requests.get(
+        url,
+        params=query
+    )
+
+    attachments = response.json()
+
+    # URL de l'API pour supprimer une pièce jointe
+    url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments/{attachments[0]['id']}"
+
+    requests.delete(url, params=query)
+
+
 def make_planning():
+
+    # Paramètres pour créer une carte
+    id_card_plannif = "666849763ceda7f88c19f0b6",
 
     file_path = create_html_planning()
 
-    attach_html_planning(file_path)
+    get_and_delete_attachement(id_card_plannif)
+
+    attach_html_planning(file_path, id_card_plannif)
 
 
