@@ -1,12 +1,15 @@
+import os
+
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
+from django.template.loader import render_to_string
 
 from .forms import CostForm, ValidationForm
 from .models import Event, Cost, EventAcompte
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from .module.data_bdd.taches_planifs import maj_today_event
+from .module.data_bdd.taches_planifs import maj_today_event, make_planning
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_devis_pdf
@@ -255,8 +258,12 @@ def tableau_de_bord(request):
         'lst_event_prio': lst_event_prio,
     })
 
-def plannif_maj_event(request):
+# TACHE PLANIFIEES
+def maj_status_event(request):
     maj_today_event()
-    return redirect('lst_devis')
+    return redirect('tableau_de_bord')
 
 
+def planning(request):
+    make_planning()
+    return redirect('tableau_de_bord')
