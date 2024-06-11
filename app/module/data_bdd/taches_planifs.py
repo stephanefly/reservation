@@ -74,7 +74,7 @@ def get_and_delete_attachement(id_card_plannif):
         params=query
     )
 
-    attachments = response.json()
+    attachments = json.loads(response.text)
 
     # URL de l'API pour supprimer une pièce jointe
     url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments/{attachments[0]['id']}"
