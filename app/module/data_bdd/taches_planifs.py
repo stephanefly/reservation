@@ -32,10 +32,7 @@ def create_html_planning():
     context = {'lst_event_prio': lst_event_prio}
     html_content = render_to_string('app/backend/planning.html', context)
 
-    # Spécifier le chemin et le nom du fichier HTML à sauvegarder
-    file_path = os.path.join(r'app\templates\app', 'planning.html')
-
-    # Écrire le contenu HTML dans le fichier
+    file_path = r"app/planning.html"
     with open(file_path, 'w') as f:
         f.write(html_content)
 
