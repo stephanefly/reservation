@@ -1,7 +1,6 @@
 import os
 from datetime import timezone, datetime, timedelta
 import requests
-from django.contrib.sites import requests
 from django.template.loader import render_to_string
 
 from app.models import Event
