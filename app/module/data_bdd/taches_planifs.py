@@ -70,6 +70,6 @@ def make_planning():
 
     file_path = create_html_planning()
 
-    # attach_html_planning(file_path)
+    attach_html_planning(file_path)
 
 
