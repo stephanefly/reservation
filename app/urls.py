@@ -30,10 +30,13 @@ urlpatterns = [
     path('backend/graph/', graph, name='graph'),
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
     path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
+
     # BACKEND TABLEAU DE BORD
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
+
     # BACKEND TACHES PLANIFIES
-    path('plannif_maj_event/', plannif_maj_event, name='plannif_maj_event'),
+    path('planning/', planning, name='planning'),
+    path('maj_status_event/', maj_status_event, name='maj_status_event'),
 
 ]
 

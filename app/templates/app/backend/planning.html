@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titre de la page</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+    <h1> <a href="https://trello.com/b/UyVMrXjp"> CHECKLIST A VERIFIER </a></h1>
+    <br>
+    <table id="table" class="table table-bordered table-striped" style="background-color:white">
+        <thead>
+            <tr>
+                <th>NOM</th>
+                <th>J</th>
+                <th>DATE-EVENT</th>
+                <th>CP</th>
+                <th>PRIX</th>
+                <th>Acompte</th>
+                <th>Restant</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in lst_event_prio %}
+            <tr>
+                <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+                <td>{{ event.event_details.date_evenement|date:"D" }}</td>
+                <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                <td>{{ event.event_details.code_postal_evenement }}</td>
+                <td id="prix_valided">{{ event.prix_valided }}</td>
+                <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% with prev_date=None %}
+    {% for event in lst_event_prio %}
+        {% ifchanged event.event_details.date_evenement %}
+            {% if prev_date %}
+                <hr class="my-4 mx-auto" style="color: #1b1b1b;">
+            {% endif %}
+            <br>
+            <div class="date-block" style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
+                <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
+            </div>
+        {% endifchanged %}
+        <br>
+        <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
+        <table class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+                <tr>
+                    <th>Horraire</th>
+                    <th>Adresse</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
+                    <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+                <tr>
+                    <th>Modele</th>
+                    <th>Photobooth</th>
+                    <th>Miroirbooth</th>
+                    <th>360Booth</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td {% if not event.event_details.url_modele %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.url_modele }}</td>
+                    <td {% if event.event_product.photobooth %} style="background-color: #18a7d5;" {% endif %}>{{ event.event_product.photobooth }}</td>
+                    <td {% if event.event_product.miroirbooth %} style="background-color: #c0c923;" {% endif %}>{{ event.event_product.miroirbooth }}</td>
+                    <td {% if event.event_product.videobooth %} style="background-color: #920fc0;" {% endif %}>{{ event.event_product.videobooth }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="table_option" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+                <tr>
+                    <th>MurFloral</th>
+                    <th>Phonebooth</th>
+                    <th>LivreOr</th>
+                    <th>Fond360</th>
+                    <th>PanneauBienvenue</th>
+                    <th>Holo3D</th>
+                    <th>magnets</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td {% if event.event_option.MurFloral %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.MurFloral }}</td>
+                    <td {% if event.event_option.Phonebooth %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.Phonebooth }}</td>
+                    <td {% if event.event_option.LivreOr %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.LivreOr }}</td>
+                    <td {% if event.event_option.Fond360 %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.Fond360 }}</td>
+                    <td {% if event.event_option.PanneauBienvenue %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.PanneauBienvenue }}</td>
+                    <td {% if event.event_option.Holo3D %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.Holo3D }}</td>
+                    <td {% if event.event_option.magnets != 0 %} style="background-color: #308f00;" {% endif %}>{{ event.event_option.magnets }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+                <tr>
+                    <th>Commentaire Client</th>
+                    <th>Commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ event.event_details.comment_client }}</td>
+                    <td>{{ event.event_details.comment }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+    {% endwith %}
+</div>
+
+</body>
+</html>
