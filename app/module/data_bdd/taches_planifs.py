@@ -41,34 +41,30 @@ def create_html_planning():
 
 def attach_html_planning(file_path, id_card_plannif):
 
-    # URL pour ajouter une pièce jointe à la carte
     url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments"
 
-    # Ouvrir le fichier HTML pour le télécharger
     with open(file_path, 'rb') as file:
-
         query = {
             'key': KEY_TRELLO,
             'token': TOKEN_TRELLO,
-            'file': file,
             'name': 'PLANNING-S24'
         }
-        response = requests.request(
-            "POST",
+
+        response = requests.post(
             url,
             params=query,
+            files={'file': file}
         )
 
 
 def get_and_delete_attachement(id_card_plannif):
 
-    # URL de l'API pour obtenir les pièces jointes
-    url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments"
-
     query = {
         'key': KEY_TRELLO,
         'token': TOKEN_TRELLO,
     }
+    # URL de l'API pour obtenir les pièces jointes
+    url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments"
 
     response = requests.get(
         url,
@@ -77,10 +73,14 @@ def get_and_delete_attachement(id_card_plannif):
 
     attachments = json.loads(response.text)
 
-    # URL de l'API pour supprimer une pièce jointe
-    url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments/{attachments[0]['id']}"
+    if attachments:
+        # URL de l'API pour supprimer une pièce jointe
+        url = f"https://api.trello.com/1/cards/{id_card_plannif}/attachments/{attachments[0]['id']}"
 
-    requests.delete(url, params=query)
+        requests.delete(
+            url,
+            params=query
+        )
 
 
 def make_planning():
