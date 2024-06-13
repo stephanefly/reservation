@@ -47,7 +47,7 @@ def attach_html_planning(file_path, id_card_plannif):
         query = {
             'key': KEY_TRELLO,
             'token': TOKEN_TRELLO,
-            'name': 'PLANNING-S24'
+            'name': 'PLANNING.html'
         }
 
         response = requests.post(
