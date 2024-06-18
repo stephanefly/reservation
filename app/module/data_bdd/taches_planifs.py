@@ -18,6 +18,38 @@ def maj_today_event():
             event.status = "Refused"
         event.save()
 
+def get_member_list(lst_event_prio):
+
+    event_lst_member = {}
+    for event in lst_event_prio:
+        lst_member = []
+        id_card = event.id_card
+
+        # Paramètres de la requête
+        query = {
+            'key': KEY_TRELLO,
+            'token': TOKEN_TRELLO,
+        }
+
+        # URL de l'API pour obtenir les labels
+        url = f"https://api.trello.com/1/cards/{id_card}/labels"
+
+        # Envoi de la requête GET
+        response = requests.get(
+            url,
+            params=query
+        )
+
+        # Traitement de la réponse
+        if response.status_code == 200:
+            labels = response.json()
+            for label in labels:
+                if label['color'] == 'orange_dark':
+                    lst_member.append(label['name'])
+        event_lst_member[event] = lst_member
+
+    return event_lst_member
+
 
 def create_html_planning():
     today_date = datetime.now()
@@ -28,8 +60,10 @@ def create_html_planning():
         event_details__date_evenement__range=[today_date, end_week_date]
     ).order_by('event_details__date_evenement')
 
+    event_lst_member = get_member_list()
+
     # Générer le contenu HTML à partir d'un modèle
-    context = {'lst_event_prio': lst_event_prio}
+    context = {'lst_event_prio': lst_event_prio, 'event_lst_member': event_lst_member}
     html_content = render_to_string('app/backend/planning.html', context)
 
     file_path = r'app\templates\app\planning-complet.html'

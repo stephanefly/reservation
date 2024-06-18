@@ -73,7 +73,9 @@
                <tr>
                   <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
                   <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
-                  <td></td>
+                            {% for member in event_lst_member|get_item:event %}
+                                {{ member }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
                </tr>
             </tbody>
          </table>
