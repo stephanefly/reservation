@@ -46,7 +46,7 @@ def get_member_list(lst_event_prio):
             for label in labels:
                 if label['color'] == 'orange_dark':
                     lst_member.append(label['name'])
-        event_lst_member[event] = lst_member
+        event_lst_member[event.client.nom] = lst_member
 
     return event_lst_member
 
@@ -60,7 +60,8 @@ def create_html_planning():
         event_details__date_evenement__range=[today_date, end_week_date]
     ).order_by('event_details__date_evenement')
 
-    event_lst_member = get_member_list()
+    event_lst_member = get_member_list(lst_event_prio)
+    print(event_lst_member)
 
     # Générer le contenu HTML à partir d'un modèle
     context = {'lst_event_prio': lst_event_prio, 'event_lst_member': event_lst_member}
