@@ -25,14 +25,17 @@ class EventDetails(models.Model):
     comment = models.TextField(null=True)
     comment_client = models.TextField(null=True)
     horaire = models.CharField(max_length=100, null=True)
-    url_modele = models.TextField(null=True)
 
+class EventTemplate(models.Model):
+    url_modele = models.TextField(null=True)
+    text_template = models.TextField(null=True)
 
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
     miroirbooth = models.BooleanField(default=False)
     videobooth = models.BooleanField(default=False)
-
+    voguebooth = models.BooleanField(default=False)
+    ipadbooth = models.BooleanField(default=False)
 
 class EventOption(models.Model):
 
@@ -99,6 +102,7 @@ class Event(models.Model):
     event_product = models.ForeignKey(EventProduct, on_delete=models.CASCADE, null=True)
     event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
     event_acompte = models.ForeignKey(EventAcompte, on_delete=models.CASCADE, null=True)
+    event_template = models.ForeignKey(EventTemplate, on_delete=models.CASCADE, null=True)
 
     prix_brut = models.IntegerField()
     reduc_product = models.IntegerField(null=True, blank=True)
@@ -137,6 +141,4 @@ class Cost(models.Model):
     type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
     price_cost = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
-
-
 

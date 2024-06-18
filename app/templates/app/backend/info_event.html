@@ -137,14 +137,17 @@ button:hover {
         <label>Commentaire Client: <br><textarea name="comment_client" value="{{ event.event_details.comment_client }}">{{ event.event_details.comment_client }}</textarea></label>  <br>
         <label>Commentaire: <br><textarea name="comment" value="{{ event.event_details.comment }}">{{ event.event_details.comment }}</textarea></label>  <br>
         <label>Horaire: <input type="time" name="horaire" value="{{ event.event_details.horaire }}"></label><br>
-        <label>Url_modèle: <input type="text" name="url_modele" value="{{ event.event_details.url_modele }}"></label><br>
+        <label>Url_modèle: <input type="text" name="url_modele" value="{{ event.event_template.url_modele }}"></label><br>
+        <label>Text modèle: <br><textarea type="text" name="url_modele" value="{{ event.event_template.text_template }}"></textarea><br>
     </div>
 
     <div>
         <h3>Produits de l'Événement</h3>
         <label><input type="checkbox" name="photobooth" {% if event.event_product.photobooth %}checked{% endif %}> Photobooth</label><br>
         <label><input type="checkbox" name="miroirbooth" {% if event.event_product.miroirbooth %}checked{% endif %}> Miroirbooth</label><br>
-        <label><input type="checkbox" name="videobooth" {% if event.event_product.videobooth %}checked{% endif %}> Videobooth</label><br>
+        <label><input type="checkbox" name="videobooth" {% if event.event_product.videobooth %}checked{% endif %}> Videobooth</label><br>        
+        <label><input type="checkbox" name="ipadbooth" {% if event.event_product.ipadbooth %}checked{% endif %}> Ipadbooth</label><br>
+        <label><input type="checkbox" name="voguebooth" {% if event.event_product.voguebooth %}checked{% endif %}> VogueBooth</label><br>
     </div>
 
     <div>

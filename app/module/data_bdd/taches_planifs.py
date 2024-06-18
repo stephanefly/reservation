@@ -32,7 +32,7 @@ def create_html_planning():
     context = {'lst_event_prio': lst_event_prio}
     html_content = render_to_string('app/backend/planning.html', context)
 
-    file_path = r"app/planning.html"
+    file_path = r'app\templates\app\planning-complet.html'
     with open(file_path, 'w') as f:
         f.write(html_content)
 
