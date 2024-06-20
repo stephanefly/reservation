@@ -112,7 +112,7 @@ def tracage_figure_bar_cost(df_brut_net, year, date_now):
                      source=source, width=datetime.timedelta(weeks=1))
     graph.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
     graph.x_range = Range1d(pd.to_datetime(f"{year}-01-01"), pd.to_datetime(f"{year}-12-30"))
-    graph.y_range = Range1d(-1000, 3300)
+    graph.y_range = Range1d(-1000, 4500)
     # graph.legend.location = "top_left"
     # graph.legend.background_fill_alpha = 0.2
     graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
