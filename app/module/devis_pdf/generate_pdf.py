@@ -253,7 +253,7 @@ def generate_pdf_facture(event):
     else:
         pdf.setFont("Helvetica", 12)
         pdf.setFillColor(colors.black)
-        pdf.drawString(450, y_position - 25, "Total :")
+        pdf.drawString(450, y_position - 25, "Total HT:")
         pdf.drawString(507, y_position - 25, str(total_brut_devis) + " €")
         pdf.setFont("Helvetica", 8)
         pdf.setFillColor(colors.darkslategrey)
