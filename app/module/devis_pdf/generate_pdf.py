@@ -251,13 +251,17 @@ def generate_pdf_facture(event):
         pdf.drawString(463, y_position - 55, "Total :")
         pdf.drawString(507, y_position - 55, total_devis + " €")
     else:
-        pdf.setFont("Helvetica", 12)
+        pdf.setFont("Helvetica", 10)
         pdf.setFillColor(colors.black)
         pdf.drawString(450, y_position - 25, "Total HT:")
         pdf.drawString(507, y_position - 25, str(total_brut_devis) + " €")
+        pdf.setFont("Helvetica", 12)
+        pdf.setFillColor(colors.black)
+        pdf.drawString(435, y_position - 40, "Total TTC:")
+        pdf.drawString(507, y_position - 40, str(total_brut_devis) + " €")
         pdf.setFont("Helvetica", 8)
         pdf.setFillColor(colors.darkslategrey)
-        pdf.drawString(395, y_position - 38, "TVA non-applicable, article 293B du CGI")
+        pdf.drawString(395, y_position - 55, "TVA non-applicable, article 293B du CGI")
 
     # ----------------------------------------------------------------------------------------
     # Ajouter les totaux et les conditions
