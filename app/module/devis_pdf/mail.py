@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
 from app.module.data_bdd.post_form import make_num_devis
-from app.module.devis_pdf.generate_pdf import generate_devis_pdf
+from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE, MAIL_BCC
 from email.mime.application import MIMEApplication
 
@@ -39,7 +39,7 @@ def send_email(event):
     # MAJ Num DEVIS
     increment_num_devis(event)
 
-    buffer = generate_devis_pdf(event)
+    buffer = generate_pdf_devis(event)
 
     # Attacher le PDF
     pdf_name = 'Devis-' +  str(event.client.nom) + ".pdf"
@@ -74,6 +74,7 @@ def complete_mail(event, soup):
     soup.find('a', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     return soup
+
 
 def increment_num_devis(event):
     if event.num_devis :

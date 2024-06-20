@@ -12,7 +12,7 @@ from django.shortcuts import render
 from .module.data_bdd.taches_planifs import maj_today_event, make_planning
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
-from .module.devis_pdf.generate_pdf import generate_devis_pdf
+from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
@@ -26,6 +26,7 @@ from .module.trello.update_data_card import update_labels_trello
 
 today_date = datetime.now().date()
 
+# FRONTEND
 def demande_devis(request):
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
     today_date_str = today_date.strftime("%Y-%m-%d")
@@ -72,14 +73,17 @@ def confirmation(request):
 def remerciement(request):
     return render(request, 'app/frontend/remerciement.html')
 
+# -------------------------------------------------------
 
 def lst_devis(request):
     all_event = Event.objects.all().order_by('-created_at')
     return render(request, 'app/backend/lst_devis.html', {'all_event': all_event, })
 
+
 def lst_cost(request):
     all_cost = Cost.objects.all().order_by('-created_at')
     return render(request, 'app/backend/lst_cost.html', {'all_cost': all_cost, })
+
 
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
@@ -138,6 +142,7 @@ def refused_devis(request, id):
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)
 
+
 # Vue qui affiche la page de confirmation
 def confirmation_del_devis(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -161,18 +166,29 @@ def del_devis(request, id):
     return redirect('lst_devis')
 
 
-def generate_pdf(request, event_id):
+def generate_devis_pdf(request, event_id):
     # Récupérez les données de l'événement en fonction de l'event_id
     event = Event.objects.get(id=event_id)
 
-    buffer = generate_devis_pdf(event)
+    buffer = generate_pdf_devis(event)
+
+    # Réinitialisez le tampon et renvoyez le PDF en tant que réponse HTTP
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="devis.pdf"'
+    return response
+
+def generate_facture_pdf(request, event_id):
+    # Récupérez les données de l'événement en fonction de l'event_id
+    event = Event.objects.get(id=event_id)
+
+    buffer = generate_pdf_facture(event)
 
     # Réinitialisez le tampon et renvoyez le PDF en tant que réponse HTTP
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="facture.pdf"'
     return response
-
 
 # Vue qui affiche la page de confirmation
 def confirmation_envoi_mail(request, event_id):
@@ -206,6 +222,7 @@ def graph(request):
     script, div = tracage_figure_bar_bokeh(df_all_week, today_date.strftime('%Y-%m-%d'))
     return render(request, 'app/backend/graph_all.html', {'script': script, 'div': div})
 
+
 def graph_cost(request):
     df_all_week = new_mise_en_week(get_ok_data())
     df_brut_net = mise_en_week_avoir(df_all_week, get_cost_data())
@@ -213,9 +230,11 @@ def graph_cost(request):
     script, div = table_graph(df_brut_net, date_now)
     return render(request, 'app/backend/graph_cost.html', {'script': script, 'div': div})
 
+
 def graph_cost_pie(request):
     script, div = table_graph_pie(get_ok_data(), get_cost_data())
     return render(request, 'app/backend/graph_cost_pie.html', {'script': script, 'div': div})
+
 
 def create_cost(request):
     if request.method == 'POST':
@@ -227,11 +246,13 @@ def create_cost(request):
         form = CostForm()
     return render(request, 'app/backend/create_cost.html', {'form': form})
 
+
 def info_cost(request, id):
     cost = get_object_or_404(Cost, pk=id)
     form = CostForm(instance=cost)
     return render(request, 'app/backend/info_cost.html',
                   {'cost': cost, 'form': form, 'id':id})
+
 
 @require_http_methods(["POST"])
 def edit_cost(request, id):
@@ -240,6 +261,7 @@ def edit_cost(request, id):
     if form.is_valid():
         form.save()
         return redirect('lst_cost')
+
 
 @require_http_methods(["POST"])
 def delete_cost(request, id):
@@ -258,6 +280,7 @@ def tableau_de_bord(request):
     return render(request, 'app/backend/tableau_de_bord.html', {
         'lst_event_prio': lst_event_prio,
     })
+
 
 # TACHE PLANIFIEES
 def maj_status_event(request):

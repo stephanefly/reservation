@@ -192,11 +192,14 @@ button:hover {
     <button type="submit" class="button-save">Sauvegarder les modifications</button>
 </form>
     {%  if event.prix_proposed %}
-    <form method="POST" action="{% url 'generate_pdf' event.id %}">
+    <form method="POST" action="{% url 'generate_devis_pdf' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-generate">Générer DEVIS</button>
     </form>
-    
+        <form method="POST" action="{% url 'generate_facture_pdf' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="button-generate">Générer FACTURE</button>
+    </form>
     <form method="POST" action="{% url 'confirmation_envoi_mail' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-send">Envoi DEVIS</button>
