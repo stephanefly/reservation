@@ -36,8 +36,8 @@ urlpatterns = [
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
 
     # BACKEND TACHES PLANIFIES
-    path('planning/', planning, name='planning'),
-    path('maj_status_event/', maj_status_event, name='maj_status_event'),
+    path('tache_planif/', tache_planif, name='tache_planif'),
+
 
 ]
 

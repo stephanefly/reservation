@@ -291,11 +291,8 @@ def tableau_de_bord(request):
 
 
 # TACHE PLANIFIEES
-def maj_status_event(request):
+def tache_planif(request):
     maj_today_event()
-    return redirect('tableau_de_bord')
-
-
-def planning(request):
     make_planning()
     return redirect('tableau_de_bord')
+
