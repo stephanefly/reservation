@@ -130,3 +130,9 @@ def make_planning():
     attach_html_planning(file_path, id_card_plannif)
 
 
+if __name__ == "__main__":
+    make_planning()
+    maj_today_event()
+
+
+
