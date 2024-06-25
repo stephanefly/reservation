@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Réservation facile et rapide de photobooth pour vos événements. Photobooth classique, miroir et 360 disponibles.">
+    <meta name="keywords" content="photobooth, réservation photobooth, photobooth événements, photobooth mariage, photobooth entreprise">
+    <meta name="author" content="Votre Nom d'Entreprise">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="MySelfieBooth">
+    <meta property="og:description" content="Profitez de nos meilleurs photobooths pour vos événements.">
+    <meta property="og:image" content="URL_de_votre_image">
+    <meta property="og:url" content="URL_de_votre_site_web">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <title>MySelfieBooth - Reservation</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
+
+
+</head>
+
+<body style="background-image: url('../../../static/img/background-client.jpg');">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">MySelfieBooth Paris</a>
+        </div>
+    </nav>
+
+    <main class="container mt-3">
+    {% block content %}
+    {% endblock content %}
+    </main>
+
+    <footer class="text-center bg-light text-muted">
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2024 MySelfieBooth Tous droits réservés.
+        </div>
+    </footer>
+</body>
+
+</html>

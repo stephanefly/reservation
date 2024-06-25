@@ -9,6 +9,7 @@ urlpatterns = [
     path('remerciement', remerciement, name='remerciement'),
     path('confirmation/', confirmation, name='confirmation'),
     path("login/", auth_views.LoginView.as_view(template_name="app/backend/login.html"), name="login"),
+
     # BACKEND DEVIS
     path('backend/lst_devis/', lst_devis, name='lst_devis'),
     path('backend/lst_cost/', lst_cost, name='lst_cost'),
@@ -31,13 +32,13 @@ urlpatterns = [
     path('backend/graph/', graph, name='graph'),
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
     path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
-
     # BACKEND TABLEAU DE BORD
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
-
     # BACKEND TACHES PLANIFIES
     path('tache_planif/', tache_planif, name='tache_planif'),
 
+    # CLIENT CHOIX MODEL
+    path('espace_client/', espace_client, name='espace_client'),
 
 ]
 

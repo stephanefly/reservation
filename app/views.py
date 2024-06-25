@@ -296,3 +296,6 @@ def tache_planif(request):
     make_planning()
     return redirect('tableau_de_bord')
 
+ # CLIENT CHOIX MODEL
+def espace_client(request):
+    return render(request, 'app/client/base_client.html')
