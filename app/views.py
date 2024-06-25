@@ -9,7 +9,7 @@ from .forms import CostForm, ValidationForm
 from .models import Event, Cost, EventAcompte
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from .module.data_bdd.taches_planifs import maj_today_event, make_planning
+from .module.data_bdd.taches_planifs import maj_today_event, make_planning, get_member_list
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -272,14 +272,22 @@ def delete_cost(request, id):
 
 def tableau_de_bord(request):
 
+    today_date = datetime.now()
+    end_week_date = today_date + timedelta(days=10)
+
     lst_event_prio = Event.objects.filter(
         signer_at__isnull=False,
-        event_details__date_evenement__range=[today_date, today_date + timedelta(days=12)]
+        event_details__date_evenement__range=[today_date, end_week_date]
     ).order_by('event_details__date_evenement')
 
-    return render(request, 'app/backend/tableau_de_bord.html', {
-        'lst_event_prio': lst_event_prio,
-    })
+    event_lst_member = get_member_list(lst_event_prio)
+    print(event_lst_member)
+
+    return render(request, 'app/backend/tableau_de_bord.html',
+                  {
+                      'lst_event_prio': lst_event_prio,
+                      'event_lst_member': event_lst_member
+                  })
 
 
 # TACHE PLANIFIEES
