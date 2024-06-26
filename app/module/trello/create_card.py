@@ -34,7 +34,7 @@ def data_to_post_on_card(post_data):
 
    data = {}
 
-   client_data = post_data['client']
+   client_data = post_data['page_client']
    event_data = post_data['event']
    product_data = post_data['product']
    options_data = post_data['options']

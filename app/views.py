@@ -1,12 +1,13 @@
 import os
 
+from babel.dates import parse_date
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
 from django.template.loader import render_to_string
-
+import uuid
 from .forms import CostForm, ValidationForm
-from .models import Event, Cost, EventAcompte
+from .models import Event, Cost, EventAcompte, Client
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from .module.data_bdd.taches_planifs import maj_today_event, make_planning, get_member_list
@@ -297,5 +298,33 @@ def tache_planif(request):
     return redirect('tableau_de_bord')
 
  # CLIENT CHOIX MODEL
-def espace_client(request):
-    return render(request, 'app/client/base_client.html')
+def logging_client(request):
+    context = {'form': {}}
+    if request.method == 'POST':
+        form_data = request.POST.dict()
+        client_mail = form_data['mail']
+        client_date_evenement = datetime.strptime(form_data['date_evenement'], '%Y-%m-%d')
+
+        # Vérifiez si les informations sont dans la base de données
+        event = Event.objects.get(
+            event_details__date_evenement=client_date_evenement,
+            client=Client.objects.filter(mail=client_mail).first()
+        )
+
+        if event:
+            token = uuid.uuid4().hex  # Générer un token UUID unique
+            # Stocker le token en session ou dans la base de données
+            request.session['client_token'] = token
+            return redirect('choix_client', id=event.id, token=token)
+        else:
+            context['error_message'] = "Les informations saisies ne sont pas trouvées dans notre base de données."
+
+    return render(request, 'app/page_client/logging.html')
+
+
+def choix_client(request, id, token):
+    if 'client_token' in request.session and request.session['client_token'] == token:
+        event = Event.objects.get(pk=id)
+        return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    else:
+        return render(request, 'app/page_client/logging.html')

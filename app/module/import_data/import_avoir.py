@@ -15,8 +15,8 @@ def upload_avoir():
 
 
     # names_uniques = df['Client'].unique()
-    # for client in names_uniques:
-    #     NameCost.objects.create(name=client)
+    # for page_client in names_uniques:
+    #     NameCost.objects.create(name=page_client)
 
     for i in df.iloc:
         # Conversion de Timestamp en str

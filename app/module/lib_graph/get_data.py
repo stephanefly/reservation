@@ -12,7 +12,7 @@ def get_ok_data():
         'event_product_id',  # Suppose un ForeignKey vers AppEventProduct
         'event_details_id'  # Suppose un ForeignKey vers AppEventDetails
     ).values(
-        'client_id__nom',  # Accéder au champ `nom` de la relation client
+        'client_id__nom',  # Accéder au champ `nom` de la relation page_client
         'prix_proposed',
         'event_details_id__date_evenement',  # Accéder à date_evenement à travers la relation
         'event_product_id__photobooth',  # Accéder à photobooth à travers la relation

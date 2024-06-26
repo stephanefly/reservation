@@ -13,7 +13,7 @@ def get_confirmation_data(request):
     print(int(request.POST.get('magnets_range')))
 
     post_data = {
-        "client": {
+        "page_client": {
             "nom": nom,
             "raison_sociale": raison_sociale,
             "mail": request.POST.get('mail').strip(),
@@ -39,7 +39,7 @@ def initialize_event(post_data):
 
     with transaction.atomic():
         # -------------------------------------------------------------
-        client_data = post_data['client']
+        client_data = post_data['page_client']
         event_data = post_data['event']
         product_data = post_data['product']
         options_data = post_data['options']

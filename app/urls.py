@@ -38,7 +38,9 @@ urlpatterns = [
     path('tache_planif/', tache_planif, name='tache_planif'),
 
     # CLIENT CHOIX MODEL
-    path('espace_client/', espace_client, name='espace_client'),
+    path('espace_client/', logging_client, name='logging_client'),
+    path('espace_client/<int:id>/<str:token>', choix_client, name='choix_client'),
+
 
 ]
 
