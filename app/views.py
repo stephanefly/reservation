@@ -311,15 +311,17 @@ def logging_client(request):
             client=Client.objects.filter(mail=client_mail).first()
         )
 
-        if event:
+        if event and client_date_evenement.date() >= today_date:
             token = uuid.uuid4().hex  # Générer un token UUID unique
             # Stocker le token en session ou dans la base de données
             request.session['client_token'] = token
             return redirect('choix_client', id=event.id, token=token)
+        elif client_date_evenement.date() < today_date:
+            context['error_message'] = "La date de l'événement est passée."
         else:
             context['error_message'] = "Les informations saisies ne sont pas trouvées dans notre base de données."
 
-    return render(request, 'app/page_client/logging.html')
+    return render(request, 'app/page_client/logging.html', context)
 
 
 def choix_client(request, id, token):

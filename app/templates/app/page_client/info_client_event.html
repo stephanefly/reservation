@@ -2,34 +2,182 @@
 {% block content %}
 
 <style>
-    h1, h4 {
-      margin-bottom: 10px;
-      margin-top: 10px;
-      font-family: "Arial Black", Gadget, sans-serif;
-      letter-spacing: -1px;
-      word-spacing: 0.6px;
-      font-weight: 400;
-      color: white;
-      text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-      font-weight: bold;
+    body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
     }
-    button {
-      margin: 20px;
-      background-image: linear-gradient(to bottom, #ffef96, #5a4300);
-      color: white;
-      border: 1px solid goldenrod;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-shadow: 1px 1px 2px black;
-      box-shadow: 2px 2px 4px grey;
-      font-size: 22px;
+
+    h1, h4 {
+        margin-bottom: 10px;
+        margin-top: 10px;
+        font-family: "Arial Black", Gadget, sans-serif;
+        letter-spacing: -1px;
+        word-spacing: 0.6px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
+        text-align: center;
+    }
+
+    .highlight-prestation {
+        background-color: blue;
+        color: white;
+        padding: 0 3px;
+        border-radius: 3px;
+    }
+
+    .highlight-option {
+        background-color: skyblue;
+        color: black;
+        padding: 0 3px;
+        border-radius: 3px;
+    }
+
+    .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+    }
+
+    .info-block {
+        margin-bottom: 20px;
+    }
+
+    .info-title {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .info-content {
+        margin-left: 10px;
+    }
+
+    .info-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        width: 150px;
+        font-weight: bold;
+        color: #555;
+        flex-shrink: 0;
+    }
+
+    .info-value {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        .info-label {
+            width: 100%;
+        }
+
+        .info-row {
+            flex-direction: column;
+            margin-bottom: 5px;
+        }
+
+        h1, h4 {
+            font-size: 18px;
+        }
+
+        button {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        h1, h4 {
+            font-size: 16px;
+        }
+
+        button {
+            font-size: 16px;
+        }
     }
 </style>
-    
-<div class="row">
-  <h4>Bienvenue {{ event.client.nom }} !</h4>
-</div>
 
+<div class="container">
+    <h4>Bienvenue {{ event.client.nom }} !</h4>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">N°DEVIS:</div>
+            <div class="info-value">{{ event.num_devis }}</div>
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">Durée:</div>
+            <div class="info-value">{{ event.event_option.duree }}h</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Horaire:</div>
+            <div class="info-value" {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>
+                {{ event.event_details.horaire }}
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Adresse:</div>
+            <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-title">Prestations:</div>
+        <div class="info-content">
+            {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span> {% endif %}
+            {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span> {% endif %}
+            {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span> {% endif %}
+            {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span> {% endif %}
+            {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadbooth</span> {% endif %}
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-title">Options:</div>
+        <div class="info-content">
+            {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span> {% endif %}
+            {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span> {% endif %}
+            {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span> {% endif %}
+            {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span> {% endif %}
+            {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span> {% endif %}
+            {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3D</span> {% endif %}
+            {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span> {% endif %}
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-title">Commentaires:</div>
+        <div class="info-content">
+            <div class="info-row">
+                <div class="info-label">Commentaire Client:</div>
+                <div class="info-value">{{ event.event_details.comment_client }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Commentaire:</div>
+                <div class="info-value">{{ event.event_details.comment }}</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
