@@ -23,6 +23,8 @@ urlpatterns = [
     path('backend/refused_devis/<int:id>/', refused_devis, name='refused_devis'),
     path('backend/confirmation_envoi_mail/<int:event_id>/', confirmation_envoi_mail, name='confirmation_envoi_mail'),
     path('backend/envoi_mail_devis/<int:event_id>/', envoi_mail_devis, name='envoi_mail_devis'),
+    # BACKEND TABLEAU DE BORD
+    path('backend/', tableau_de_bord, name='tableau_de_bord'),
     # BACKEND COST
     path('backend/create_cost/', create_cost, name='create_cost'),
     path('backend/info_cost/<int:id>/', info_cost, name='info_cost'),
@@ -32,14 +34,16 @@ urlpatterns = [
     path('backend/graph/', graph, name='graph'),
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
     path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
-    # BACKEND TABLEAU DE BORD
-    path('backend/', tableau_de_bord, name='tableau_de_bord'),
+
     # BACKEND TACHES PLANIFIES
     path('tache_planif/', tache_planif, name='tache_planif'),
 
     # CLIENT CHOIX MODEL
     path('espace_client/', logging_client, name='logging_client'),
     path('espace_client/<int:id>/<str:token>', choix_client, name='choix_client'),
+    path('espace_client/edit_horaire/<int:event_id>/', edit_horaire, name='edit_horaire'),
+    path('espace_client/edit_comment/<int:event_id>/', edit_comment, name='edit_comment'),
+    path('espace_client/edit_text/<int:event_id>/', edit_text, name='edit_text'),
 
 
 ]

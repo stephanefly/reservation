@@ -10,38 +10,19 @@
         padding: 0;
     }
 
-    h1, h4 {
-        margin-bottom: 10px;
-        margin-top: 10px;
-        font-family: "Arial Black", Gadget, sans-serif;
-        letter-spacing: -1px;
-        word-spacing: 0.6px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-        text-align: center;
-    }
-
-    .highlight-prestation {
-        background-color: blue;
-        color: white;
-        padding: 0 3px;
-        border-radius: 3px;
-    }
-
-    .highlight-option {
-        background-color: skyblue;
-        color: black;
-        padding: 0 3px;
-        border-radius: 3px;
-    }
-
     .container {
+        max-width: 800px;
+        margin: 20px auto;
         background-color: white;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h4 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
     }
 
     .info-block {
@@ -51,93 +32,86 @@
     .info-title {
         font-weight: bold;
         color: #555;
+        font-size: 18px;
+        margin-bottom: 10px;
     }
 
     .info-content {
         margin-left: 10px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .highlight-prestation {
+        background-color: #3498db;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 3px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .highlight-option {
+        background-color: #1abc9c;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 3px;
+        margin-right: 5px;
+        margin-bottom: 5px;
     }
 
     .info-row {
         display: flex;
         flex-wrap: wrap;
         margin-bottom: 10px;
+        align-items: center;
     }
 
     .info-label {
         width: 150px;
         font-weight: bold;
         color: #555;
-        flex-shrink: 0;
+        font-size: 16px;
     }
 
     .info-value {
         flex: 1;
+        color: #2c3e50;
+        font-size: 16px;
     }
 
-    @media (max-width: 768px) {
-        .container {
-            padding: 15px;
-            margin: 10px;
-        }
+    button {
+        margin: 10px 0;
+        background-image: linear-gradient(to bottom, #d096ff, #670072);
+        color: white;
+        border: 1px solid #b12dc5;
+        font-weight: bold;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-shadow: 1px 1px 2px black;
+        box-shadow: 2px 2px 4px grey;
+        font-size: 18px;
+        cursor: pointer;
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
 
+    @media (max-width: 600px) {
         .info-label {
             width: 100%;
-        }
-
-        .info-row {
-            flex-direction: column;
-            margin-bottom: 5px;
-        }
-
-        h1, h4 {
-            font-size: 18px;
-        }
-
-        button {
-            font-size: 18px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .container {
-            padding: 10px;
-            margin: 5px;
-        }
-
-        h1, h4 {
-            font-size: 16px;
-        }
-
-        button {
-            font-size: 16px;
+            text-align: left;
         }
     }
 </style>
 
 <div class="container">
     <h4>Bienvenue {{ event.client.nom }} !</h4>
-
+<br>
     <div class="info-block">
         <div class="info-row">
             <div class="info-label">N°DEVIS:</div>
             <div class="info-value">{{ event.num_devis }}</div>
-        </div>
-    </div>
-
-    <div class="info-block">
-        <div class="info-row">
-            <div class="info-label">Durée:</div>
-            <div class="info-value">{{ event.event_option.duree }}h</div>
-        </div>
-        <div class="info-row">
-            <div class="info-label">Horaire:</div>
-            <div class="info-value" {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>
-                {{ event.event_details.horaire }}
-            </div>
-        </div>
-        <div class="info-row">
-            <div class="info-label">Adresse:</div>
-            <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
         </div>
     </div>
 
@@ -162,21 +136,226 @@
             {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span> {% endif %}
             {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3D</span> {% endif %}
             {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span> {% endif %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#optionsModal">
+                    Ajouter des options
+                </button>
         </div>
     </div>
 
     <div class="info-block">
-        <div class="info-title">Commentaires:</div>
-        <div class="info-content">
+        <div class="info-row">
+            <div class="info-label">Adresse:</div>
+            <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">Durée:</div>
+            <div class="info-value">{{ event.event_option.duree }}h</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Horaire début de la prestation:</div>
+            {% if event.event_details.horaire %}
+                <p>{{ event.event_details.horaire }}</p>
+            {% endif %}
+        </div>
             <div class="info-row">
-                <div class="info-label">Commentaire Client:</div>
-                <div class="info-value">{{ event.event_details.comment_client }}</div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">
+                {% if event.event_details.horaire %}
+                    Modifier l'horaire
+                {% else %}
+                    Définir l'horaire
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">Template - Model de Tirage:</div>
+            {% if event.event_details.url_modele %}
+                <p style="color: #006b1b">Modele choisi</p>
+            {% endif %}
+        </div>
+            <div class="info-row">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">
+                {% if event.event_template.url_modele %}
+                    Modifier le Modèle de Tirage
+                {% else %}
+                    Choisir le Modèle de Tirage
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">Texte :</div>
+            {% if event.event_template.text_template %}
+                <p> {{ event.event_template.text_template }}</p>
+            {% endif %}
+        </div>
+            <div class="info-row">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#textModal">
+                {% if event.event_template.text_template %}
+                    Modifier le text
+                {% else %}
+                    Choisir le texte à mettre
+                {% endif %}
+            </button>
+        </div>
+    </div>
+    <div class="info-block">
+        <div class="info-row">
+                <div class="info-label">Commentaire:</div><p> (Optionel)</p>
+            <div class="info-value">
+                {% if event.event_details.comment_client %}
+                    <p>{{ event.event_details.comment_client }}</p>
+                {% endif %}
             </div>
-            <div class="info-row">
-                <div class="info-label">Commentaire:</div>
-                <div class="info-value">{{ event.event_details.comment }}</div>
+        </div>
+        <!-- Button to trigger modal for adding/editing commentaire client -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentaireModal">
+            {% if event.event_details.comment_client %}
+                Modifier un commentaire
+            {% else %}
+                Ajouter un commentaire
+            {% endif %}
+        </button>
+    </div>
+</div>
+
+<!-- Modal for editing horaire -->
+<div class="modal fade" id="horaireModal" tabindex="-1" role="dialog" aria-labelledby="horaireModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% if event.event_details.horaire %}
+                    <h5 class="modal-title" id="horaireModalLabel">Modifier l'horaire</h5>
+                {% else %}
+                    <h5 class="modal-title" id="horaireModalLabel">Ajouter l'horaire</h5>
+                {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'edit_horaire' event.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="horaire">Nouvel horaire:</label>
+                        <input type="time" class="form-control" id="horaire" name="horaire" value="{{ event.event_details.horaire }}" placeholder="Entrez le nouvel horaire">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    
+<!-- Modal for editing horaire -->
+<div class="modal fade" id="horaireModal" tabindex="-1" role="dialog" aria-labelledby="horaireModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% if event.event_details.horaire %}
+                    <h5 class="modal-title" id="horaireModalLabel">Modifier l'horaire</h5>
+                {% else %}
+                    <h5 class="modal-title" id="horaireModalLabel">Ajouter l'horaire</h5>
+                {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'edit_horaire' event.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="horaire">Nouvel horaire:</label>
+                        <input type="time" class="form-control" id="horaire" name="horaire" value="{{ event.event_details.horaire }}" placeholder="Entrez le nouvel horaire">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+    <!-- Modal for editing texte -->>
+<div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="textModalLabel">Ajouter/Modifier le texte</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form method="post" action="{% url 'edit_text' event.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="text_template">Texte à mettre :</label>
+                        <textarea class="form-control" id="text_template" name="text_template" rows="3">{{ event.event_template.text_template }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<!-- Modal for adding/editing commentaire client -->
+<div class="modal fade" id="commentaireModal" tabindex="-1" role="dialog" aria-labelledby="commentaireModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentaireModalLabel">Ajouter/Modifier un commentaire</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form method="post" action="{% url 'edit_comment' event.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="comment_client">Commentaire:</label>
+                        <textarea class="form-control" id="comment_client" name="comment_client" rows="3">{{ event.event_details.comment_client }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+    <!-- Modal simple avec titre et bouton de fermeture -->
+<div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="optionModalLabel">Ajouter des Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                        <p>Pour l'ajout d'options,<br>
+        merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>
+        ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <!-- Autres boutons ou actions si nécessaire -->
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

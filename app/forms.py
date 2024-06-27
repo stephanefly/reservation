@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cost, EventAcompte
+from .models import Cost, EventAcompte, EventDetails
 import datetime
 
 
@@ -46,3 +46,14 @@ class ValidationForm(forms.ModelForm):
     class Meta:
         model = EventAcompte
         fields = ['montant_acompte', 'mode_payement', 'date_payement']
+
+
+class CommentaireForm(forms.ModelForm):
+    class Meta:
+        model = EventDetails
+        fields = ['comment_client']
+
+class HoraireForm(forms.ModelForm):
+    class Meta:
+        model = EventDetails
+        fields = ['horaire']

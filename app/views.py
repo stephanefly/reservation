@@ -6,8 +6,8 @@ from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
 from django.template.loader import render_to_string
 import uuid
-from .forms import CostForm, ValidationForm
-from .models import Event, Cost, EventAcompte, Client
+from .forms import CostForm, ValidationForm, CommentaireForm, HoraireForm
+from .models import Event, Cost, EventAcompte, Client, EventDetails, EventTemplate
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from .module.data_bdd.taches_planifs import maj_today_event, make_planning, get_member_list
@@ -311,13 +311,15 @@ def logging_client(request):
             client=Client.objects.filter(mail=client_mail).first()
         )
 
-        if event and client_date_evenement.date() >= today_date:
+        if event and client_date_evenement.date() >= today_date and event.signer_at:
             token = uuid.uuid4().hex  # Générer un token UUID unique
             # Stocker le token en session ou dans la base de données
             request.session['client_token'] = token
             return redirect('choix_client', id=event.id, token=token)
         elif client_date_evenement.date() < today_date:
             context['error_message'] = "La date de l'événement est passée."
+        elif not event.signer_at:
+            context['error_message'] = "Le devis n'a pas été encore validé"
         else:
             context['error_message'] = "Les informations saisies ne sont pas trouvées dans notre base de données."
 
@@ -330,3 +332,38 @@ def choix_client(request, id, token):
         return render(request, 'app/page_client/info_client_event.html', {'event': event})
     else:
         return render(request, 'app/page_client/logging.html')
+
+
+@require_http_methods(["POST"])
+def edit_horaire(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    new_horaire = request.POST.get('horaire')
+
+    # Mettez à jour l'horaire de l'événement
+    event.event_details.horaire = new_horaire
+    event.event_details.save()
+
+    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+
+@require_http_methods(["POST"])
+def edit_comment(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    new_comment = request.POST.get('comment_client')
+
+    # Mettez à jour le commentaire client de l'événement
+    event.event_details.comment_client = new_comment
+    event.event_details.save()
+
+    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+
+@require_http_methods(["POST"])
+def edit_text(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    text_template = request.POST.get('text_template')
+
+    # Mettez à jour le commentaire client de l'événement
+    if not event.event_template:
+        event.event_template = EventTemplate(text_template=text_template)
+    event.event_template.save()
+
+    return render(request, 'app/page_client/info_client_event.html', {'event': event})
