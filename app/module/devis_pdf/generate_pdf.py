@@ -6,7 +6,7 @@ from io import BytesIO
 import os
 from datetime import datetime, timedelta
 
-from app.module.devis_pdf.make_table import make_tableau_devis
+from app.module.devis_pdf.make_table import make_tableau, add_acompte_mention
 from myselfiebooth.settings import PDF_REPERTORY, TITULAIRE_DU_COMPTE_A, IBAN_A, BIC_A, BIC_B, TITULAIRE_DU_COMPTE_B, \
     IBAN_B
 
@@ -59,7 +59,7 @@ def generate_pdf_devis(event):
     # ----------------------------------------------------------------------------------------
 
     # Ajouter un tableau pour les articles
-    data_tableau_devis, total_brut_devis, acompte = make_tableau_devis(event)
+    data_tableau_devis, total_brut_devis, acompte = make_tableau(event)
 
     table = Table(data_tableau_devis, colWidths=[210, 80, 70, 80, 95])
     table_style = [
@@ -154,6 +154,7 @@ def generate_pdf_devis(event):
     buffer.seek(0)
     return buffer
 
+
 def generate_pdf_facture(event):
 
     # Créez un objet BytesIO pour stocker le PDF en mémoire
@@ -205,7 +206,9 @@ def generate_pdf_facture(event):
     # ----------------------------------------------------------------------------------------
 
     # Ajouter un tableau pour les articles
-    data_tableau_devis, total_brut_devis, acompte = make_tableau_devis(event)
+    data_tableau_devis, total_brut_devis, acompte = make_tableau(event)
+
+    data_tableau_devis, total_brut_devis = add_acompte_mention(event, data_tableau_devis, total_brut_devis)
 
     table = Table(data_tableau_devis, colWidths=[210, 80, 70, 80, 95])
     table_style = [
@@ -225,7 +228,7 @@ def generate_pdf_facture(event):
     table.setStyle(TableStyle(table_style))
 
     # Hauteur de départ pour l'en-tête de la table
-    start_y_position = height - 400  # Ajustez ce nombre selon l'emplacement souhaité pour l'en-tête
+    start_y_position = height - 420  # Ajustez ce nombre selon l'emplacement souhaité pour l'en-tête
     # Calculez la hauteur de la table (en supposant que chaque ligne a une hauteur fixe pour simplifier)
     line_height = 20  # Ajustez ceci selon la hauteur de vos lignes
     table_height = len(data_tableau_devis) * line_height

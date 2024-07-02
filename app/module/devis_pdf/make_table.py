@@ -1,5 +1,5 @@
 
-def make_tableau_devis(event):
+def make_tableau(event):
     total_brut_devis=0
     # Initialisation du tableau de devis avec l'en-tête
     data_tableau_devis = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total']]
@@ -23,12 +23,13 @@ def make_tableau_devis(event):
     # Ajout des lignes fixes pour la personnalisation et la galerie web
     data_tableau_devis += [
         ['Personnalisation', '0 €', '1', "", '0 €'],
-        ['Galerie Web', '0 €', '1', "", '0 €']
+        ['Galerie Web', '0 €', '1', "", '0 €'],
     ]
 
     data_tableau_devis, total_option = prix_ligne_option(event, data_tableau_devis)
 
     total_brut_devis += total_option
+
 
     return data_tableau_devis, total_brut_devis, acompte
 
@@ -109,3 +110,15 @@ def prix_ligne_option(event, data_tableau_devis):
             data_tableau_devis.append(ligne)
 
     return data_tableau_devis, total
+
+
+def add_acompte_mention(event, data_tableau_devis, total_brut_devis):
+
+    # Mention de l'acompte
+    data_tableau_devis += [
+        ['Acompte versé le ' + str(event.event_acompte.date_payement),
+         str(event.event_acompte.montant_acompte) + ' €', '', "",
+         "-" + str(event.event_acompte.montant_acompte) + ' €']]
+    total_brut_devis -= event.event_acompte.montant_acompte
+
+    return data_tableau_devis, total_brut_devis
