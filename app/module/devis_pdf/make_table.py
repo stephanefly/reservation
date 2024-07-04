@@ -114,7 +114,7 @@ def prix_ligne_option(event, data_tableau_devis):
 
 def add_acompte_mention(event, data_tableau_devis, total_brut_devis):
 
-    if int(event.event_acompte.montant_acompte) > 0:
+    if int(event.event_acompte.montant_acompte) > 0 and event.event_acompte:
         # Mention de l'acompte
         data_tableau_devis += [
             ['Acompte versé le ' + str(event.event_acompte.date_payement),
