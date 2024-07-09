@@ -1,38 +1,13 @@
 {% extends 'app/page_client/base_client.html' %}
 {% block content %}
-
-<style>
-    h1, h4 {
-      margin-bottom: 10px;
-      margin-top: 10px;
-      font-family: "Arial Black", Gadget, sans-serif;
-      letter-spacing: -1px;
-      word-spacing: 0.6px;
-      font-weight: 400;
-      color: white;
-      text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;
-      font-weight: bold;
-    }
-    button {
-      margin: 20px;
-      background-image: linear-gradient(to bottom, #ffef96, #5a4300);
-      color: white;
-      border: 1px solid goldenrod;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-shadow: 1px 1px 2px black;
-      box-shadow: 2px 2px 4px grey;
-      font-size: 22px;
-    }
-</style>
+    
 
 <div class="row d-flex justify-content-center">
-  <h1>Espace Client</h1>
+  <h1>Espace Client MySelfieBooth</h1>
 </div>
 <div class="row">
-  <h4>Merci de remplir ces informations pour accéder à votre espace</h4>
-</div>
+  <h5>Merci de remplir ces informations pour accéder à votre espace</h5>
+</div><br>
     {% if error_message %}
   <div class="row d-flex justify-content-center">
     <div class="alert alert-danger" role="alert">
@@ -43,9 +18,9 @@
 <form method="post" id="monFormulaire">
    {% csrf_token %}
   <div>
-    <label for="id_mail" class="form-label">Mail :</label>
+    <label for="id_mail" class="form-label">Mail (présent sur le devis) :</label>
     <input type="email" class="form-control" id="id_mail" name="mail" required value="{{ form.mail }}" aria-label="Adresse e-mail">
-    
+    <br>
     <label for="id_date_evenement" class="form-label">Date de l'événement :</label>
     <input type="date" class="form-control" id="id_date_evenement" name="date_evenement" required value="{{ form.date_evenement }}" aria-label="Date de l'événement">
   </div>

@@ -26,9 +26,11 @@ class EventDetails(models.Model):
     comment_client = models.TextField(null=True)
     horaire = models.CharField(max_length=100, null=True)
 
+
 class EventTemplate(models.Model):
     url_modele = models.TextField(null=True)
     text_template = models.TextField(null=True)
+
 
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
@@ -36,6 +38,7 @@ class EventProduct(models.Model):
     videobooth = models.BooleanField(default=False)
     voguebooth = models.BooleanField(default=False)
     ipadbooth = models.BooleanField(default=False)
+
 
 class EventOption(models.Model):
 
@@ -78,6 +81,7 @@ class EventOption(models.Model):
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 
+
 class EventAcompte(models.Model):
     montant_acompte = models.IntegerField(null=True, blank=True)
     MOYEN_PAIEMENT = [
@@ -92,6 +96,7 @@ class EventAcompte(models.Model):
     mode_payement = models.CharField(max_length=255, default='PayPal', choices=MOYEN_PAIEMENT, null=True, blank=True)
     date_payement = models.DateField(null=True, blank=True)
     montant_restant = models.IntegerField(null=True, blank=True)
+
 
 class Event(models.Model):
     id_card = models.CharField(max_length=100, null=True)
