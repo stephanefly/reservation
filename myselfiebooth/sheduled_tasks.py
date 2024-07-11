@@ -4,7 +4,7 @@ import sys
 
 import yaml
 
-# sys.path.append('/home/stephanefly/reservation/myselfiebooth')
+sys.path.append('/home/stephanefly/reservation/myselfiebooth')
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myselfiebooth.settings')
 
