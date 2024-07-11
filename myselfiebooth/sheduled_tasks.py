@@ -1,8 +1,13 @@
-# Importez les modules Django nécessaires et configurez les paramètres Django si nécessaire
-import os
 import sys
+import os
 
-import yaml
+# Chemin absolu du répertoire parent de 'myselfiebooth'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+# Maintenant, vous pouvez importer 'myselfiebooth'
+import myselfiebooth
 
 sys.path.append('home/stephanefly/reservation/myselfiebooth')
 
