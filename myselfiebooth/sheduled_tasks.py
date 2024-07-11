@@ -1,11 +1,15 @@
 # Importez les modules Django nécessaires et configurez les paramètres Django si nécessaire
 import os
+import sys
+
+sys.path.append('/home/stephanefly/reservation/myselfiebooth')
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myselfiebooth.settings')
 
 import django
 django.setup()
 
-# list des tache planifié
+# Liste des tâches planifiées
 from app.module.data_bdd.taches_planifs import maj_today_event, make_planning
 
 maj_today_event()
