@@ -21,4 +21,4 @@ make_planning()
 # TODO
 # relance_model_choise (1 mois + 15 avant, 1 mois, 3 semaine, 2 semaine)
 
-home/stephanefly/.virtualenvs/venv/bin/python3.9 /home/stephanefly/reservation/myselfiebooth/sheduled_tasks.py
+# home/stephanefly/.virtualenvs/venv/bin/python3.9 /home/stephanefly/reservation/myselfiebooth/sheduled_tasks.py
