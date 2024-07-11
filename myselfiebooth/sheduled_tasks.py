@@ -2,7 +2,9 @@
 import os
 import sys
 
-sys.path.append('/home/stephanefly/reservation/myselfiebooth')
+import yaml
+
+# sys.path.append('/home/stephanefly/reservation/myselfiebooth')
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myselfiebooth.settings')
 
@@ -24,5 +26,3 @@ make_planning()
 
 # TODO
 # relance_model_choise (1 mois + 15 avant, 1 mois, 3 semaine, 2 semaine)
-
-# home/stephanefly/.virtualenvs/venv/bin/python3.9 /home/stephanefly/reservation/myselfiebooth/sheduled_tasks.py

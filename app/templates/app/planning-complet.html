@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Titre de la page</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   </head>
+   <body>
+      <style>
+         .highlight-prestation {
+         background-color: blue;
+         color: white; /* Pour que le texte reste lisible sur un fond bleu */
+         padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+         }
+         .highlight-option {
+         background-color: skyblue;
+         color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+         padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+         }
+         .highlight-membre {
+         background-color: #f1cd9d;
+         color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+         padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+         }
+      </style>
+      <div class="container">
+         <h1> <a href="https://trello.com/b/UyVMrXjp"> CHECKLIST A VERIFIER </a></h1>
+         <br>
+         <table id="table" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>NOM</th>
+                  <th>J</th>
+                  <th>DATE-EVENT</th>
+                  <th>CP</th>
+                  <th>PRIX</th>
+                  <th>Acompte</th>
+                  <th>Restant</th>
+               </tr>
+            </thead>
+            <tbody>
+               
+               <tr>
+                  <td><a href="info-event/9602">Aravinthan Anusha</a></td>
+                  <td>Sat</td>
+                  <td>2024-07-13</td>
+                  <td>95100</td>
+                  <td id="prix_valided">400</td>
+                  <td id="montant_acompte"></td>
+                  <td id="difference"></td>
+               </tr>
+               
+            </tbody>
+         </table>
+         
+         
+         
+         
+         <br>
+         <div class="date-block" style="background-color: #f0ad4e; padding: 10px;">
+            <h3 class="text-center">July 13, 2024</h3>
+         </div>
+         
+         <br>
+         <h5><a href="info-event/9602">Aravinthan Anusha</a></h5>
+         <table class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Durée</th>
+                  <th>Horaire</th>
+                  <th>Adresse</th>
+                  <th>Equipe</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>5h</td>
+                  <td >None</td>
+                  <td>La Bella Argenteuil, 95100 Argenteuil</td>
+                  <td>
+                      
+                          
+                              
+                                   <span class="highlight-membre">CORENTIN</span>, 
+                              
+                                   <span class="highlight-membre">RAYAN</span>
+                              
+                          
+                      
+                  </td>
+
+
+               </tr>
+            </tbody>
+         </table>
+         <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Prestation</th>
+                  <th>Option</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>
+                      <span class="highlight-prestation">Photobooth</span>, 
+                     
+                     
+                     
+                     
+                  </td>
+                  <td>
+                      <span class="highlight-option">MurFloral</span>, 
+                      <span class="highlight-option">Phonebooth</span>, 
+                     
+                     
+                     
+                     
+                     
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Commentaire Client</th>
+                  <th>Commentaire</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>None</td>
+                  <td>None</td>
+               </tr>
+            </tbody>
+         </table>
+         
+         
+      </div>
+   </body>
+</html>

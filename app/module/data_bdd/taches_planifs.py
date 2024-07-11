@@ -2,11 +2,14 @@ import json
 import os
 from datetime import timezone, datetime, timedelta
 import requests
+import yaml
 from django.template.loader import render_to_string
 
 from app.models import Event
 from myselfiebooth.settings import TOKEN_TRELLO, KEY_TRELLO
 
+with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\myselfiebooth\settings.yaml', 'r') as yaml_file:
+    config = yaml.safe_load(yaml_file)
 
 def maj_today_event():
     events_before_today = Event.objects.filter(
@@ -67,7 +70,7 @@ def create_html_planning():
     context = {'lst_event_prio': lst_event_prio, 'event_lst_member': event_lst_member}
     html_content = render_to_string('app/backend/planning.html', context)
 
-    file_path = r'app\templates\app\planning-complet.html'
+    file_path = config.get('PLANNING_PATH')
     with open(file_path, 'w') as f:
         f.write(html_content)
 
