@@ -14,12 +14,12 @@ from pathlib import Path
 import os
 import yaml
 
-
-with open(r'myselfiebooth/settings.yaml', 'r') as yaml_file:
-    config = yaml.safe_load(yaml_file)
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_YML = os.path.join(BASE_DIR, 'myselfiebooth', 'settings.yaml')
+with open(STATIC_YML, 'r') as yaml_file:
+    config = yaml.safe_load(yaml_file)
 
 TIME_ZONE = 'UTC'  # Ou tout autre fuseau horaire approprié
 USE_TZ = True

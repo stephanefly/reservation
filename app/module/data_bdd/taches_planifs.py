@@ -6,9 +6,10 @@ import yaml
 from django.template.loader import render_to_string
 
 from app.models import Event
-from myselfiebooth.settings import TOKEN_TRELLO, KEY_TRELLO
+from myselfiebooth.settings import TOKEN_TRELLO, KEY_TRELLO, BASE_DIR
 
-with open(r'C:\Users\FAURE-Stephane\PycharmProjects\myselfiebooth\myselfiebooth\settings.yaml', 'r') as yaml_file:
+STATIC_YML = os.path.join(BASE_DIR, 'myselfiebooth', 'settings.yaml')
+with open(STATIC_YML, 'r') as yaml_file:
     config = yaml.safe_load(yaml_file)
 
 def maj_today_event():
