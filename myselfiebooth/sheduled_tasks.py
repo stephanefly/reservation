@@ -1,28 +1,10 @@
 import sys
 import os
-import subprocess
-
-
-# Fonction pour installer les packages à partir de requirements.txt
-def install_packages_from_requirements(requirements_file):
-    try:
-        # Construire la commande pip install
-        command = ['pip', 'install', '-r', requirements_file]
-
-        # Exécuter la commande
-        subprocess.check_call(command)
-        print(f"Les packages de {requirements_file} ont été installés avec succès.")
-    except subprocess.CalledProcessError as e:
-        print(f"Erreur lors de l'installation des packages de {requirements_file}: {e}")
-
 
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
-
-# Installer les packages depuis requirements.txt
-install_packages_from_requirements(os.path.join(parent_dir, 'requirements.txt'))
 
 # Maintenant, vous pouvez importer 'myselfiebooth'
 import myselfiebooth
