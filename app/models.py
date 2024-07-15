@@ -38,6 +38,7 @@ class EventProduct(models.Model):
     videobooth = models.BooleanField(default=False)
     voguebooth = models.BooleanField(default=False)
     ipadbooth = models.BooleanField(default=False)
+    airbooth = models.BooleanField(default=False)
 
 
 class EventOption(models.Model):

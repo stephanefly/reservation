@@ -23,7 +23,7 @@ from .module.trello.create_card import create_card
 from .module.trello.get_trello_data import get_prio_card_name, get_all_card, get_data_card_by_name
 from .module.trello.move_card import to_acompte_ok, to_list_devis_fait, to_refused
 from .module.lib_graph.get_data import get_ok_data, get_cost_data
-from .module.trello.update_data_card import update_labels_trello
+from .module.trello.update_data_card import update_option_labels_trello
 
 today_date = datetime.now().date()
 
@@ -95,7 +95,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
-    update_labels_trello(event)
+    update_option_labels_trello(event)
 
     # Rediriger vers la page de détails de l'événement mise à jour
     return redirect('info_event', id=event.id)

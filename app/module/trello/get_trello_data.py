@@ -63,12 +63,17 @@ def get_lst_cards():
    lst_cards = json.loads(response.text)
    return lst_cards
 
-
 def get_id_label(post_label):
    # Supposons que get_lst_labels() renvoie une liste de labels sous forme de dictionnaires
    for label in get_lst_labels():
       if label['name'] == post_label:
-         return label['id']  # Retourner l'ID dès qu'une correspondance est trouvée
+         return label['id']  # Retourner l'ID dès qu'une correspondence est trouvée
+      elif "360Airbooth" == post_label:
+         return "669591d56535a9bb2e8a60bd"
+      elif "Voguebooth" == post_label:
+         return "669591939c9d96fbe5d218c2"
+      elif "Ipadbooth" == post_label:
+         return "669591e13475d95a06c61737"
 
 def get_data_card_by_name(name):
    for card_json in get_lst_cards():

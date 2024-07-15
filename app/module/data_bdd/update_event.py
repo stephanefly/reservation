@@ -73,6 +73,9 @@ def update_data(event, request):
     event_product.photobooth = request.POST.get('photobooth') == 'on'
     event_product.miroirbooth = request.POST.get('miroirbooth') == 'on'
     event_product.videobooth = request.POST.get('videobooth') == 'on'
+    event_product.voguebooth = request.POST.get('voguebooth') == 'on'
+    event_product.ipadbooth = request.POST.get('ipadbooth') == 'on'
+    event_product.airbooth = request.POST.get('airbooth') == 'on'
     event_product.save()
 
     # Mise à jour des options de l'événement et calcul du total

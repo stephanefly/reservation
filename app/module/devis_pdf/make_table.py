@@ -45,6 +45,12 @@ def prix_ligne_product(event):
         produits_descriptions.append("Miroirbooth Tirages Illimités ")
     if event.event_product.videobooth:
         produits_descriptions.append("360VidéoBooth Vidéos Illimités ")
+    if event.event_product.voguebooth:
+        produits_descriptions.append("VogueBooth Personnalisé")
+    if event.event_product.ipadbooth:
+        produits_descriptions.append("Ipad Numérique Illimités ")
+    if event.event_product.airbooth:
+        produits_descriptions.append("360Airbooth Vidéos Illimités ")
 
     if len(produits_descriptions) > 1:
         acompte = "100"

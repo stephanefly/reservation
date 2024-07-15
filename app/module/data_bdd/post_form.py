@@ -68,6 +68,9 @@ def initialize_event(post_data):
             'photobooth': False,
             'miroirbooth': False,
             'videobooth': False,
+            'voguebooth': False,
+            'ipadbooth': False,
+            'airbooth': False,
         }
 
         # Mise à jour des attributs en fonction de la présence des mots-clés dans product_data
@@ -77,6 +80,12 @@ def initialize_event(post_data):
             product_attrs['miroirbooth'] = True
         if "360Booth" in product_data:
             product_attrs['videobooth'] = True
+        if "Voguebooth" in product_data:
+            product_attrs['voguebooth'] = True
+        if "Ipadbooth" in product_data:
+            product_attrs['ipadbooth'] = True
+        if "360Airbooth" in product_data:
+            product_attrs['airbooth'] = True
 
         # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
         event_product = EventProduct(**product_attrs)
@@ -129,7 +138,12 @@ def prix_brut_calculs(event):
     prix_brut = 0
 
     # Prix de base pour chaque produit pour des durées de 5 et 3 heures
-    prix_photobooth_5h, prix_miroirbooth_5h, prix_360booth_5h = 450, 600, 500
+    prix_photobooth_5h = 450
+    prix_miroirbooth_5h = 550
+    prix_360booth_5h = 500
+    prix_voguebooth_5h = 500
+    prix_ipadbooth_5h = 250
+    prix_airbooth_5h = 500
 
     # Ajoutez le prix de chaque produit sélectionné
     if event.event_product.photobooth:
@@ -138,6 +152,12 @@ def prix_brut_calculs(event):
         prix_brut += prix_miroirbooth_5h
     if event.event_product.videobooth:
         prix_brut += prix_360booth_5h
+    if event.event_product.voguebooth:
+        prix_brut += prix_voguebooth_5h
+    if event.event_product.ipadbooth:
+        prix_brut += prix_ipadbooth_5h
+    if event.event_product.airbooth:
+        prix_brut += prix_airbooth_5h
 
     if prix_brut == 450:
         event.reduc_product = 50

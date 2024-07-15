@@ -4,7 +4,7 @@ from app.module.trello.get_trello_data import get_id_label, get_data_card_by_nam
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
 
-def update_labels_trello(event):
+def update_option_labels_trello(event):
 
    data_card = get_data_card_by_name(event.client.nom)
 
