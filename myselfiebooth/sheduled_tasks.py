@@ -22,8 +22,6 @@ maj_today_event()
 make_planning()
 
 # Backup BDD
-
 # launch_relance devis (2 jours hors vendredi/samedi/dimanche, 1 semaine plus tard, debut du mois prochain)
 # STAT à quels heures je reçois mes devis
-
 # relance_model_choise (1 mois + 15 avant, 1 mois, 3 semaine, 2 semaine)
