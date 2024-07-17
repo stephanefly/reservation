@@ -1,7 +1,7 @@
 import os
-
 from babel.dates import parse_date
 from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from datetime import datetime, timedelta, timezone
 from django.http import QueryDict
 from django.template.loader import render_to_string
@@ -16,6 +16,7 @@ from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
+from .module.espace_client.completer import update_event_and_redirect
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.lib_pie_chart import table_graph_pie
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
@@ -336,54 +337,16 @@ def choix_client(request, id, token):
 
 @require_http_methods(["POST"])
 def edit_horaire(request, event_id):
-    event = Event.objects.get(pk=event_id)
-    new_horaire = request.POST.get('horaire')
-
-    # Mettez à jour l'horaire de l'événement
-    event.event_details.horaire = new_horaire
-    event.event_details.save()
-    event.save()
-
-    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    return update_event_and_redirect(request, event_id, 'horaire', 'event_details', 'choix_client')
 
 @require_http_methods(["POST"])
 def edit_comment(request, event_id):
-    event = Event.objects.get(pk=event_id)
-    new_comment = request.POST.get('comment_client')
-
-    # Mettez à jour le commentaire client de l'événement
-    event.event_details.comment_client = new_comment
-    event.event_details.save()
-    event.save()
-
-    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    return update_event_and_redirect(request, event_id, 'comment_client', 'event_details', 'choix_client')
 
 @require_http_methods(["POST"])
 def edit_text(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    text_template = request.POST.get('text_template')
-
-    if not event.event_template:
-        event.event_template = EventTemplate(text_template=text_template)
-    else:
-        event.event_template.text_template = text_template
-
-    event.event_template.save()
-    event.save()
-
-    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    return update_event_and_redirect(request, event_id, 'text_template', 'event_template', 'choix_client')
 
 @require_http_methods(["POST"])
 def edit_template(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    url_modele = request.POST.get('model_template')
-
-    if not event.event_template:
-        event.event_template = EventTemplate(url_modele=url_modele)
-    else:
-        event.event_template.url_modele = url_modele
-
-    event.event_template.save()
-    event.save()
-
-    return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    return update_event_and_redirect(request, event_id, 'url_modele', 'event_template', 'choix_client')

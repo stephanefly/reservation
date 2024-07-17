@@ -21,7 +21,7 @@
    </div>
    {% else %} 
    <div class="info-block alert alert-success">
-        <p>Merci ! Toutes les informations nécessaires sont complètes.</p>
+        <p>Merci ! Toutes les informations nécessaires sont complètes.<br> Une validation sera faite par notre équipe</p>
        </div>
    {% endif %}
 
@@ -35,12 +35,12 @@
       </div>
       {% endif %}
       <div class="info-label">Prestations:</div>
-      <div class="info-content">
-         {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
-         {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}
-         {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}
-         {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}
-         {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadbooth</span>{% endif %}
+            <div class="info-content">
+                {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
+{#         {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}#}
+{#         {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}#}
+{#         {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}#}
+{#         {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadbooth</span>{% endif %}#}
       </div>
       <div class="info-row">
          <div class="info-label">Durée:</div>
@@ -59,6 +59,27 @@
          Ajouter des options
          </button>
       </div>
+   </div>
+   <div class="info-block">
+      <h5>Prix Prestation</h5>
+         <table id="table" class="table table-bordered table-striped" style="background-color: rgba(255, 255, 255, 0.9); border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: rgba(220, 220, 220, 0.9);">
+            <th style="padding: 10px;">PRIX</th>
+            <th style="padding: 10px;">Acompte</th>
+            <th style="padding: 10px;">Restant</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="prix_valided" style="padding: 10px;">{{ event.prix_valided }}</td>
+            <td id="montant_acompte" style="padding: 10px;">{{ event.event_acompte.montant_acompte }}</td>
+            <td id="difference" style="padding: 10px;">{{ event.event_acompte.montant_restant }}</td>
+        </tr>
+    </tbody>
+</table>
+
+
    </div>
    <div class="info-block">
       <h5>Informations évènement</h5>
