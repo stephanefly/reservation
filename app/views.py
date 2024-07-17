@@ -372,3 +372,18 @@ def edit_text(request, event_id):
     event.save()
 
     return render(request, 'app/page_client/info_client_event.html', {'event': event})
+
+@require_http_methods(["POST"])
+def edit_template(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    url_modele = request.POST.get('model_template')
+
+    if not event.event_template:
+        event.event_template = EventTemplate(url_modele=url_modele)
+    else:
+        event.event_template.url_modele = url_modele
+
+    event.event_template.save()
+    event.save()
+
+    return render(request, 'app/page_client/info_client_event.html', {'event': event})

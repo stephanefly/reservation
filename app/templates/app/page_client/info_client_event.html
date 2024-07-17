@@ -1,5 +1,7 @@
 {% extends 'app/page_client/base_client.html' %}
 {% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
+
 <div class="container">
    <h4>Bienvenue {{ event.client.nom }} !</h4>
    {% if not event.event_details.horaire or not event.event_template.text_template or not event.event_template.url_modele %}
@@ -66,7 +68,17 @@
       </div>
       <div class="info-row">
          <div class="info-label">Horaire début de la prestation:</div>
-         <div class="info-value">{{ event.event_details.horaire }}</div>
+          <div class="info-value">
+                {% if event.event_details.horaire %}
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_details.horaire }}</strong>
+                    </span>
+                {% else %}
+                    <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
+                    </span>
+                {% endif %}
+            </div>  
       </div>
       <div class="info-row">
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">
@@ -82,7 +94,18 @@
       <h5>Design</h5>
       <div class="info-row">
          <div class="info-label">Model de Tirage:</div>
-         <div class="info-value">{{ event.event_template.url_modele }}</div>
+            <div class="info-value">
+                {% if event.event_template.url_modele %}
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i> 
+                        <strong><a href="{{ event.event_template.url_modele }}" target="_blank" class="text-success" style="text-decoration: none;"><u>OK (voir modèle)</u></a></strong>
+                    </span>
+                {% else %}
+                    <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i> <strong>Non OK</strong>
+                    </span>
+                {% endif %}
+            </div>
       </div>
       <div class="info-row">
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
@@ -95,7 +118,17 @@
       </div>
       <div class="info-row">
          <div class="info-label">Texte:</div>
-         <div class="info-value">{{ event.event_template.text_template }}</div>
+                   <div class="info-value">
+                {% if event.event_template.text_template %}
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_template.text_template }}</strong>
+                    </span>
+                {% else %}
+                    <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
+                    </span>
+                {% endif %}
+            </div>  
       </div>
       <div class="info-row">
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#textModal">
@@ -111,7 +144,7 @@
       <h5>Informations supplémentaires</h5>
       <div class="info-row">
          <div class="info-label">Commentaire (Optionel): </div>
-         <div class="info-value">{{ event.event_details.comment_client }}</div>
+         <div class="info-value">{{ event.event_details.comment_client|default:'' }}</div>
       </div>
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentaireModal">
       {% if event.event_details.comment_client %}
@@ -150,7 +183,47 @@
       </div>
    </div>
 </div>
-    
+
+<!-- Modal for editing template -->
+<div class="modal fade" id="templateModal" tabindex="-1" role="dialog" aria-labelledby="templateModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="templateModalLabel">{% if event.event_template.url_modele %}Modifier le modèle{% else %}Ajouter le modèle{% endif %}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <form method="post" action="{% url 'edit_template' event.id %}">
+            {% csrf_token %}
+            <div class="modal-body"><div class="info-block alert alert-warning">
+    <p>
+        <strong>Personnalisez votre tirage :</strong> Choisissez un modèle parmi nos trois sites Etsy ci-dessous. Nous nous occupons de la personnalisation, y compris la taille des photos et l'ajout de portraits si vous le souhaitez. Vous avez juste à copier l'URL du modèle souhaité.
+    </p>
+    <hr>
+    <p>
+        <strong>Sites Etsy :</strong>
+    </p>
+    <ul style="list-style-type: none; padding: 0; text-align: center;">
+        <li><a href="https://www.etsy.com/shop/MyCreativeTemplateCo" target="_blank">MyCreativeTemplateCo</a></li>
+        <li><a href="https://www.etsy.com/shop/YourCreativeTemplate" target="_blank">YourCreativeTemplate</a></li>
+        <li><a href="https://www.etsy.com/shop/TemplateBux" target="_blank">TemplateBux</a></li>
+    </ul>
+</div>
+
+               <div class="form-group">
+                  <label for="model_template">URL du Modèle de Tirage:</label>
+                  <input type="url" class="form-control" id="model_template" name="model_template" value="{{ event.event_template.url_modele|default:'' }}" placeholder="URL MODEL ESTY">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+               <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+
 <!-- Modal for editing texte -->
 <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
@@ -189,7 +262,7 @@
             <div class="modal-body">
                <div class="form-group">
                   <label for="comment_client">Commentaire:</label>
-                  <textarea class="form-control" id="comment_client" name="comment_client" rows="3">{{ event.event_details.comment_client }}</textarea>
+                  <textarea class="form-control" id="comment_client" name="comment_client" rows="3">{{ event.event_details.comment_client|default:'' }}</textarea>
                </div>
             </div>
             <div class="modal-footer">
