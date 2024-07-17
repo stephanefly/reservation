@@ -102,7 +102,7 @@
                     </span>
                 {% else %}
                     <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>Non OK</strong>
+                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
                     </span>
                 {% endif %}
             </div>
@@ -237,7 +237,7 @@
             <div class="modal-body">
                <div class="form-group">
                   <label for="text_template">Texte à mettre :</label>
-                  <textarea class="form-control" id="text_template" name="text_template" rows="3">{{ event.event_template.text_template }}</textarea>
+                  <textarea class="form-control" id="text_template" name="text_template" rows="3">{{ event.event_template.text_template|default:'' }}</textarea>
                </div>
             </div>
             <div class="modal-footer">
