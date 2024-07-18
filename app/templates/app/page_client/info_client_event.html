@@ -1,6 +1,5 @@
 {% extends 'app/page_client/base_client.html' %}
 {% block content %}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
 
 <div class="container">
    <h4>Bienvenue {{ event.client.nom }} !</h4>
@@ -21,7 +20,7 @@
    </div>
    {% else %} 
    <div class="info-block alert alert-success">
-        <p>Merci ! Toutes les informations nécessaires sont complètes.<br> Une validation sera faite par notre équipe</p>
+        <p>Merci ! Toutes les informations nécessaires sont complètes.<br> Une validation et un retour sera faite par notre équipe</p>
        </div>
    {% endif %}
 
@@ -35,17 +34,17 @@
       </div>
       {% endif %}
       <div class="info-label">Prestations:</div>
-            <div class="info-content">
-                {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
-{#         {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}#}
-{#         {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}#}
-{#         {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}#}
-{#         {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadbooth</span>{% endif %}#}
-      </div>
-      <div class="info-row">
-         <div class="info-label">Durée:</div>
-         <div class="info-value">{{ event.event_option.duree }}h</div>
-      </div>
+        <div class="info-content">
+            {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
+            {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}
+            {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}
+            {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}
+            {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadbooth</span>{% endif %}
+            {% if event.event_product.airbooth %}<span class="highlight-prestation">Airbooth</span>{% endif %}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
+         Ajouter des Prestations
+         </button>
+        </div>
       <div class="info-label">Options:</div>
       <div class="info-content">
          {% if event.event_option.MurFloral %}<span class="highlight-option">MurFloral</span>{% endif %}
@@ -59,6 +58,12 @@
          Ajouter des options
          </button>
       </div>
+         <div class="info-label">Durée:</div>
+         <div class="info-content"><span style="background-color: #966bbf;color: white;padding: 10px 15px;margin: 5px;font-size: 18px;">
+             {{ event.event_option.duree }}h</span>
+       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dureeModal">
+            Changer la durée
+         </button></div>
    </div>
    <div class="info-block">
       <h5>Prix Prestation</h5>
@@ -176,7 +181,74 @@
       </button>
    </div>
 </div>
-    
+
+<!-- Modal for adding prestation -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">Ajouter d'autres Prestations</h5>
+
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+                                             {% load static %}
+                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
+        <img src="/static/img/all_presta.jpg" alt="Description de l'image" style="max-width: 100%;"><hr>
+            <p>Pour l'ajout d'autres prestation,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Modal for adding options -->
+<div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="optionModalLabel">Ajouter des Options</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+                                                          {% load static %}
+                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
+        <img src="/static/img/all_options.jpg" alt="Description de l'image" style="max-width: 100%;"><hr>
+            <p>Pour l'ajout d'options,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Modal for adding duree -->
+<div class="modal fade" id="dureeModal" tabindex="-1" role="dialog" aria-labelledby="dureeModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="dureeModalLabel">Changer la durée</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+<ul>
+    <li>30€/h si vous décidez aujourd'hui</li>
+    <li>50€/h le jour J pour toute prolongation de la prestation</li>
+</ul>
+    </ul>
+             <hr>
+            <p>Pour l'augmentation de la durée,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+         </div>
+      </div>
+   </div>
+</div>
+
 <!-- Modal for editing horaire -->
 <div class="modal fade" id="horaireModal" tabindex="-1" role="dialog" aria-labelledby="horaireModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
@@ -189,7 +261,7 @@
             {% csrf_token %}
             <div class="modal-body">
                    <div class="info-block alert alert-warning">
-                <p>Pour information nous serons présent 1h avant le début pour l'instalation</p>
+                <p>Pour information, Nous serons présents une heure avant le début pour l'installation.</p>
                        </div>
                <div class="form-group">
                   <label for="horaire">Horaire début prestation:</label>
@@ -231,8 +303,8 @@
 </div>
 
                <div class="form-group">
-                  <label for="model_template">URL du Modèle de Tirage:</label>
-                  <input type="url" class="form-control" id="model_template" name="model_template" value="{{ event.event_template.url_modele|default:'' }}" placeholder="URL MODEL ESTY">
+                  <label for="url_modele">URL du Modèle de Tirage:</label>
+                  <input type="url" class="form-control" id="url_modele" name="url_modele" value="{{ event.event_template.url_modele|default:'' }}" placeholder="https://">
                </div>
             </div>
             <div class="modal-footer">
@@ -257,8 +329,12 @@
             {% csrf_token %}
             <div class="modal-body">
                <div class="form-group">
+                   {% load static %}
+                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
+        <img src="/static/img/exemple-texte.gif" alt="Description de l'image" style="max-width: 100%;">
+                   <br><br>
                   <label for="text_template">Texte à mettre :</label>
-                  <textarea class="form-control" id="text_template" name="text_template" rows="3">{{ event.event_template.text_template|default:'' }}</textarea>
+                  <textarea class="form-control" id="text_template" name="text_template" rows="3" placeholder="Mariage de">{{ event.event_template.text_template|default:'' }}</textarea>
                </div>
             </div>
             <div class="modal-footer">
@@ -295,22 +371,5 @@
    </div>
 </div>
     
-<!-- Modal for adding options -->
-<div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel" aria-hidden="true">
-   <div class="modal-dialog" role="document">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h5 class="modal-title" id="optionModalLabel">Ajouter des Options</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
-         <div class="modal-body">
-            <p>Pour l'ajout d'options,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-         </div>
-      </div>
-   </div>
-</div>
-    
+
 {% endblock %}

@@ -76,7 +76,7 @@ button {
     justify-content: center;
 }
 
-.highlight-prestation, .highlight-option {
+.highlight-prestation, .highlight-option, .highlight-duree {
     color: white;
     padding: 10px 15px;
     margin: 5px;
@@ -89,6 +89,10 @@ button {
 
 .highlight-option {
     background-color: #1abc9c;
+}
+
+.highlight-duree {
+    background-color: #966bbf;
 }
 
 .info-row {
@@ -144,4 +148,16 @@ h5 {
         text-align: left;
         width: auto;
     }
+}
+
+.gif-container {
+    max-width: 100%; /* La largeur maximale du conteneur est celle de son parent */
+    height: auto; /* La hauteur s'ajuste automatiquement pour conserver le ratio */
+    overflow: hidden; /* Empêche le débordement de l'image */
+}
+
+.gif-container img {
+    display: block; /* Pour enlever l'espace réservé sous l'image */
+    width: 100%; /* L'image occupe 100% de la largeur du conteneur */
+    height: auto; /* Laisse la hauteur s'ajuster automatiquement */
 }
