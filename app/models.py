@@ -40,6 +40,21 @@ class EventProduct(models.Model):
     ipadbooth = models.BooleanField(default=False)
     airbooth = models.BooleanField(default=False)
 
+    def get_selected_booths(self):
+        selected_booths = []
+        if self.photobooth:
+            selected_booths.append("photobooth")
+        if self.miroirbooth:
+            selected_booths.append("miroirbooth")
+        if self.videobooth:
+            selected_booths.append("videobooth")
+        if self.voguebooth:
+            selected_booths.append("voguebooth")
+        if self.ipadbooth:
+            selected_booths.append("ipadbooth")
+        if self.airbooth:
+            selected_booths.append("airbooth")
+        return ', '.join(selected_booths[:-1]) + ' et ' + selected_booths[-1]
 
 class EventOption(models.Model):
 

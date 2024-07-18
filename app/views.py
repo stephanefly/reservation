@@ -17,6 +17,7 @@ from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_fact
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
 from .module.espace_client.completer import update_event_and_redirect
+from .module.espace_client.mail_validation import send_mail_validation
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.lib_pie_chart import table_graph_pie
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
@@ -107,6 +108,9 @@ def confirmation_val_devis(request, id):
     if request.method == 'POST':
         form = ValidationForm(request.POST)
         if form.is_valid():
+            if not event.prix_valided:
+                send_mail_validation(event)
+
             event_acompte = EventAcompte(
                 montant_acompte=form.cleaned_data.get('montant_acompte'),
                 mode_payement=form.cleaned_data.get('mode_payement'),

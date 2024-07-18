@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
-from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, PDF_REPERTORY, MAIL_COPIE, MAIL_BCC
+from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_COPIE, MAIL_BCC
 from email.mime.application import MIMEApplication
 
 
@@ -27,7 +27,7 @@ def send_email(event):
 
     # Corps de l'e-mail au format HTML
     # Ouvrir le fichier HTML en mode lecture (r pour read)
-    with open(os.path.join(PDF_REPERTORY, "test.html"), 'r', encoding='utf-8') as fichier_html:
+    with open(os.path.join(MAIL_TEMPLATE_REPOSITORY, "mail_devis.html"), 'r', encoding='utf-8') as fichier_html:
         html_message = fichier_html.read()
     soup = BeautifulSoup(html_message, 'html.parser')
 
@@ -56,22 +56,24 @@ def send_email(event):
 
 def complete_mail(event, soup):
 
-    soup.find('a', class_='client_nom').string = str(event.client.nom)
+    soup.find('b', class_='client_nom').string = str(event.client.nom)
     soup.find('a', class_='date_event').string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
 
     if event.prix_brut > event.prix_proposed:
         soup.find('a', class_='txt_reduc').string = " et bénéficier de la reservation"
+    else:
+        soup.find('a', class_='txt_reduc').string = ""
 
     if event.prix_proposed >= 600:
-        soup.find('a', class_='acompte').string = "100 €"
+        soup.find('b', class_='acompte').string = "100 €"
     elif event.prix_proposed >= 1000:
-        soup.find('a', class_='acompte').string = "150 €"
+        soup.find('b', class_='acompte').string = "150 €"
     else:
-        soup.find('a', class_='acompte').string = "50 €"
+        soup.find('b', class_='acompte').string = "50 €"
 
     # Ajouter 10 jours à la date de l'événement
     date_j_plus_10 = datetime.now() + timedelta(days=8)
-    soup.find('a', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
+    soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     return soup
 

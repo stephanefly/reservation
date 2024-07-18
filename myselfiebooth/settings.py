@@ -32,6 +32,8 @@ SECRET_KEY = config.get('SECRET_KEY')
 KEY_TRELLO = config.get('key'),
 TOKEN_TRELLO = config.get('token')
 PDF_REPERTORY = config.get('PDF_REPERTORY')
+MAIL_TEMPLATE_REPOSITORY = config.get('MAIL_TEMPLATE_REPOSITORY')
+
 
 TITULAIRE_DU_COMPTE_A = config.get('TITULAIRE_DU_COMPTE_A')
 IBAN_A = config.get('IBAN_A')
