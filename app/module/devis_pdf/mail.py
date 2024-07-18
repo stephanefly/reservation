@@ -27,7 +27,7 @@ def send_email(event):
 
     # Corps de l'e-mail au format HTML
     # Ouvrir le fichier HTML en mode lecture (r pour read)
-    with open(os.path.join(PDF_REPERTORY, "template_mail.html"), 'r', encoding='utf-8') as fichier_html:
+    with open(os.path.join(PDF_REPERTORY, "test.html"), 'r', encoding='utf-8') as fichier_html:
         html_message = fichier_html.read()
     soup = BeautifulSoup(html_message, 'html.parser')
 
