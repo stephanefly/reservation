@@ -2,6 +2,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formataddr
 
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -20,8 +21,8 @@ def send_email(event):
 
     # Configuration de l'email
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "📸 MySelfieBooth - Votre devis - " + str(event.client.nom) + " ✨"
-    msg['From'] = MAIL_MYSELFIEBOOTH
+    msg['Subject'] = "📸 Votre devis - " + str(event.client.nom) + " ✨"
+    msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
     msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
 

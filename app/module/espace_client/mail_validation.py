@@ -2,7 +2,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+from email.utils import formataddr
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
@@ -19,8 +19,8 @@ def send_mail_validation(event):
 
     # Configuration de l'email
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "📸 MySelfiebooth - Votre prestation est réservé : préparez-vous à vous éclater ! ✨"
-    msg['From'] = MAIL_MYSELFIEBOOTH
+    msg['Subject'] = "📸 Votre prestation est réservé : préparez-vous à vous éclater ! ✨"
+    msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
     msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
 

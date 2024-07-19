@@ -108,7 +108,7 @@ def confirmation_val_devis(request, id):
     if request.method == 'POST':
         form = ValidationForm(request.POST)
         if form.is_valid():
-            if not event.prix_valided:
+            if event.status != "Acompte OK":
                 send_mail_validation(event)
 
             event_acompte = EventAcompte(
