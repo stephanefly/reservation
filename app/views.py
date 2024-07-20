@@ -17,6 +17,7 @@ from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_fact
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
 from .module.espace_client.completer import update_event_and_redirect
+from .module.espace_client.logging import process_client_request
 from .module.espace_client.mail_validation import send_mail_validation
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.lib_pie_chart import table_graph_pie
@@ -302,31 +303,24 @@ def tache_planif():
     make_planning()
 
 
- # CLIENT CHOIX MODEL
 def logging_client(request):
     context = {'form': {}}
+
     if request.method == 'POST':
         form_data = request.POST.dict()
-        client_mail = form_data['mail']
-        client_date_evenement = datetime.strptime(form_data['date_evenement'], '%Y-%m-%d')
+        client_mail = form_data.get('mail')
+        date_str = form_data.get('date_evenement')
+        today_date = datetime.now().date()
 
-        # Vérifiez si les informations sont dans la base de données
-        event = Event.objects.get(
-            event_details__date_evenement=client_date_evenement,
-            client=Client.objects.filter(mail=client_mail).first()
-        )
+        # Appeler la fonction utilitaire
+        event, result = process_client_request(client_mail, date_str, today_date)
 
-        if event and client_date_evenement.date() >= today_date and event.signer_at:
-            token = uuid.uuid4().hex  # Générer un token UUID unique
+        if event:
             # Stocker le token en session ou dans la base de données
-            request.session['client_token'] = token
-            return redirect('choix_client', id=event.id, token=token)
-        elif client_date_evenement.date() < today_date:
-            context['error_message'] = "La date de l'événement est passée."
-        elif not event.signer_at:
-            context['error_message'] = "Le devis n'a pas été encore validé"
+            request.session['client_token'] = result
+            return redirect('choix_client', id=event.id, token=result)
         else:
-            context['error_message'] = "Les informations saisies ne sont pas trouvées dans notre base de données."
+            context['error_message'] = result
 
     return render(request, 'app/page_client/logging.html', context)
 

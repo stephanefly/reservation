@@ -65,6 +65,8 @@
             Changer la durée
          </button></div>
    </div>
+
+   {% if event.event_acompte %}
    <div class="info-block">
       <h5>Prix Prestation</h5>
          <table id="table" class="table table-bordered table-striped" style="background-color: rgba(255, 255, 255, 0.9); border-collapse: collapse;">
@@ -83,9 +85,8 @@
         </tr>
     </tbody>
 </table>
-
-
    </div>
+    {% endif %}
    <div class="info-block">
       <h5>Informations évènement</h5>
       <div class="info-row">
