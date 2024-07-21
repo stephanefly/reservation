@@ -360,3 +360,9 @@ def send_new_espace_client(request):
         send_email_espace_client(event_ok)
 
     return redirect('lst_cost')
+
+def send_new_espace_client_one(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_email_espace_client(event)
+
+    return redirect('lst_cost')
