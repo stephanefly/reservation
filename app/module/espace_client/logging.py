@@ -13,7 +13,7 @@ def process_client_request(client_mail, date_str, today_date):
         # Vérifier si l'événement existe avec la date donnée et le client
         event = Event.objects.get(
             event_details__date_evenement=client_date_evenement,
-            client=client_mail
+            client__mail=client_mail
         )
         if not event.signer_at:
             return None, "Le devis n'a pas été encore validé."
