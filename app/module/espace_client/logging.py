@@ -9,16 +9,11 @@ def process_client_request(client_mail, date_str, today_date):
     except ValueError:
         return None, "Format de date invalide."
 
-    # Vérifier si le client existe
-    client = Client.objects.filter(mail=client_mail).first()
-    if not client:
-        return None, "Client non trouvé."
-
     try:
         # Vérifier si l'événement existe avec la date donnée et le client
         event = Event.objects.get(
             event_details__date_evenement=client_date_evenement,
-            client=client
+            client=Client.objects.filter(mail=client_mail)
         )
         if not event.signer_at:
             return None, "Le devis n'a pas été encore validé."
@@ -27,7 +22,7 @@ def process_client_request(client_mail, date_str, today_date):
             return event, token
 
     except Event.DoesNotExist:
-        return None, "Événement non trouvé pour la date et le client donnés."
+        return None, "Événement non trouvé pour la date ou le mail donnés."
 
 
 
