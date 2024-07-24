@@ -350,17 +350,6 @@ def edit_text(request, event_id):
 def edit_template(request, event_id):
     return update_event_and_redirect(request, event_id, 'url_modele', 'event_template', 'choix_client')
 
-def send_new_espace_client(request):
-
-    lst_event_ok = Event.objects.filter(
-            prix_valided__isnull=False,
-            status='Acompte OK',
-    )
-    for event_ok in lst_event_ok:
-        send_email_espace_client(event_ok)
-
-    return redirect('lst_cost')
-
 def send_new_espace_client_one(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_email_espace_client(event)
