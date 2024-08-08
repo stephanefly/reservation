@@ -354,3 +354,7 @@ def edit_text(request, event_id):
 @require_http_methods(["POST"])
 def edit_template(request, event_id):
     return update_event_and_redirect(request, event_id, 'url_modele', 'event_template', 'choix_client')
+
+# TARIFS
+def tarifs(request):
+    return render(request, 'app/frontend/tarifs.html')

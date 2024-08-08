@@ -1,0 +1,271 @@
+{% extends 'app/frontend/index.html' %}
+{% block content %}
+{% load static %}
+<style>
+   body {
+   font-family: Arial, sans-serif;
+   margin: 0;
+   padding: 0;
+   background-color: #1e1e1e;
+   color: #fff;
+   }
+   header {
+   background: linear-gradient(90deg, #333, #000);
+   color: #ffd700;
+   padding: 20px 0;
+   text-align: center;
+   font-size: 24px;
+   letter-spacing: 1px;
+   }
+   .container {
+   max-width: 1200px;
+   margin: auto;
+   padding: 20px;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 20px;
+   }
+   .service {
+   background-color: #000;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+   flex: 1 1 calc(33.333% - 20px);
+   box-sizing: border-box;
+   padding: 20px;
+   text-align: center;
+   position: relative;
+   transition: transform 0.3s ease;
+   }
+   .service:hover {
+   transform: translateY(-10px);
+   }
+   .service img {
+   width: 100%;
+   border-radius: 8px;
+   margin-bottom: 10px;
+   transition: transform 0.3s ease;
+   }
+   .service:hover img {
+   transform: scale(1.05);
+   }
+   .service:hover .label {
+   transform: scale(1.2);
+   transition: transform 0.3s ease;
+   }
+   .service h2 {
+   font-size: 22px;
+   margin-bottom: 10px;
+   color: #ffd700;
+   }
+   .price {
+   font-size: 22px;
+   color: #ffd700;
+   font-weight: bold;
+   margin-bottom: 20px;
+   background-color: #444;
+   padding: 15px 30px;
+   border-radius: 10px;
+   border: 3px solid #b3a150;
+   display: flex;
+   justify-content: space-around; /* Centrer les prix */
+   }
+   .price span {
+   color: #fff;
+   background-color: #555;
+   padding: 8px 16px;
+   border-radius: 5px;
+   border: 2px solid #b3a150;
+   display: inline-block;
+   position: relative;
+   }
+   .price span::after {
+   content: attr(data-time);
+   top: 100%;
+   left: 50%;
+   transform: translateX(-50%);
+   background-color: #f2e4a9;
+   color: #000;
+   padding: 2px 5px;
+   border-radius: 10px;
+   font-size: 14px;
+   font-weight: bold;
+   margin: 5px;
+   white-space: nowrap;
+   }
+   .details {
+   font-size: 16px;
+   color: #ddd;
+   margin-bottom: 20px;
+   text-align: left;
+   background-color: #333;
+   padding: 15px;
+   border-radius: 8px;
+   border: 1px solid #b3a150;
+   }
+   .details ul {
+   list-style: none;
+   padding: 0;
+   }
+   .details ul li {
+   display: flex;
+   align-items: center;
+   margin-bottom: 10px;
+   }
+   .details ul li img {
+   width: 20px;
+   margin-right: 10px;
+   }
+   .button {
+   display: inline-block;
+   padding: 10px 20px;
+   background: linear-gradient(to bottom, #ffef96, #5a4300);
+   color: #fff;
+   border-radius: 4px;
+   text-decoration: none;
+   font-weight: bold;
+   text-shadow: 1px 1px 2px #000;
+   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+   transition: background 0.3s ease;
+   margin: 5px;
+   }
+   .button:hover {
+   background: linear-gradient(90deg, #ffcc00, #daa520);
+   }
+   .label {
+   position: absolute;
+   top: 0;
+   left: 0;
+   background-color: #b3a150;
+   color: #000;
+   padding: 5px 10px;
+   border-radius: 0 0 15px 0;
+   font-size: 25px;
+   font-weight: bold;
+   border: 2px solid #655a12;
+   font-family: initial;
+   z-index: 10;
+   transition: transform 0.3s ease;
+   }
+   @media (max-width: 768px) {
+   .service {
+   flex: 1 1 calc(50% - 20px);
+   }
+   }
+   @media (max-width: 480px) {
+   .service {
+   flex: 1 1 100%;
+   }
+   }
+</style>
+<div class="service">
+   <div class="label">Promotion</div>
+   <img src="/static/img/photobooth.jpg" alt="Photobooth">
+   <div class="price">
+      <span data-time="3h">300€</span>
+      <span data-time="5h">400€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="icone/video-icone.png" alt="Mail Icon">Partage par Mail & SMS illimités</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Photos, Gifs & Boomerangs</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le Photobooth</a>
+   <a href="#" class="button">Réserver le Photobooth</a>
+</div>
+<div class="service">
+   <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
+   <div class="price">
+      <span data-time="3h">400€</span>
+      <span data-time="5h">500€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail & SMS illimités</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Photos, Gifs & Boomerangs</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le Miroirbooth</a>
+   <a href="#" class="button">Réserver le Miroirbooth</a>
+</div>
+<div class="service">
+   <div class="label">Best Seller</div>
+   <img src="/static/img/360booth.jpg" alt="360booth">
+   <div class="price">
+      <span data-time="3h">500€</span>
+      <span data-time="5h">700€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-video.png" alt="Video Icon">Vidéos illimitées</li>
+         <li><img src="images/icon-effects.png" alt="Effects Icon">Effets spéciaux</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le 360booth</a>
+   <a href="#" class="button">Réserver le 360booth</a>
+</div>
+<div class="service">
+   <img src="/static/img/ipadbooth.jpg" alt="RingBooth">
+   <div class="price">
+      <span data-time="3h">199€</span>
+      <span data-time="5h">299€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail & SMS illimités</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Photos, Gifs & Boomerangs</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le RingBooth</a>
+   <a href="#" class="button">Réserver le RingBooth</a>
+</div>
+<div class="service">
+   <div class="label">Nouveau</div>
+   <img src="/static/img/airbooth.jpg" alt="Air360booth">
+   <div class="price">
+      <span data-time="3h">1199€</span>
+      <span data-time="5h">1399€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-video.png" alt="Video Icon">Vidéos illimitées</li>
+         <li><img src="images/icon-effects.png" alt="Effects Icon">Effets spéciaux</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+         <li><img src="images/icon-technician.png" alt="Technician Icon">Technicien présent</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le Air360booth</a>
+   <a href="#" class="button">Réserver le Air360booth</a>
+</div>
+<div class="service">
+   <div class="label">Top Trend</div>
+   <img src="/static/img/voguebooth.jpg" alt="VogueBooth">
+   <div class="price">
+      <span data-time="3h">899€</span>
+      <span data-time="5h">1099€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-video.png" alt="Video Icon">Vidéos illimitées</li>
+         <li><img src="images/icon-effects.png" alt="Effects Icon">Effets spéciaux</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+         <li><img src="images/icon-technician.png" alt="Technician Icon">Technicien présent</li>
+      </ul>
+   </div>
+   <a href="#" class="button">En savoir plus sur le VogueBooth</a>
+   <a href="#" class="button">Réserver le VogueBooth</a>
+</div>
+{% endblock %}
