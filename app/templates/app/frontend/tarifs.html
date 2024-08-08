@@ -6,7 +6,7 @@
        font-family: Arial, sans-serif;
        margin: 0;
        padding: 0;
-       background-color: #1e1e1e;
+       background-color: #000000;
        color: #fff;
    }
    header {
@@ -119,7 +119,9 @@
        margin: 5px;
    }
    .button:hover {
-       background: linear-gradient(90deg, #ffcc00, #daa520);
+       background: linear-gradient(90deg, #fded95, #daa520);
+       color: #000000;
+      text-shadow: 1px 1px 2px #ffffff;
    }
    .label {
        position:absolute;
@@ -159,7 +161,7 @@
 </style>
 
 <div class="service">
-   <div class="label">Promotion</div>
+   <div class="label">Best Seller</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
    <div class="price">
       <span data-time="3h">300€</span>
@@ -167,16 +169,35 @@
    </div>
    <div class="details">
       <ul>
-         <li><img src="icone/video-icone.png" alt="Mail Icon">Partage par Mail & SMS illimités</li>
-         <li><img src="images/icon-photo.png" alt="Photo Icon">Photos, Gifs & Boomerangs</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation et Animateur sur Place</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Impression illimités</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage en Numérique illimités</li>
          <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le Photobooth</a>
    <a href="#" class="button">Réserver le Photobooth</a>
 </div>
 <div class="service">
+   <div class="label">Best Seller</div>
+   <img src="/static/img/photobooth.jpg" alt="Photobooth">
+   <div class="price">
+      <span data-time="Un jour">300€</span>
+      <span data-time="Weekend">400€</span>
+   </div>
+   <div class="details">
+      <ul>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">400 Impressions</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Dispo</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Animateur sur Place</li>
+         <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
+      </ul>
+   </div>
+   <a href="#" class="button">Réserver le Photobooth</a>
+</div>
+<div class="service">
+   <div class="label">En Promo !</div>
    <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
    <div class="price">
       <span data-time="3h">400€</span>
@@ -184,17 +205,17 @@
    </div>
    <div class="details">
       <ul>
-         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail & SMS illimités</li>
-         <li><img src="images/icon-photo.png" alt="Photo Icon">Photos, Gifs & Boomerangs</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Impression illimités</li>
+         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
+         <li><img src="images/icon-photo.png" alt="Photo Icon">Animateur sur Place</li>
          <li><img src="images/icon-custom.png" alt="Custom Icon">Contour personnalisé</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
+         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le Miroirbooth</a>
    <a href="#" class="button">Réserver le Miroirbooth</a>
 </div>
 <div class="service">
-   <div class="label">Best Seller</div>
+   <div class="label">4K</div>
    <img src="/static/img/360booth.jpg" alt="360booth">
    <div class="price">
       <span data-time="3h">500€</span>
@@ -209,10 +230,10 @@
          <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le 360booth</a>
    <a href="#" class="button">Réserver le 360booth</a>
 </div>
 <div class="service">
+   <div class="label">Formule Eco</div>
    <img src="/static/img/ipadbooth.jpg" alt="RingBooth">
    <div class="price">
       <span data-time="3h">199€</span>
@@ -226,11 +247,10 @@
          <li><img src="images/icon-gallery.png" alt="Gallery Icon">Galerie Web</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le RingBooth</a>
    <a href="#" class="button">Réserver le RingBooth</a>
 </div>
 <div class="service">
-   <div class="label">Nouveau</div>
+   <div class="label">Nouveau !</div>
    <img src="/static/img/airbooth.jpg" alt="Air360booth">
    <div class="price">
       <span data-time="3h">1199€</span>
@@ -246,11 +266,10 @@
          <li><img src="images/icon-technician.png" alt="Technician Icon">Technicien présent</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le Air360booth</a>
    <a href="#" class="button">Réserver le Air360booth</a>
 </div>
 <div class="service">
-   <div class="label">Top Trend</div>
+   <div class="label">En Vogue !</div>
    <img src="/static/img/voguebooth.jpg" alt="VogueBooth">
    <div class="price">
       <span data-time="3h">899€</span>
@@ -266,7 +285,6 @@
          <li><img src="images/icon-technician.png" alt="Technician Icon">Technicien présent</li>
       </ul>
    </div>
-   <a href="#" class="button">En savoir plus sur le VogueBooth</a>
    <a href="#" class="button">Réserver le VogueBooth</a>
 </div>
 {% endblock %}
