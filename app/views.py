@@ -355,3 +355,6 @@ def send_new_espace_client_one(request, event_id):
     send_email_espace_client(event)
 
     return redirect('lst_cost')
+
+def tarifs(request):
+    return render(request, 'app/frontend/tarifs.html')
