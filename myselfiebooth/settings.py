@@ -49,7 +49,7 @@ MAIL_BCC = config.get('MAIL_BCC')
 MP = config.get('MP')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 

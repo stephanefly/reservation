@@ -8,18 +8,24 @@ from app.models import Event, EventDetails, EventTemplate
 @require_http_methods(["POST"])
 def update_event_and_redirect(request, event_id, data_type_template, update_field, redirect_view):
     event = get_object_or_404(Event, pk=event_id)
+    token = request.session.get('client_token')
     new_data = request.POST.get(data_type_template)
 
-    if update_field == 'event_details':
-        model_class = EventDetails
+    if update_field == 'event_details' and hasattr(event.event_details, 'horaire'):
+        event.event_details.horaire = new_data
+        event.event_details.save()
     elif update_field == 'event_template':
-        model_class = EventTemplate
+        if event.event_template:
+            setattr(event.event_template, data_type_template, new_data)
+            event.event_template.save()
+        else:
+            event_template = EventTemplate(**{data_type_template: new_data})
+            event_template.save()
+            event.event_template = event_template
+            event.save()
 
-    # Récupérer ou créer l'objet lié
-    model_instance, created = model_class.objects.get_or_create(event=event, defaults={data_type_template: new_data})
-    if not created:
-        setattr(model_instance, data_type_template, new_data)
-    model_instance.save()
+    return redirect(redirect_view, event_id, token)
+
 
     # Redirection vers l'URL "choix client" avec le token approprié
     client_token = request.session.get('client_token')
