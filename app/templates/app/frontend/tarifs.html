@@ -3,160 +3,161 @@
 {% load static %}
 <style>
    body {
-   font-family: Arial, sans-serif;
-   margin: 0;
-   padding: 0;
-   background-color: #1e1e1e;
-   color: #fff;
+       font-family: Arial, sans-serif;
+       margin: 0;
+       padding: 0;
+       background-color: #1e1e1e;
+       color: #fff;
    }
    header {
-   background: linear-gradient(90deg, #333, #000);
-   color: #ffd700;
-   padding: 20px 0;
-   text-align: center;
-   font-size: 24px;
-   letter-spacing: 1px;
+       background: linear-gradient(90deg, #333, #000);
+       color: #ffd700;
+       padding: 20px 0;
+       text-align: center;
+       font-size: 24px;
+       letter-spacing: 1px;
    }
    .container {
-   max-width: 1200px;
-   margin: auto;
-   padding: 20px;
-   display: flex;
-   flex-wrap: wrap;
-   gap: 20px;
+       max-width: 1200px;
+       margin: auto;
+       padding: 20px;
+       display: flex;
+       flex-wrap: wrap;
+       gap: 20px;
    }
    .service {
-   background-color: #000;
-   border-radius: 8px;
-   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-   flex: 1 1 calc(33.333% - 20px);
-   box-sizing: border-box;
-   padding: 20px;
-   text-align: center;
-   position: relative;
-   transition: transform 0.3s ease;
-   }
-   .service:hover {
-   transform: translateY(-10px);
+       background-color: #000;
+       border-radius: 8px;
+       box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+       flex: 1 1 calc(33.33% - 20px); /* De base, deux services par ligne */
+       box-sizing: border-box;
+       padding: 10px;
+       text-align: center;
+       position: relative;
+       transition: transform 0.3s ease;
    }
    .service img {
-   width: 100%;
-   border-radius: 8px;
-   margin-bottom: 10px;
-   transition: transform 0.3s ease;
-   }
-   .service:hover img {
-   transform: scale(1.05);
-   }
-   .service:hover .label {
-   transform: scale(1.2);
-   transition: transform 0.3s ease;
+       width: 100%;
+       border-radius: 8px;
+       margin-bottom: 10px;
+       transition: transform 0.3s ease;
    }
    .service h2 {
-   font-size: 22px;
-   margin-bottom: 10px;
-   color: #ffd700;
+       font-size: 22px;
+       margin-bottom: 10px;
+       color: #ffd700;
    }
    .price {
-   font-size: 22px;
-   color: #ffd700;
-   font-weight: bold;
-   margin-bottom: 20px;
-   background-color: #444;
-   padding: 15px 30px;
-   border-radius: 10px;
-   border: 3px solid #b3a150;
-   display: flex;
-   justify-content: space-around; /* Centrer les prix */
+       /* font-size: 22px; */
+       color: #ffd700;
+       /* font-weight: bold; */
+       margin-bottom: 20px;
+       background-color: #444;
+       /* padding: 15px 30px; */
+       border-radius: 10px;
+       border: 3px solid #b3a150;
+       /* display: flex; */
+       justify-content: space-around; /* Centrer les prix */
    }
    .price span {
-   color: #fff;
-   background-color: #555;
-   padding: 8px 16px;
-   border-radius: 5px;
-   border: 2px solid #b3a150;
-   display: inline-block;
-   position: relative;
+       color: #fff;
+       background-color: #555;
+       padding: 4px 10px;
+       border-radius: 2px;
+       /* border: 2px solid #b3a150; */
+       display: inline-block;
+       position: relative;
    }
    .price span::after {
-   content: attr(data-time);
-   top: 100%;
-   left: 50%;
-   transform: translateX(-50%);
-   background-color: #f2e4a9;
-   color: #000;
-   padding: 2px 5px;
-   border-radius: 10px;
-   font-size: 14px;
-   font-weight: bold;
-   margin: 5px;
-   white-space: nowrap;
+       content: attr(data-time);
+       top: 100%;
+       left: 50%;
+       transform: translateX(-50%);
+       background-color: #f2e4a9;
+       color: #000;
+       padding: 2px 5px;
+       border-radius: 10px;
+       font-size: 14px;
+       font-weight: bold;
+       margin: 5px;
+       white-space: nowrap;
    }
    .details {
-   font-size: 16px;
-   color: #ddd;
-   margin-bottom: 20px;
-   text-align: left;
-   background-color: #333;
-   padding: 15px;
-   border-radius: 8px;
-   border: 1px solid #b3a150;
+       font-size: 16px;
+       color: #ddd;
+       margin-bottom: 20px;
+       text-align: left;
+       background-color: #333;
+       padding: 15px;
+       border-radius: 8px;
+       border: 1px solid #b3a150;
    }
    .details ul {
-   list-style: none;
-   padding: 0;
+       list-style: none;
+       padding: 0;
    }
    .details ul li {
-   display: flex;
-   align-items: center;
-   margin-bottom: 10px;
+       display: flex;
+       /* align-items: center; */
+       margin-bottom: 10px;
    }
    .details ul li img {
-   width: 20px;
-   margin-right: 10px;
+       width: 20px;
+       margin-right: 10px;
    }
    .button {
-   display: inline-block;
-   padding: 10px 20px;
-   background: linear-gradient(to bottom, #ffef96, #5a4300);
-   color: #fff;
-   border-radius: 4px;
-   text-decoration: none;
-   font-weight: bold;
-   text-shadow: 1px 1px 2px #000;
-   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-   transition: background 0.3s ease;
-   margin: 5px;
+       display: inline-block;
+       padding: 15px 5px;
+       background: linear-gradient(to bottom, #ffef96, #5a4300);
+       color: #fff;
+       border-radius: 4px;
+       text-decoration: none;
+       font-weight: bold;
+       text-shadow: 1px 1px 2px #000;
+       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+       transition: background 0.3s ease;
+       margin: 5px;
    }
    .button:hover {
-   background: linear-gradient(90deg, #ffcc00, #daa520);
+       background: linear-gradient(90deg, #ffcc00, #daa520);
    }
    .label {
-   position: absolute;
-   top: 0;
-   left: 0;
-   background-color: #b3a150;
-   color: #000;
-   padding: 5px 10px;
-   border-radius: 0 0 15px 0;
-   font-size: 25px;
-   font-weight: bold;
-   border: 2px solid #655a12;
-   font-family: initial;
-   z-index: 10;
-   transition: transform 0.3s ease;
+       position:absolute;
+       top:0;
+       left:0;
+       background-color: #b3a150;
+       color: #000;
+       padding: 5px 10px;
+       border-radius: 0 0 15px 0;
+       /* font-size: 25px; */
+       font-weight: bold;
+       border: 2px solid #655a12;
+       font-family: initial;
+       z-index: 10;
+       transition: transform 0.3s ease;
    }
-   @media (max-width: 768px) {
-   .service {
-   flex: 1 1 calc(50% - 20px);
+
+   /* Ajustement pour des écrans plus grands */
+   @media (min-width: 300px) {
+       .container {
+           display: flex;
+           flex-wrap: wrap;
+           justify-content: space-between;
+       }
+       .service {
+           width: calc(50% - 10px); /* Adjust width to allow 2 services per line */
+       }
    }
+
+   /* Ajustements pour des écrans très petits */
+   @media (max-width: 300px) {
+       .service {
+           font-size: 12px; /* Smaller font size for very small devices */
+       }
    }
-   @media (max-width: 480px) {
-   .service {
-   flex: 1 1 100%;
-   }
-   }
+
 </style>
+
 <div class="service">
    <div class="label">Promotion</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
