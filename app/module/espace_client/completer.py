@@ -11,8 +11,8 @@ def update_event_and_redirect(request, event_id, data_type_template, update_fiel
     token = request.session.get('client_token')
     new_data = request.POST.get(data_type_template)
 
-    if update_field == 'event_details' and hasattr(event.event_details, 'horaire'):
-        event.event_details.horaire = new_data
+    if update_field == 'event_details':
+        setattr(event.event_details, data_type_template, new_data)
         event.event_details.save()
     elif update_field == 'event_template':
         if event.event_template:
