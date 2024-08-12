@@ -64,7 +64,7 @@
        color: #fff;
        border: 2px solid #655a12;
        border-radius: 0 0 15px 0;
-       font-size: 10px;
+       font-size: 12px;
        font-weight: bold;
        text-shadow: 1px 1px 2px #000;
        transition: transform 0.3s ease;
@@ -73,7 +73,7 @@
    /* Styles des prix */
    .price {
        justify-content: space-around;
-       margin-bottom: 20px;
+       margin-bottom: 10px;
        padding: 10px;
        background-color: #444;
        border-radius: 10px;
@@ -112,6 +112,7 @@
        background-color: #000000;
        border-radius: 8px;
        margin-bottom: 5px;
+       font-size: 12px;
    }
    
    .details_option {
@@ -178,6 +179,7 @@
        margin: 25px 0;
    }
       .info {
+                 padding: 15px;
        font-size: 15px;
    }
 </style>
@@ -210,16 +212,18 @@
    <div class="label">En Promo !</div>
    <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
    <div class="price">
+       <span data-time="3h">450€</span>
       <span data-time="5h">550€</span>
    </div>
    <div class="details">
-      <ul>
-         <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation</li>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Animateur sur Place</li>
-         <li><img src="images/icon-mail.png" alt="Mail Icon">Impression + Numérique illimités</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Parsonnalisation</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
-      </ul>
+
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Galerie Web<br>
+
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Miroirbooth</a>
 </div>
@@ -232,11 +236,12 @@
    </div>
    <div class="details">
       <ul>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation et Animateur sur Place</li>
-         <li><img src="images/icon-video.png" alt="Video Icon">Vidéos illimitées</li>
-         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Filtre personnalisé</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
+          <li>Impression illimités</li>
+         <li>Livraison et Installation</li>
+          <li>Animateur sur Place</li>
+          <li>Numérique illimités</li>
+         <li>Parsonnalisation</li>
+         <li>Galerie Web</li>
       </ul>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le 360booth</a>
@@ -365,7 +370,9 @@
 
         <div style="text-align: center; width: 100%;">
             <hr class="separator" >
-            <h2 class="info">Pour tout blabla</h2>
+            <h2 class="info">Pour toutes demandes spécifiques,
+merci de nous contacter au 0699733998
+ou par mail contact@myselfiebooth-paris.fr</h2>
 
     </div>
 {% endblock %}
