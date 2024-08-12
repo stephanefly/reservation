@@ -2,61 +2,85 @@
 {% block content %}
 {% load static %}
 <style>
+   /* Reset et styles de base */
    body {
-       font-family: Arial, sans-serif;
        margin: 0;
        padding: 0;
        background-color: #000000;
        color: #fff;
+       font-family: Arial, sans-serif;
    }
    header {
+       padding: 20px 0;
        background: linear-gradient(90deg, #333, #000);
        color: #ffd700;
-       padding: 20px 0;
        text-align: center;
        font-size: 24px;
        letter-spacing: 1px;
    }
+
+   /* Conteneur principal */
    .container {
        max-width: 1200px;
        margin: auto;
-       padding: 20px;
+       padding: 5px;
        display: flex;
        flex-wrap: wrap;
-       gap: 20px;
+       gap: 5px;
    }
+
+   /* Styles des services */
    .service {
+       position: relative;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       padding: 10px;
        background-color: #000;
        border-radius: 8px;
        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        flex: 1 1 calc(25% - 20px); /* 4 services par ligne */
-       box-sizing: border-box;
-       padding: 10px;
+       flex: 1 1 calc(25% - 20px);
        text-align: center;
-       position: relative;
        transition: transform 0.3s ease;
    }
    .service img {
        width: 100%;
-       border-radius: 8px;
        margin-bottom: 10px;
+       border-radius: 8px;
        transition: transform 0.3s ease;
    }
    .service h2 {
-       font-size: 22px;
        margin-bottom: 10px;
        color: #ffd700;
+       font-size: 22px;
    }
+   .label {
+       position: absolute;
+       top: 0;
+       left: 0;
+       z-index: 10;
+       padding: 5px 10px;
+       background: linear-gradient(to left, #836716, #fbfdc2);
+       color: #fff;
+       border: 2px solid #655a12;
+       border-radius: 0 0 15px 0;
+       font-size: 10px;
+       font-weight: bold;
+       text-shadow: 1px 1px 2px #000;
+       transition: transform 0.3s ease;
+   }
+
+   /* Styles des prix */
    .price {
+       justify-content: space-around;
        margin-bottom: 20px;
+       padding: 10px;
        background-color: #444;
        border-radius: 10px;
        border: 3px solid #b3a150;
-       justify-content: space-around; /* Centrer les prix */
        text-shadow: 1px 1px 2px #b9b391;
-
    }
-   .price span {
+ .price span {
        color: #fff;
        background-color: #555;
        padding: 4px 10px;
@@ -80,28 +104,26 @@
        white-space: nowrap;
        text-shadow: 1px 1px 2px #000;
    }
+   /* Styles des détails */
    .details {
-       font-size: 16px;
-       color: #ddd;
-       margin-bottom: 20px;
-       padding: 5px;
        text-align: left;
+       color: #ddd;
+       font-size: 16px;
+       background-color: #000000;
+       border-radius: 8px;
+       margin-bottom: 5px;
+   }
+   
+   .details_option {
+       text-align: left;
+       color: #ddd;
+       font-size: 16px;
        background-color: #333;
        border-radius: 8px;
+       padding: 5px;
+       margin-bottom: 20px;
    }
-   .details ul {
-       list-style: none;
-       padding: 0;
-   }
-   .details ul li {
-       display: flex;
-       /* align-items: center; */
-       margin-bottom: 10px;
-   }
-   .details ul li img {
-       width: 20px;
-       margin-right: 10px;
-   }
+   /* Styles des boutons */
    .button {
        display: inline-block;
        padding: 15px 10px;
@@ -112,87 +134,61 @@
        font-weight: bold;
        text-shadow: 1px 1px 2px #000;
        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-       transition: background 0.3s ease;
+       transition: background 0.3s, transform 0.3s ease;
        margin: 5px;
    }
    .button:hover {
        background: linear-gradient(90deg, #fded95, #daa520);
        color: #000000;
-      text-shadow: 1px 1px 2px #ffffff;
-    transform: scale(1.1); /* Augmente la taille de 10% */
-    transition: transform 0.3s ease; 
+       text-shadow: 1px 1px 2px #ffffff;
+       transform: scale(1.1);
    }
-.label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: linear-gradient(to left, #836716, #fbfdc2); /* Dégradé or-blanc-noir */
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 0 0 15px 0;
-    font-size: 10px;
-    font-weight: bold;
-    border: 2px solid #655a12;
-    font-family: Arial, sans-serif;
-    z-index: 10;
-    transition: transform 0.3s ease;
-    text-shadow: 1px 1px 2px #000; /* Pour donner du relief au texte */
-}
 
-
-   /* Ajustement pour des écrans plus grands */
+   /* Médias queries pour la responsivité */
    @media (min-width: 300px) {
        .container {
-           display: flex;
-           flex-wrap: wrap;
            justify-content: space-between;
        }
        .service {
-           width: calc(50% - 10px); /* Adjust width to allow 2 services per line */
+           width: calc(50% - 10px);
        }
    }
-
-   /* Ajustements pour des écrans très petits */
    @media (max-width: 300px) {
        .service {
-           font-size: 12px; /* Smaller font size for very small devices */
+           font-size: 12px;
        }
    }
 
-.options-title {
-    text-align: center;
-    font-size: 36px;
-    background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-    -webkit-background-clip: text;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
-}
-
-
-.info {
-    text-align: center;
-    font-size: 10px;
-    background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-    -webkit-background-clip: text;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
-}
-   .separator {
-       border: 5px;
-       height: 10px; /* Augmente l'épaisseur */
-       background: linear-gradient(to right, #ffd700, #fff, #ffd700); /* Utilise un dégradé plus clair pour un meilleur contraste */
-       margin: 25px 0;
+   /* Autres styles textuels */
+   .options-title, .info {
+       text-align: center;
+       background: linear-gradient(to right, #ffffff, #fff, #ffffff);
+       -webkit-background-clip: text;
+       font-size: 36px; /* pour options-title */
+       font-size: 10px; /* pour info */
+       letter-spacing: 2px;
+       text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
    }
 
+   /* Styles pour les séparateurs */
+   .separator {
+       border: 5px;
+       height: 10px;
+       background: linear-gradient(to right, #ffd700, #fff, #ffd700);
+       margin: 25px 0;
+   }
+      .info {
+       font-size: 15px;
+   }
 </style>
+
 
 <div class="service">
    <div class="label">Illimités - Best Seller !</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
    <div class="price">
-      <span data-time="3h">300€</span>
-      <span data-time="5h">400€</span>
+      <span data-time="3h">350€</span>
+      <span data-time="5h">450€</span>
    </div>
    <div class="details">
 <img src="/static/img/photobooth.jpg" alt="Photobooth">
@@ -203,8 +199,7 @@
    <div class="label">Toute la soirée !</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
    <div class="price">
-      <span data-time="semaine">300€</span>
-      <span data-time="weekend">350€</span>
+      <span data-time="24/48h">350€</span>
    </div>
    <div class="details">
 <img src="/static/img/photobooth.jpg" alt="Photobooth">
@@ -215,8 +210,7 @@
    <div class="label">En Promo !</div>
    <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
    <div class="price">
-      <span data-time="3h">400€</span>
-      <span data-time="5h">500€</span>
+      <span data-time="5h">550€</span>
    </div>
    <div class="details">
       <ul>
@@ -323,7 +317,7 @@
     </div>
 <div class="service">
     <img src="/static/img/allmur.jpg" alt="Mur Floral">
-    <div class="details">
+    <div class="details_option">
         Embellissez vos photo avec un mur floral chic, idéal pour le photobooth.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">+ Infos</a>
@@ -331,7 +325,7 @@
 
 <div class="service">
     <img src="/static/img/phonebooth.jpg" alt="PhoneBooth">
-    <div class="details">
+    <div class="details_option">
         Laissez vos invités créer des souvenirs audio uniques avec notre livre d'or audio.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le PhoneBooth</a>
@@ -339,7 +333,7 @@
 
 <div class="service">
     <img src="/static/img/3dHolo.jpg" alt="Holobooth">
-    <div class="details">
+    <div class="details_option">
         Donner vie à vos photos avec le Holobooth 3D comme jamais auparavant.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le Holobooth 3D</a>
@@ -347,7 +341,7 @@
 
 <div class="service">
     <img src="/static/img/Livre-dor.jpg" alt="Livre d'or">
-    <div class="details">
+    <div class="details_option">
         Gardez des messages précieux avec notre Livre d'Or personnalisé.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Livre d'Or</a>
@@ -355,7 +349,7 @@
 
 <div class="service">
     <img src="/static/img/Welcomeboard.jpg" alt="Panneau de Bienvenue">
-    <div class="details">
+    <div class="details_option">
         Accueillez vos invités avec un panneau personnalisé et élégant.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Panneau de Bienvenue</a>
@@ -363,7 +357,7 @@
 
 <div class="service">
     <img src="/static/img/fond360.jpg" alt="Fond LED 360">
-    <div class="details">
+    <div class="details_option">
         Illuminez vos vidéos 360° avec un fond LED spectaculaire.
     </div>
     <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Fond LED 360</a>
