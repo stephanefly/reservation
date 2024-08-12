@@ -30,19 +30,19 @@
    }
 
    /* Styles des services */
-   .service {
-       position: relative;
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-       padding: 10px;
-       background-color: #000;
-       border-radius: 8px;
-       box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-       flex: 1 1 calc(25% - 20px);
-       text-align: center;
-       transition: transform 0.3s ease;
-   }
+.service {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #000;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    flex: 1 1 calc(25% - 20px);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
    .service img {
        width: 100%;
        margin-bottom: 10px;
@@ -114,12 +114,6 @@
     margin: 5px 0px;
 }
 
-/* Requête média pour les écrans de plus de 700px */
-@media (min-width: 700px) {
-    .details {
-        font-size: 18px; /* Taille de police augmentée pour les grands écrans */
-    }
-}
    
    .details_option {
        text-align: left;
@@ -151,20 +145,18 @@
        transform: scale(1.1);
    }
 
-   /* Médias queries pour la responsivité */
-   @media (min-width: 300px) {
-       .container {
-           justify-content: space-between;
-       }
-       .service {
-           width: calc(50% - 10px);
-       }
-   }
-   @media (max-width: 300px) {
-       .service {
-           font-size: 12px;
-       }
-   }
+/* Médias queries pour la responsivité */
+@media (max-width: 1000px) {
+    .service {
+        flex: 1 1 calc(33.33% - 20px); /* 3 services par ligne */
+    }
+}
+
+@media (max-width: 700px) {
+    .service {
+        flex: 1 1 calc(50% - 20px); /* 2 services par ligne */
+    }
+}
 
    /* Autres styles textuels */
    .options-title, .info {
@@ -199,7 +191,12 @@
       <span data-time="5h">450€</span>
    </div>
    <div class="details">
-<img src="/static/img/photobooth.jpg" alt="Photobooth">
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Photobooth</a>
 </div>
@@ -210,7 +207,12 @@
       <span data-time="24/48h">350€</span>
    </div>
    <div class="details">
-<img src="/static/img/photobooth.jpg" alt="Photobooth">
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Photobooth</a>
 </div>
@@ -222,14 +224,12 @@
       <span data-time="5h">550€</span>
    </div>
    <div class="details">
-
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
           <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
-
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Miroirbooth</a>
 </div>
@@ -241,14 +241,12 @@
       <span data-time="5h">700€</span>
    </div>
    <div class="details">
-      <ul>
-          <li>Impression illimités</li>
-         <li>Livraison et Installation</li>
-          <li>Animateur sur Place</li>
-          <li>Numérique illimités</li>
-         <li>Parsonnalisation</li>
-         <li>Galerie Web</li>
-      </ul>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le 360booth</a>
 </div>
@@ -260,13 +258,12 @@
       <span data-time="5h">299€</span>
    </div>
    <div class="details">
-      <ul>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">100% Numérique seulement Photo/GIF</li>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation en option (50€)</li>
-          <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Parsonnalisation</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
-      </ul>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le RingBooth</a>
 </div>
@@ -278,13 +275,12 @@
       <span data-time="5h">1399€</span>
    </div>
    <div class="details">
-      <ul>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation et Animateur sur Place</li>
-         <li><img src="images/icon-video.png" alt="Video Icon">Vidéos illimitées</li>
-         <li><img src="images/icon-mail.png" alt="Mail Icon">Partage par Mail illimités</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Filtre personnalisé</li>
-         <li><img src="images/icon-gallery.png" alt="Gallery Icon">Sauvegarde Galerie Web</li>
-      </ul>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Air360booth</a>
 </div>
@@ -295,13 +291,12 @@
       <span>500€</span>
    </div>
    <div class="details">
-      <ul>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Texte personnalisé</li>
-          <li><img src="images/icon-custom.png" alt="Custom Icon">Décoration personnalisé</li>
-          <li><img src="images/icon-effects.png" alt="Effects Icon">Photographe Pro en option (100€)</li>
-          <li><img src="images/icon-effects.png" alt="Effects Icon">Impression en option (100€)</li>
-      </ul>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le VogueBooth</a>
 </div>
@@ -312,13 +307,12 @@
       <span data-time="5h">500€</span>
    </div>
    <div class="details">
-      <ul>
-          <li><img src="images/icon-photo.png" alt="Photo Icon">Livraison et Installation</li>
-         <li><img src="images/icon-custom.png" alt="Custom Icon">Texte personnalisé</li>
-          <li><img src="images/icon-custom.png" alt="Custom Icon">Décoration personnalisé</li>
-          <li><img src="images/icon-effects.png" alt="Effects Icon">Photographe Pro en option (100€)</li>
-          <li><img src="images/icon-effects.png" alt="Effects Icon">Impression en option (100€)</li>
-      </ul>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le VogueBooth</a>
 </div>
