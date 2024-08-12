@@ -105,15 +105,21 @@
        text-shadow: 1px 1px 2px #000;
    }
    /* Styles des détails */
-   .details {
-       text-align: left;
-       color: #ddd;
-       font-size: 16px;
-       background-color: #000000;
-       border-radius: 8px;
-       margin-bottom: 5px;
-       font-size: 12px;
-   }
+.details {
+    text-align: left;
+    color: #ddd;
+    font-size: 12px; /* Taille par défaut pour les petits écrans */
+    background-color: #000000;
+    border-radius: 8px;
+    margin: 5px 0px;
+}
+
+/* Requête média pour les écrans de plus de 700px */
+@media (min-width: 700px) {
+    .details {
+        font-size: 18px; /* Taille de police augmentée pour les grands écrans */
+    }
+}
    
    .details_option {
        text-align: left;
@@ -217,12 +223,12 @@
    </div>
    <div class="details">
 
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Impression illimités<br>
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Livraison et Installation<br>
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Animateur sur Place<br>
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Numérique illimités<br>
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Parsonnalisation<br>
-          <img style="width: 20px" src="/static/icone/impression.jpg" alt="Photo Icon"> Galerie Web<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Impression illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Livraison et Installation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Animateur sur Place<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Numérique illimités<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Parsonnalisation<br>
+          <img style="width: 20px" src="/static/icone/impression.ico" alt="Photo Icon"> Galerie Web<br>
 
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Miroirbooth</a>
