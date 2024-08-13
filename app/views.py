@@ -10,6 +10,7 @@ from .forms import CostForm, ValidationForm, CommentaireForm, HoraireForm
 from .models import Event, Cost, EventAcompte, Client, EventDetails, EventTemplate
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
+from .module.data_bdd.price import PRIX_PRODUITS
 from .module.data_bdd.taches_planifs import maj_today_event, make_planning, get_member_list
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
@@ -357,4 +358,4 @@ def send_new_espace_client_one(request, event_id):
     return redirect('lst_cost')
 
 def tarifs(request):
-    return render(request, 'app/frontend/tarifs.html')
+    return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})

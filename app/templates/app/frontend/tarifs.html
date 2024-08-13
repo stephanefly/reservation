@@ -4,221 +4,209 @@
 <style>
    /* Reset et styles de base */
    body {
-       margin: 0;
-       padding: 0;
-       background-color: #000000;
-       color: #fff;
-       font-family: Arial, sans-serif;
+   margin: 0;
+   padding: 0;
+   background-color: #000000;
+   color: #fff;
+   font-family: Arial, sans-serif;
    }
    header {
-       padding: 20px 0;
-       background: linear-gradient(90deg, #333, #000);
-       color: #ffd700;
-       text-align: center;
-       font-size: 24px;
-       letter-spacing: 1px;
+   padding: 20px 0;
+   background: linear-gradient(90deg, #333, #000);
+   color: #ffd700;
+   text-align: center;
+   font-size: 24px;
+   letter-spacing: 1px;
    }
-
    /* Conteneur principal */
    .container {
-       max-width: 1200px;
-       margin: auto;
-       padding: 5px;
-       display: flex;
-       flex-wrap: wrap;
-       gap: 5px;
+   max-width: 1200px;
+   margin: auto;
+   padding: 5px;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 5px;
    }
-
    /* Styles des services */
-.service {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    background-color: #000;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    flex: 1 1 calc(25% - 20px);
-    text-align: center;
-    transition: transform 0.3s ease;
-}
+   .service {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 10px;
+   background-color: #000;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+   flex: 1 1 calc(25% - 20px);
+   text-align: center;
+   transition: transform 0.3s ease;
+   }
    .service img {
-       width: 100%;
-       margin-bottom: 10px;
-       border-radius: 8px;
-       transition: transform 0.3s ease;
+   width: 100%;
+   margin-bottom: 10px;
+   border-radius: 8px;
+   transition: transform 0.3s ease;
    }
    .service h2 {
-       margin-bottom: 10px;
-       color: #ffd700;
-       font-size: 22px;
+   margin-bottom: 10px;
+   color: #ffd700;
+   font-size: 22px;
    }
    .label {
-       position: absolute;
-       top: 0;
-       left: 0;
-       z-index: 10;
-       padding: 5px 10px;
-       background: linear-gradient(to left, #836716, #fbfdc2);
-       color: #fff;
-       border: 2px solid #655a12;
-       border-radius: 0 0 15px 0;
-       font-size: 12px;
-       font-weight: bold;
-       text-shadow: 1px 1px 2px #000;
-       transition: transform 0.3s ease;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 10;
+   padding: 5px 10px;
+   background: linear-gradient(to left, #836716, #fbfdc2);
+   color: #fff;
+   border: 2px solid #655a12;
+   border-radius: 0 0 15px 0;
+   font-size: 12px;
+   font-weight: bold;
+   text-shadow: 1px 1px 2px #000;
+   transition: transform 0.3s ease;
    }
-
    /* Styles des prix */
    .price {
-       justify-content: space-around;
-       margin-bottom: 10px;
-       padding: 10px;
-       background-color: #444;
-       border-radius: 10px;
-       border: 3px solid #b3a150;
-       text-shadow: 1px 1px 2px #b9b391;
+   justify-content: space-around;
+   margin-bottom: 10px;
+   padding: 10px;
+   background-color: #444;
+   border-radius: 10px;
+   border: 3px solid #b3a150;
+   text-shadow: 1px 1px 2px #b9b391;
    }
- .price span {
-       color: #fff;
-       background-color: #555;
-       padding: 4px 10px;
-       border-radius: 2px;
-       /* border: 2px solid #b3a150; */
-       display: inline-block;
-       position: relative;
+   .price span {
+   color: #fff;
+   background-color: #555;
+   padding: 4px 10px;
+   border-radius: 2px;
+   /* border: 2px solid #b3a150; */
+   display: inline-block;
+   position: relative;
    }
    .price span::after {
-       content: attr(data-time);
-       top: 100%;
-       left: 50%;
-       transform: translateX(-50%);
-       background: linear-gradient(to bottom, #896f20, #ceaf54, #896f20);
-       color: #ffffff;
-       padding: 2px 5px;
-       border-radius: 10px;
-       font-size: 14px;
-       font-weight: bold;
-       margin-left: 5px;
-       white-space: nowrap;
-       text-shadow: 1px 1px 2px #000;
+   content: attr(data-time);
+   top: 100%;
+   left: 50%;
+   transform: translateX(-50%);
+   background: linear-gradient(to bottom, #896f20, #ceaf54, #896f20);
+   color: #ffffff;
+   padding: 2px 5px;
+   border-radius: 10px;
+   font-size: 14px;
+   font-weight: bold;
+   margin-left: 5px;
+   white-space: nowrap;
+   text-shadow: 1px 1px 2px #000;
    }
    /* Styles des détails */
-.details {
-    text-align: left;
-    color: #ddd;
-    font-size: 12px; /* Taille par défaut pour les petits écrans */
-    background-color: #000000;
-    border-radius: 8px;
-    margin: 5px 0px;
-}
-
-   
+   .details {
+   text-align: left;
+   color: #ddd;
+   font-size: 12px; /* Taille par défaut pour les petits écrans */
+   background-color: #000000;
+   border-radius: 8px;
+   margin: 5px 0px;
+   }
    .details_option {
-       text-align: left;
-       color: #ddd;
-       font-size: 16px;
-       background-color: #333;
-       border-radius: 8px;
-       padding: 5px;
-       margin-bottom: 20px;
+   text-align: left;
+   color: #ddd;
+   font-size: 16px;
+   background-color: #333;
+   border-radius: 8px;
+   padding: 5px;
+   margin-bottom: 20px;
    }
    /* Styles des boutons */
    .button {
-       display: inline-block;
-       padding: 15px 10px;
-       background: linear-gradient(to bottom, #fbfdc2, #917c32, #59450a);
-       color: #fff;
-       border-radius: 4px;
-       text-decoration: none;
-       font-weight: bold;
-       text-shadow: 1px 1px 2px #000;
-       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-       transition: background 0.3s, transform 0.3s ease;
-       margin: 5px;
+   display: inline-block;
+   padding: 15px 10px;
+   background: linear-gradient(to bottom, #fbfdc2, #917c32, #59450a);
+   color: #fff;
+   border-radius: 4px;
+   text-decoration: none;
+   font-weight: bold;
+   text-shadow: 1px 1px 2px #000;
+   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+   transition: background 0.3s, transform 0.3s ease;
+   margin: 5px;
    }
    .button:hover {
-       background: linear-gradient(90deg, #fded95, #daa520);
-       color: #000000;
-       text-shadow: 1px 1px 2px #ffffff;
-       transform: scale(1.1);
+   background: linear-gradient(90deg, #fded95, #daa520);
+   color: #000000;
+   text-shadow: 1px 1px 2px #ffffff;
+   transform: scale(1.1);
    }
-
-/* Médias queries pour la responsivité */
-@media (max-width: 1000px) {
-    .service {
-        flex: 1 1 calc(33.33% - 20px); /* 3 services par ligne */
-    }
-}
-
-@media (max-width: 700px) {
-    .service {
-        flex: 1 1 calc(50% - 20px); /* 2 services par ligne */
-    }
-}
-
+   /* Médias queries pour la responsivité */
+   @media (max-width: 1000px) {
+   .service {
+   flex: 1 1 calc(33.33% - 20px); /* 3 services par ligne */
+   }
+   }
+   @media (max-width: 700px) {
+   .service {
+   flex: 1 1 calc(50% - 20px); /* 2 services par ligne */
+   }
+   }
    /* Autres styles textuels */
    .options-title, .info {
-       text-align: center;
-       background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-       -webkit-background-clip: text;
-       font-size: 36px; /* pour options-title */
-       letter-spacing: 2px;
-       text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
+   text-align: center;
+   background: linear-gradient(to right, #ffffff, #fff, #ffffff);
+   -webkit-background-clip: text;
+   font-size: 36px; /* pour options-title */
+   letter-spacing: 2px;
+   text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
    }
    /* Autres styles textuels */
    .info {
-       text-align: center;
-       background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-       -webkit-background-clip: text;
-       font-size: 10px; /* pour options-title */
-       letter-spacing: 2px;
-       text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
+   text-align: center;
+   background: linear-gradient(to right, #ffffff, #fff, #ffffff);
+   -webkit-background-clip: text;
+   font-size: 10px; /* pour options-title */
+   letter-spacing: 2px;
+   text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
    }
-
-      /* Autres styles textuels */
+   /* Autres styles textuels */
    .all {
-       text-align: center;
-       background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-       -webkit-background-clip: text;
-       letter-spacing: 2px;
-       text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
+   text-align: center;
+   background: linear-gradient(to right, #ffffff, #fff, #ffffff);
+   -webkit-background-clip: text;
+   letter-spacing: 2px;
+   text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
    }
-
    /* Styles pour les séparateurs */
    .separator {
-       border: 5px;
-       height: 10px;
-       background: linear-gradient(to right, #ffd700, #fff, #ffd700);
-       margin: 25px 0;
+   border: 5px;
+   height: 10px;
+   background: linear-gradient(to right, #ffd700, #fff, #ffd700);
+   margin: 25px 0;
    }
-      .info {
-                 padding: 15px;
-       font-size: 15px;
+   .info {
+   padding: 15px;
+   font-size: 15px;
    }
-            .icone {
-        filter: invert(100%);
-        padding-top: 6px;
-                width: 20px !important;
+   .icone {
+   filter: invert(100%);
+   padding-top: 6px;
+   width: 20px !important;
    }
 </style>
-
-
 <div class="service">
    <div class="label">Illimités - Best Seller !</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
    <div class="price">
-      <span data-time="3h">350€</span>
-      <span data-time="5h">450€</span>
+      <span data-time="3h">{{ data_price.photobooth3h }}€</span>
+      <span data-time="5h">{{ data_price.photobooth }}€</span>
    </div>
    <div class="details">
-          <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
-          <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-          <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-          <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
+      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
+      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Photobooth</a>
 </div>
@@ -226,15 +214,15 @@
    <div class="label">Toute la soirée !</div>
    <img src="/static/img/photobooth.jpg" alt="Photobooth">
    <div class="price">
-      <span data-time="24/48h">350€</span>
+      <span data-time="24-48h">{{ data_price.photobooth_auto }}€</span>
    </div>
    <div class="details">
-          <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> 400 Impressions <br>(800 impression bandelette)<br>
-        <img class="icone" src="/static/icone/montage.ico" alt="Montage"> Montage en 5min<br>
-          <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-                 <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation (Option 100€)<br>
+      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> 400 Impressions <br>(800 impression bandelette)<br>
+      <img class="icone" src="/static/icone/montage.ico" alt="Montage"> Montage en 10 min<br>
+      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation (Option 100€)<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Photobooth</a>
 </div>
@@ -242,16 +230,16 @@
    <div class="label">En Promo !</div>
    <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
    <div class="price">
-       <span data-time="3h">450€</span>
-      <span data-time="5h">550€</span>
+      <span data-time="3h">{{ data_price.miroirbooth3h }}€</span>
+      <span data-time="5h">{{ data_price.miroirbooth }}€</span>
    </div>
    <div class="details">
-          <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
-          <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-          <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-          <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
+      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
+      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Miroirbooth</a>
 </div>
@@ -259,16 +247,16 @@
    <div class="label">Vidéo 4K</div>
    <img src="/static/img/360booth.jpg" alt="360booth">
    <div class="price">
-      <span data-time="3h">500€</span>
-      <span data-time="5h">700€</span>
+      <span data-time="3h">{{ data_price.videobooth3h }}€</span>
+      <span data-time="5h">{{ data_price.videobooth }}€</span>
    </div>
    <div class="details">
-          <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
-       <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 5 personnes!<br>
-          <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-          <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
+      <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 5 personnes!<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
+      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le 360booth</a>
 </div>
@@ -276,15 +264,14 @@
    <div class="label">Formule Eco</div>
    <img src="/static/img/ipadbooth.jpg" alt="RingBooth">
    <div class="price">
-      <span data-time="3h">199€</span>
-      <span data-time="5h">299€</span>
+      <span data-time="24-48h">{{ data_price.ipadbooth }}€</span>
    </div>
    <div class="details">
-        <img class="icone" src="/static/icone/montage.ico" alt="Montage"> Montage en 5min<br>
-          <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-                 <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation (Option 100€)<br>
+      <img class="icone" src="/static/icone/montage.ico" alt="Montage"> Montage en 5min<br>
+      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation (Option 100€)<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le RingBooth</a>
 </div>
@@ -292,16 +279,16 @@
    <div class="label">Nouveau !</div>
    <img src="/static/img/airbooth.jpg" alt="Air360booth">
    <div class="price">
-      <span data-time="3h">1199€</span>
-      <span data-time="5h">1399€</span>
+      <span data-time="3h">{{ data_price.airbooth3h }}€</span>
+      <span data-time="5h">{{ data_price.airbooth }}€</span>
    </div>
    <div class="details">
-          <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
-       <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 10 personnes!<br>
-          <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-          <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-          <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-          <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
+      <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
+      <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 10 personnes!<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
+      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Air360booth</a>
 </div>
@@ -309,14 +296,14 @@
    <div class="label">En Vogue !</div>
    <img src="/static/img/voguebooth.jpg" alt="VogueBooth">
    <div class="price">
-      <span>500€</span>
+      <span data-time="Offre de Lancement">{{ data_price.voguebooth }}€</span>
    </div>
    <div class="details">
-       <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-       <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-       <img class="icone" src="/static/icone/decor.ico" alt="Décoration"> Décoration<br>
-       <img class="icone" src="/static/icone/photo.ico" alt="Photo"> Photographe (+150€)<br>
-       <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions (+100€)<br>
+      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
+      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
+      <img class="icone" src="/static/icone/decor.ico" alt="Décoration"> Décoration<br>
+      <img class="icone" src="/static/icone/photo.ico" alt="Photo"> Photographe (+150€)<br>
+      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions (+100€)<br>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le VogueBooth</a>
 </div>
@@ -324,69 +311,64 @@
    <div class="label">Pack !</div>
    <img src="/static/img/all_presta.jpg" alt="ALL">
    <div class="details">
-       <p>Combinez plusieurs de nos services (Photobooth, Miroirbooth, 360Booth, etc.) et bénéficiez d'une offre sur mesure avec une réduction spéciale.
-           <br>
-           Contactez-nous pour un devis personnalisé adapté à vos besoins et à votre budget !</p>
+      <p>Combinez plusieurs de nos services (Photobooth, Miroirbooth, 360Booth, etc.) et bénéficiez d'une offre sur mesure avec une réduction spéciale.
+         <br>
+         Contactez-nous pour un devis personnalisé adapté à vos besoins et à votre budget !
+      </p>
    </div>
    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Offre Personnalisé</a>
 </div>
-    <div style="text-align: center; width: 100%;">
-    <hr class="separator" >
-        <h2 class="options-title">Options</h2>
-    </div>
-<div class="service">
-    <img src="/static/img/allmur.jpg" alt="Mur Floral">
-    <div class="details_option">
-        Embellissez vos photo avec un mur floral chic, idéal pour le photobooth.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">+ Infos</a>
+<div style="text-align: center; width: 100%;">
+   <hr class="separator" >
+   <h2 class="options-title">Options</h2>
 </div>
-
 <div class="service">
-    <img src="/static/img/phonebooth.jpg" alt="PhoneBooth">
-    <div class="details_option">
-        Laissez vos invités créer des souvenirs audio uniques avec notre livre d'or audio.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le PhoneBooth</a>
+   <img src="/static/img/allmur.jpg" alt="Mur Floral">
+   <div class="details_option">
+      Embellissez vos photo avec un mur floral chic, idéal pour le photobooth.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">+ Infos</a>
 </div>
-
 <div class="service">
-    <img src="/static/img/3dHolo.jpg" alt="Holobooth">
-    <div class="details_option">
-        Donner vie à vos photos avec le Holobooth 3D comme jamais auparavant.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le Holobooth 3D</a>
+   <img src="/static/img/phonebooth.jpg" alt="PhoneBooth">
+   <div class="details_option">
+      Laissez vos invités créer des souvenirs audio uniques avec notre livre d'or audio.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le PhoneBooth</a>
 </div>
-
 <div class="service">
-    <img src="/static/img/Livre-dor.jpg" alt="Livre d'or">
-    <div class="details_option">
-        Gardez des messages précieux avec notre Livre d'Or personnalisé.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Livre d'Or</a>
+   <img src="/static/img/3dHolo.jpg" alt="Holobooth">
+   <div class="details_option">
+      Donner vie à vos photos avec le Holobooth 3D comme jamais auparavant.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le Holobooth 3D</a>
 </div>
-
 <div class="service">
-    <img src="/static/img/Welcomeboard.jpg" alt="Panneau de Bienvenue">
-    <div class="details_option">
-        Accueillez vos invités avec un panneau personnalisé et élégant.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Panneau de Bienvenue</a>
+   <img src="/static/img/Livre-dor.jpg" alt="Livre d'or">
+   <div class="details_option">
+      Gardez des messages précieux avec notre Livre d'Or personnalisé.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Livre d'Or</a>
 </div>
-
 <div class="service">
-    <img src="/static/img/fond360.jpg" alt="Fond LED 360">
-    <div class="details_option">
-        Illuminez vos vidéos 360° avec un fond LED spectaculaire.
-    </div>
-    <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Fond LED 360</a>
+   <img src="/static/img/Welcomeboard.jpg" alt="Panneau de Bienvenue">
+   <div class="details_option">
+      Accueillez vos invités avec un panneau personnalisé et élégant.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Panneau de Bienvenue</a>
 </div>
-
-        <div style="text-align: center; width: 100%;">
-            <hr class="separator" >
-            <h2 class="info">Pour toutes demandes spécifiques,
-merci de nous contacter au 0699733998
-ou par mail contact@myselfiebooth-paris.fr</h2>
-
-    </div>
+<div class="service">
+   <img src="/static/img/fond360.jpg" alt="Fond LED 360">
+   <div class="details_option">
+      Illuminez vos vidéos 360° avec un fond LED spectaculaire.
+   </div>
+   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter un Fond LED 360</a>
+</div>
+<div style="text-align: center; width: 100%;">
+   <hr class="separator" >
+   <h2 class="info">Pour toutes demandes spécifiques,
+      merci de nous contacter au 0699733998
+      ou par mail contact@myselfiebooth-paris.fr
+   </h2>
+</div>
 {% endblock %}

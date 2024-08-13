@@ -1,6 +1,7 @@
 from app.models import Client, EventDetails, EventProduct, EventOption, Event
 from django.db import transaction
 from datetime import datetime
+from app.module.data_bdd.price import PRIX_PRODUITS
 
 def get_confirmation_data(request):
     if request.POST.get('raison_sociale'):
@@ -135,29 +136,9 @@ def initialize_event(post_data):
         return event
 
 def prix_brut_calculs(event):
-    prix_brut = 0
 
-    # Prix de base pour chaque produit pour des durées de 5 et 3 heures
-    prix_photobooth_5h = 450
-    prix_miroirbooth_5h = 550
-    prix_360booth_5h = 500
-    prix_voguebooth_5h = 500
-    prix_ipadbooth_5h = 250
-    prix_airbooth_5h = 500
-
-    # Ajoutez le prix de chaque produit sélectionné
-    if event.event_product.photobooth:
-        prix_brut += prix_photobooth_5h
-    if event.event_product.miroirbooth:
-        prix_brut += prix_miroirbooth_5h
-    if event.event_product.videobooth:
-        prix_brut += prix_360booth_5h
-    if event.event_product.voguebooth:
-        prix_brut += prix_voguebooth_5h
-    if event.event_product.ipadbooth:
-        prix_brut += prix_ipadbooth_5h
-    if event.event_product.airbooth:
-        prix_brut += prix_airbooth_5h
+    # Calcul du prix brut en sommant les prix des produits sélectionnés
+    prix_brut = sum(prix for produit, prix in PRIX_PRODUITS.items() if getattr(event.event_product, produit, False))
 
     if prix_brut == 450:
         event.reduc_product = 50
