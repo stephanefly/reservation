@@ -15,4 +15,5 @@ PRIX_PRODUITS = {
     'voguebooth': 500,
     'ipadbooth': 250,
 
+    'pack': 850,
 }
