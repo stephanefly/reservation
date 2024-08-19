@@ -1,5 +1,5 @@
 PRIX_PRODUITS = {
-    'photobooth3h': 450,
+    'photobooth3h': 350,
     'photobooth': 450,
     'photobooth_auto': 350,
 
