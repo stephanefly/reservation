@@ -45,7 +45,7 @@ urlpatterns = [
     path('espace_client/edit_comment/<int:event_id>/', edit_comment, name='edit_comment'),
     path('espace_client/edit_text/<int:event_id>/', edit_text, name='edit_text'),
     path('espace_client/edit_template/<int:event_id>/', edit_template, name='edit_template'),
-    path('espace_client/new/<int:event_id>', send_new_espace_client_one, name='send_new_espace_client_one'),
+    path('espace_client/relance/<int:event_id>', relance_espace_client, name='relance_espace_client'),
 
     # TARIFS
     path('tarifs/', tarifs, name='tarifs'),

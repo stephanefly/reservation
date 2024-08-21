@@ -19,8 +19,7 @@ from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
 from .module.espace_client.completer import update_event_and_redirect
 from .module.espace_client.logging import process_client_request
-from .module.espace_client.mail_validation import send_mail_validation
-from .module.espace_client.send_mail_all_new import send_email_espace_client
+from .module.espace_client.send_mail_espace_client import send_mail_espace_client
 from .module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph
 from .module.lib_graph.lib_pie_chart import table_graph_pie
 from .module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
@@ -112,7 +111,7 @@ def confirmation_val_devis(request, id):
         form = ValidationForm(request.POST)
         if form.is_valid():
             if event.status != "Acompte OK":
-                send_mail_validation(event)
+                send_mail_espace_client(event, 'validation')
 
             event_acompte = EventAcompte(
                 montant_acompte=form.cleaned_data.get('montant_acompte'),
@@ -351,10 +350,9 @@ def edit_text(request, event_id):
 def edit_template(request, event_id):
     return update_event_and_redirect(request, event_id, 'url_modele', 'event_template', 'choix_client')
 
-def send_new_espace_client_one(request, event_id):
+def relance_espace_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    send_email_espace_client(event)
-
+    send_mail_espace_client(event, 'relance')
     return redirect('lst_cost')
 
 def tarifs(request):

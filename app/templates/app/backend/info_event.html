@@ -68,6 +68,16 @@ input[type="text"], input[type="email"], input[type="date"], input[type="number"
     color: white;
 }
 
+.button-relance {
+    background-color: #ffad35; /* Rouge */
+        padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    color: white;
+}
+
 .button-refused {
     background-color: #e06d6d; /* Rouge */
         padding: 10px 15px;
@@ -208,6 +218,10 @@ button:hover {
         <form method="POST" action="{% url 'confirmation_val_devis' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-valid">Valider DEVIS</button>
+    </form>
+        <form method="POST" action="{% url 'relance_espace_client' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="button-relance">Relance espace client</button>
     </form>
     <form method="POST" action="{% url 'refused_devis' event.id %}">
         {% csrf_token %}
