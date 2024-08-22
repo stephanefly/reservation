@@ -11,12 +11,13 @@ from .models import Event, Cost, EventAcompte, Client, EventDetails, EventTempla
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from .module.data_bdd.price import PRIX_PRODUITS
-from .module.data_bdd.taches_planifs import maj_today_event, make_planning, get_member_list
+from .module.data_bdd.make_planning import maj_today_event, make_planning, get_member_list
 from .module.data_bdd.post_form import initialize_event, get_confirmation_data
 from .module.data_bdd.update_event import update_data
 from .module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.http import HttpResponse
 from .module.devis_pdf.mail import send_email
+from .module.espace_client.choose_to_relance import choose_to_relance
 from .module.espace_client.completer import update_event_and_redirect
 from .module.espace_client.logging import process_client_request
 from .module.espace_client.send_mail_espace_client import send_mail_espace_client
@@ -354,6 +355,7 @@ def relance_espace_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_espace_client(event, 'relance')
     return redirect('lst_cost')
+
 
 def tarifs(request):
     return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})
