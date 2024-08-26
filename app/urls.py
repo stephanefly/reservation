@@ -35,9 +35,6 @@ urlpatterns = [
     path('backend/graph_cost/', graph_cost, name='graph_cost'),
     path('backend/graph_cost_pie/', graph_cost_pie, name='graph_cost_pie'),
 
-    # BACKEND TACHES PLANIFIES
-    path('tache_planif/', tache_planif, name='tache_planif'),
-
     # CLIENT CHOIX MODEL
     path('espace_client/', logging_client, name='logging_client'),
     path('espace_client/<int:id>/<str:token>', choix_client, name='choix_client'),
@@ -46,6 +43,9 @@ urlpatterns = [
     path('espace_client/edit_text/<int:event_id>/', edit_text, name='edit_text'),
     path('espace_client/edit_template/<int:event_id>/', edit_template, name='edit_template'),
     path('espace_client/relance/<int:event_id>', relance_espace_client, name='relance_espace_client'),
+
+    # TEAM
+    path('team/template', template_to_do, name='template_to_do'),
 
     # TARIFS
     path('tarifs/', tarifs, name='tarifs'),

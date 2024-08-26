@@ -298,13 +298,6 @@ def tableau_de_bord(request):
                       'event_lst_member': event_lst_member
                   })
 
-
-# TACHE PLANIFIEES
-def tache_planif():
-    maj_today_event()
-    make_planning()
-
-
 def logging_client(request):
     context = {'form': {}}
 
@@ -359,3 +352,17 @@ def relance_espace_client(request, event_id):
 
 def tarifs(request):
     return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})
+
+def template_to_do(request):
+    today_date = datetime.now()
+    end_week_date = today_date + timedelta(days=10)
+
+    lst_event_prio = Event.objects.filter(
+        signer_at__isnull=False,
+        event_details__date_evenement__range=[today_date, end_week_date]
+    ).order_by('event_details__date_evenement')
+
+    return render(request, 'app/team/template_to_do.html',
+                  {
+                      'lst_event_prio': lst_event_prio,
+                  })
