@@ -35,12 +35,21 @@
          <table class="table table-bordered table-striped" style="background-color:white">
             <thead>
                <tr>
+                   <th>Prestation</th>
                   <th>URL</th>
                   <th>Texte</th>
+                   <th>Statut</th>
                </tr>
             </thead>
             <tbody>
                <tr>
+                                 <td>
+                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>, {% endif %}
+                     {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
+                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>, {% endif %}
+                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>, {% endif %}
+                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>, {% endif %}
+                  </td>
                     <td style="{% if event.event_template.url_modele %}background-color: rgba(204,255,204,0.42);{% else %}background-color: rgba(255,0,0,0.47);{% endif %}">
                         {% if event.event_template.url_modele %}
                             <a href="{{ event.event_template.url_modele }}">MODEL</a>
@@ -48,38 +57,8 @@
                             Pas de model
                         {% endif %}
                     </td>
-
-
                    <td>{{ event.event_template.text_template }}</td>
-               
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Prestation</th>
-                  <th>Option</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>
-                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>, {% endif %}
-                     {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
-                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>, {% endif %}
-                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>, {% endif %}
-                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>, {% endif %}
-                  </td>
-                  <td>
-                     {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>, {% endif %}
-                     {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
-                     {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
-                     {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
-                     {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                     {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
-                     {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                  </td>
+                   <td><button>OK / Pas OK</button></td>
                </tr>
             </tbody>
          </table>
