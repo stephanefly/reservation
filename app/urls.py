@@ -44,6 +44,9 @@ urlpatterns = [
     path('espace_client/edit_template/<int:event_id>/', edit_template, name='edit_template'),
     path('espace_client/relance/<int:event_id>', relance_espace_client, name='relance_espace_client'),
 
+    # AVIS CLIENT
+    path('feedback/relance/<int:event_id>', relance_avis_client, name='relance_avis_client'),
+
     # TEAM
     path('team/template', template_to_do, name='template_to_do'),
 

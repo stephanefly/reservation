@@ -349,6 +349,10 @@ def relance_espace_client(request, event_id):
     send_mail_espace_client(event, 'relance')
     return redirect('lst_cost')
 
+def relance_avis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_espace_client(event, 'relance_avis')
+    return redirect('lst_cost')
 
 def tarifs(request):
     return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})

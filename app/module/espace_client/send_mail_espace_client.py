@@ -18,6 +18,9 @@ def send_mail_espace_client(event, mail_type):
     elif mail_type == 'relance':
         subject = "📸 Informations manquantes pour votre événement ✨"
         template_name = "mail_relance_espace_client.html"
+    elif mail_type == 'relance_avis':
+        subject = "📸 Votre avis compte ! ✨"
+        template_name = "mail_relance_avis.html"
     else:
         raise ValueError("Type de mail non reconnu. Utilisez 'validation' ou 'relance'.")
 
