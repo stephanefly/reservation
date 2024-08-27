@@ -30,6 +30,7 @@ class EventDetails(models.Model):
 class EventTemplate(models.Model):
     url_modele = models.TextField(null=True)
     text_template = models.TextField(null=True)
+    statut = models.BooleanField(default=False)
 
 
 class EventProduct(models.Model):

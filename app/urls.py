@@ -49,6 +49,7 @@ urlpatterns = [
 
     # TEAM
     path('team/template', template_to_do, name='template_to_do'),
+    path('change-status/<int:pk>/', change_status, name='change_status'),
 
     # TARIFS
     path('tarifs/', tarifs, name='tarifs'),
