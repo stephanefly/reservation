@@ -35,7 +35,7 @@
       </thead>
       <tbody>
          {% for event in lst_event_prio %}
-         <tr>
+         <tr style="background-color: {% if event.event_template.statut %}#13be0061{% else %}#ff000061{% endif %}; ">
             <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"D" }}</td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
