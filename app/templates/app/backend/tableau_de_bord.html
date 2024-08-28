@@ -118,6 +118,7 @@
       <thead>
          <tr>
             <th>URL</th>
+             <th>Texte</th>
             <th>Statut</th>
             <th>Action</th>
          </tr>
@@ -131,6 +132,7 @@
                Pas de model
                {% endif %}
             </td>
+                     <td>{{ event.event_template.text_template }}</td>
             <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
                {% if event.event_template.statut %}
                Prêt
