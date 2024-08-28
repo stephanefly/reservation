@@ -90,8 +90,6 @@
          <tr>
             <th>Prestation</th>
             <th>Option</th>
-            <th>Statut</th>
-            <th>Action</th>
          </tr>
       </thead>
       <tbody>
@@ -111,6 +109,27 @@
                {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
                {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
                {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
+            </td>
+         </tr>
+      </tbody>
+   </table>
+       
+   <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+         <tr>
+            <th>URL</th>
+            <th>Statut</th>
+            <th>Action</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+                     <td style="{% if event.event_template.url_modele %}background-color: rgb(255,255,255);{% else %}background-color: rgba(255,0,0,0.47);{% endif %}">
+               {% if event.event_template.url_modele %}
+               <a href="{{ event.event_template.url_modele }}">MODEL</a>
+               {% else %}
+               Pas de model
+               {% endif %}
             </td>
             <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
                {% if event.event_template.statut %}
