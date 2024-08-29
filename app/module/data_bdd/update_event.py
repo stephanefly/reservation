@@ -1,5 +1,7 @@
 from django.http import request
 
+from app.models import EventTemplate
+
 
 def parse_int(value, default=0):
     try:
@@ -50,6 +52,7 @@ def update_data(event, request):
     event_details = event.event_details
     event_product = event.event_product
     event_option = event.event_option
+    event_template = event.event_template or EventTemplate()
 
     # Mise à jour des informations du page_client
     client.nom = request.POST.get('client_nom')
@@ -66,8 +69,11 @@ def update_data(event, request):
     event_details.comment = request.POST.get('comment')
     event_details.comment_client = request.POST.get('comment_client')
     event_details.horaire = request.POST.get('horaire')
-    event_details.url_modele = request.POST.get('url_modele')
     event_details.save()
+
+    event_template.url_modele = request.POST.get('url_modele')
+    event_template.texte_template = request.POST.get('texte_template')
+    event_template.save()
 
     # Mise à jour des produits de l'événement
     event_product.photobooth = request.POST.get('photobooth') == 'on'
