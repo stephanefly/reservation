@@ -153,10 +153,10 @@ button:hover {
         <label>Ville: <input type="text" name="ville_evenement" value="{{ event.event_details.ville_evenement }}"></label><br>
         <label>Code Postal: <input type="text" name="code_postal_evenement" value="{{ event.event_details.code_postal_evenement }}"></label><br>
         <label>Commentaire Client: <br><textarea name="comment_client" value="{{ event.event_details.comment_client }}"></textarea></label><br>
-        <label>Commentaire: <br><textarea name="comment" value="{{ event.event_details.comment }}"></textarea></label><br>
+        <label>Commentaire: <br><textarea name="comment" value="{{ event.event_details.comment }}">{{ event.event_details.comment }}</textarea></label><br>
         <label>Horaire: <input type="time" name="horaire" value="{{ event.event_details.horaire }}"></label><br>
         <label>Url modèle: <input type="text" name="url_modele" value="{{ event.event_template.url_modele }}"></label><br>
-        <label>Texte modèle: <br><textarea name="texte_template" value="{{ event.event_template.text_template }}"></textarea></label><br>
+        <label>Texte modèle: <br><textarea name="text_template" value="{{ event.event_template.text_template }}">{{ event.event_template.text_template }}</textarea></label><br>
     </div>
 
     <div>
