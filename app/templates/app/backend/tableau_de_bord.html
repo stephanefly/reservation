@@ -31,6 +31,7 @@
             <th>PRIX</th>
             <th>Acompte</th>
             <th>Restant</th>
+            <th>Mode</th>
          </tr>
       </thead>
       <tbody>
@@ -43,6 +44,7 @@
             <td id="prix_valided">{{ event.prix_valided }}</td>
             <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
             <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
          </tr>
          {% endfor %}
       </tbody>
