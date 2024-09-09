@@ -159,6 +159,7 @@ class Cost(models.Model):
         ('Membre', 'Membre'),
         ('Invest', 'Invest'),
         ('Charge', 'Charge'),
+        ('Delegation', 'Delegation'),
     ]
     type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
     price_cost = models.IntegerField(null=True, blank=True)
