@@ -12,7 +12,6 @@ urlpatterns = [
 
     # BACKEND DEVIS
     path('backend/lst_devis/', lst_devis, name='lst_devis'),
-    path('backend/lst_cost/', lst_cost, name='lst_cost'),
     path('backend/info-event/<int:id>/', info_event, name='info_event'),
     path('backend/event/update/<int:id>/', update_event, name='update_event'),
     path('backend/generate-devis-pdf/<int:event_id>/', generate_devis_pdf, name='generate_devis_pdf'),
@@ -26,6 +25,7 @@ urlpatterns = [
     # BACKEND TABLEAU DE BORD
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
     # BACKEND COST
+    path('backend/lst_cost/', lst_cost, name='lst_cost'),
     path('backend/create_cost/', create_cost, name='create_cost'),
     path('backend/info_cost/<int:id>/', info_cost, name='info_cost'),
     path('backend/edit_cost/<int:id>/', edit_cost, name='edit_cost'),
