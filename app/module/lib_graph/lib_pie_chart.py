@@ -80,12 +80,13 @@ def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
     membre = df_cost[df_cost['Type'] == "Membre"]['Cost'].sum()
     invest = df_cost[df_cost['Type'] == "Invest"]['Cost'].sum()
     charge = df_cost[df_cost['Type'] == "Charge"]['Cost'].sum()
+    delegation = df_cost[df_cost['Type'] == "Delegation"]['Cost'].sum()
 
     # Préparation des données pour le diagramme
-    total = net_total_year + membre + invest + charge
-    values = [ charge,  invest,membre, net_total_year, ]
-    sectors=['Charge', 'Invest','Membre',  'Bénéfice']
-    color = [ 'red', 'violet','blue',  'green']
+    total = net_total_year + membre + invest + charge + delegation
+    values = [ charge,  invest,membre, net_total_year, delegation,]
+    sectors=['Charge', 'Invest','Membre',  'Bénéfice', 'Delegation']
+    color = [ 'red', 'violet','blue',  'green', 'orange']
     proportions = [value / total for value in values]
     angles = [prop * 2 * pi for prop in proportions]
 

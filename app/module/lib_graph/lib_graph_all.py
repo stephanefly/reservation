@@ -101,11 +101,12 @@ def tracage_figure_bar_cost(df_brut_net, year, date_now):
         ("Membre", "@Membre €"),
         ("Invest", "@Invest €"),
         ("Charge", "@Charge €"),
+        ("Delegation", "@Delegation €"),
         ("Net", "@BeneficeNet €")],
         formatters={'@Date': 'datetime'})
 
-    produit = ["BeneficeNet", "Membre", "Invest", "Charge"]
-    colors = ['green', "blue", "violet", "red"]
+    produit = ["BeneficeNet", "Membre", "Invest", "Charge", "Delegation"]
+    colors = ['green', "blue", "violet", "red", "orange"]
 
     graph = figure(title=f"Resultat {year}",width=1150, height=300, tools=[hover])
     graph.vbar_stack(produit, x='Date-Event', fill_color=colors, color="black",

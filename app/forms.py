@@ -16,6 +16,7 @@ class CostForm(forms.ModelForm):
     class Meta:
         model = Cost
         fields = ['name_cost', 'type_cost', 'price_cost', 'created_at']
+        ordering = ['name_cost']  # Tri ascendant
 
 class ValidationForm(forms.ModelForm):
 
