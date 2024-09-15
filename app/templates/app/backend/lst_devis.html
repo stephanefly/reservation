@@ -33,7 +33,7 @@ body {
         {% else %}
             <td>{{event.prix_proposed}}</td>
         {% endif %}
-            <td>{{event.eventacompte.montant_acompte}}</td>
+            <td>{{event.event_acompte.montant_acompte}}</td>
         <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
         </tr>
     {% endfor %}
