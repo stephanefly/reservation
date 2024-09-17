@@ -120,7 +120,7 @@ def generate_pdf_devis(event):
     pdf.setFillColor(colors.darkslategrey)
     # Calcul de la date de J+10
     date_j_plus_10 = datetime.now() + timedelta(days=10)
-    pdf.drawString(65, height - 650, "Un acompte de " + acompte + " € est à verser pour confirmer la réservation avant le " + date_j_plus_10.strftime('%d/%m/%Y'))
+    pdf.drawString(65, height - 650, "Un acompte de " + acompte + " € est à verser pour confirmer la réservation")
     pdf.drawString(65, height - 665, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
     pdf.drawString(65, height - 680, "Vous pouvez payer par virement (RIB ci-dessous), Paylib (+33699733998), Paypal (paypal.me/3dmouvstudio)")
 
