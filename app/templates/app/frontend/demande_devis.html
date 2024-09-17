@@ -54,12 +54,12 @@
       <input type="text" class="form-control" id="id_code_postal_evenement" name="code_postal_evenement" required pattern="^\d{5}$" title="Veuillez entrer un code postal valide" value="{{ form.code_postal_evenement }}">
    </div>
    <div class="row">
-      <label for="client_how_find" class="form-label">Comment avez-vous trouvé ?</label>
+      <label for="client_how_find" class="form-label">Comment nous avez-vous trouvé ?</label>
       <select class="form-select" id="client_how_find" name="client_how_find" required>
       <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' %}selected{% endif %}>INSTAGRAM</option>
       <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>SITE INTERNET</option>
       <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>LEBONCOIN</option>
-      <option value="RECOMMENDATION" {% if form.client_how_find == 'RECOMMENDATION' %}selected{% endif %}>RECOMMENDATION</option>
+      <option value="RECOMMANDATION" {% if form.client_how_find == 'RECOMMANDATION' %}selected{% endif %}>RECOMMANDATION</option>
       </select>
       <br>
    </div>
@@ -104,7 +104,7 @@
             <div class="col">
                <input class="form-check-input" type="checkbox" checked disabled>
                <label class="form-label">
-               Personnalisation Modèle
+               Personnalisation du Modèle
                </label>
             </div>
             <div class="col">
