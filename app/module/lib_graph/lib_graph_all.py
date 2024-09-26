@@ -83,6 +83,21 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
                                                  years=["%d %b %Y"]
                                                       )
 
+    # GRAPHE 2025
+    graph2024 = figure(title="2025", width=1150, height=300,tools=[hover])
+    graph2024.vbar(x='date4', top ='Prix', fill_alpha=0, width=datetime.timedelta(weeks=1), source=source)
+    graph2024.vbar_stack(produit, x='Date-Event', fill_color=colors, legend_label=produit,
+                         source=source, width=datetime.timedelta(weeks=1))
+    graph2024.legend.background_fill_alpha = 0.2
+    graph2024.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
+    graph2024.x_range = Range1d(pd.to_datetime("2025-01-01"), pd.to_datetime("2025-12-30"))
+
+    graph2024.y_range = Range1d(0, 3300)
+    graph2024.legend.location = "top_left"
+    graph2024.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
+                                                 months=["%d %b %Y"],
+                                                 years=["%d %b %Y"]
+                                                      )
     layout = column(graph2024, graph2023, graph2022, graph2021)
 
     return components(layout)
@@ -125,7 +140,7 @@ def tracage_figure_bar_cost(df_brut_net, year, date_now):
 
 def table_graph(df_brut_net, date_now):
 
-    lst_year = [2024, 2023, 2022]
+    lst_year = [2025, 2024, 2023, 2022]
     script = []
     div = []
     for year in lst_year:

@@ -139,7 +139,10 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     stackers = df_cost_monthly_pivot.columns[:-1].tolist()  # Tous les types de coûts sans la colonne 'months'
     if len(stackers) > 20:
         raise ValueError("Il y a plus de types de coûts que de couleurs disponibles dans la palette Category20.")
-    colors = Category20[len(stackers)]
+    elif len(stackers) == 0:
+        colors = 'green'
+    else:
+        colors = Category20[len(stackers)]
 
     # Création de la source de données pour le graphique
     source = ColumnDataSource(df_cost_monthly_pivot)
@@ -169,7 +172,7 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
 
 def table_graph_pie(df_all_ok, df_all_cost):
 
-    lst_year = [2024, 2023, 2022]
+    lst_year = [2025, 2024, 2023, 2022]
     script = []
     div = []
     for year in lst_year:
