@@ -1,3 +1,5 @@
+from app.module.data_bdd.price import DEPARTEMENT
+
 
 def make_tableau(event):
     total_brut_devis=0
@@ -14,7 +16,7 @@ def make_tableau(event):
         str(event.event_details.adresse_evenement),
         str(event.event_details.code_postal_evenement) + " " + str(event.event_details.ville_evenement)
     ])
-    if str(event.event_details.code_postal_evenement)[:2] in ['75','77', '27', '78', '95', '92', '94', '91', '93']:
+    if str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT:
         data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, '0 €', '1', "", '0 €'])
     else:
         data_tableau_devis.append(["Livraison - Installation (Hors IDF)\n" + livraison_details, '0 €', '1', "", '50 €'])
