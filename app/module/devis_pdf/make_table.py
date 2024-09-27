@@ -48,7 +48,7 @@ def prix_ligne_product(event):
     if event.event_product.videobooth:
         produits_descriptions.append("360VidéoBooth Vidéos Illimités ")
     if event.event_product.voguebooth:
-        produits_descriptions.append("VogueBooth Personnalisé")
+        produits_descriptions.append("VogueBooth")
     if event.event_product.ipadbooth:
         produits_descriptions.append("Ipad Numérique Illimités ")
     if event.event_product.airbooth:
@@ -96,6 +96,10 @@ def prix_ligne_option(event, data_tableau_devis):
         ("Backdrop LightRGB 360", event.event_option.Fond360, event.event_option.prix_base_Fond360(),event.event_option.Fond360_reduc_prix),
         ("Panneau de Bienvenue personnalisé", event.event_option.PanneauBienvenue, event.event_option.prix_base_PanneauBienvenue(),event.event_option.PanneauBienvenue_reduc_prix),
         ("Panneau Holograme 3D", event.event_option.Holo3D,event.event_option.prix_base_Holo3D(), event.event_option.Holo3D_reduc_prix),
+        ("Photographe pour le VogueBooth", event.event_option.PhotographeVoguebooth, event.event_option.prix_base_PhotographeVoguebooth(),event.event_option.PhotographeVoguebooth_reduc_prix),
+        ("Impression pour le VogueBooth", event.event_option.ImpressionVoguebooth, event.event_option.prix_base_ImpressionVoguebooth(),event.event_option.ImpressionVoguebooth_reduc_prix),
+        ("Décor personalisé pour le VogueBooth", event.event_option.DecorVoguebooth, event.event_option.prix_base_DecorVoguebooth(),event.event_option.DecorVoguebooth_reduc_prix),
+
         (str(event.event_option.magnets) + " Magnets", event.event_option.magnets, event.event_option.prix_base_magnets(event.event_option.magnets) if event.event_option.magnets else 0, event.event_option.magnets_reduc_prix)
     ]
 

@@ -190,6 +190,15 @@ button:hover {
         <label><input type="checkbox" name="Holo3D" {% if event.event_option.Holo3D %}checked{% endif %}> Holo3D</label><br>
         <label>Holo3D Reduc<input type="number" name="Holo3D_reduc_prix" value="{{ event.event_option.Holo3D_reduc_prix }}"></label><br>
 
+        <label><input type="checkbox" name="PhotographeVoguebooth" {% if event.event_option.PhotographeVoguebooth %}checked{% endif %}> PhotographeVoguebooth</label><br>
+        <label>PhotographeVoguebooth Reduc<input type="number" name="PhotographeVoguebooth_reduc_prix" value="{{ event.event_option.PhotographeVoguebooth_reduc_prix }}"></label><br>
+    
+        <label><input type="checkbox" name="ImpressionVoguebooth" {% if event.event_option.ImpressionVoguebooth %}checked{% endif %}> ImpressionVoguebooth</label><br>
+        <label>ImpressionVoguebooth Reduc<input type="number" name="ImpressionVoguebooth_reduc_prix" value="{{ event.event_option.ImpressionVoguebooth_reduc_prix }}"></label><br>
+    
+        <label><input type="checkbox" name="DecorVoguebooth" {% if event.event_option.DecorVoguebooth %}checked{% endif %}> DecorVoguebooth</label><br>
+        <label>DecorVoguebooth Reduc<input type="number" name="DecorVoguebooth_reduc_prix" value="{{ event.event_option.DecorVoguebooth_reduc_prix }}"></label><br>
+    
         <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
         <label>magnets Reduc<input type="number" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
 

@@ -101,6 +101,9 @@ def initialize_event(post_data):
             'Fond360': False,
             'PanneauBienvenue': False,
             'Holo3D': False,
+            'PhotographeVoguebooth': False,
+            'ImpressionVoguebooth': False,
+            'DecorVoguebooth': False,
         }
 
         # Convertissez options_data en une liste si ce n'est pas déjà le cas

@@ -84,6 +84,21 @@ class EventOption(models.Model):
     def prix_base_PanneauBienvenue(self):
         return 70
 
+    PhotographeVoguebooth = models.BooleanField(default=False)
+    PhotographeVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_PhotographeVoguebooth(self):
+        return 100
+
+    ImpressionVoguebooth = models.BooleanField(default=False)
+    ImpressionVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_ImpressionVoguebooth(self):
+        return 50
+
+    DecorVoguebooth = models.BooleanField(default=False)
+    DecorVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_DecorVoguebooth(self):
+        return 50
+
     Holo3D = models.BooleanField(default=False)
     Holo3D_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_Holo3D(self):
@@ -109,6 +124,7 @@ class EventAcompte(models.Model):
         ('Espece', 'Espece'),
         ('Lydia', 'Lydia'),
         ('Revolut', 'Revolut'),
+        ('Boursorama', 'Boursorama'),
     ]
     mode_payement = models.CharField(max_length=255, default='PayPal', choices=MOYEN_PAIEMENT, null=True, blank=True)
     date_payement = models.DateField(null=True, blank=True)
