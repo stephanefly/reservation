@@ -16,11 +16,10 @@ def make_tableau(event):
         str(event.event_details.adresse_evenement),
         str(event.event_details.code_postal_evenement) + " " + str(event.event_details.ville_evenement)
     ])
-    if str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT:
-        data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, '0 €', '1', "", '0 €'])
-    else:
-        data_tableau_devis.append(["Livraison - Installation (Hors IDF)\n" + livraison_details, '0 €', '1', "", '50 €'])
-        total_brut_devis += 50
+
+    prix_livraison = '0 €' if str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT else '50 €'
+    data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, '0 €', '1', "", prix_livraison])
+    total_brut_devis += 50 if prix_livraison == '50 €' else 0
 
     # Ajout des lignes fixes pour la personnalisation et la galerie web
     data_tableau_devis += [
@@ -31,7 +30,6 @@ def make_tableau(event):
     data_tableau_devis, total_option = prix_ligne_option(event, data_tableau_devis)
 
     total_brut_devis += total_option
-
 
     return data_tableau_devis, total_brut_devis, acompte
 

@@ -1,6 +1,7 @@
 from django.http import request
 
 from app.models import EventTemplate
+from app.module.data_bdd.price import DEPARTEMENT
 
 
 def parse_int(value, default=0):
@@ -115,8 +116,13 @@ def update_data(event, request):
     event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
 
+    if not str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT:
+        prix_distance = 50
+    else:
+        prix_distance = 0
+
     event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
-    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option
+    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option + prix_distance
 
     if event.status == 'Initied':
         event.status = 'Calculed'
