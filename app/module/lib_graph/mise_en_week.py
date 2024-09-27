@@ -8,10 +8,10 @@ from app.module.lib_graph.get_data import get_ok_data
 def new_mise_en_week(df_all):
 
     # Nettoyage initial et remplacement des valeurs vides par 0
-    df_all['Ponderation'] = df_all[['Photobooth', 'Miroirbooth', '360Booth']].fillna(0).sum(axis=1).astype(int)
+    df_all['Ponderation'] = df_all[['Photobooth', 'Miroirbooth', '360Booth', 'Voguebooth', 'Ipadbooth', 'Airbooth']].fillna(0).sum(axis=1).astype(int)
 
     # Calcul des prix proportionnels pour chaque produit
-    lst_produit = ['Photobooth', 'Miroirbooth', '360Booth']
+    lst_produit = ['Photobooth', 'Miroirbooth', '360Booth', 'Voguebooth', 'Ipadbooth', 'Airbooth']
     for produit in lst_produit:
         prix_colonne = f'Prix{produit}'
         for i in range(1, 4):
@@ -22,8 +22,20 @@ def new_mise_en_week(df_all):
     df_all = df_all.sort_values(by='Date-Event')
 
     # Groupement des données par semaine pour les différents calculs
-    agg_funcs = {'Prix': 'sum', 'PrixPhotobooth': 'sum', 'PrixMiroirbooth': 'sum',
-                 'Prix360Booth': 'sum', 'Photobooth': 'sum', 'Miroirbooth': 'sum', '360Booth': 'sum'}
+    agg_funcs = {'Prix': 'sum',
+                 'PrixPhotobooth': 'sum',
+                 'PrixMiroirbooth': 'sum',
+                 'Prix360Booth': 'sum',
+                 'Photobooth': 'sum',
+                 'Miroirbooth': 'sum',
+                 '360Booth': 'sum',
+                 'PrixVoguebooth': 'sum',
+                 'PrixIpadbooth': 'sum',
+                 'PrixAirbooth': 'sum',
+                 'Voguebooth': 'sum',
+                 'Ipadbooth': 'sum',
+                 'Airbooth': 'sum',
+                 }
     df_all_grouped = df_all.groupby(pd.Grouper(key='Date-Event', freq='W')).agg(agg_funcs).reset_index().sort_values('Date-Event')
 
     # Ajout de la date de la dernière semaine et du dernier mois

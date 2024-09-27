@@ -20,13 +20,16 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
         ("Photobooth", "@PrixPhotobooth € (@Photobooth)"),
         ("Miroirbooth", "@PrixMiroirbooth € (@Miroirbooth)"),
         ("360Booth", "@Prix360Booth € (@360Booth)"),
+        ("Voguebooth", "@PrixVoguebooth € (@Voguebooth)"),
+        ("Ipadbooth", "@PrixIpadbooth € (@Ipadbooth)"),
+        ("Airbooth", "@PrixAirbooth € (@Airbooth)"),
         ("Total-week", "@Prix €")],
         formatters={'@Date1': 'datetime', '@Date2': 'datetime'})
 
     # ... rest of the code ...
 
-    produit = ["PrixPhotobooth", "PrixMiroirbooth", "Prix360Booth"]
-    colors = ["#87CEEB", '#FFD700', "#BA55D3"]
+    produit = ["PrixPhotobooth", "PrixMiroirbooth", "Prix360Booth", "PrixVoguebooth", "PrixIpadbooth", "PrixAirbooth"]
+    colors = ["#87CEEB", "#FFD700", "#BA55D3", "#50d150", "#000000", "#f6a2f3"]
 
     # GRAPHE 2021
     graph2021 = figure(title="2021", width=1150, height=300,tools=[hover])
