@@ -17,14 +17,17 @@
    padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
    }
    .card {
-   border: solid 5px;
+   border: solid 0.5px;
    }
 </style>
 <div class="container">
          {% for event in lst_post_event %}
              <div class="card">
                    <div class="card-header">
-         <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
+<h5>
+    <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
+</h5>
+
       </div>
              <div class="card-body">
    <table id="table" class="table table-bordered table-striped" style="background-color:white">
@@ -78,16 +81,24 @@
                   {% endif %}
                </form>
             </td>
-            <td>
-               <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback' %}" method="post">
-                  {% csrf_token %}
-                  {% if not event.post_presta.feedback %}
-                  <button type="submit">OK</button>
-                  {% else %}
-                  <span>Fait</span>
-                  {% endif %}
-               </form>
-            </td>
+<td>
+    <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback' %}" method="post">
+        {% csrf_token %}
+        {% if not event.post_presta.feedback %}
+            <button type="submit">OK</button>
+        {% else %}
+            <span>Fait</span>
+        {% endif %}
+    </form>
+
+    {% if not event.post_presta.feedback %}
+    <form method="POST" action="{% url 'relance_avis_client' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="button-relance-avis">Relance avis client</button>
+    </form>
+    {% endif %}
+</td>
+
             <td>
                <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback_posted' %}" method="post">
                   {% csrf_token %}

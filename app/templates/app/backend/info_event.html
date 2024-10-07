@@ -240,10 +240,6 @@ button:hover {
         {% csrf_token %}
         <button type="submit" class="button-relance">Relance espace client</button>
     </form>
-                <form method="POST" action="{% url 'relance_avis_client' event.id %}">
-        {% csrf_token %}
-        <button type="submit" class="button-relance-avis">Relance avis client</button>
-    </form>
     <form method="POST" action="{% url 'refused_devis' event.id %}">
         {% csrf_token %}
         <button type="submit" class="button-refused">Refuser DEVIS</button>

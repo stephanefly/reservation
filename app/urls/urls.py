@@ -7,7 +7,6 @@ urlpatterns = [
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
 
     path('backend/post_presta/', include('app.urls.post_presta_urls')),
-    path('backend/relance/<int:event_id>/', relance_avis_client, name='relance_avis_client'),
     path('backend/info-event/', include('app.urls.info_event_urls')),
     path('backend/cost/', include('app.urls.cost_urls')),
     path('backend/graph/', include('app.urls.graph_urls')),
