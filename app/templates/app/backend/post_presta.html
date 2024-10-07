@@ -1,0 +1,125 @@
+{% extends 'app/backend/base.html' %}
+{% block content %}
+<style>
+   .highlight-prestation {
+   background-color: blue;
+   color: white; /* Pour que le texte reste lisible sur un fond bleu */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
+   .highlight-option {
+   background-color: skyblue;
+   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
+   .highlight-membre {
+   background-color: #f1cd9d;
+   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
+   .card {
+   border: solid 5px;
+   }
+</style>
+<div class="container">
+         {% for event in lst_post_event %}
+             <div class="card">
+                   <div class="card-header">
+         <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
+      </div>
+             <div class="card-body">
+   <table id="table" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+         <tr>
+            <th>Mail</th>
+            <th>DATE-EVENT</th>
+            <th>Mode</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>{{ event.client.mail }}</td>
+            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+         </tr>
+
+      </tbody>
+   </table>
+ <table id="table" class="table table-bordered table-striped" style="background-color:white">
+       <thead>
+         <tr>
+            <th>Payé</th>
+            <th>Membre Payé</th>
+            <th>Feedback</th>
+            <th>Feedback Posté</th>
+            <th>Envoi</th>
+            <th>Action</th>
+         </tr>
+      </thead>
+      <tbody>
+
+         <tr>
+            <td>
+               <form action="{% url 'update_post_presta_status' event.post_presta.id 'paid' %}" method="post">
+                  {% csrf_token %}
+                  {% if not event.post_presta.paid %}
+                  <button type="submit">OK</button>
+                  {% else %}
+                  <span>Fait</span>
+                  {% endif %}
+               </form>
+            </td>
+            <td>
+               <form action="{% url 'update_post_presta_status' event.post_presta.id 'membre_paid' %}" method="post">
+                  {% csrf_token %}
+                  {% if not event.post_presta.membre_paid %}
+                  <button type="submit">OK</button>
+                  {% else %}
+                  <span>Fait</span>
+                  {% endif %}
+               </form>
+            </td>
+            <td>
+               <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback' %}" method="post">
+                  {% csrf_token %}
+                  {% if not event.post_presta.feedback %}
+                  <button type="submit">OK</button>
+                  {% else %}
+                  <span>Fait</span>
+                  {% endif %}
+               </form>
+            </td>
+            <td>
+               <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback_posted' %}" method="post">
+                  {% csrf_token %}
+                  {% if not event.post_presta.feedback_posted %}
+                  <button type="submit">OK</button>
+                  {% else %}
+                  <span>Fait</span>
+                  {% endif %}
+               </form>
+            </td>
+            <td>
+               <form action="{% url 'update_post_presta_status' event.post_presta.id 'sent' %}" method="post">
+                  {% csrf_token %}
+                  {% if not event.post_presta.sent %}
+                  <button type="submit">OK</button>
+                  {% else %}
+                  <span>Fait</span>
+                  {% endif %}
+               </form>
+            </td>
+            <td>
+               <form action="{% url 'presta_fini' event.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit">Finir Presta</button>
+               </form>
+            </td>
+         </tr>
+
+      </tbody>
+   </table>
+            </div> </div>
+             <br>
+         {% endfor %}
+</div>
+{% endblock %}

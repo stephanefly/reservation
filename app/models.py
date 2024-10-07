@@ -113,6 +113,12 @@ class EventOption(models.Model):
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 
+class EventPostPrestation(models.Model):
+    paid = models.BooleanField(default=False)
+    feedback = models.BooleanField(default=False)
+    feedback_posted = models.BooleanField(default=False)
+    membre_paid = models.BooleanField(default=False)
+    sent = models.BooleanField(default=False)
 
 class EventAcompte(models.Model):
     montant_acompte = models.IntegerField(null=True, blank=True)
@@ -141,6 +147,7 @@ class Event(models.Model):
     event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
     event_acompte = models.ForeignKey(EventAcompte, on_delete=models.CASCADE, null=True)
     event_template = models.ForeignKey(EventTemplate, on_delete=models.CASCADE, null=True)
+    post_presta = models.ForeignKey(EventPostPrestation, on_delete=models.CASCADE, null=True)
 
     prix_brut = models.IntegerField()
     reduc_product = models.IntegerField(null=True, blank=True)
@@ -159,8 +166,10 @@ class Event(models.Model):
         ('Acompte OK', 'Acompte OK'),
         ('Refused', 'Refused'),
         ('Presta FINI', 'Presta FINI'),
+        ('Post Presta', 'Post Presta'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
+
 
 
 class NameCost(models.Model):

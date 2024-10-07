@@ -95,7 +95,6 @@ def confirmation_envoi_mail(request, event_id):
     event = Event.objects.get(id=event_id)
     return render(request, 'app/backend/confirmation_envoi_mail.html', {'event': event})
 
-
 # Vue modifiée pour l'envoi de l'email
 def envoi_mail_devis(request, event_id):
     if request.method == 'POST':  # Assurez-vous que la confirmation a été faite

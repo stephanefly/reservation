@@ -47,6 +47,9 @@
                 {% url 'tableau_de_bord' as url %}
                 <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
                    style="padding-right: 25px;padding-left: 25px;"> Planning </a>
+                {% url 'post_presta' as url %}
+                <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
+                   style="padding-right: 25px;padding-left: 25px;"> Post Presta </a>
                 {% url 'lst_devis' as url %}
                 <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}" 
                    style="padding-right: 25px;padding-left: 25px;"> Liste Devis  </a>
