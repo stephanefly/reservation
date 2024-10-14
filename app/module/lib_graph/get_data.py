@@ -6,7 +6,10 @@ from app.models import Event, Cost
 def get_ok_data():
     pd.set_option('display.max_columns', None)
     results = Event.objects.filter(
-        Q(status__icontains="Presta FINI")|Q(status__icontains="Acompte OK")).filter(signer_at__isnull=False
+        Q(status__icontains="Presta FINI")
+        |Q(status__icontains="Acompte OK")
+        |Q(status__icontains="Post Presta")
+    ).filter(signer_at__isnull=False
     ).select_related(
         'client_id',  # Suppose un ForeignKey vers AppClient
         'event_product_id',  # Suppose un ForeignKey vers AppEventProduct

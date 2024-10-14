@@ -171,7 +171,6 @@ class Event(models.Model):
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 
 
-
 class NameCost(models.Model):
     name = models.CharField(max_length=100)
     def __str__(self):
