@@ -36,14 +36,23 @@ def generate_pdf_devis(event):
     pdf.setFillColor(colors.darkslategrey)
     pdf.drawString(50, height - 142, "Établi le "+ datetime.now().strftime('%d/%m/%Y'))
     # ----------------------------------------------------------------------------------------
+    # Définir les paramètres de texte et couleur communs
     pdf.setFont("Helvetica-Bold", 14)
     pdf.setFillColor(colors.black)
-    pdf.drawString(50, height - 180, "MySelfieBooth")
+    pdf.drawString(50, height - (180 if not event.client.raison_sociale else 165), "MySelfieBooth")
+
     pdf.setFont("Helvetica", 12)
     pdf.setFillColor(colors.darkslategrey)
-    pdf.drawString(50, height - 195, "0699733998")
-    pdf.drawString(50, height - 210, "contact@myselfiebooth-paris.fr")
-    pdf.drawString(50, height - 225, "www.myselfiebooth-paris.fr")
+    pdf.drawString(50, height - (195 if not event.client.raison_sociale else 180), "0699733998")
+    pdf.drawString(50, height - (210 if not event.client.raison_sociale else 195), "contact@myselfiebooth-paris.fr")
+    pdf.drawString(50, height - (225 if not event.client.raison_sociale else 210), "www.myselfiebooth-paris.fr")
+
+    # Ajouter les informations supplémentaires si la raison sociale est présente
+    if event.client.raison_sociale:
+        pdf.drawString(50, height - 225, "SIRET 91428344500015")
+        pdf.drawString(50, height - 240, "144 Avenue Pierre Mendès France")
+        pdf.drawString(50, height - 255, "77176 Savigny-le-Temple")
+
     # ----------------------------------------------------------------------------------------
     pdf.setFont("Helvetica-Bold", 14)
     pdf.setFillColor(colors.black)
@@ -112,17 +121,18 @@ def generate_pdf_devis(event):
 
     # ----------------------------------------------------------------------------------------
 
-    # Ajouter les totaux et les conditions
-    pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(65, height - 635, "Modalité de payement:")
-    pdf.setFillColor(colors.black)
-    pdf.setFont("Helvetica", 10)
-    pdf.setFillColor(colors.darkslategrey)
-    # Calcul de la date de J+10
-    date_j_plus_10 = datetime.now() + timedelta(days=10)
-    pdf.drawString(65, height - 650, "Un acompte de " + acompte + " € est à verser pour confirmer la réservation avant le " + date_j_plus_10.strftime('%d/%m/%Y'))
-    pdf.drawString(65, height - 665, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
-    pdf.drawString(65, height - 680, "Vous pouvez payer par virement (RIB ci-dessous), Paylib (+33699733998), Paypal (paypal.me/3dmouvstudio)")
+    if not event.client.raison_sociale :
+        # Ajouter les totaux et les conditions
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(65, height - 635, "Modalité de payement:")
+        pdf.setFillColor(colors.black)
+        pdf.setFont("Helvetica", 10)
+        pdf.setFillColor(colors.darkslategrey)
+        # Calcul de la date de J+10
+        date_j_plus_10 = datetime.now() + timedelta(days=10)
+        pdf.drawString(65, height - 650, "Un acompte de " + acompte + " € est à verser pour confirmer la réservation avant le " + date_j_plus_10.strftime('%d/%m/%Y'))
+        pdf.drawString(65, height - 665, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
+        pdf.drawString(65, height - 680, "Vous pouvez payer par virement (RIB ci-dessous), Paylib (+33699733998), Paypal (paypal.me/3dmouvstudio)")
 
     # ----------------------------------------------------------------------------------------
 

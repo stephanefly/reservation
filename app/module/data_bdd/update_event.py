@@ -59,6 +59,10 @@ def update_data(event, request):
     event_option = event.event_option
 
     # Mise à jour des informations du page_client
+    raison_sociale = request.POST.get('raison_sociale')
+    if raison_sociale == 'on':
+        client.raison_sociale = True
+
     client.nom = request.POST.get('client_nom')
     client.mail = request.POST.get('client_mail')
     client.numero_telephone = request.POST.get('client_numero_telephone')
