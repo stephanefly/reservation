@@ -1,11 +1,11 @@
 import time
 
-from app.models import Event, EventDetails, EventTemplate
+from app.models import Event
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 
-from app.module.espace_client.send_mail_espace_client import send_mail_espace_client
+from app.module.mail.send_mail_event import send_mail_event
 
 
 def choose_to_relance():
@@ -31,5 +31,5 @@ def choose_to_relance():
         # Vérifie si des informations essentielles sont manquantes pour l'événement
         if (event_valid.event_template is None or not event_valid.event_template.url_modele or not event_valid.event_template.text_template or
             event_valid.event_details is None or not event_valid.event_details.horaire):
-            send_mail_espace_client(event_valid, 'relance')
+            send_mail_event(event_valid, 'relance_espace_client')
             time.sleep(900)  # Pause de 15 minutes

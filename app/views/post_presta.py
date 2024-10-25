@@ -1,13 +1,12 @@
-
-from ..module.data_bdd.make_planning import get_member_list
 from django.shortcuts import render, redirect, get_object_or_404
 from ..models import Event, EventPostPrestation
-from ..module.espace_client.send_mail_espace_client import send_mail_espace_client
-from datetime import datetime, timedelta, timezone
+from app.module.mail.send_mail_event import send_mail_event
+from datetime import datetime
+
 
 def relance_avis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    send_mail_espace_client(event, 'relance_avis')
+    send_mail_event(event, 'relance_avis')
     return redirect('tableau_de_bord')
 
 def presta_fini(request, event_id):

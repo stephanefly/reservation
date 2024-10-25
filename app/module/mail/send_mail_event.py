@@ -6,7 +6,7 @@ from email.utils import formataddr
 from bs4 import BeautifulSoup
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_COPIE, MAIL_BCC
 
-def send_mail_espace_client(event, mail_type):
+def send_mail_event(event, mail_type):
     # Configuration du serveur SMTP
     server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
     server.login(MAIL_MYSELFIEBOOTH, MP)
@@ -15,12 +15,15 @@ def send_mail_espace_client(event, mail_type):
     if mail_type == 'validation':
         subject = "📸 Votre prestation est réservée : préparez-vous à vous éclater ! ✨"
         template_name = "mail_validation.html"
-    elif mail_type == 'relance':
+    elif mail_type == 'relance_espace_client':
         subject = "📸 Informations manquantes pour votre événement ✨"
         template_name = "mail_relance_espace_client.html"
     elif mail_type == 'relance_avis':
         subject = "📸 Votre avis compte ! ✨"
         template_name = "mail_relance_avis.html"
+    elif mail_type == 'relance_devis':
+        subject = "📸 Nous avons pensé à vous ! 📅✨"
+        template_name = "mail_relance_devis.html"
     else:
         raise ValueError("Type de mail non reconnu. Utilisez 'validation' ou 'relance'.")
 
@@ -57,5 +60,8 @@ def complete_mail_content(event, soup, mail_type='validation'):
         prestation_tag = soup.find('b', class_='prestation')
         if prestation_tag:
             prestation_tag.string = selected_booths
+    elif mail_type == 'relance_devis_client':
+        soup.find('h4', class_='reduc').string = str(event.client.nom)
+
 
     return soup
