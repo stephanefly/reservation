@@ -171,6 +171,7 @@ class Event(models.Model):
         ('Refused', 'Refused'),
         ('Presta FINI', 'Presta FINI'),
         ('Post Presta', 'Post Presta'),
+        ('Resended', 'Resended'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 

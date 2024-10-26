@@ -106,6 +106,8 @@ def complete_mail(event, soup, mail_type):
             soup.find('a', class_='reduc_all').string = ""
         if mail_type == 'relance_devis':
             soup.find('a', class_='reduc_all_title').string = "-"+str(event.reduc_all) + "€"
+            event.status = 'Resended'
+            event.save()
 
     return soup
 
