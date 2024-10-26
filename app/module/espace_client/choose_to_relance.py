@@ -4,11 +4,11 @@ from app.models import Event
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
-
+from datetime import datetime, timedelta
 from app.module.mail.send_mail_event import send_mail_event
 
 
-def choose_to_relance():
+def choose_to_relance_espace_client():
     # Calcul de la date actuelle, une semaine dans le futur, et un mois dans le futur
     now = timezone.now().date()
     some_days_later = now + relativedelta(days=4)
@@ -33,3 +33,17 @@ def choose_to_relance():
             event_valid.event_details is None or not event_valid.event_details.horaire):
             send_mail_event(event_valid, 'relance_espace_client')
             time.sleep(900)  # Pause de 15 minutes
+
+def choose_to_relance_devis_client():
+    # Calcul de la date correspondant à J-3
+    date_j_minus = datetime.now() - timedelta(days=7)
+
+    # Filtrer les événements créés il y a exactement 7 jours
+    lst_event_to_relance = Event.objects.filter(
+        created_at__date=date_j_minus.date(),
+        status='Sended',
+    )
+
+    for event_to_relance in lst_event_to_relance:
+        send_mail_event(event_to_relance, 'relance_devis')
+        time.sleep(900)  # Pause de 15 minutes
