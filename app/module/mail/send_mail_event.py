@@ -7,6 +7,7 @@ from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
+from app.models import Event
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_COPIE, MAIL_BCC
@@ -26,9 +27,13 @@ def send_mail_event(event, mail_type):
     elif mail_type == 'relance_avis':
         subject = "📸 Votre avis compte ! ✨"
         template_name = "mail_relance_avis.html"
+        event.client.nb_relance_avis = event.client.nb_relance_avis + 1
+        event.save()
     elif mail_type == 'relance_devis':
         subject = "📸 Nous avons pensé à vous ! 📅✨"
         template_name = "mail_relance_devis.html"
+        event.client.nb_relance_devis = event.client.nb_relance_devis + 1
+        event.save()
     elif mail_type == 'devis':
         subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
         template_name = "mail_devis.html"
@@ -136,3 +141,12 @@ def increment_num_devis(event):
         increment_num_devis(event)
 
     event.save()
+
+def relance_all_devis_client():
+    event = Event.objects.filter(
+        status='Sended',
+        signer_at__isnull=True,
+        client__nb_relance_devis=0,
+        raison_sociale=False,
+    ).order_by('-prix_proposed').first()
+    send_mail_event(event, 'relance_devis')
