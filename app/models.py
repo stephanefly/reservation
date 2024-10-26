@@ -15,6 +15,8 @@ class Client(models.Model):
     ]
     how_find = models.CharField(max_length=255, default='', choices=HOW_FIND, null=True)
     raison_sociale = models.BooleanField(default=False)
+    nb_relance_devis = models.IntegerField(default=0, null=True)
+    nb_relance_avis = models.IntegerField(default=0, null=True)
 
 
 class EventDetails(models.Model):

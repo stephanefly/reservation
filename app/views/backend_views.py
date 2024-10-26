@@ -61,7 +61,7 @@ def confirmation_val_devis(request, id):
 
             to_acompte_ok(event)
 
-            return redirect('lst_devis')
+            return redirect('info_event', id=event.id)
     else:
         form = ValidationForm()
     return render(request, 'app/backend/confirmation_val_devis.html', {'form': form, 'event': event})
@@ -129,4 +129,4 @@ def envoi_mail_devis(request, event_id):
 def relance_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'relance_devis')
-    return redirect('tableau_de_bord')
+    return redirect('info_event', id=event.id)
