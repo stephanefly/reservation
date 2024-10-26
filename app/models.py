@@ -42,20 +42,22 @@ class EventProduct(models.Model):
     airbooth = models.BooleanField(default=False)
 
     def get_selected_booths(self):
-        selected_booths = []
-        if self.photobooth:
-            selected_booths.append("photobooth")
-        if self.miroirbooth:
-            selected_booths.append("miroirbooth")
-        if self.videobooth:
-            selected_booths.append("videobooth")
-        if self.voguebooth:
-            selected_booths.append("voguebooth")
-        if self.ipadbooth:
-            selected_booths.append("ipadbooth")
-        if self.airbooth:
-            selected_booths.append("airbooth")
-        return ', '.join(selected_booths[:-1]) + ' et ' + selected_booths[-1]
+        booths = {
+            "photobooth": self.photobooth,
+            "miroirbooth": self.miroirbooth,
+            "videobooth": self.videobooth,
+            "voguebooth": self.voguebooth,
+            "ipadbooth": self.ipadbooth,
+            "airbooth": self.airbooth
+        }
+
+        # Filtrer les booths sélectionnés
+        selected_booths = [name for name, selected in booths.items() if selected]
+        # Gérer le formatage pour une liste de plus de 1 élément
+        if len(selected_booths) > 1:
+            return ', '.join(selected_booths[:-1]) + ' et ' + selected_booths[-1]
+        elif selected_booths:
+            return selected_booths[0]
 
 class EventOption(models.Model):
 

@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
 from ..models import Event, EventAcompte
 from ..module.data_bdd.update_event import update_data
-from ..module.devis_pdf.mail import send_email
+from app.module.mail.send_mail_event import send_mail_event
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
-from app.module.mail.send_mail_event import send_mail_event
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.http import HttpResponse
@@ -110,7 +109,7 @@ def confirmation_envoi_mail(request, event_id):
 def envoi_mail_devis(request, event_id):
     if request.method == 'POST':  # Assurez-vous que la confirmation a été faite
         event = Event.objects.get(id=event_id)
-        if send_email(event):
+        if send_mail_event(event,'devis'):
 
             # MAJ BDD
             event.status = 'Sended'
