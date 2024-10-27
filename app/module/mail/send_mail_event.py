@@ -60,7 +60,7 @@ def send_mail_event(event, mail_type):
     msg.attach(MIMEText(soup_completed.prettify(), 'html'))
 
     # Si c'est un devis, générer et attacher le PDF
-    if mail_type == 'devis':
+    if mail_type == 'devis' or mail_type == 'relance_devis':
         increment_num_devis(event)
         buffer = generate_pdf_devis(event)
 
