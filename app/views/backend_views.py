@@ -130,3 +130,9 @@ def relance_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'relance_devis')
     return redirect('info_event', id=event.id)
+
+def desabonner(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    event.client.autorisation_mail = False
+    event.client.save()  # Enregistrer l'objet client
+    return render(request, 'app/frontend/desabonnement.html')

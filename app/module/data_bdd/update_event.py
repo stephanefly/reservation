@@ -121,7 +121,7 @@ def update_data(event, request):
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
 
     if not str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT:
-        prix_distance = 50
+        prix_distance = 100
     else:
         prix_distance = 0
 

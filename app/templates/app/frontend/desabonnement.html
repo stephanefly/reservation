@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %} <!-- Charge les balises statiques -->
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de désabonnement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            background-image: url("{% static 'img/background-client.jpg' %}"); /* Utilise le chemin statique */
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            color: #333333;
+        }
+        p {
+            color: #606060;
+            font-size: 16px;
+        }
+        .back-button {
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Vous êtes désabonné</h2>
+        <p>Vous ne recevrez plus nos emails. Merci pour le temps passé avec nous.</p>
+        <br>
+        <a href="https://reservation.myselfiebooth-paris.fr/" class="back-button">Refaire une nouvelle demande</a>
+    </div>
+</body>
+</html>

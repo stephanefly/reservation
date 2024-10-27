@@ -110,9 +110,14 @@ def complete_mail(event, soup, mail_type):
             soup.find('a', class_='txt_reduc').string = ""
             soup.find('a', class_='reduc_all').string = ""
         if mail_type == 'relance_devis':
+            soup.find('a', class_='mail_client').string = str(event.client.mail)
             soup.find('a', class_='reduc_all_title').string = "-"+str(event.reduc_all) + "€"
             event.status = 'Resended'
             event.save()
+            # Créez la variable `unsubscribe_url`
+            unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event.id}"
+            unsubscribe_link = soup.find('a', text="Se désabonner")
+            unsubscribe_link['href'] = unsubscribe_url
 
     return soup
 

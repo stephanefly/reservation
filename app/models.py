@@ -17,6 +17,7 @@ class Client(models.Model):
     raison_sociale = models.BooleanField(default=False)
     nb_relance_devis = models.IntegerField(default=0, null=True)
     nb_relance_avis = models.IntegerField(default=0, null=True)
+    autorisation_mail = models.BooleanField(default=True)
 
 
 class EventDetails(models.Model):
