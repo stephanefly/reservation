@@ -103,15 +103,16 @@ def complete_mail(event, soup, mail_type):
             soup.find('b', class_='acompte').string = "50 €"
 
         # Gestion des réductions
-        if event.reduc_all > 0:
+        reduction = event.reduc_product if event.reduc_all == 0 else event.reduc_all
+        if reduction > 0 :
             soup.find('a', class_='txt_reduc').string = " et bénéficier de la reduction de "
-            soup.find('a', class_='reduc_all').string = str(event.reduc_all) + "€"
+            soup.find('a', class_='reduc_all').string = str(reduction) + "€"
         else:
             soup.find('a', class_='txt_reduc').string = ""
             soup.find('a', class_='reduc_all').string = ""
         if mail_type == 'relance_devis':
             soup.find('a', class_='mail_client').string = str(event.client.mail)
-            soup.find('a', class_='reduc_all_title').string = "-"+str(event.reduc_all) + "€"
+            soup.find('a', class_='reduc_all_title').string = "-"+str(reduction) + "€"
             event.status = 'Resended'
             event.save()
             # Créez la variable `unsubscribe_url`
