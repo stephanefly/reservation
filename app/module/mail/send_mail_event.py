@@ -153,6 +153,6 @@ def relance_all_devis_client():
         status='Sended',
         signer_at__isnull=True,
         client__nb_relance_devis=0,
-        raison_sociale=False,
+        client__raison_sociale=False,
     ).order_by('-prix_proposed').first()
     send_mail_event(event, 'relance_devis')
