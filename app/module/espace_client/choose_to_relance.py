@@ -35,13 +35,13 @@ def choose_to_relance_espace_client():
             time.sleep(900)  # Pause de 15 minutes
 
 def choose_to_relance_devis_client():
-    # Calcul de la date correspondant à J-3
-    date_j_minus = datetime.now() - timedelta(days=7)
+    # Calcul de la date correspondant à J+3
+    date_j_minus = datetime.now() - timedelta(days=3)
 
-    # Filtrer les événements créés il y a exactement 7 jours
+    # Filtrer les événements créés il y a exactement 3 jours
     lst_event_to_relance = Event.objects.filter(
         created_at__date=date_j_minus.date(),
-        status='Sended',
+        signer_at__isnull=True,
     )
 
     for event_to_relance in lst_event_to_relance:

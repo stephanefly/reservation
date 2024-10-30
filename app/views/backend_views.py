@@ -42,7 +42,7 @@ def confirmation_val_devis(request, id):
     if request.method == 'POST':
         form = ValidationForm(request.POST)
         if form.is_valid():
-            if event.status != "Acompte OK":
+            if event.signer_at is None:
                 send_mail_event(event, 'validation')
 
             event_acompte = EventAcompte(
@@ -112,8 +112,9 @@ def envoi_mail_devis(request, event_id):
         if send_mail_event(event,'devis'):
 
             # MAJ BDD
-            event.status = 'Sended'
-            event.save()
+            if event.signer_at is None:
+                event.status = 'Sended'
+                event.save()
 
             # MAJ TRELLO
             to_list_devis_fait(event)
