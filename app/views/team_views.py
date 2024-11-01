@@ -3,7 +3,8 @@ from ..models import EventTemplate, Event
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 import os
 
 from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
@@ -41,3 +42,13 @@ def upload_image(request, event_id):
 
     return redirect('template_to_do')
 
+def view_image(request, event_id):
+    sftp_storage = SFTP_STORAGE  # Utilisez votre instance de connexion SFTP
+    file_data, file_name = sftp_storage._get_last_image(event_id)  # Récupérer l'image
+
+    # Détectez le type de contenu (vous pouvez ajuster selon votre fichier)
+    content_type = "image/jpeg" if file_name.endswith(".jpg") or file_name.endswith(".jpeg") else "image/png"
+
+    # Retourne l'image sans forcer le téléchargement
+    response = HttpResponse(file_data, content_type=content_type)
+    return response

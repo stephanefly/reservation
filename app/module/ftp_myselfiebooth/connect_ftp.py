@@ -126,6 +126,26 @@ class SFTPStorage(Storage):
         finally:
             sftp.close()
 
+    def _get_last_image(self, event_id):
+        sftp = self._connect()
+        event = Event.objects.get(pk=event_id)
+
+        # Construire le chemin du fichier sur le NAS
+        prepa_event_path = self.prepa_event_path.replace("\\", "/")
+        directory_name = event.event_template.directory_name.replace("\\", "/")
+        file_name = event.event_template.image_name
+        file_path = f"{prepa_event_path}/{directory_name}/{file_name}"
+
+        # Ouvrir le fichier distant en mode binaire
+        try:
+            remote_file = sftp.file(file_path, 'rb')  # Lire le fichier à distance
+            file_data = remote_file.read()
+            remote_file.close()
+            return file_data, file_name  # Retourne les données et le nom du fichier
+        finally:
+            sftp.close()
+
+
 # Configuration des informations NAS
 SFTP_STORAGE = SFTPStorage(
     hostname=FTP_SERVER,
