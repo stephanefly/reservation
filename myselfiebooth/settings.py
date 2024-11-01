@@ -84,6 +84,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'myselfiebooth.middleware.BackendAuthMiddleware',
+    'myselfiebooth.middleware.TeamOnlyMiddleware',  # Assure-toi de mettre le chemin correct vers le middleware
+
 ]
 
 LOGIN_REDIRECT_URL = 'backend/lst_devis/'
@@ -159,3 +161,5 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
+# settings.py
+LOGOUT_REDIRECT_URL = '/login/'  # Par exemple, redirection vers la page d'accueil

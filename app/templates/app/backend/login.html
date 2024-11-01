@@ -1,38 +1,47 @@
-{% extends 'app/backend/base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Connexion</title>
+    <style>
+        body {
+            background-color: rgba(222, 222, 222, 0.55);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body login-card-body text-center">
+                        <p class="login-box-msg">Connectez-vous pour accéder à l'application</p>
 
-<style>
-body {
-    background-image: None;
-}
+                        <form action="{% url 'login' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ next }}">
 
-</style>
-
-<div class="container">
-    <div class="card">
-        <div class="card-body login-card-body">
-            <p class="login-box-msg">
-                Connectez-vous pour accéder à l'application
-            </p>
-
-            <form action="{% url 'login' %}" method="post">
-
-                {% csrf_token %}
-
-                <input type="hidden" name="next" value="{{ next }}">
-
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="identifiant..." name="username">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Identifiant..." name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" placeholder="Mot de passe..." name="password" required>
+                            </div>
+                            <input type="hidden" name="next" value="/team/template/" />
+                            <button type="submit" class="btn btn-primary w-100">Connexion</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="password" class="form-control" placeholder="mot de passe..." name="password">
-                </div>
-                <div class="row">
-                      <input type="hidden" name="next" value="/backend/lst_devis/" />
-                    <button type="submit" class="btn btn-primary btn-block">Connexion</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
