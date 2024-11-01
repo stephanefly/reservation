@@ -47,6 +47,13 @@ MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
 MAIL_COPIE = config.get('MAIL_COPIE')
 MAIL_BCC = config.get('MAIL_BCC')
 MP = config.get('MP')
+# Remplacez ces informations par celles de votre NAS
+FTP_SERVER = config.get('FTP_SERVER')
+FTP_USER = config.get('FTP_USER')
+FTP_PASS = config.get('FTP_PASS')
+NAS_EVENT_PATH = config.get('NAS_EVENT_PATH')
+PREPA_EVENT_PATH = config.get('PREPA_EVENT_PATH')
+FTP_PORT = config.get('FTP_PORT')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')

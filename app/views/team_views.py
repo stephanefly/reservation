@@ -1,7 +1,12 @@
-from django.shortcuts import render
+
 from ..models import EventTemplate, Event
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render
+from django.http import JsonResponse
+import os
+
+from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
 
 today_date = datetime.now().date()
 
@@ -23,3 +28,16 @@ def change_status(request, pk):
     event_template.statut = not event_template.statut
     event_template.save()
     return redirect('tableau_de_bord')
+
+
+def upload_image(request, event_id):
+    if request.method == 'POST':
+        image = request.FILES.get('myTemplate')
+        if image:
+
+            # Sauvegarder l'image sur le NAS via SFTPStorage
+            saved_path = SFTP_STORAGE._save_png(image, event_id)
+            return redirect('template_to_do')
+
+    return redirect('template_to_do')
+

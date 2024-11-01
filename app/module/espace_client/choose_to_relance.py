@@ -34,6 +34,7 @@ def choose_to_relance_espace_client():
             send_mail_event(event_valid, 'relance_espace_client')
             time.sleep(900)  # Pause de 15 minutes
 
+
 def choose_to_relance_devis_client():
     # Calcul de la date correspondant à J+3
     date_j_minus = datetime.now() - timedelta(days=3)

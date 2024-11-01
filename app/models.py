@@ -34,7 +34,9 @@ class EventTemplate(models.Model):
     url_modele = models.TextField(null=True)
     text_template = models.TextField(null=True)
     statut = models.BooleanField(default=False)
-
+    directory_name = models.CharField(max_length=100, null=True)
+    image_name = models.CharField(max_length=100, null=True)
+    num_template = models.IntegerField(default=1)  # Champ pour stocker l'incrémentation
 
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
