@@ -38,6 +38,11 @@ def upload_image(request, event_id):
 
             # Sauvegarder l'image sur le NAS via SFTPStorage
             saved_path = SFTP_STORAGE._save_png(image, event_id)
+
+            event = get_object_or_404(Event, pk=event_id)  # Récupère l'événement par son ID
+            event.event_template.statut = "A VALIDER"  # Met à jour le statut
+            event.event_template.save()  # Sauvegarde la mise à jour dans la base de données
+
             return redirect('template_to_do')
 
     return redirect('template_to_do')
