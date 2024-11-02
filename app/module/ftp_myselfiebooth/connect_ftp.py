@@ -14,39 +14,28 @@ class SFTPStorage(Storage):
         self.prepa_event_path = prepa_event_path
         self.nas_event_path = nas_event_path
         self.port = port
-        self.transport = None  # Ajouter transport comme attribut pour une gestion correcte
 
     def _connect(self):
-        """Établit une connexion SFTP et retourne un client SFTP."""
-        try:
-            self.transport = paramiko.Transport((self.hostname, self.port))
-            self.transport.connect(username=self.username, password=self.password)
-            return paramiko.SFTPClient.from_transport(self.transport)
-        except Exception as e:
-            raise ConnectionError(f"Impossible de se connecter au serveur SFTP : {str(e)}")
-
-    def close(self):
-        """Ferme la connexion SFTP proprement."""
-        if self.transport:
-            self.transport.close()
+        transport = paramiko.Transport((self.hostname, self.port))
+        transport.connect(username=self.username, password=self.password)
+        return paramiko.SFTPClient.from_transport(transport)
 
     def _create_event_repository(self, event):
-        """Crée un répertoire pour l'événement sur le serveur SFTP."""
         directory_name = normalized_directory_name(event)
         sftp = self._connect()
-        path = os.path.join(self.prepa_event_path, directory_name).replace("\\", "/")
+        path = os.path.join(self.prepa_event_path, directory_name)
+
         try:
-            sftp.stat(path)  # Vérifier si le répertoire existe déjà
+            sftp.stat(path)  # Vérifier si le répertoire existe
         except FileNotFoundError:
             try:
-                sftp.mkdir(path)
+                sftp.mkdir(path)  # Créer le répertoire
             except Exception as e:
-                raise ValueError(f"Impossible de créer le répertoire '{directory_name}': {str(e)}")
+                raise ValueError(f"Unable to create directory '{directory_name}': {str(e)}")
         finally:
             sftp.close()
 
-        # Crée ou met à jour l'EventTemplate pour l'événement
-        event_template, created = EventTemplate.objects.update_or_create(
+        event_template, _ = EventTemplate.objects.update_or_create(
             pk=event.event_template.pk if event.event_template else None,
             defaults={'directory_name': directory_name}
         )
@@ -54,16 +43,15 @@ class SFTPStorage(Storage):
         event.save()
         return directory_name
 
-    def _renname_event_repository(self, event, new_directory_name):
-        """Renomme le répertoire de l'événement sur le serveur SFTP."""
+    def _rename_event_repository(self, event, new_directory_name):
         old_directory_name = event.event_template.directory_name
         sftp = self._connect()
-        old_path = os.path.join(self.prepa_event_path, old_directory_name).replace("\\", "/")
-        new_path = os.path.join(self.prepa_event_path, new_directory_name).replace("\\", "/")
+        old_path = os.path.join(self.prepa_event_path, old_directory_name)
+        new_path = os.path.join(self.prepa_event_path, new_directory_name)
 
         try:
-            sftp.stat(old_path)  # Vérifier si l'ancien répertoire existe
-            sftp.rename(old_path, new_path)
+            sftp.stat(old_path)  # Vérifier l'existence de l'ancien répertoire
+            sftp.rename(old_path, new_path)  # Renommer le répertoire
         except FileNotFoundError:
             raise ValueError(f"Le répertoire {old_path} n'existe pas et ne peut pas être renommé.")
         except Exception as e:
@@ -71,65 +59,55 @@ class SFTPStorage(Storage):
         finally:
             sftp.close()
 
-        # Met à jour l'EventTemplate avec le nouveau nom de répertoire
         event.event_template.directory_name = new_directory_name
         event.event_template.save()
         event.save()
 
     def _save_png(self, image, event_id):
-        """Enregistre une image PNG dans le répertoire de l'événement."""
         if not image.name.lower().endswith('.png'):
-            raise ValueError('Seuls les fichiers PNG sont autorisés pour le téléchargement')
+            raise ValueError('Only PNG files are allowed for upload')
 
         sftp = self._connect()
         event = Event.objects.get(pk=event_id)
 
-        # Crée ou récupère un EventTemplate associé à l'événement
         if not event.event_template:
             event_template = EventTemplate(statut=False)
-            event_template.save()  # Sauvegarder d'abord l'EventTemplate
+            event_template.save()
             event.event_template = event_template
-            event.save()  # Ensuite sauvegarder l'événement pour l'association
+            event.save()
 
         if not event.event_template.directory_name:
             self._create_event_repository(event)
 
-        # Incrémentation du nom de fichier
         increment = event.event_template.num_template
         file_name = f"MySelfieBooth-{event.event_template.directory_name}-{increment}.png"
         event.event_template.num_template += 1
         event.event_template.save()
 
-        # Chemin complet pour le fichier sur le NAS
         prepa_event_path = self.prepa_event_path.replace("\\", "/")
         directory_name = event.event_template.directory_name.replace("\\", "/")
         file_path = f"{prepa_event_path}/{directory_name}/{file_name}"
 
-        try:
-            with sftp.file(file_path, 'wb') as f:
-                f.write(image.read())
-        finally:
-            sftp.close()
+        with sftp.file(file_path, 'w') as f:
+            f.write(image.read())
 
+        sftp.close()
         event.event_template.image_name = file_name
         event.event_template.save()
         event.save()
+
         return file_path
 
     def _open(self, name, mode='rb'):
-        """Ouvre un fichier sur le NAS en mode lecture."""
         sftp = self._connect()
-        path = os.path.join(self.prepa_event_path, name).replace("\\", "/")
-        try:
-            file_content = sftp.file(path, mode).read()
-            return ContentFile(file_content)
-        finally:
-            sftp.close()
+        path = os.path.join(self.base_path, name)
+        file_content = sftp.file(path, mode).read()
+        sftp.close()
+        return ContentFile(file_content)
 
     def exists(self, name):
-        """Vérifie si un fichier existe déjà sur le NAS."""
         sftp = self._connect()
-        path = os.path.join(self.prepa_event_path, name).replace("\\", "/")
+        path = os.path.join(self.base_path, name)
         try:
             sftp.stat(path)
             return True
@@ -150,13 +128,12 @@ class SFTPStorage(Storage):
         try:
             remote_file = sftp.file(file_path, 'rb')
             file_data = remote_file.read()
-            remote_file.close()
             return file_data, file_name
         finally:
             sftp.close()
 
 
-# Configuration des informations NAS pour une utilisation facile
+# Configuration des informations NAS
 SFTP_STORAGE = SFTPStorage(
     hostname=FTP_SERVER,
     username=FTP_USER,
