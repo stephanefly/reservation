@@ -88,9 +88,13 @@ def update_data(event, request):
         event_template.text_template = request.POST.get('text_template')
         event_template.save()
 
-        new_directory_name = normalized_directory_name(event)
-        if new_directory_name != event.event_template.directory_name:
-            SFTP_STORAGE._renname_event_repository(event, new_directory_name)
+        if not event.event_template.directory_name:
+            SFTP_STORAGE._create_event_repository(event)
+
+        else:
+            new_directory_name = normalized_directory_name(event)
+            if new_directory_name != event.event_template.directory_name:
+                SFTP_STORAGE._rename_event_repository(event, new_directory_name)
 
 
         if not event.event_template:
