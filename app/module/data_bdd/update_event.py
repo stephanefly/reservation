@@ -88,6 +88,10 @@ def update_data(event, request):
         event_template.text_template = request.POST.get('text_template')
         event_template.save()
 
+        if not event.event_template:
+            event.event_template = event_template
+            event.save()
+
         if not event.event_template.directory_name:
             SFTP_STORAGE._create_event_repository(event)
 
@@ -96,10 +100,6 @@ def update_data(event, request):
             if new_directory_name != event.event_template.directory_name:
                 SFTP_STORAGE._rename_event_repository(event, new_directory_name)
 
-
-        if not event.event_template:
-            event.event_template = event_template
-            event.save()
 
     # Mise à jour des produits de l'événement
     event_product.photobooth = request.POST.get('photobooth') == 'on'
