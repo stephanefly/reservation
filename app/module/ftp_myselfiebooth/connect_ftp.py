@@ -134,6 +134,7 @@ class SFTPStorage(Storage):
             sftp.close()
 
 
+
 # Configuration des informations NAS
 SFTP_STORAGE = SFTPStorage(
     hostname=FTP_SERVER,
