@@ -3,7 +3,7 @@ from ..forms import ValidationForm
 from ..models import Event, EventAcompte
 from ..module.data_bdd.update_event import update_data
 from app.module.mail.send_mail_event import send_mail_event
-from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
+from ..module.ftp_myselfiebooth.connect_ftp import FTPStorage
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -61,7 +61,7 @@ def confirmation_val_devis(request, id):
             event.status = 'Acompte OK'
             event.save()
 
-            SFTP_STORAGE._create_event_repository(event)
+            FTPStorage._create_event_repository(event)
             return redirect('info_event', id=event.id)
     else:
         form = ValidationForm()

@@ -1,13 +1,13 @@
+from ftplib import FTP, error_perm
 from app.models import EventTemplate, Event
 from myselfiebooth.settings import FTP_SERVER, FTP_PORT, FTP_USER, FTP_PASS, PREPA_EVENT_PATH, NAS_EVENT_PATH
 from app.module.tools.rennaming import normalized_directory_name
-import paramiko
 from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 import os
 
 
-class SFTPStorage(Storage):
+class FTPStorage(Storage):
     def __init__(self, hostname, username, password, prepa_event_path, nas_event_path, port):
         self.hostname = hostname
         self.username = username
@@ -17,24 +17,25 @@ class SFTPStorage(Storage):
         self.port = port
 
     def _connect(self):
-        transport = paramiko.Transport((self.hostname, self.port))
-        transport.connect(username=self.username, password=self.password)
-        return paramiko.SFTPClient.from_transport(transport)
+        ftp = FTP()
+        ftp.connect(self.hostname, self.port, timeout=10)
+        ftp.login(self.username, self.password)
+        return ftp
 
     def _create_event_repository(self, event):
         directory_name = normalized_directory_name(event)
-        sftp = self._connect()
-        path = os.path.join(self.prepa_event_path, directory_name)
+        ftp = self._connect()
+        path = os.path.join(self.prepa_event_path, directory_name).replace("\\", "/")
 
         try:
-            sftp.stat(path)  # Vérifier si le répertoire existe
-        except FileNotFoundError:
+            ftp.cwd(path)  # Vérifier si le répertoire existe
+        except error_perm:
             try:
-                sftp.mkdir(path)  # Créer le répertoire
+                ftp.mkd(path)  # Créer le répertoire
             except Exception as e:
                 raise ValueError(f"Unable to create directory '{directory_name}': {str(e)}")
         finally:
-            sftp.close()
+            ftp.quit()
 
         event_template, _ = EventTemplate.objects.update_or_create(
             pk=event.event_template.pk if event.event_template else None,
@@ -46,19 +47,19 @@ class SFTPStorage(Storage):
 
     def _rename_event_repository(self, event, new_directory_name):
         old_directory_name = event.event_template.directory_name
-        sftp = self._connect()
-        old_path = os.path.join(self.prepa_event_path, old_directory_name)
-        new_path = os.path.join(self.prepa_event_path, new_directory_name)
+        ftp = self._connect()
+        old_path = os.path.join(self.prepa_event_path, old_directory_name).replace("\\", "/")
+        new_path = os.path.join(self.prepa_event_path, new_directory_name).replace("\\", "/")
 
         try:
-            sftp.stat(old_path)  # Vérifier l'existence de l'ancien répertoire
-            sftp.rename(old_path, new_path)  # Renommer le répertoire
-        except FileNotFoundError:
+            ftp.cwd(old_path)  # Vérifier l'existence de l'ancien répertoire
+            ftp.rename(old_path, new_path)  # Renommer le répertoire
+        except error_perm:
             raise ValueError(f"Le répertoire {old_path} n'existe pas et ne peut pas être renommé.")
         except Exception as e:
             raise ValueError(f"Erreur lors du renommage du répertoire : {str(e)}")
         finally:
-            sftp.close()
+            ftp.quit()
 
         event.event_template.directory_name = new_directory_name
         event.event_template.save()
@@ -68,7 +69,7 @@ class SFTPStorage(Storage):
         if not image.name.lower().endswith('.png'):
             raise ValueError('Only PNG files are allowed for upload')
 
-        sftp = self._connect()
+        ftp = self._connect()
         event = Event.objects.get(pk=event_id)
 
         if not event.event_template:
@@ -89,10 +90,13 @@ class SFTPStorage(Storage):
         directory_name = event.event_template.directory_name.replace("\\", "/")
         file_path = f"{prepa_event_path}/{directory_name}/{file_name}"
 
-        with sftp.file(file_path, 'w') as f:
-            f.write(image.read())
+        try:
+            ftp.storbinary(f'STOR {file_path}', image.file)
+        except Exception as e:
+            raise ValueError(f"Erreur lors du transfert du fichier : {str(e)}")
+        finally:
+            ftp.quit()
 
-        sftp.close()
         event.event_template.image_name = file_name
         event.event_template.save()
         event.save()
@@ -100,43 +104,48 @@ class SFTPStorage(Storage):
         return file_path
 
     def _open(self, name, mode='rb'):
-        sftp = self._connect()
-        path = os.path.join(self.base_path, name)
-        file_content = sftp.file(path, mode).read()
-        sftp.close()
-        return ContentFile(file_content)
+        ftp = self._connect()
+        path = os.path.join(self.prepa_event_path, name).replace("\\", "/")
+        file_content = ContentFile()
+
+        try:
+            ftp.retrbinary(f"RETR {path}", file_content.write)
+        finally:
+            ftp.quit()
+
+        return file_content
 
     def exists(self, name):
-        sftp = self._connect()
-        path = os.path.join(self.base_path, name)
+        ftp = self._connect()
+        path = os.path.join(self.prepa_event_path, name).replace("\\", "/")
         try:
-            sftp.stat(path)
+            ftp.size(path)
             return True
-        except FileNotFoundError:
+        except error_perm:
             return False
         finally:
-            sftp.close()
+            ftp.quit()
 
     def _get_last_image(self, event_id):
-        """Récupère la dernière image associée à un événement."""
-        sftp = self._connect()
+        ftp = self._connect()
         event = Event.objects.get(pk=event_id)
         prepa_event_path = self.prepa_event_path.replace("\\", "/")
         directory_name = event.event_template.directory_name.replace("\\", "/")
         file_name = event.event_template.image_name
         file_path = f"{prepa_event_path}/{directory_name}/{file_name}"
 
-        try:
-            remote_file = sftp.file(file_path, 'rb')
-            file_data = remote_file.read()
-            return file_data, file_name
-        finally:
-            sftp.close()
+        file_content = ContentFile()
 
+        try:
+            ftp.retrbinary(f"RETR {file_path}", file_content.write)
+        finally:
+            ftp.quit()
+
+        return file_content, file_name
 
 
 # Configuration des informations NAS
-SFTP_STORAGE = SFTPStorage(
+FTP_STORAGE = FTPStorage(
     hostname=FTP_SERVER,
     username=FTP_USER,
     password=FTP_PASS,
