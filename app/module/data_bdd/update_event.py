@@ -1,6 +1,6 @@
 import os
 
-from app.module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
+from app.module.ftp_myselfiebooth.connect_ftp import FTPStorage
 from app.module.tools.rennaming import normalized_directory_name
 
 from django.http import request
