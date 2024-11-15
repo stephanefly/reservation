@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..models import Event, EventPostPrestation
 from app.module.mail.send_mail_event import send_mail_event
 from datetime import datetime
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 def relance_avis_client(request, event_id):
@@ -16,24 +17,29 @@ def presta_fini(request, event_id):
     return redirect('post_presta')
 
 
+
+
 def update_post_presta_status(request, post_presta_id, action):
-    post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
+    if request.method == 'POST' and request.is_ajax():
+        post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
+        actions = {
+            'paid': 'paid',
+            'membre_paid': 'membre_paid',
+            'feedback': 'feedback',
+            'feedback_posted': 'feedback_posted',
+            'sent': 'sent',
+        }
 
-    if action == 'paid':
-        post_presta.paid = True
-    elif action == 'membre_paid':
-        post_presta.membre_paid = True
-    elif action == 'feedback':
-        post_presta.feedback = True
-    elif action == 'feedback_posted':
-        post_presta.feedback_posted = True
-    elif action == 'sent':
-        post_presta.sent = True
-    else:
-        return redirect('error_page')  # Gestion d'erreur si l'action est inconnue
+        if action in actions:
+            setattr(post_presta, actions[action], True)
+            post_presta.save()
+            return JsonResponse({'success': True, 'action': action, 'message': 'Statut mis à jour avec succès.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Action inconnue.'}, status=400)
 
-    post_presta.save()
-    return redirect('post_presta')
+    return HttpResponseBadRequest('Requête invalide.')
+
+
 
 
 def post_presta(request):

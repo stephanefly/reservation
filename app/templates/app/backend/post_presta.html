@@ -1,136 +1,204 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
 <style>
-   .highlight-prestation {
-   background-color: blue;
-   color: white; /* Pour que le texte reste lisible sur un fond bleu */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-option {
-   background-color: skyblue;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-membre {
-   background-color: #f1cd9d;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .card {
-   border: solid 0.5px;
-   }
+    .highlight-prestation {
+        background-color: blue;
+        color: white;
+        padding: 0 3px;
+    }
+
+    .highlight-option {
+        background-color: skyblue;
+        color: black;
+        padding: 0 3px;
+    }
+
+    .highlight-membre {
+        background-color: #f1cd9d;
+        color: black;
+        padding: 0 3px;
+    }
+
+    .card {
+        border: solid 0.5px;
+    }
 </style>
+
 <div class="container">
-         {% for event in lst_post_event %}
-             <div class="card">
-                   <div class="card-header">
-<h5>
-    <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
-</h5>
 
-      </div>
-             <div class="card-body">
-   <table id="table" class="table table-bordered table-striped" style="background-color:white">
-      <thead>
-         <tr>
-            <th>Mail</th>
+    <table id="table" class="table table-bordered table-striped" style="background-color:white">
+        <thead>
+        <tr>
+            <th>NOM</th>
             <th>DATE-EVENT</th>
-            <th>Mode</th>
-         </tr>
-      </thead>
-      <tbody>
-         <tr>
-            <td>{{ event.client.mail }}</td>
-            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-         </tr>
-
-      </tbody>
-   </table>
- <table id="table" class="table table-bordered table-striped" style="background-color:white">
-       <thead>
-         <tr>
+            <th>Presta Payé</th>
+            <th>Membre</th>
             <th>Payé</th>
-            <th>Membre Payé</th>
             <th>Feedback</th>
             <th>Feedback Posté</th>
             <th>Envoi</th>
-            <th>Action</th>
-         </tr>
-      </thead>
-      <tbody>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in lst_post_event %}
+        <tr>
+            <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.paid %}OK{% else %}Fait{% endif %}
+            </td>
+            <td>Membre</td>
+            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.membre_paid %}OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.feedback %}OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.feedback_posted %}OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.sent %}OK{% else %}Fait{% endif %}
+            </td>
+        </tr>
 
-         <tr>
-            <td>
-               <form action="{% url 'update_post_presta_status' event.post_presta.id 'paid' %}" method="post">
-                  {% csrf_token %}
-                  {% if not event.post_presta.paid %}
-                  <button type="submit">OK</button>
-                  {% else %}
-                  <span>Fait</span>
-                  {% endif %}
-               </form>
-            </td>
-            <td>
-               <form action="{% url 'update_post_presta_status' event.post_presta.id 'membre_paid' %}" method="post">
-                  {% csrf_token %}
-                  {% if not event.post_presta.membre_paid %}
-                  <button type="submit">OK</button>
-                  {% else %}
-                  <span>Fait</span>
-                  {% endif %}
-               </form>
-            </td>
-<td>
-    <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback' %}" method="post">
-        {% csrf_token %}
-        {% if not event.post_presta.feedback %}
-            <button type="submit">OK</button>
-        {% else %}
-            <span>Fait</span>
-        {% endif %}
-    </form>
+        {% endfor %}
+        </tbody>
+    </table>
 
-    {% if not event.post_presta.feedback %}
-    <form method="POST" action="{% url 'relance_avis_client' event.id %}">
-        {% csrf_token %}
-        <button type="submit" class="button-relance-avis">Relance avis client</button>
-    </form>
-    {% endif %}
-</td>
-
-            <td>
-               <form action="{% url 'update_post_presta_status' event.post_presta.id 'feedback_posted' %}" method="post">
-                  {% csrf_token %}
-                  {% if not event.post_presta.feedback_posted %}
-                  <button type="submit">OK</button>
-                  {% else %}
-                  <span>Fait</span>
-                  {% endif %}
-               </form>
-            </td>
-            <td>
-               <form action="{% url 'update_post_presta_status' event.post_presta.id 'sent' %}" method="post">
-                  {% csrf_token %}
-                  {% if not event.post_presta.sent %}
-                  <button type="submit">OK</button>
-                  {% else %}
-                  <span>Fait</span>
-                  {% endif %}
-               </form>
-            </td>
-            <td>
-               <form action="{% url 'presta_fini' event.id %}" method="post">
-                  {% csrf_token %}
-                  <button type="submit">Finir Presta</button>
-               </form>
-            </td>
-         </tr>
-
-      </tbody>
-   </table>
-            </div> </div>
-             <br>
-         {% endfor %}
+    {% for event in lst_post_event %}
+    <div class="card">
+        <div class="card-header">
+            <h5>
+                <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
+            </h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>Mail</th>
+                    <th>Date-Event</th>
+                    <th>Membre</th>
+                    <th>PC</th>
+                    <th>PRIX</th>
+                    <th>Acompte</th>
+                    <th>Restant</th>
+                    <th>Mode</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ event.client.mail }}</td>
+                    <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                    <td>Membre</td>
+                    <td>PC</td>
+                    <td id="prix_valided">{{ event.prix_valided }}</td>
+                    <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                    <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+                    <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>Payé</th>
+                    <th>Membre Payé</th>
+                    <th>Feedback</th>
+                    <th>Feedback Posté</th>
+                    <th>Envoi</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="paid">
+                            {% if not event.post_presta.paid %}OK{% else %}Fait{% endif %}
+                        </button>
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="membre_paid">
+                            {% if not event.post_presta.membre_paid %}OK{% else %}Fait{% endif %}
+                        </button>
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback">
+                            {% if not event.post_presta.feedback %}OK{% else %}Fait{% endif %}
+                        </button>
+                        {% if not event.post_presta.feedback %}
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="relance_avis">
+                            Relance avis client
+                        </button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback_posted">
+                            {% if not event.post_presta.feedback_posted %}OK{% else %}Fait{% endif %}
+                        </button>
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="sent">
+                            {% if not event.post_presta.sent %}OK{% else %}Fait{% endif %}
+                        </button>
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="finish_presta">Finir Presta
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM chargé, script actif');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        document.querySelectorAll('.ajax-btn').forEach(button => {
+            console.log('Bouton trouvé:', button);
+            button.addEventListener('click', function () {
+                console.log('Bouton cliqué:', this.dataset.id, this.dataset.action);
+
+                const id = this.dataset.id;
+                const action = this.dataset.action;
+
+                fetch(`/update_post_presta_status/${id}/${action}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        console.log('Réponse reçue:', response);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Données reçues:', data);
+                        if (data.success) {
+                            this.outerHTML = `<span>${data.action === 'relance_avis' ? 'Relancé' : 'Fait'}</span>`;
+                        } else {
+                            alert('Erreur: ' + data.message);
+                        }
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            });
+        });
+    });
+
+</script>
 {% endblock %}
