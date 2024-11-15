@@ -94,7 +94,6 @@ def update_data(event, request):
 
         if not event.event_template.directory_name:
             SFTP_STORAGE._create_event_repository(event)
-
         else:
             new_directory_name = normalized_directory_name(event)
             if new_directory_name != event.event_template.directory_name:
