@@ -6,7 +6,6 @@ from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 import os
 
-
 class SFTPStorage(Storage):
     def __init__(self, hostname, username, password, prepa_event_path, nas_event_path, port):
         self.hostname = hostname
