@@ -20,16 +20,11 @@ class SFTPStorage(Storage):
 
     def _connect(self):
         try:
-            ipv4_address = socket.gethostbyname(self.hostname)  # Résout en IPv4 uniquement
-            transport = paramiko.Transport((ipv4_address, self.port))
-            transport.connect(username=self.username, password=self.password)
-            return transport
-        except paramiko.SSHException as e:
-            print(f"SSH error: {e}")
-            raise
+            self.transport = paramiko.Transport((self.hostname, self.port))
+            self.transport.connect(username=self.username, password=self.password)
+            return paramiko.SFTPClient.from_transport(self.transport)
         except Exception as e:
-            print(f"Unexpected error: {e}")
-            raise
+            raise ConnectionError(f"Impossible de se connecter au serveur SFTP : {str(e)}")
 
     def _create_event_repository(self, event):
         directory_name = normalized_directory_name(event)
