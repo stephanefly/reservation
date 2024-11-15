@@ -5,6 +5,8 @@ import paramiko
 from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 import os
+import socket
+
 
 
 class SFTPStorage(Storage):
@@ -17,9 +19,17 @@ class SFTPStorage(Storage):
         self.port = port
 
     def _connect(self):
-        transport = paramiko.Transport((self.hostname, self.port))
-        transport.connect(username=self.username, password=self.password)
-        return paramiko.SFTPClient.from_transport(transport)
+        try:
+            ipv4_address = socket.gethostbyname(self.hostname)  # Résout en IPv4 uniquement
+            transport = paramiko.Transport((ipv4_address, self.port))
+            transport.connect(username=self.username, password=self.password)
+            return transport
+        except paramiko.SSHException as e:
+            print(f"SSH error: {e}")
+            raise
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            raise
 
     def _create_event_repository(self, event):
         directory_name = normalized_directory_name(event)
