@@ -43,33 +43,50 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">MySelfieBooth Paris</a>
-    <a class="navbar-brand mx-auto" href="#">{{ request.user }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px">
-
         <ul class="navbar-nav">
             {% url 'tableau_de_bord' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Planning </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Planning</a>
+            </li>
             {% url 'post_presta' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Post Presta </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Post Presta</a>
+            </li>
             {% url 'lst_devis' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Liste Devis </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Liste Devis</a>
+            </li>
             {% url 'graph' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Graph ALL </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Graph ALL</a>
+            </li>
             {% url 'lst_cost' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Côuts </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Côuts</a>
+            </li>
             {% url 'graph_cost' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Rentabilité </a>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Rentabilité</a>
+            </li>
             {% url 'graph_cost_pie' as url %}
-            <a class="nav-item nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-               style="padding-right: 25px;padding-left: 25px;"> Annuel </a>
-            <a href="{% url 'logout' %}">Déconnexion</a>
-
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                   style="padding-right: 25px;padding-left: 25px;">Annuel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>
+            </li>
         </ul>
     </div>
 </nav>
