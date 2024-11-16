@@ -3,6 +3,7 @@ from ..models import Event, EventPostPrestation
 from app.module.mail.send_mail_event import send_mail_event
 from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.http import require_http_methods
 
 
 def relance_avis_client(request, event_id):
@@ -17,25 +18,23 @@ def presta_fini(request, event_id):
     return redirect('post_presta')
 
 
-
-
+@require_http_methods(["POST"])
 def update_post_presta_status(request, post_presta_id, action):
-    if request.method == 'POST' and request.is_ajax():
-        post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
-        actions = {
-            'paid': 'paid',
-            'membre_paid': 'membre_paid',
-            'feedback': 'feedback',
-            'feedback_posted': 'feedback_posted',
-            'sent': 'sent',
-        }
+    post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
+    actions = {
+        'paid': 'paid',
+        'membre_paid': 'membre_paid',
+        'feedback': 'feedback',
+        'feedback_posted': 'feedback_posted',
+        'sent': 'sent',
+    }
 
-        if action in actions:
-            setattr(post_presta, actions[action], True)
-            post_presta.save()
-            return JsonResponse({'success': True, 'action': action, 'message': 'Statut mis à jour avec succès.'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Action inconnue.'}, status=400)
+    if action in actions:
+        setattr(post_presta, actions[action], True)
+        post_presta.save()
+        return JsonResponse({'success': True, 'action': action, 'message': 'Statut mis à jour avec succès.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Action inconnue.'}, status=400)
 
     return HttpResponseBadRequest('Requête invalide.')
 

@@ -31,9 +31,9 @@
         <tr>
             <th>NOM</th>
             <th>DATE-EVENT</th>
-            <th>Presta Payé</th>
             <th>Membre</th>
-            <th>Payé</th>
+            <th>Presta Payé</th>
+            <th>Membre Payé</th>
             <th>Feedback</th>
             <th>Feedback Posté</th>
             <th>Envoi</th>
@@ -44,21 +44,21 @@
         <tr>
             <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.paid %}OK{% else %}Fait{% endif %}
-            </td>
             <td>Membre</td>
-            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.membre_paid %}OK{% else %}Fait{% endif %}
+            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.paid %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.feedback %}OK{% else %}Fait{% endif %}
+            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
+                {% if not event.post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.feedback_posted %}OK{% else %}Fait{% endif %}
+            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
             </td>
             <td class="{% if event.post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.sent %}OK{% else %}Fait{% endif %}
+                {% if not event.post_presta.sent %}Pas OK{% else %}Fait{% endif %}
             </td>
         </tr>
 
@@ -114,40 +114,50 @@
                 <tbody>
                 <tr>
                     <td>
+                        {% if not event.post_presta.paid %}
                         {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="paid">
-                            {% if not event.post_presta.paid %}OK{% else %}Fait{% endif %}
-                        </button>
-                    </td>
-                    <td>
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="membre_paid">
-                            {% if not event.post_presta.membre_paid %}OK{% else %}Fait{% endif %}
-                        </button>
-                    </td>
-                    <td>
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback">
-                            {% if not event.post_presta.feedback %}OK{% else %}Fait{% endif %}
-                        </button>
-                        {% if not event.post_presta.feedback %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="relance_avis">
-                            Relance avis client
-                        </button>
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="paid">OK</button>
+                        {% else %}
+                        Fait
                         {% endif %}
                     </td>
                     <td>
+                        {% if not event.post_presta.membre_paid %}
                         {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback_posted">
-                            {% if not event.post_presta.feedback_posted %}OK{% else %}Fait{% endif %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="membre_paid">OK
                         </button>
+                        {% else %}
+                        Fait
+                        {% endif %}
                     </td>
                     <td>
+                        {% if not event.post_presta.feedback %}
                         {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="sent">
-                            {% if not event.post_presta.sent %}OK{% else %}Fait{% endif %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback">OK</button>
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="relance_avis">Relance avis
+                            client
                         </button>
+                        {% else %}
+                        Fait
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not event.post_presta.feedback_posted %}
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback_posted">OK
+                        </button>
+                        {% else %}
+                        Fait
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not event.post_presta.sent %}
+                        {% csrf_token %}
+                        <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="sent">OK</button>
+                        {% else %}
+                        Fait
+                        {% endif %}
                     </td>
                     <td>
                         {% csrf_token %}
@@ -155,6 +165,7 @@
                         </button>
                     </td>
                 </tr>
+
                 </tbody>
             </table>
         </div>
@@ -176,7 +187,10 @@
                 const id = this.dataset.id;
                 const action = this.dataset.action;
 
-                fetch(`/update_post_presta_status/${id}/${action}/`, {
+                // Génération de la partie statique de l'URL en utilisant Django, sans les paramètres
+                const url = `{% url 'update_post_presta_status' 0 'placeholder' %}`.replace('0', id).replace('placeholder', action);
+
+                fetch(url, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': csrfToken,
@@ -199,6 +213,6 @@
             });
         });
     });
-
 </script>
+
 {% endblock %}
