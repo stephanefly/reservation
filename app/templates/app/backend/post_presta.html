@@ -134,10 +134,12 @@
                         {% if not event.post_presta.feedback %}
                         {% csrf_token %}
                         <button class="ajax-btn" data-id="{{ event.post_presta.id }}" data-action="feedback">OK</button>
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="relance_avis">Relance avis
-                            client
-                        </button>
+                        <form method="POST" action="{% url 'relance_avis_client' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                Relance avis
+                            </button>
+                        </form>
                         {% else %}
                         Fait
                         {% endif %}
