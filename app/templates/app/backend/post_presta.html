@@ -160,9 +160,12 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% csrf_token %}
-                        <button href="{% url 'presta_fini' event.id %}">Finir Presta
-                        </button>
+                        <form method="POST" action="{% url 'presta_fini' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                Finir Presta
+                            </button>
+                        </form>
                     </td>
                 </tr>
 
