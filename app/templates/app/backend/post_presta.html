@@ -161,7 +161,7 @@
                     </td>
                     <td>
                         {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.id }}" data-action="finish_presta">Finir Presta
+                        <button href="{% url 'presta_fini' event.id %}">Finir Presta
                         </button>
                     </td>
                 </tr>
