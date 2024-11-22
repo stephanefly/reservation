@@ -138,3 +138,4 @@ def desabonner(request, event_id):
     event.client.autorisation_mail = False
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
+

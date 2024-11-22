@@ -34,6 +34,13 @@ def send_mail_event(event, mail_type):
         template_name = "mail_relance_devis.html"
         event.client.nb_relance_devis = event.client.nb_relance_devis + 1
         event.save()
+    elif mail_type == 'relance_devis_black_friday':
+        subject = "📸 Black Friday : -50€ supplémentaire ! ✨"
+        template_name = "mail_relance_devis_black_friday.html"
+        event.client.nb_relance_devis = event.client.nb_relance_devis + 1
+        event.reduc_all = event.reduc_all + 50
+        event.prix_proposed = event.prix_proposed - 50
+        event.save()
     elif mail_type == 'devis':
         subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
         template_name = "mail_devis.html"
@@ -60,7 +67,7 @@ def send_mail_event(event, mail_type):
     msg.attach(MIMEText(soup_completed.prettify(), 'html'))
 
     # Si c'est un devis, générer et attacher le PDF
-    if mail_type == 'devis' or mail_type == 'relance_devis':
+    if mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'relance_devis_black_friday':
         increment_num_devis(event)
         buffer = generate_pdf_devis(event)
 
@@ -88,7 +95,7 @@ def complete_mail(event, soup, mail_type):
         prestation_tag = soup.find('b', class_='prestation')
         if prestation_tag:
             prestation_tag.string = selected_booths
-    elif mail_type == 'devis' or mail_type == 'relance_devis' :
+    elif mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'relance_devis_black_friday':
 
         # Ajouter 10 jours à la date butoir
         date_j_plus_10 = datetime.now() + timedelta(days=8)
@@ -148,11 +155,11 @@ def increment_num_devis(event):
 
     event.save()
 
-def relance_all_devis_client():
+def relance_all_devis_client_black_friday():
     event = Event.objects.filter(
-        status='Sended',
         signer_at__isnull=True,
-        client__nb_relance_devis=0,
         client__raison_sociale=False,
+        client__autorisation_mail=True,
     ).order_by('-prix_proposed').first()
-    send_mail_event(event, 'relance_devis')
+    send_mail_event(event, 'relance_devis_black_friday')
+
