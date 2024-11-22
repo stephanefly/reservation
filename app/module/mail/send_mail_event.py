@@ -28,16 +28,17 @@ def send_mail_event(event, mail_type):
         subject = "📸 Votre avis compte ! ✨"
         template_name = "mail_relance_avis.html"
         event.client.nb_relance_avis = event.client.nb_relance_avis + 1
-        event.save()
+        event.client.save()
     elif mail_type == 'relance_devis':
         subject = "📸 Nous avons pensé à vous ! 📅✨"
         template_name = "mail_relance_devis.html"
         event.client.nb_relance_devis = event.client.nb_relance_devis + 1
-        event.save()
+        event.client.save()
     elif mail_type == 'relance_devis_black_friday':
         subject = "📸 Black Friday : -50€ supplémentaire ! ✨"
         template_name = "mail_relance_devis_black_friday.html"
         event.client.nb_relance_devis = event.client.nb_relance_devis + 1
+        event.client.save()
         event.reduc_all = event.reduc_all + 50
         event.prix_proposed = event.prix_proposed - 50
         event.save()
