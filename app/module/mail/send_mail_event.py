@@ -163,7 +163,7 @@ def relance_all_devis_client_black_friday():
         client__raison_sociale=False,
         client__autorisation_mail=True,
         client__nb_relance_devis=0,  # Correction ici
-        date_evenement__gte=now()  # Filtre pour les événements à venir
+        event_details__date_evenement__gte=now()  # Filtre pour les événements à venir
     ).order_by('-prix_proposed').first()
     if event:  # Vérifie qu'un événement existe
         send_mail_event(event, 'relance_devis_black_friday')
