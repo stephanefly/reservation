@@ -150,13 +150,13 @@ def prix_brut_calculs(event):
 
     return prix_brut
 
+
 def make_num_devis(event):
 
-    # Obtenir la date actuelle
     today = datetime.now()
-    # Formater la date en 'YYMMDD'
     formatted_date = today.strftime("%y%m")
 
     # Concaténer la date formatée avec l'ID de l'objet
-    event.num_devis = formatted_date + str(event.id) + '0'
+    event.num_devis = int(f"{formatted_date}{event.id}0")  # Convertir en entier
+
     event.save()

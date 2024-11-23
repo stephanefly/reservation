@@ -70,7 +70,8 @@ def send_mail_event(event, mail_type):
 
     # Si c'est un devis, générer et attacher le PDF
     if mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'relance_devis_black_friday':
-        increment_num_devis(event)
+        event.num_devis = event.num_devis + 1
+        event.save()
         buffer = generate_pdf_devis(event)
 
         # Attacher le PDF
@@ -130,32 +131,6 @@ def complete_mail(event, soup, mail_type):
             unsubscribe_link['href'] = unsubscribe_url
 
     return soup
-
-def increment_num_devis(event):
-    if event.num_devis:
-        # Extraire le préfixe (date + id) et le chiffre à incrémenter
-        prefix = event.num_devis[:-1]  # Tout sauf le dernier caractère
-        last_digit = event.num_devis[-1:]  # Dernier caractère
-
-        # Vérifier si on doit augmenter la partie numérique à cause d'un '9'
-        if last_digit == '9':
-            # Trouver la fin de l'identifiant et le début du chiffre à incrémenter
-            start_of_increment = len(event.num_devis) - len(event.id) - 1  # Position de départ du chiffre à incrémenter
-            prefix = event.num_devis[:start_of_increment]
-            number_part = event.num_devis[start_of_increment:]
-
-            # Convertir en nombre et incrémenter
-            incremented_number = int(number_part) + 1
-            event.num_devis = prefix + str(incremented_number)
-        else:
-            # Simplement incrémenter le dernier chiffre s'il ne s'agit pas d'un '9'
-            incremented_digit = int(last_digit) + 1
-            event.num_devis = prefix + str(incremented_digit)
-    else:
-        make_num_devis(event)
-        increment_num_devis(event)
-
-    event.save()
 
 def relance_all_devis_client_black_friday():
     event = Event.objects.filter(
