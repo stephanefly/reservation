@@ -1,12 +1,13 @@
 import os
 
+from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
 from app.module.tools.rennaming import normalized_directory_name
 
 from django.http import request
 
 from app.models import EventTemplate
-from app.module.data_bdd.price import DEPARTEMENT
+from app.module.data_bdd.price import DEPARTEMENT_INCLUS, DEPARTEMENT_PLUS
 
 
 def parse_int(value, default=0):
@@ -131,13 +132,10 @@ def update_data(event, request):
     event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
 
-    if not str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT:
-        prix_distance = 100
-    else:
-        prix_distance = 0
+    int_prix_livraison, str_prix_livraison = calcul_prix_distance(event)
 
     event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
-    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option + prix_distance
+    event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option + int_prix_livraison
 
     if event.status == 'Initied':
         event.status = 'Calculed'

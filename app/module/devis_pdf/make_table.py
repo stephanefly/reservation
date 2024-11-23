@@ -1,15 +1,17 @@
-from app.module.data_bdd.price import DEPARTEMENT
+from app.module.data_bdd.price import DEPARTEMENT_INCLUS, DEPARTEMENT_PLUS
 
 
 def make_tableau(event):
     total_brut_devis=0
+    # ----------------------------------------------------------------------------------------
     # Initialisation du tableau de devis avec l'en-tête
     data_tableau_devis = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total']]
-
+    # ----------------------------------------------------------------------------------------
+    # Ligne Produit
     ligne_forfait, total_product, acompte = prix_ligne_product(event)
     data_tableau_devis.append(ligne_forfait)
     total_brut_devis += total_product
-
+    # ----------------------------------------------------------------------------------------
     # Ajout de la ligne de livraison avec les détails de l'événement
     livraison_details = "\n".join([
         str(event.event_details.date_evenement.strftime('%d/%m/%Y')),
@@ -17,16 +19,19 @@ def make_tableau(event):
         str(event.event_details.code_postal_evenement) + " " + str(event.event_details.ville_evenement)
     ])
 
-    prix_livraison = '0 €' if str(event.event_details.code_postal_evenement)[:2] in DEPARTEMENT else '50 €'
-    data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, '0 €', '1', "", prix_livraison])
-    total_brut_devis += 50 if prix_livraison == '50 €' else 0
+    int_prix_livraison, str_prix_livraison = calcul_prix_distance(event)
 
+    data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, str_prix_livraison, '1', "", str_prix_livraison])
+
+    total_brut_devis += int_prix_livraison
+    # ----------------------------------------------------------------------------------------
     # Ajout des lignes fixes pour la personnalisation et la galerie web
     data_tableau_devis += [
         ['Personnalisation', '0 €', '1', "", '0 €'],
         ['Galerie Web', '0 €', '1', "", '0 €'],
     ]
-
+    # ----------------------------------------------------------------------------------------
+    # Ajout des options
     data_tableau_devis, total_option = prix_ligne_option(event, data_tableau_devis)
 
     total_brut_devis += total_option
@@ -133,3 +138,12 @@ def add_acompte_mention(event, data_tableau_devis, total_brut_devis):
         total_brut_devis -= event.event_acompte.montant_acompte
 
     return data_tableau_devis, total_brut_devis
+
+def calcul_prix_distance(event):
+    departement = str(event.event_details.code_postal_evenement)[:2]
+    if departement in DEPARTEMENT_INCLUS:
+        return 0, "0€"
+    elif departement in DEPARTEMENT_PLUS:
+        return 50, "50€"
+    else:
+        return 100, "100€"
