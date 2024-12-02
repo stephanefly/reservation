@@ -39,10 +39,7 @@ def update_post_presta_status(request, post_presta_id, action):
     return HttpResponseBadRequest('Requête invalide.')
 
 
-
-
 def post_presta(request):
-    today_date = datetime.now()
 
     lst_post_event = Event.objects.filter(
         signer_at__isnull=False,

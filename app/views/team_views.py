@@ -7,9 +7,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 import os
 
+from ..module.data_bdd.make_planning import get_member_list
 from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
 
 today_date = datetime.now().date()
+
 
 def template_to_do(request):
     today_date = datetime.now()
@@ -23,6 +25,7 @@ def template_to_do(request):
     return render(request, 'app/team/template_to_do.html', {
         'lst_event_prio': lst_event_prio,
     })
+
 
 def change_status(request, pk):
     event_template = get_object_or_404(EventTemplate, pk=pk)
@@ -43,6 +46,7 @@ def upload_image(request, event_id):
 
     return redirect('template_to_do')
 
+
 def view_image(request, event_id):
     sftp_storage = SFTP_STORAGE  # Utilisez votre instance de connexion SFTP
     file_data, file_name = sftp_storage._get_last_image(event_id)  # Récupérer l'image
@@ -53,3 +57,37 @@ def view_image(request, event_id):
     # Retourne l'image sans forcer le téléchargement
     response = HttpResponse(file_data, content_type=content_type)
     return response
+
+
+def team_post_presta(request):
+
+    lst_post_event = Event.objects.filter(
+        signer_at__isnull=False,
+        status='Post Presta'
+    ).order_by('event_details__date_evenement')
+
+    # event_lst_member = get_member_list(lst_post_event)
+
+    return render(request, 'app/team/template_post_presta.html',
+                  {
+                      'lst_post_event': lst_post_event,
+                  })
+
+
+def team_planning(request):
+    today_date = datetime.now()
+    end_week_date = today_date + timedelta(days=30)
+
+    lst_event_prio = Event.objects.filter(
+        signer_at__isnull=False,
+        event_details__date_evenement__range=[today_date, end_week_date]
+    ).order_by('event_details__date_evenement')
+
+    event_lst_member = get_member_list(lst_event_prio)
+    print(event_lst_member)
+
+    return render(request, 'app/team/team_planning.html',
+                  {
+                      'lst_event_prio': lst_event_prio,
+                      'event_lst_member': event_lst_member
+                  })
