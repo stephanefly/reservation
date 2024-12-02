@@ -48,7 +48,7 @@ def get_member_list(lst_event_prio):
 
 def create_html_planning():
     today_date = datetime.now()
-    end_week_date = today_date + timedelta(days=10)
+    end_week_date = today_date + timedelta(days=30)
 
     lst_event_prio = Event.objects.filter(
         signer_at__isnull=False,

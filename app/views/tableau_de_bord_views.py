@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 def tableau_de_bord(request):
     today_date = datetime.now()
-    end_week_date = today_date + timedelta(days=10)
+    end_week_date = today_date + timedelta(days=30)
 
     lst_event_prio = Event.objects.filter(
         signer_at__isnull=False,
