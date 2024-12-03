@@ -47,46 +47,35 @@
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px">
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px;">
         <ul class="navbar-nav">
-            {% url 'template' as url %}
             <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Planning</a>
-            </li>
-            {% url 'post_presta' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Post Presta</a>
-            </li>
-            {% url 'lst_devis' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Liste Devis</a>
-            </li>
-            {% url 'graph' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Graph ALL</a>
-            </li>
-            {% url 'lst_cost' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Côuts</a>
-            </li>
-            {% url 'graph_cost' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Rentabilité</a>
-            </li>
-            {% url 'graph_cost_pie' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Annuel</a>
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'tableau_de_bord' %}"
+                   style="padding-right: 25px; padding-left: 25px;">Planning</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'post_presta' %}"
+                   style="padding-right: 25px; padding-left: 25px;">Post Presta</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'lst_devis' %}"
+                   style="padding-right: 25px; padding-left: 25px;">Liste Devis</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'lst_cost' %}"
+                   style="padding-right: 25px; padding-left: 25px;">Coûts</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                   aria-expanded="false">Graphiques</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'graph' %}">Graph ALL</a></li>
+                    <li><a class="dropdown-item" href="{% url 'graph_cost' %}">Rentabilité</a></li>
+                    <li><a class="dropdown-item" href="{% url 'graph_cost_pie' %}">Annuel</a></li>
+                </ul>
+            </li>
+            <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>
         </ul>
     </div>
 </nav>
@@ -106,21 +95,88 @@
 </body>
 
 <style>
+    /* Style global du corps */
     body {
-        background-image: None;
-        background-color: rgba(222, 222, 222, 0.55);
+        background: linear-gradient(135deg, #f3f4f6, #ddeeff);
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Style pour la barre de navigation */
+    .navbar {
+        background-color: #343a40;
+        padding: 10px 20px;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    .navbar-brand:hover {
+        color: #f8f9fa;
     }
 
     .nav-item {
-        font-weight: 500;
-        scale: 1.2;
-        padding-right: 25px;
-        padding-left: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 5px 15px;
+        text-transform: capitalize;
+        transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
     }
 
-    .navbar-collapse {
-        align-items: center;
+    .nav-link {
+        color: #ffffff;
+        text-decoration: none;
     }
 
+    .nav-link:hover {
+        color: #007bff;
+        transform: scale(1.1);
+    }
+
+    .active {
+        color: #ffc107;
+        border-bottom: 2px solid #ffc107;
+    }
+
+    .dropdown-menu {
+        background-color: #343a40;
+        border: none;
+        padding: 10px 0;
+    }
+
+    .dropdown-item {
+        color: #ffffff;
+        font-size: 0.9rem;
+        padding: 5px 15px;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .dropdown-item:hover {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    /* Contenu principal */
+    .content-container {
+        padding: 20px;
+        background-color: #ffffff;
+        margin: 20px auto;
+        max-width: 1200px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    /* Graphique ou tableau */
+    .graph-container {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
 </style>
+
 </html>

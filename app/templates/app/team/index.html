@@ -13,28 +13,29 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">{{ request.user }}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px">
-        <ul class="navbar-nav">
-            {% url 'team_planning' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Planning</a>
-            </li>
-            {% url 'team_post_presta' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Post Presta</a>
-            </li>
-            {% url 'template_to_do' as url %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                   style="padding-right: 25px;padding-left: 25px;">Template</a>
-            </li>
-        </ul>
-        </div>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px">
+                <ul class="navbar-nav">
+                    {% url 'team_planning' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                           style="padding-right: 25px;padding-left: 25px;">Planning</a>
+                    </li>
+                    {% url 'team_post_presta' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                           style="padding-right: 25px;padding-left: 25px;">Post Presta</a>
+                    </li>
+                    {% url 'template_to_do' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                           style="padding-right: 25px;padding-left: 25px;">Template</a>
+                    </li>
+                </ul>
+            </div>
     </nav>
 
     <!-- Contenu principal -->

@@ -10,13 +10,58 @@ from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_fac
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
 from django.http import HttpResponse
+from django.shortcuts import render
+from django.db.models import Q
 
 today_date = datetime.now().date()
 
-
 def lst_devis(request):
-    all_event = Event.objects.all().order_by('-created_at')
-    return render(request, 'app/backend/lst_devis.html', {'all_event': all_event})
+    # Récupération des paramètres de filtre
+    nom = request.GET.get('nom', '').strip()
+    tel = request.GET.get('tel', '').strip()
+    date_event = request.GET.get('date_event', '').strip()
+    prix_min = request.GET.get('prix_min', '').strip()
+    prix_max = request.GET.get('prix_max', '').strip()
+    status = request.GET.get('status', '').strip()
+
+    # Initialisation de la requête avec les 15 derniers événements
+    all_event = Event.objects.all().order_by('-created_at')[:15]
+
+    # Appliquer les filtres dynamiquement
+    filters = Q()  # Initialisez une requête vide
+
+    if nom:
+        filters &= Q(client__nom__icontains=nom)
+    if tel:
+        filters &= Q(client__numero_telephone__icontains=tel)
+    if date_event:
+        filters &= Q(event_details__date_evenement__icontains=date_event)
+    if prix_min.isdigit():
+        filters &= Q(prix_proposed__gte=int(prix_min))
+    if prix_max.isdigit():
+        filters &= Q(prix_proposed__lte=int(prix_max))
+    if status:
+        filters &= Q(status=status)  # Filtre exact sur le statut
+
+    # Appliquer les filtres si spécifiés
+    if filters:
+        all_event = Event.objects.filter(filters).order_by('-created_at')
+
+    # Renvoyer les résultats au template
+    return render(request, 'app/backend/lst_devis.html', {
+        'all_event': all_event,
+        'filters': {
+            'nom': nom,
+            'tel': tel,
+            'date_event': date_event,
+            'prix_min': prix_min,
+            'prix_max': prix_max,
+            'status': status,
+        },
+        'status_choices': Event.STATUS,  # Passer les choix de status au template
+    })
+
+
 
 
 def info_event(request, id):

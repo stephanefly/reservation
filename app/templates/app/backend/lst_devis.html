@@ -1,118 +1,118 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
-
 <style>
-body {
-    background-image: None;
-}
+    .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-container input, .search-container button {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .search-container button {
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    table {
+        background-color: white;
+    }
 
 </style>
+
+
 <h3>Liste des devis</h3>
-<br>
-<table id="table" class="table table-bordered table-striped" style="background-color:white">
+
+<!-- Formulaire de recherche -->
+<form method="get" action="{% url 'lst_devis' %}">
+    <div class="search-container">
+        <input style="width: 150px;" type="text" name="nom" placeholder="Filtrer par nom" value="{{ filters.nom }}">
+        <input style="width: 150px;" type="text" name="tel" placeholder="Filtrer par téléphone"
+               value="{{ filters.tel }}">
+        <input style="width: 150px;" type="text" name="date_event" placeholder="Filtrer par date d'événement"
+               value="{{ filters.date_event }}">
+        <input style="width: 150px;" type="number" name="prix_min" placeholder="Prix minimum"
+               value="{{ filters.prix_min }}">
+        <input style="width: 150px;" type="number" name="prix_max" placeholder="Prix maximum"
+               value="{{ filters.prix_max }}">
+                <!-- Dropdown pour le status -->
+        <select name="status" style="width: 150px;">
+            <option value="">Tous les statuts</option>
+            {% for status_value, status_label in status_choices %}
+                <option value="{{ status_value }}" {% if filters.status == status_value %}selected{% endif %}>
+                    {{ status_label }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Rechercher</button>
+    </div>
+</form>
+
+
+<!-- Tableau des résultats -->
+<table id="table" class="table table-bordered table-striped">
     <thead>
+    <tr>
         <th>NOM</th>
         <th>Tel</th>
         <th>Create_at</th>
         <th>J</th>
         <th>DATE-EVENT</th>
         <th>PRIX</th>
-                <th>Acompte</th>
+        <th>Acompte</th>
         <th>STATUS</th>
+    </tr>
     </thead>
     <tbody>
-    {% for event in all_event %}
-        {% url 'tableau_de_bord' as url %}
-        <td><a href="{{ url }}info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
-        <td>{{event.client.numero_telephone}}</td>
-        <td>{{ event.created_at|date:"Y-m-d" }}</td>
-        <td>{{event.event_details.date_evenement|date:"D" }}</td>
-        <td>{{event.event_details.date_evenement|date:"Y-m-d" }}</td>
-        {% if event.prix_valided %}
-            <td>{{event.prix_valided}}</td>
-        {% else %}
-            <td>{{event.prix_proposed}}</td>
-        {% endif %}
-            <td>{{event.event_acompte.montant_acompte}}</td>
-        <td class="status-cell" data-status="{{ event.status }}" >{{event.status}}</td>
+    {% if all_event %}
+        {% for event in all_event %}
+            <tr>
+                <td><a href="{% url 'tableau_de_bord' %}info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+                <td>{{ event.client.numero_telephone }}</td>
+                <td>{{ event.created_at|date:"Y-m-d" }}</td>
+                <td>{{ event.event_details.date_evenement|date:"D" }}</td>
+                <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                {% if event.prix_valided %}
+                    <td>{{ event.prix_valided }}</td>
+                {% else %}
+                    <td>{{ event.prix_proposed }}</td>
+                {% endif %}
+                <td>{{ event.event_acompte.montant_acompte }}</td>
+                <td style="
+                        {% if event.status == 'Calculed' %}background-color: rgba(232, 183, 133, 0.65); color: #000000;{% endif %}
+                        {% if event.status == 'Acompte OK' %}background-color: rgba(141, 217, 141, 0.65); color: #000000;{% endif %}
+                        {% if event.status == 'Initied' %}background-color: rgba(255, 105, 180, 0.65); color: #000000;{% endif %}
+                        {% if event.status == 'Sended' %}background-color: rgba(80, 139, 243, 0.6); color: #000000;{% endif %}
+                        {% if event.status == 'Resended' %}background-color: rgba(102, 153, 204, 0.7); color: #000000;{% endif %}
+                        {% if event.status == 'Presta FINI' %}background-color: rgba(46, 127, 0, 0.65); color: #000000;{% endif %}
+                        {% if event.status == 'Post Presta' %}background-color: rgba(102, 102, 255, 0.7); color: #000000;{% endif %}
+                        {% if event.status == 'Refused' or event.status == 'ANNULER' %}background-color: rgba(215, 99, 99, 0.76); color: #000000;{% endif %}
+                        ">
+                    {{ event.status }}
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="8" class="text-center">Aucun résultat trouvé</td>
         </tr>
-    {% endfor %}
+    {% endif %}
     </tbody>
 </table>
-
-
 <script type="text/javascript">
-document.querySelectorAll('.status-cell').forEach(function(cell) {
-    var status = cell.getAttribute('data-status');
-    var color = ''; // Couleur par défaut
-    switch (status) {
-        case 'Calculed':
-            color = 'rgba(232,183,133,0.65)'; // Jaune à 50% de transparence
-            break;
-        case 'Acompte OK':
-            color = 'rgba(141,217,141,0.65)'; // Vert à 50% de transparence
-            break;
-        case 'Initied':
-            color = 'rgba(255, 105, 180, 0.65)'; // Rose (pink) à 50% de transparence
-            break;
-        case 'Sended':
-            color = 'rgba(80,139,243,0.6)'; // Orange à 50% de transparence
-            break;
-        case 'Presta FINI':
-            color = 'rgba(46,127,0,0.65)'; // Jaune à 50% de transparence
-            break;
-        case 'Refused':
-            color = 'rgba(215,99,99,0.76)'; // Jaune à 50% de transparence
-            break;
-        case 'ANNULER':
-            color = 'rgba(215,99,99,0.76)'; // Jaune à 50% de transparence
-            break;
-    }
-    cell.style.backgroundColor = color;
-});
-
-$(document).ready(function () {
-    var table = $('#table').DataTable({
-        responsive: true,
-        lengthChange: false,
-        paging: false,
-        searching: true,
-        info: false,
-        order: [[3, 'desc']], // Correction pour cibler la colonne created_at pour le tri initial
-        columnDefs: [
-            {
-                targets: 3, // Correction de l'index pour les colonnes dates
-                type: 'date' // Définit le type de la colonne pour le tri
-            },
-            {
-                targets: 5, // Correction de l'index pour les colonnes dates
-                type: 'date' // Définit le type de la colonne pour le tri
-            }
-        ],
-        columns: [
-            { data: 'nom' },
-            { data: 'tel' },
-            { data: 'created_at' },
-            { data: 'J' },
-            { data: 'date_event' },
-            { data: 'prix' },
-            { data: 'acompte' },
-            { data: 'status' },
-        ]
+    $(document).ready(function () {
+        $('#table').DataTable({
+            responsive: true,
+            lengthChange: false,
+            paging: false,
+            searching: true,
+            info: false,
+        });
     });
-
-    // Écouteur d'événement pour chaque champ de filtre
-    $('.filter-input').on('keyup change', function () {
-        // Récupère l'index de la colonne (data-column attribut) et la valeur du champ de filtre
-        var i = $(this).attr('data-column');
-        var v = $(this).val();
-        // Utilise la fonction search() de DataTable pour filtrer les données
-        table.columns(i).search(v).draw();
-    });
-});
-
-
-
 </script>
-
 {% endblock %}
