@@ -66,11 +66,12 @@ def team_post_presta(request):
         status='Post Presta'
     ).order_by('event_details__date_evenement')
 
-    # event_lst_member = get_member_list(lst_post_event)
+    event_lst_member = get_member_list(lst_post_event)
 
-    return render(request, 'app/team/template_post_presta.html',
+    return render(request, 'app/team/team_post_presta.html',
                   {
                       'lst_post_event': lst_post_event,
+                      'event_lst_member': event_lst_member
                   })
 
 

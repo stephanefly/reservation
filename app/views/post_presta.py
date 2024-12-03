@@ -5,6 +5,8 @@ from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
+from ..module.data_bdd.make_planning import get_member_list
+
 
 def relance_avis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -46,9 +48,10 @@ def post_presta(request):
         status='Post Presta'
     ).order_by('event_details__date_evenement')
 
-    # event_lst_member = get_member_list(lst_post_event)
+    event_lst_member = get_member_list(lst_post_event)
 
     return render(request, 'app/backend/post_presta.html',
                   {
                       'lst_post_event': lst_post_event,
+                      'event_lst_member': event_lst_member
                   })

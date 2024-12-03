@@ -1,0 +1,167 @@
+{% extends 'app/team/index.html' %}
+{% block content %}
+        <style>
+        .highlight-prestation {
+            background-color: blue;
+            color: white; /* Pour que le texte reste lisible sur un fond bleu */
+            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+        }
+
+        .highlight-option {
+            background-color: skyblue;
+            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+        }
+
+        .highlight-membre {
+            background-color: #f1cd9d;
+            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+        }
+                .highlight-pc {
+            background-color: #f19d9d;
+            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+        }
+    </style>
+    <table id="table" class="table table-bordered table-striped" style="background-color:white">
+        <thead>
+        <tr>
+            <th>NOM</th>
+            <th>DATE-EVENT</th>
+            <th>Presta Payé</th>
+            <th>Membre Payé</th>
+            <th>Feedback</th>
+            <th>Feedback Posté</th>
+            <th>Envoi</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in lst_post_event %}
+        <tr>
+            <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.paid %}Pas OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
+                {% if not event.post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
+            </td>
+            <td class="{% if event.post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.post_presta.sent %}Pas OK{% else %}Fait{% endif %}
+            </td>
+        </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+            {% for event in lst_post_event %}
+            <div class="card">
+                <div class="card-header">
+                    <h5>
+                        <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" style="background-color:white">
+                        <thead>
+                        <tr>
+                            <th>Mail</th>
+                            <th>Date-Event</th>
+                            <th>PRIX</th>
+                            <th>Acompte</th>
+                            <th>Restant</th>
+                            <th>Mode</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ event.client.mail }}</td>
+                            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                            <td id="prix_valided">{{ event.prix_valided }}</td>
+                            <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                            <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+                            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+                        <thead>
+                        <tr>
+                            <th>Prestation</th>
+                            <th>Option</th>
+                            <th>Membre</th>
+                            <th>Num PC</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                {% if event.event_product.photobooth %}
+                                    <span class="highlight-prestation">Photobooth</span>
+                                    , {% endif %}
+                                {% if event.event_product.miroirbooth %}
+                                    <span class="highlight-prestation">Miroirbooth</span>
+                                    , {% endif %}
+                                {% if event.event_product.videobooth %}
+                                    <span class="highlight-prestation">360Booth</span>
+                                    , {% endif %}
+                                {% if event.event_product.voguebooth %}
+                                    <span class="highlight-prestation">VogueBooth</span>
+                                    , {% endif %}
+                                {% if event.event_product.ipadbooth %}
+                                    <span class="highlight-prestation">Ipadebooth</span>
+                                    , {% endif %}
+                                {% if event.event_product.airbooth %}
+                                    <span class="highlight-prestation">Ipadebooth</span>
+                                    , {% endif %}
+                            </td>
+                            <td>
+                                {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>
+                                    , {% endif %}
+                                {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>
+                                    , {% endif %}
+                                {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>
+                                    , {% endif %}
+                                {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>
+                                    , {% endif %}
+                                {% if event.event_option.PanneauBienvenue %}
+                                    <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
+                                {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>
+                                    , {% endif %}
+                                {% if event.event_option.PhotographeVoguebooth %}
+                                    <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
+                                {% if event.event_option.ImpressionVoguebooth %}
+                                    <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
+                                {% if event.event_option.DecorVoguebooth %}
+                                    <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
+                                {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
+                                    , {% endif %}
+                            </td>
+                                                <td>
+                        {% for event_name, membres in event_lst_member.items %}
+                            {% if event_name == event.client.nom %}
+                                {% for membre in membres %}
+                                    <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %},
+                                {% endif %}
+                                {% empty %}
+                                    Aucun membre associé
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                            <td> <span class="highlight-pc">PCX</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+{% endblock %}
