@@ -21,6 +21,4 @@ urlpatterns = [
 
     path('desabonner/<int:event_id>', desabonner, name='desabonner'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # URL de déconnexion
-
-    path('backend/code_client', generate_all_code_espace_client, name='generate_all_code_espace_client'),
 ]

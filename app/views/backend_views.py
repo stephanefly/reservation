@@ -3,7 +3,7 @@ from ..forms import ValidationForm
 from ..models import Event, EventAcompte
 from ..module.data_bdd.update_event import update_data, update_event_by_validation
 from app.module.mail.send_mail_event import send_mail_event
-from ..module.espace_client.data_client import generate_code_espace_client, create_acompte
+from ..module.espace_client.data_client import create_acompte
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -172,11 +172,3 @@ def desabonner(request, event_id):
     event.client.autorisation_mail = False
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
-
-def generate_all_code_espace_client(request):
-
-    lst_event_ok = Event.objects.filter(status='Acompte OK')
-
-    for event in lst_event_ok:
-        generate_code_espace_client(event)
-    return redirect('lst_devis')
