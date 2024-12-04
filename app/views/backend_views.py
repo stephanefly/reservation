@@ -3,6 +3,7 @@ from ..forms import ValidationForm
 from ..models import Event, EventAcompte
 from ..module.data_bdd.update_event import update_data
 from app.module.mail.send_mail_event import send_mail_event
+from ..module.espace_client.data_client import generate_code_espace_client
 from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
@@ -104,6 +105,7 @@ def confirmation_val_devis(request, id):
             event_acompte.save()
             event.signer_at = today_date
             event.status = 'Acompte OK'
+            generate_code_espace_client(event)
             event.save()
 
             SFTP_STORAGE._create_event_repository(event)
@@ -184,3 +186,9 @@ def desabonner(request, event_id):
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
 
+def generate_all_code_espace_client(request):
+
+    lst_event_ok = Event.objects.filter(status__exact='Acompte OK')
+
+    for event in lst_event_ok:
+        generate_code_espace_client(event)

@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from ..views import tableau_de_bord, post_presta, relance_avis_client, presta_fini, update_post_presta_status, \
-    desabonner
+    desabonner, generate_all_code_espace_client
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -21,4 +21,6 @@ urlpatterns = [
 
     path('desabonner/<int:event_id>', desabonner, name='desabonner'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # URL de déconnexion
+
+    path('backend/code_client', generate_all_code_espace_client, name='generate_all_code_espace_client'),
 ]

@@ -18,6 +18,7 @@ class Client(models.Model):
     nb_relance_devis = models.IntegerField(default=0, null=True)
     nb_relance_avis = models.IntegerField(default=0, null=True)
     autorisation_mail = models.BooleanField(default=True)
+    code_espace_client = models.CharField(max_length=6, unique=True, null=True, blank=True)
 
 
 class EventDetails(models.Model):
