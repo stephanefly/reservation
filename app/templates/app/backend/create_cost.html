@@ -2,14 +2,31 @@
 {% block content %}
 
 <div class="container justify-content-center">
-    <h2>Ajouter un nouveau Cost</h2>
-    <br>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Soumettre</button>
-        <a href="{% url 'lst_cost' %}" class="btn btn-secondary">Retour</a>
-    </form>
+    <div class="col-md-6 col-lg-5"> <!-- Largeur ajustée pour le formulaire -->
+        <h2 class="text-center">Ajouter un nouveau Cost</h2>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="name_cost">Nom du cost :</label>
+                <select id="name_cost" name="name_cost" class="form-control">
+                    <option value="" selected>-- Sélectionner --</option>
+                    {% for name_cost in name_costs %}
+                        <option value="{{ name_cost.id }}">{{ name_cost.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="new_name_cost">Ou ajouter un nouveau name cost :</label>
+                <input type="text" id="new_name_cost" name="new_name_cost" class="form-control" placeholder="Nouveau nom de catégorie">
+            </div>
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-success">Soumettre</button>
+                <a href="{% url 'lst_cost' %}" class="btn btn-secondary">Retour</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

@@ -15,12 +15,7 @@ class CostForm(forms.ModelForm):
 
     class Meta:
         model = Cost
-        fields = ['name_cost', 'type_cost', 'price_cost', 'created_at', 'frecency']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Trier les options du champ name_cost
-        self.fields['name_cost'].queryset = self.fields['name_cost'].queryset.order_by('name')
+        fields = ['type_cost', 'price_cost', 'created_at', 'frecency']
 
 
 class ValidationForm(forms.ModelForm):
