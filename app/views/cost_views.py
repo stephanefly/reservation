@@ -4,7 +4,7 @@ from ..models import Cost, NameCost
 
 
 def lst_cost(request):
-    all_cost = Cost.objects.all().order_by('-created_at')[:20]
+    all_cost = Cost.objects.all().order_by('-created_at')
     return render(request, 'app/backend/lst_cost.html', {'all_cost': all_cost})
 
 
