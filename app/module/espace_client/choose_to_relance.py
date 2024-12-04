@@ -43,6 +43,7 @@ def choose_to_relance_devis_client():
     lst_event_to_relance = Event.objects.filter(
         created_at__date__lte=date_limite.date(),
         signer_at__isnull=True,
+        client__raison_sociale=False,
     )
 
     for event_to_relance in lst_event_to_relance:
