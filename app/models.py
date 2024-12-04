@@ -197,4 +197,10 @@ class Cost(models.Model):
     type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
     price_cost = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
+    FREQUENCY = [
+        ('Ponctuel', 'Ponctuel'),
+        ('Mensuel', 'Mensuel'),
+        ('Annuel', 'Annuel'),
+    ]
+    frecency = models.CharField(max_length=50, choices=FREQUENCY, default='Ponctuel', null=True)
 
