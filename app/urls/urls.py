@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from ..views import tableau_de_bord, post_presta, relance_avis_client, presta_fini, update_post_presta_status, \
-    desabonner, generate_all_code_espace_client
+    desabonner
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
