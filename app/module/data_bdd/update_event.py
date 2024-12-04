@@ -1,11 +1,10 @@
 import os
-
 from app.module.devis_pdf.make_table import calcul_prix_distance
+from app.module.espace_client.data_client import generate_code_espace_client
 from app.module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
 from app.module.tools.rennaming import normalized_directory_name
-
 from django.http import request
-
+from django.utils.timezone import now
 from app.models import EventTemplate
 from app.module.data_bdd.price import DEPARTEMENT_INCLUS, DEPARTEMENT_PLUS
 
@@ -142,3 +141,13 @@ def update_data(event, request):
     event.save()
 
     return event
+
+def update_event_by_validation(event, acompte):
+    """Update the event status and information upon validation."""
+    event.prix_valided = event.prix_proposed
+    event.event_acompte = acompte
+    event.signer_at = now()
+    event.status = 'Acompte OK'
+    generate_code_espace_client(event)
+    event.save()
+    SFTP_STORAGE._create_event_repository(event)

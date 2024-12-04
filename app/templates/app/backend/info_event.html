@@ -140,6 +140,7 @@
             <label><b>Created at :</b> {{ event.created_at|date:'d-m-Y' }}</label><br>
             <label><b>Signed at: </b> {{ event.signer_at|date:'d-m-Y' }}</label><br>
             <label><b>Nb Relance Devis: </b> {{ event.client.nb_relance_devis }}</label><br>
+            <label><b>Code Espace: </b> {{ event.client.code_espace_client }}</label><br>
             <br>
             <label><input type="checkbox" name="raison_sociale" {% if event.client.raison_sociale %}checked{% endif %}>Entreprise</label><br>
             <label>Nom: <input type="text" name="client_nom" value="{{ event.client.nom }}"></label><br>

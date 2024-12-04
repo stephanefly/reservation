@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
 from ..models import Event, EventAcompte
-from ..module.data_bdd.update_event import update_data
+from ..module.data_bdd.update_event import update_data, update_event_by_validation
 from app.module.mail.send_mail_event import send_mail_event
-from ..module.espace_client.data_client import generate_code_espace_client
-from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
+from ..module.espace_client.data_client import generate_code_espace_client, create_acompte
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -74,7 +73,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
-    # update_option_labels_trello(event)
+    update_option_labels_trello(event)
     return redirect('info_event', id=event.id)
 
 
@@ -85,34 +84,22 @@ def confirmation_del_devis(request, event_id):
 
 
 def confirmation_val_devis(request, id):
-    event = Event.objects.get(pk=id)
-    if request.method == 'POST':
-        form = ValidationForm(request.POST)
-        if form.is_valid():
-            if event.signer_at is None:
-                send_mail_event(event, 'validation')
-                to_acompte_ok(event)
+    event = get_object_or_404(Event, pk=id)
+    form = ValidationForm(request.POST or None)
 
-            event_acompte = EventAcompte(
-                montant_acompte=form.cleaned_data.get('montant_acompte'),
-                mode_payement=form.cleaned_data.get('mode_payement'),
-                date_payement=form.cleaned_data.get('date_payement'),
-            )
-            event_acompte.save()
-            event.prix_valided = event.prix_proposed
-            event.event_acompte = event_acompte
-            event_acompte.montant_restant = event.prix_proposed - int(event_acompte.montant_acompte)
-            event_acompte.save()
-            event.signer_at = today_date
-            event.status = 'Acompte OK'
-            generate_code_espace_client(event)
-            event.save()
+    if request.method == 'POST' and form.is_valid():
+        if not event.signer_at:
+            send_mail_event(event, 'validation')
 
-            SFTP_STORAGE._create_event_repository(event)
-            return redirect('info_event', id=event.id)
-    else:
-        form = ValidationForm()
-    return render(request, 'app/backend/confirmation_val_devis.html', {'form': form, 'event': event})
+        acompte = create_acompte(event, form.cleaned_data)
+        update_event_by_validation(event, acompte)
+
+        return redirect('info_event', id=event.id)
+
+    return render(request, 'app/backend/confirmation_val_devis.html', {
+        'form': form,
+        'event': event
+    })
 
 
 def refused_devis(request, id):
@@ -188,7 +175,8 @@ def desabonner(request, event_id):
 
 def generate_all_code_espace_client(request):
 
-    lst_event_ok = Event.objects.filter(status__exact='Acompte OK')
+    lst_event_ok = Event.objects.filter(status='Acompte OK')
 
     for event in lst_event_ok:
         generate_code_espace_client(event)
+    return redirect('lst_devis')
