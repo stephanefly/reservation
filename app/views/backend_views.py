@@ -178,21 +178,4 @@ def desabonner(request, event_id):
 
 def action_once(request):
 
-    lst_event_ok = Event.objects.filter(status__in=['Acompte OK', 'Post Presta', 'Presta FINI'])
-
-    for event in lst_event_ok:
-        print(event.client.nom)
-
-        normalized_directory_name = normalize_name(event)
-
-        if event.event_template:
-            event.event_template.directory_name = normalized_directory_name
-            event.event_template.save()
-        else:
-            event_template = EventTemplate()
-            event_template.directory_name = normalized_directory_name
-            event_template.save()
-            event.event_template = event_template
-            event.save()
-
     return redirect('lst_devis')
