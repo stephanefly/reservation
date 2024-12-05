@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
-from ..models import Event, EventAcompte
+from ..models import Event, EventAcompte, EventTemplate
 from ..module.data_bdd.update_event import update_data, update_event_by_validation
 from app.module.mail.send_mail_event import send_mail_event
 from ..module.espace_client.data_client import create_acompte
+from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
+from ..module.ftp_myselfiebooth.rennaming import normalize_name
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -62,8 +64,6 @@ def lst_devis(request):
     })
 
 
-
-
 def info_event(request, id):
     event = get_object_or_404(Event, id=id)
     return render(request, 'app/backend/info_event.html', {'event': event})
@@ -93,6 +93,7 @@ def confirmation_val_devis(request, id):
 
         acompte = create_acompte(event, form.cleaned_data)
         update_event_by_validation(event, acompte)
+        SFTP_STORAGE._create_event_repository(event)
 
         return redirect('info_event', id=event.id)
 
@@ -167,8 +168,31 @@ def relance_devis_client(request, event_id):
     send_mail_event(event, 'relance_devis')
     return redirect('info_event', id=event.id)
 
+
 def desabonner(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     event.client.autorisation_mail = False
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
+
+
+def action_once(request):
+
+    lst_event_ok = Event.objects.filter(status__in=['Acompte OK', 'Post Presta', 'Presta FINI'])
+
+    for event in lst_event_ok:
+        print(event.client.nom)
+
+        normalized_directory_name = normalize_name(event)
+
+        if event.event_template:
+            event.event_template.directory_name = normalized_directory_name
+            event.event_template.save()
+        else:
+            event_template = EventTemplate()
+            event_template.directory_name = normalized_directory_name
+            event_template.save()
+            event.event_template = event_template
+            event.save()
+
+    return redirect('lst_devis')

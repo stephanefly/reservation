@@ -1,12 +1,9 @@
-import os
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
 from app.module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
-from app.module.tools.rennaming import normalized_directory_name
-from django.http import request
+from app.module.ftp_myselfiebooth.rennaming import normalize_name
 from django.utils.timezone import now
 from app.models import EventTemplate
-from app.module.data_bdd.price import DEPARTEMENT_INCLUS, DEPARTEMENT_PLUS
 
 
 def parse_int(value, default=0):
@@ -95,7 +92,7 @@ def update_data(event, request):
         if not event.event_template.directory_name:
             SFTP_STORAGE._create_event_repository(event)
         else:
-            new_directory_name = normalized_directory_name(event)
+            new_directory_name = normalize_name(event)
             if new_directory_name != event.event_template.directory_name:
                 SFTP_STORAGE._rename_event_repository(event, new_directory_name)
 
@@ -150,4 +147,3 @@ def update_event_by_validation(event, acompte):
     event.status = 'Acompte OK'
     generate_code_espace_client(event)
     event.save()
-    SFTP_STORAGE._create_event_repository(event)

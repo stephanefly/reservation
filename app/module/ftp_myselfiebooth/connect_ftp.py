@@ -1,9 +1,9 @@
-import paramiko
+# import paramiko
 from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 from myselfiebooth.settings import FTP_SERVER, FTP_PORT, FTP_USER, FTP_PASS, PREPA_EVENT_PATH, NAS_EVENT_PATH
 from app.models import EventTemplate, Event
-from app.module.tools.rennaming import normalized_directory_name
+from app.module.ftp_myselfiebooth.rennaming import normalize_name
 import os
 import logging
 
@@ -34,7 +34,7 @@ class SFTPStorage(Storage):
 
     def _create_event_repository(self, event):
         """Crée un répertoire pour l'événement sur le serveur SFTP."""
-        directory_name = normalized_directory_name(event)
+        directory_name = normalize_name(event)
         with self._connect() as sftp:
             path = os.path.join(self.prepa_event_path, directory_name).replace("\\", "/")
             try:

@@ -39,6 +39,7 @@ class EventTemplate(models.Model):
     image_name = models.CharField(max_length=100, null=True)
     num_template = models.IntegerField(default=1)
 
+
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
     miroirbooth = models.BooleanField(default=False)
@@ -64,6 +65,7 @@ class EventProduct(models.Model):
             return ', '.join(selected_booths[:-1]) + ' et ' + selected_booths[-1]
         elif selected_booths:
             return selected_booths[0]
+
 
 class EventOption(models.Model):
 
@@ -121,12 +123,14 @@ class EventOption(models.Model):
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 
+
 class EventPostPrestation(models.Model):
     paid = models.BooleanField(default=False)
     feedback = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
     membre_paid = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
+
 
 class EventAcompte(models.Model):
     montant_acompte = models.IntegerField(null=True, blank=True)
