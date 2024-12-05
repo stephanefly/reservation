@@ -1,4 +1,4 @@
-# import paramiko
+import paramiko
 from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 from myselfiebooth.settings import FTP_SERVER, FTP_PORT, FTP_USER, FTP_PASS, PREPA_EVENT_PATH, NAS_EVENT_PATH
