@@ -28,98 +28,103 @@
     {% endif %}
     <br>
     <div class="date-block"
-         style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
+         style="background-color:{% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
         <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
     </div>
     {% endifchanged %}
     <br>
-    <h5><a>{{ event.client.nom }}</a></h5>
-    <table class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
-            <th>Prestation</th>
-            <th>URL</th>
-            <th>Texte</th>
-            <th>Statut</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
-                , {% endif %}
-                {% if event.event_product.miroirbooth %}
-                <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
-                {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
-                , {% endif %}
-                {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
-                , {% endif %}
-                {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>
-                , {% endif %}
-            </td>
-            <td style="{% if event.event_template.url_modele %}background-color: rgb(255,255,255);{% else %}background-color: rgba(255,0,0,0.47);{% endif %}">
-                {% if event.event_template.url_modele %}
-                <a href="{{ event.event_template.url_modele }}">MODEL</a>
-                {% else %}
-                Pas de model
-                {% endif %}
-            </td>
-            <td>{{ event.event_template.text_template }}</td>
-            <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                {% if event.event_template.statut %}
-                Prêt
-                {% else %}
-                Pas OK
-                {% endif %}
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
-            <th>Commentaire Client</th>
-            <th>Commentaire</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>{{ event.event_details.comment_client }}</td>
-            <td>{{ event.event_details.comment }}</td>
-        </tr>
-        </tbody>
-    </table>
-    <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
-            <th>TEMPLATE</th>
-            <th>ENVOYER</th>
-            <th>TEMPLATE</th>
-        </tr>
-        </thead>
-        <tbody>
-        <form id="uploadmyTemplate" method="post" enctype="multipart/form-data"
-              action="{% url 'upload_image' event.id %}">
-            {% csrf_token %}
-            <tr>
-                <td>
-                    <input type="file" name="myTemplate" id="image" accept="image/png" required>
-                </td>
-                <td>
-                    <button type="submit">Upload</button>
-                </td>
+    <div class="card">
+        <div class="card-header">
+            <h5><a>{{ event.client.nom }}</a></h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>Prestation</th>
+                    <th>URL</th>
+                    <th>Texte</th>
+                    <th>Statut</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
+                        , {% endif %}
+                        {% if event.event_product.miroirbooth %}
+                        <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
+                        {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
+                        , {% endif %}
+                        {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
+                        , {% endif %}
+                        {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>
+                        , {% endif %}
+                    </td>
+                    <td style="{% if event.event_template.url_modele %}background-color: rgb(255,255,255);{% else %}background-color: rgba(255,0,0,0.47);{% endif %}">
+                        {% if event.event_template.url_modele %}
+                        <a href="{{ event.event_template.url_modele }}">MODEL</a>
+                        {% else %}
+                        Pas de model
+                        {% endif %}
+                    </td>
+                    <td>{{ event.event_template.text_template }}</td>
+                    <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                        {% if event.event_template.statut %}
+                        Prêt
+                        {% else %}
+                        Pas OK
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>Commentaire Client</th>
+                    <th>Commentaire</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ event.event_details.comment_client }}</td>
+                    <td>{{ event.event_details.comment }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>TEMPLATE</th>
+                    <th>ENVOYER</th>
+                    <th>TEMPLATE</th>
+                </tr>
+                </thead>
+                <tbody>
+                <form id="uploadmyTemplate" method="post" enctype="multipart/form-data"
+                      action="{% url 'upload_image' event.id %}">
+                    {% csrf_token %}
+                    <tr>
+                        <td>
+                            <input type="file" name="myTemplate" id="image" accept="image/png" required>
+                        </td>
+                        <td>
+                            <button type="submit">Upload</button>
+                        </td>
 
-                {% if event.event_template.image_name %}
-                <td style="background-color: #6da37a">
-                    <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
-                </td>
-                {% endif %}
-            </tr>
-        </form>
+                        {% if event.event_template.image_name %}
+                        <td style="background-color: #6da37a">
+                            <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </form>
 
-        </tbody>
-    </table>
-    {% endfor %}
-    {% endwith %}
-</div>
-{% endblock %}
+                </tbody>
+            </table>
+        </div></div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+    {% endblock %}

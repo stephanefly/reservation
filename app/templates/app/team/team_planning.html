@@ -59,7 +59,11 @@
                 </div>
             {% endifchanged %}
             <br>
+        <div class="card">
+        <div class="card-header">
             <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
+                    </div>
+        <div class="card-body">
             <table class="table table-bordered table-striped" style="background-color:white">
                 <thead>
                 <tr>
@@ -144,6 +148,7 @@
                 </tr>
                 </tbody>
             </table>
+                    </div></div>
         {% endfor %}
     {% endwith %}
 </div>
