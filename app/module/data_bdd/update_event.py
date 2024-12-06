@@ -1,7 +1,7 @@
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
-from app.module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
-from app.module.ftp_myselfiebooth.rennaming import normalize_name
+from app.module.cloud.connect_ftp_nas import SFTP_STORAGE
+from app.module.cloud.rennaming import normalize_name
 from django.utils.timezone import now
 from app.models import EventTemplate
 
@@ -83,6 +83,7 @@ def update_data(event, request):
         event_template = event.event_template or EventTemplate(statut=False)
         event_template.url_modele = request.POST.get('url_modele')
         event_template.text_template = request.POST.get('text_template')
+        event_template.link_media_shared = request.POST.get('link_media_shared')
         event_template.save()
 
         if not event.event_template:

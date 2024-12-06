@@ -164,7 +164,7 @@
                 <thead>
                 <tr>
                     <th>Nom Dossier</th>
-                    <th>Lien Shared</th>
+                    <th>Lien Depot Fichier</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -174,7 +174,7 @@
                         {{ event.event_template.directory_name }}
                     </td>
                     <td>
-                        Lien Shared
+                        <a href="{{ event.event_template.link_media_shared }}">Lien</a>
                     </td>
                     <td>
                         <button>Envoyer Fichiers</button>

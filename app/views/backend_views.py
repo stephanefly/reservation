@@ -4,8 +4,8 @@ from ..models import Event, EventAcompte, EventTemplate
 from ..module.data_bdd.update_event import update_data, update_event_by_validation
 from app.module.mail.send_mail_event import send_mail_event
 from ..module.espace_client.data_client import create_acompte
-from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
-from ..module.ftp_myselfiebooth.rennaming import normalize_name
+from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
+from ..module.cloud.rennaming import normalize_name
 from ..module.trello.update_data_card import update_option_labels_trello
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture

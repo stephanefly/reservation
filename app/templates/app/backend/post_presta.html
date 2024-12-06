@@ -42,7 +42,7 @@
         <tbody>
         {% for event in lst_post_event %}
         <tr>
-            <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+            <td>                <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
             <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
                 {% if not event.post_presta.paid %}Pas OK{% else %}Fait{% endif %}
@@ -168,7 +168,8 @@
                 <thead>
                 <tr>
                     <th>Nom Dossier</th>
-                    <th>Lien Shared</th>
+                    <th>Path Depot Fichier</th>
+                    <th>Lien Depot Fichier</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -178,7 +179,10 @@
                         {{ event.event_template.directory_name }}
                     </td>
                     <td>
-                        Lien Shared
+                        <a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a>
+                    </td>
+                    <td>
+                        <a href="{{ event.event_template.link_media_shared }}">Lien</a>
                     </td>
                     <td>
                         <button>Envoyer Fichiers</button>

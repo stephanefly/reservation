@@ -22,7 +22,7 @@ def maj_today_event():
             event.status = "Post Presta"
             post_presta = EventPostPrestation()
             post_presta.save()  # On sauvegarde d'abord le post_presta avant de l'associer à l'event
-            event.post_presta = post_presta
+            event.event_post_presta = post_presta
         else:
             event.status = "Refused"
         event.save()  # Ensuite, on sauvegarde l'event après avoir associé post_presta

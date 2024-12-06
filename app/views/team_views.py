@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 import os
 
 from ..module.data_bdd.make_planning import get_member_list
-from ..module.ftp_myselfiebooth.connect_ftp import SFTP_STORAGE
+from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
 
 today_date = datetime.now().date()
 

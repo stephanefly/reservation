@@ -38,6 +38,7 @@ class EventTemplate(models.Model):
     directory_name = models.CharField(max_length=100, null=True)
     image_name = models.CharField(max_length=100, null=True)
     num_template = models.IntegerField(default=1)
+    link_media_shared = models.URLField(null=True, blank=True)
 
 
 class EventProduct(models.Model):
@@ -132,6 +133,7 @@ class EventPostPrestation(models.Model):
     sent = models.BooleanField(default=False)
 
 
+
 class EventAcompte(models.Model):
     montant_acompte = models.IntegerField(null=True, blank=True)
     MOYEN_PAIEMENT = [
@@ -159,7 +161,7 @@ class Event(models.Model):
     event_option = models.ForeignKey(EventOption, on_delete=models.CASCADE, null=True)
     event_acompte = models.ForeignKey(EventAcompte, on_delete=models.CASCADE, null=True)
     event_template = models.ForeignKey(EventTemplate, on_delete=models.CASCADE, null=True)
-    post_presta = models.ForeignKey(EventPostPrestation, on_delete=models.CASCADE, null=True)
+    event_post_presta = models.ForeignKey(EventPostPrestation, on_delete=models.CASCADE, null=True)
 
     prix_brut = models.IntegerField()
     reduc_product = models.IntegerField(null=True, blank=True)

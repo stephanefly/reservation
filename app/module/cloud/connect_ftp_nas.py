@@ -3,7 +3,7 @@ from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
 from myselfiebooth.settings import FTP_SERVER, FTP_PORT, FTP_USER, FTP_PASS, PREPA_EVENT_PATH, NAS_EVENT_PATH
 from app.models import EventTemplate, Event
-from app.module.ftp_myselfiebooth.rennaming import normalize_name
+from app.module.cloud.rennaming import normalize_name
 import os
 import logging
 
