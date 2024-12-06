@@ -20,7 +20,7 @@
    border: solid 5px;
    }
 </style>
-<div class="container">
+
    <table id="table" class="table table-bordered table-striped" style="background-color:white">
       <thead>
          <tr>
@@ -99,6 +99,7 @@
                <tr>
                   <th>Prestation</th>
                   <th>Option</th>
+                                     <th>Statut</th>
                </tr>
             </thead>
             <tbody>
@@ -123,6 +124,14 @@
                         {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
                         {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
                     </td>
+                                       <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
+                    <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                        {% if event.event_template.statut %}
+                            Prêt
+                        {% else %}
+                            Pas OK
+                        {% endif %}
+                    </td>
                </tr>
             </tbody>
          </table>
@@ -131,67 +140,49 @@
                <tr>
                   <th>URL ESTY</th>
                   <th>Texte</th>
-                  <th>Statut</th>
+
                   <th>TEMPLATE</th>
-                  <th>Action</th>
+                  <th>Path Depot Template</th>
                </tr>
             </thead>
             <tbody>
-<tr>
-    <!-- Colonne pour le lien vers le modèle avec un fond conditionnel -->
-    <td style="{% if event.event_template.url_modele %}background-color: rgb(255, 255, 255);{% else %}background-color: rgba(255, 0, 0, 0.47);{% endif %}">
-        {% if event.event_template.url_modele %}
-            <a href="{{ event.event_template.url_modele }}">MODEL</a>
-        {% else %}
-            Pas de modèle
-        {% endif %}
-    </td>
+                <tr>
+                    <!-- Colonne pour le lien vers le modèle avec un fond conditionnel -->
+                    <td style="background-color: {% if event.event_template.url_modele %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.url_modele %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                        {% if event.event_template.url_modele %}
+                            <a href="{{ event.event_template.url_modele }}">MODEL</a>
+                        {% else %}
+                            Pas de modèle
+                        {% endif %}
+                    </td>
 
-    <!-- Colonne pour le texte du template -->
-    <td>{{ event.event_template.text_template }}</td>
+                    <!-- Colonne pour le texte du template -->
+                    <td style="background-color: {% if event.event_template.text_template %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.text_template %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                        {{ event.event_template.text_template }}
+                    </td>
 
-    <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
-    <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-        {% if event.event_template.statut %}
-            Prêt
-        {% else %}
-            Pas OK
-        {% endif %}
-    </td>
 
-    <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
-    {% if event.event_template.image_name %}
-        <td style="background-color: #6da37a">
-            <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
-        </td>
-    {% endif %}
 
-    <!-- Colonne pour les actions -->
-    <td>
-        {% if event.event_template.id %}
-            <!-- Formulaire pour changer le statut -->
-            <form action="{% url 'change_status' event.event_template.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn {% if event.event_template.statut %}btn-danger{% else %}btn-success{% endif %}">
-                    {% if event.event_template.statut %}
-                        Marquer comme Pas OK
-                    {% else %}
-                        Valider
-                    {% endif %}
-                </button>
-            </form>
-        {% else %}
-            <!-- Formulaire pour relancer l'espace client -->
-            <form method="POST" action="{% url 'relance_espace_client' event.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning">Relancer espace</button>
-            </form>
-        {% endif %}
-    </td>
-</tr>
+                    <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
+                    <td style="background-color: {% if event.event_template.image_name %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.image_name %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+
+                                                {% if event.event_template.image_name %}
+                            <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
+                                                {% endif %}
+                        </td>
+
+
+                    <!-- Colonne pour les prepa-template -->
+                    <td>
+                    <a href="\\192.168.1.47/HDD-MySelfieBooth/PREPA-EVENT/{{ event.event_template.directory_name }}">
+                        {{ event.event_template.directory_name }}
+                    </a>
+</td>
+                </tr>
 
             </tbody>
          </table>
+
          <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
             <thead>
                <tr>
@@ -206,9 +197,41 @@
                </tr>
             </tbody>
          </table>
+                             <table id="table_action" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+               </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                    <!-- Colonne pour les actions -->
+                    <td>
+                            <!-- Formulaire pour changer le statut -->
+                            <form action="{% url 'change_status' event.event_template.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn {% if event.event_template.statut %}btn-danger{% else %}btn-success{% endif %}">
+                                    {% if event.event_template.statut %}
+                                        Marquer comme Pas OK
+                                    {% else %}
+                                        Valider
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td><td>
+                                                    <!-- Formulaire pour relancer l'espace client -->
+                            <form method="POST" action="{% url 'relance_espace_client' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning">Relancer espace</button>
+                            </form>
+                    </td>
+                </tr>
+
+            </tbody>
+         </table>
       </div>
    </div>
    {% endfor %}
    {% endwith %}
-</div>
+
 {% endblock %}

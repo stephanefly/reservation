@@ -91,6 +91,7 @@ def confirmation_val_devis(request, id):
         if not event.signer_at:
             send_mail_event(event, 'validation')
 
+        to_acompte_ok(event)
         acompte = create_acompte(event, form.cleaned_data)
         update_event_by_validation(event, acompte)
         SFTP_STORAGE._create_event_repository(event)
