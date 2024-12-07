@@ -35,6 +35,14 @@ def send_mail_event(event, mail_type):
         template_name = "mail_relance_devis.html"
         event.client.nb_relance_devis = event.client.nb_relance_devis + 1
         event.client.save()
+    elif mail_type == 'send_media':
+        subject = "📸 Vos photos sont là ! " + str(event.client.nom) + " ✨"
+        template_name = "mail_send_media.html"
+        event.event_post_presta.sent = True
+        event.event_post_presta.save()
+    elif mail_type == 'devis':
+        subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
+        template_name = "mail_devis.html"
     elif mail_type == 'relance_devis_black_friday':
         subject = "📸 Black Friday : -50€ supplémentaire ! ✨"
         template_name = "mail_relance_devis_black_friday.html"
@@ -43,9 +51,6 @@ def send_mail_event(event, mail_type):
         event.reduc_all = event.reduc_all + 50
         event.prix_proposed = event.prix_proposed - 50
         event.save()
-    elif mail_type == 'devis':
-        subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
-        template_name = "mail_devis.html"
     else:
         raise ValueError("Type de mail non reconnu.")
 
@@ -129,6 +134,10 @@ def complete_mail(event, soup, mail_type):
             unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event.id}"
             unsubscribe_link = soup.find('a', text="Se désabonner")
             unsubscribe_link['href'] = unsubscribe_url
+    elif mail_type == 'send_media':
+        soup.find('b', class_='client_nom').string = str(event.client.nom)
+        a_tag = soup.find('a', class_='link_media_shared')
+        a_tag['href'] = str(event.event_template.link_media_shared)
 
     return soup
 

@@ -185,7 +185,12 @@
                         <a href="{{ event.event_template.link_media_shared }}">Lien</a>
                     </td>
                     <td>
-                        <button>Envoyer Fichiers</button>
+                        <form method="POST" action="{% url 'send_media' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                Envoyer Fichiers
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

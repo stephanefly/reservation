@@ -5,6 +5,7 @@ from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
+from ..module.cloud.send_media import complete_and_check_media
 from ..module.data_bdd.make_planning import get_member_list
 
 
@@ -55,3 +56,13 @@ def post_presta(request):
                       'lst_post_event': lst_post_event,
                       'event_lst_member': event_lst_member
                   })
+
+def send_media(request, event_id):
+
+    event = get_object_or_404(Event, pk=event_id)
+
+    if complete_and_check_media(event):
+        send_mail_event(event, 'send_media')
+        event.event_post_presta.sent = True
+
+    return redirect('post_presta')
