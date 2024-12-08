@@ -44,7 +44,7 @@ def confirmation(request):
     return render(request, 'app/frontend/confirmation.html')
 
 def desabonner(request, token):
-    event = Event.objects.get(token=token)
+    event = Event.objects.get(event_token=token)
     event.client.autorisation_mail = False
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
