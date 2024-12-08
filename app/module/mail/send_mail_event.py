@@ -46,7 +46,7 @@ def send_mail_event(event, mail_type):
         template_name = "mail_devis.html"
 
     elif mail_type == 'one_shoot':
-        subject = "📸 Black Friday : -50€ supplémentaire ! ✨"
+        subject = "📸 Nous avons besoin de vous ! ✨"
         template_name = "mail_sondage.html"
     else:
         raise ValueError("Type de mail non reconnu.")
