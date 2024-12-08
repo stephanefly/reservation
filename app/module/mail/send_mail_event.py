@@ -1,5 +1,6 @@
 import os
 import smtplib
+import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
@@ -149,5 +150,6 @@ def all_devis_send_one_shoot():
     )
     for event in lst_event:
         send_mail_event(event, "one_shoot")
+        time.sleep(180)
 
 

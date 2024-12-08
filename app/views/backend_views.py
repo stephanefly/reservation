@@ -171,9 +171,4 @@ def relance_devis_client(request, event_id):
 
 
 def action_once(request):
-    import secrets
-    for event in Event.objects.all():
-        if not event.event_token:
-            token = secrets.token_hex(32)  # Générer un token sécurisé
-            event.event_token = token
-            event.save()
+    return redirect('lst_devis')
