@@ -43,14 +43,10 @@ def send_mail_event(event, mail_type):
     elif mail_type == 'devis':
         subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
         template_name = "mail_devis.html"
-    elif mail_type == 'relance_devis_black_friday':
+
+    elif mail_type == 'one_shoot':
         subject = "📸 Black Friday : -50€ supplémentaire ! ✨"
-        template_name = "mail_relance_devis_black_friday.html"
-        event.client.nb_relance_devis = event.client.nb_relance_devis + 1
-        event.client.save()
-        event.reduc_all = event.reduc_all + 50
-        event.prix_proposed = event.prix_proposed - 50
-        event.save()
+        template_name = "mail_sondage.html"
     else:
         raise ValueError("Type de mail non reconnu.")
 
@@ -95,7 +91,10 @@ def send_mail_event(event, mail_type):
 def complete_mail(event, soup, mail_type):
     # Complétion des champs communs
     soup.find('b', class_='client_nom').string = str(event.client.nom)
-    soup.find('a', class_='date_event').string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
+    try:
+        soup.find('a', class_='date_event').string = str(event.event_details.date_evenement.strftime('%d/%m/%Y'))
+    except:
+        pass
 
     # Gestion des ajouts spécifiques selon le type de mail
     if mail_type == 'validation':
@@ -103,7 +102,7 @@ def complete_mail(event, soup, mail_type):
         prestation_tag = soup.find('b', class_='prestation')
         if prestation_tag:
             prestation_tag.string = selected_booths
-    elif mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'relance_devis_black_friday':
+    elif mail_type == 'devis' or mail_type == 'relance_devis':
 
         # Ajouter 10 jours à la date butoir
         date_j_plus_10 = datetime.now() + timedelta(days=8)
@@ -130,26 +129,25 @@ def complete_mail(event, soup, mail_type):
             soup.find('a', class_='reduc_all_title').string = "-"+str(reduction) + "€"
             event.status = 'Resended'
             event.save()
-            # Créez la variable `unsubscribe_url`
-            unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event.id}"
-            unsubscribe_link = soup.find('a', text="Se désabonner")
-            unsubscribe_link['href'] = unsubscribe_url
     elif mail_type == 'send_media':
         soup.find('b', class_='client_nom').string = str(event.client.nom)
         a_tag = soup.find('a', class_='link_media_shared')
         a_tag['href'] = str(event.event_template.link_media_shared)
+    elif mail_type == 'relance_devis' or mail_type == 'one_shoot':
+        # Crée l'URL de désinscription
+        event_token = event.event_token
+        unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event_token}"
+        unsubscribe_link = soup.find('a', text="Se désabonner")
+        unsubscribe_link['href'] = unsubscribe_url
 
     return soup
 
-def relance_all_devis_client_black_friday():
-    event = Event.objects.filter(
-        signer_at__isnull=True,
+def all_devis_send_one_shoot():
+    lst_event = Event.objects.filter(
         client__raison_sociale=False,
         client__autorisation_mail=True,
-        client__nb_relance_devis=0,  # Correction ici
-        event_details__date_evenement__gte=now()  # Filtre pour les événements à venir
-    ).order_by('-prix_proposed').first()
-    if event:  # Vérifie qu'un événement existe
-        send_mail_event(event, 'relance_devis_black_friday')
+    )
+    for event in lst_event:
+        send_mail_event(event, "one_shoot")
 
 

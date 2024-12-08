@@ -19,7 +19,7 @@ urlpatterns = [
     path('team/', include('app.urls.team_urls')),
     path('tarifs/', include('app.urls.pricing_urls')),
 
-    path('desabonner/<int:event_id>', desabonner, name='desabonner'),
+    path('desabonner/<str:token>', desabonner, name='desabonner'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # URL de déconnexion
 
     path('backend/action_once', action_once, name='action_once'),

@@ -16,6 +16,6 @@ import django
 django.setup()
 
 # Importer et exécuter les tâches planifiées
-from app.module.mail.send_mail_event import relance_all_devis_client_black_friday
+from app.module.mail.send_mail_event import all_devis_send_one_shoot
 
-relance_all_devis_client_black_friday()
+all_devis_send_one_shoot()

@@ -154,6 +154,7 @@ class EventAcompte(models.Model):
 class Event(models.Model):
     id_card = models.CharField(max_length=100, null=True)
     num_devis = models.IntegerField(null=True)
+    event_token = models.CharField(max_length=100, null=True)
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     event_details = models.ForeignKey(EventDetails, on_delete=models.CASCADE)

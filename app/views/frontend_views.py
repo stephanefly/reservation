@@ -1,6 +1,10 @@
+import secrets
+
 from django.http import QueryDict
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from datetime import timedelta, datetime
+
+from ..models import Event
 from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
 from ..module.data_bdd.price import PRIX_PRODUITS
 from ..module.trello.create_card import create_card
@@ -33,10 +37,17 @@ def confirmation(request):
         event = initialize_event(post_data)
         id_card = create_card(post_data)
         event.id_card = id_card
+        event.event_token = secrets.token_hex(32)
         event.save()
         return redirect('remerciement')
 
     return render(request, 'app/frontend/confirmation.html')
+
+def desabonner(request, token):
+    event = Event.objects.get(token=token)
+    event.client.autorisation_mail = False
+    event.client.save()  # Enregistrer l'objet client
+    return render(request, 'app/frontend/desabonnement.html')
 
 def remerciement(request):
     return render(request, 'app/frontend/remerciement.html')

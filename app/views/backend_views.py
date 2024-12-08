@@ -170,13 +170,10 @@ def relance_devis_client(request, event_id):
     return redirect('info_event', id=event.id)
 
 
-def desabonner(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    event.client.autorisation_mail = False
-    event.client.save()  # Enregistrer l'objet client
-    return render(request, 'app/frontend/desabonnement.html')
-
-
 def action_once(request):
-
-    return redirect('lst_devis')
+    import secrets
+    for event in Event.objects.all():
+        if not event.event_token:
+            token = secrets.token_hex(32)  # Générer un token sécurisé
+            event.event_token = token
+            event.save()
