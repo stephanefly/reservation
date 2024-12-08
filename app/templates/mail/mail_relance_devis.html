@@ -140,13 +140,14 @@
     </tr>
     <!-- Bas de page avec lien vers afficher dans le navigateur -->
     <tr>
-        <td align="center" style="padding: 24px;background-color: #000000;">
-            <a style="color: #606060;font-size: 12px; text-decoration: underline;">
-                Envoyé à:
-                <a style="color: #9c9c9c;font-size: 12px;" class="mail_client">[mail_client]</a>
-                <br>
-                <a style="color: #606060;font-size: 12px;" href="">Se désabonner</a>
-            </a>
+        <td align="center" style="padding: 24px;">
+            <p style="color: #606060; font-size: 12px;">
+                Envoyé à: 
+                <a style="color: #9c9c9c; font-size: 12px;" class="mail_client">{{ client_email }}</a>
+            </p>
+            <p style="color: #606060; font-size: 12px;">
+                <a class="mail_desabonnement" href="" style="color: #606060; font-size: 12px;">Se désabonner</a>
+            </p>
         </td>
     </tr>
     </tbody>
