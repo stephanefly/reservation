@@ -9,6 +9,7 @@ from bokeh.embed import components
 from bokeh.models import FactorRange, HoverTool
 from bokeh.palettes import Category20
 
+
 def tracer_figure_pie_chart_all(df_all_ok, df_all_cost, year):
     # Conversion des dates
     df_all_ok["Date-Event"] = pd.to_datetime(df_all_ok["Date-Event"])
@@ -61,6 +62,7 @@ def tracer_figure_pie_chart_all(df_all_ok, df_all_cost, year):
 
     # Renvoyer le script et le div pour l'intégration dans un site web
     return p
+
 
 def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
     # Conversion des dates
@@ -117,6 +119,7 @@ def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
     # Renvoyer le script et le div pour l'intégration dans un site web
     return p
 
+
 def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     # Conversion des dates et regroupement par mois et type de coût
     df_all_ok['Date-Event'] = pd.to_datetime(df_all_ok['Date-Event'])
@@ -142,7 +145,7 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     elif len(stackers) == 0:
         colors = 'green'
     else:
-        colors = Category20[len(stackers)]
+        colors = Category20[len(stackers)] if len(stackers) > 2 else ["#1f77b4"]  # Exemple de couleur par défaut
 
     # Création de la source de données pour le graphique
     source = ColumnDataSource(df_cost_monthly_pivot)
