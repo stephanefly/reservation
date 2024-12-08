@@ -156,5 +156,7 @@ def all_devis_send_one_shoot():
             lst_client_mail = Event.objects.filter(client__mail=event.client.mail)
             for client in lst_client_mail:
                 client.mail_sondage = True
+                client.save()
+
 
 
