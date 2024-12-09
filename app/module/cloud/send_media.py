@@ -39,8 +39,11 @@ def complete_and_check_media(event):
             "miroirbooth" in event.event_product.get_selected_booths()):
         folder_to_send.append("Prints")
         input_folder = os.path.join(path_folder, "Prints")
-        if create_timelapse(event.event_template.directory_name, input_folder, path_folder, fps=10):
-            folder_to_send.append(f"{event.event_template.directory_name}-timelaps.mp4")
+        try:
+            if create_timelapse(event.event_template.directory_name, input_folder, path_folder, fps=10):
+                folder_to_send.append(f"{event.event_template.directory_name}-timelaps.mp4")
+        except:
+            pass
 
     if ("videobooth" in event.event_product.get_selected_booths() or
             "airbooth" in event.event_product.get_selected_booths()):
