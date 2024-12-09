@@ -61,8 +61,8 @@ def send_media(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
-    if complete_and_check_media(event):
-        send_mail_event(event, 'send_media')
-        event.event_post_presta.sent = True
+    # if complete_and_check_media(event):
+    send_mail_event(event, 'send_media')
+    event.event_post_presta.sent = True
 
     return redirect('post_presta')
