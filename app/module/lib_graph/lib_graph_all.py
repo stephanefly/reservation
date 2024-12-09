@@ -9,9 +9,11 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
 
     df_all_prix["date2"] = df_all_prix['Date-Event']+pd.offsets.DateOffset(years=1, days=-1)
     df_all_prix["date3"] = df_all_prix['Date-Event']+pd.offsets.DateOffset(years=1, days=-1.75)
+    df_all_prix["date4"] = df_all_prix['Date-Event']+pd.offsets.DateOffset(years=1, days=-1.25)
 
     df_all_prix['Date1'] = df_all_prix['Date-Event'] - pd.Timedelta(days=6)
     df_all_prix['Date2'] = df_all_prix['Date-Event']
+    df_all_prix['Date3'] = df_all_prix['Date-Event']
 
     source = ColumnDataSource(data=df_all_prix)
 
@@ -24,7 +26,7 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
         ("Ipadbooth", "@PrixIpadbooth € (@Ipadbooth)"),
         ("Airbooth", "@PrixAirbooth € (@Airbooth)"),
         ("Total-week", "@Prix €")],
-        formatters={'@Date1': 'datetime', '@Date2': 'datetime'})
+        formatters={'@Date1': 'datetime', '@Date2': 'datetime', '@Date3': 'datetime'})
 
     # ... rest of the code ...
 
@@ -137,6 +139,39 @@ def tracage_figure_bar_cost(df_brut_net, year, date_now):
     graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
                                                   months=["%d %b %Y"],
                                                   years=["%d %b %Y"])
+
+    return components(graph)
+
+def tracage_figure_bar_potentiel(df_brut_net, df_brut_net_before, date_now):
+
+    year_before = 2024
+    year_now = 2025
+    df_brut_net_before['date4'] = df_brut_net_before['Date-Event'] + pd.offsets.DateOffset(years=1, days=-1.25)
+    all_brut_data = pd.concat([df_brut_net_before, df_brut_net], ignore_index=True)
+    all_brut_data['Date-Event'] = pd.to_datetime(all_brut_data['Date-Event'])
+    source = ColumnDataSource(data=all_brut_data)
+
+    print(all_brut_data)
+
+    hover = HoverTool(tooltips=[
+        ("week", "@{Date-Event}{%d %b %Y}"),
+        ("Brut", "@Prix €"),],
+        formatters={'@{Date-Event}': 'datetime'})
+
+
+    graph = figure(title=f"Potentiel pour 2025 par rapport à 2024",width=1150, height=300, tools=[hover])
+    graph.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
+    graph.x_range = Range1d(pd.to_datetime(f"{year_now}-01-01"), pd.to_datetime(f"{year_now}-12-30"))
+    graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
+                                                  months=["%d %b %Y"],
+                                                  years=["%d %b %Y"])
+
+    # GRAPH 2025
+    graph.vbar_stack(["Prix"], x='Date-Event', fill_color="green", color="green",
+                     source=source, width=datetime.timedelta(weeks=1), legend_label=str(year_now))
+    # GRAPH 2024 alpha 0
+    graph.vbar_stack(["Prix"], x='date4', fill_color=['blue'], fill_alpha=0, color="blue",
+                     source=source, width=datetime.timedelta(weeks=1), legend_label=str(year_before))
 
     return components(graph)
 
