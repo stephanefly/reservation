@@ -33,10 +33,8 @@ class SFTPStorage(Storage):
             raise ConnectionError(f"Impossible de se connecter au serveur SFTP : {str(e)}")
 
     def _create_event_repository(self, event):
-        """Crée un répertoire pour l'événement sur le serveur SFTP."""
-        directory_name = normalize_name(event)
         with self._connect() as sftp:
-            path = os.path.join(self.prepa_event_path, directory_name).replace("\\", "/")
+            path = os.path.join(self.prepa_event_path, event.event_template.directory_name).replace("\\", "/")
             try:
                 sftp.stat(path)  # Vérifie si le répertoire existe
                 logger.info(f"Le répertoire existe déjà : {path}")
@@ -46,15 +44,10 @@ class SFTPStorage(Storage):
                     logger.info(f"Répertoire créé avec succès : {path}")
                 except Exception as e:
                     logger.error(f"Erreur lors de la création du répertoire {path} : {str(e)}")
-                    raise ValueError(f"Unable to create directory '{directory_name}': {str(e)}")
+                    raise ValueError(f"Unable to create directory '{event.event_template.directory_name}': {str(e)}")
+                return False
 
-        event_template, _ = EventTemplate.objects.update_or_create(
-            pk=event.event_template.pk if event.event_template else None,
-            defaults={'directory_name': directory_name}
-        )
-        event.event_template = event_template
-        event.save()
-        return directory_name
+        return True
 
     def _rename_event_repository(self, event, new_directory_name):
         """Renomme le répertoire d'un événement."""
@@ -73,10 +66,6 @@ class SFTPStorage(Storage):
             except Exception as e:
                 logger.error(f"Erreur lors du renommage du répertoire : {str(e)}")
                 raise ValueError(f"Erreur lors du renommage du répertoire : {str(e)}")
-
-        event.event_template.directory_name = new_directory_name
-        event.event_template.save()
-        event.save()
 
     def _save_png(self, image, event_id):
         """Enregistre une image PNG dans le répertoire de l'événement."""

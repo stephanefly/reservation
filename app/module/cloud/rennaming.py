@@ -1,9 +1,12 @@
 import unicodedata
 import re
-
+import requests
 import unicodedata
 import re
 from datetime import datetime
+
+from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data
+from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN
 
 
 def normalize_name(event):
@@ -20,4 +23,27 @@ def normalize_name(event):
 
     return normalized_name
 
+def rennaming_pcloud_event_folder(event, new_directory_name):
+    """
+    Renname a folder on the pCloud server.
+    """
+    folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
 
+    url = f"{API_PCLOUD_URL}/renamefolder"
+    folder_client_name = event.event_template.directory_name
+    params = {
+        'access_token': ACCESS_TOKEN,
+        'folderid': folder_data["folderid"],
+        'toname': new_directory_name
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()  # Parse the JSON response
+    if data["result"] == 2004:
+        return True
+
+    # Ensure the 'metadata' key exists and contains 'contents'
+    elif 'metadata' in data and 'contents' in data['metadata']:
+        for item in data['metadata']['contents']:
+            if item.get('name') == folder_client_name and item.get('isfolder'):
+                return True

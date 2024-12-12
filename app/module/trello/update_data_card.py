@@ -1,5 +1,5 @@
 import requests
-
+from datetime import datetime
 from app.module.trello.get_trello_data import get_id_label, get_data_card_by_name
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
@@ -46,6 +46,38 @@ def update_option_labels_trello(event):
       params=query
    )
 
+
+   # Vérifier si la requête a réussi
+   if response.status_code == 200:
+      print("Carte Mise à Jours")
+   else:
+      print("Erreur lors Mise à Jours de la carte :", response.text)
+
+
+def update_trello_date(event):
+   data_card = get_data_card_by_name(event.client.nom)
+
+   card_id = data_card["id"]
+   url = f"https://api.trello.com/1/cards/{card_id}"
+
+   # Conversion de la date en objet datetime si nécessaire
+   if isinstance(event.event_details.date_evenement, str):
+      due_date_obj = datetime.strptime(event.event_details.date_evenement, '%Y-%m-%d')
+   else:
+      due_date_obj = event.event_details.date_evenement
+
+   # Convertir la date en format ISO 8601 pour Trello
+   due_date = due_date_obj.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+   query = {
+      'key': KEY_TRELLO,
+      'token': TOKEN_TRELLO,
+      'due': due_date
+   }
+
+   response = requests.put(
+      url,
+      params=query
+   )
 
    # Vérifier si la requête a réussi
    if response.status_code == 200:

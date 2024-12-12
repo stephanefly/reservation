@@ -72,7 +72,7 @@
     {% if all_event %}
         {% for event in all_event %}
             <tr>
-                <td><a href="{% url 'tableau_de_bord' %}info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+                <td><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a></td>
                 <td>{{ event.client.numero_telephone }}</td>
                 <td>{{ event.created_at|date:"Y-m-d" }}</td>
                 <td>{{ event.event_details.date_evenement|date:"D" }}</td>

@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
 from ..models import Event, EventAcompte, EventTemplate
-from ..module.data_bdd.update_event import update_data, update_event_by_validation
+
+from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
-from ..module.espace_client.data_client import create_acompte
-from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
-from ..module.cloud.rennaming import normalize_name
-from ..module.trello.update_data_card import update_option_labels_trello
+
+from ..module.trello.update_data_card import update_option_labels_trello, update_trello_date
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.views.decorators.http import require_http_methods
@@ -73,6 +72,7 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
+    update_trello_date(event)
     update_option_labels_trello(event)
     return redirect('info_event', id=event.id)
 
@@ -88,15 +88,15 @@ def confirmation_val_devis(request, id):
     form = ValidationForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        if not event.signer_at:
-            send_mail_event(event, 'validation')
 
-        to_acompte_ok(event)
-        acompte = create_acompte(event, form.cleaned_data)
-        update_event_by_validation(event, acompte)
-        SFTP_STORAGE._create_event_repository(event)
+        all_success, failing_step = process_validation_event(event, form)
 
-        return redirect('info_event', id=event.id)
+        return render(request, 'app/backend/validation_process_event.html', {
+            'failing_step': failing_step,
+            'all_success': all_success,
+            'event': event,
+        }
+                      )
 
     return render(request, 'app/backend/confirmation_val_devis.html', {
         'form': form,

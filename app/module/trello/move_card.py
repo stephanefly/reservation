@@ -33,16 +33,28 @@ def move_card_to_list(event, list_id):
     # Vérifier si la requête a réussi
     if response.status_code == 200:
         print("La carte a été déplacée avec succès dans la liste :", list_id)
+        return True
     else:
         print("Erreur lors du déplacement de la carte :", response.text)
+        return False
 
 
 # Exemples d'utilisation
 def to_acompte_ok(event):
-    move_card_to_list(event, '63c721825a499b0147a55b68')  # ID de la liste "Acompte OK"
+    # ID de la liste "Acompte OK"
+    if move_card_to_list(event, '63c721825a499b0147a55b68'):
+        return True
+    else:
+        return False
 
 def to_refused(event):
-    move_card_to_list(event, '63c72153d70f3f04062df9d4')  # ID de la liste pour les cartes refusées
+    if move_card_to_list(event, '63c72153d70f3f04062df9d4'):  # ID de la liste pour les cartes refusées
+        return True
+    else:
+        return False
 
 def to_list_devis_fait(event):
-    move_card_to_list(event, '65c6aecbe90021ebb7b9595b')  # AUTO-ENVOI
+    if move_card_to_list(event, '65c6aecbe90021ebb7b9595b'):  # AUTO-ENVOI
+        return True
+    else:
+        return False

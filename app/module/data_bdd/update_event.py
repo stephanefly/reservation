@@ -1,11 +1,15 @@
+from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
 from app.module.cloud.connect_ftp_nas import SFTP_STORAGE
-from app.module.cloud.rennaming import normalize_name
+from app.module.cloud.rennaming import normalize_name, rennaming_pcloud_event_folder
 from django.utils.timezone import now
-from app.models import EventTemplate
+from app.models import EventTemplate, EventAcompte
+from app.module.mail.send_mail_event import send_mail_event
+from app.module.trello.move_card import to_acompte_ok
 
-
+from django.db import transaction
+from django.utils.timezone import now
 def parse_int(value, default=0):
     try:
         return int(value) if value is not None and value.strip() != '' else default
@@ -90,14 +94,14 @@ def update_data(event, request):
             event.event_template = event_template
             event.save()
 
-        if not event.event_template.directory_name:
-            SFTP_STORAGE._create_event_repository(event)
         else:
             new_directory_name = normalize_name(event)
             if new_directory_name != event.event_template.directory_name:
                 SFTP_STORAGE._rename_event_repository(event, new_directory_name)
-                # TODO Renname Client Event Folder
-
+                rennaming_pcloud_event_folder(event, new_directory_name)
+                event.event_template.directory_name = new_directory_name
+                event.event_template.save()
+                event.save()
 
     # Mise à jour des produits de l'événement
     event_product.photobooth = request.POST.get('photobooth') == 'on'
@@ -141,11 +145,96 @@ def update_data(event, request):
 
     return event
 
-def update_event_by_validation(event, acompte):
-    """Update the event status and information upon validation."""
-    event.prix_valided = event.prix_proposed
-    event.event_acompte = acompte
-    event.signer_at = now()
-    event.status = 'Acompte OK'
-    generate_code_espace_client(event)
-    event.save()
+
+def process_event_update_bdd(event, form):
+    """
+    Process the event by creating or updating associated EventAcompte and EventTemplate,
+    and updating the event details.
+
+    Args:
+        event: The event object to process.
+        form: The form containing the cleaned data for acompte and other event details.
+
+    Returns:
+        dict: Contains the status of acompte and template operations and the updated event.
+    """
+    try:
+        with transaction.atomic():
+
+            montant_acompte = (
+                form.data.get('autre_montant')
+                if form.data.get('montant_acompte') == 'autre_montant'
+                else form.data.get('montant_acompte')
+            )
+
+            acompte, created_acompte = EventAcompte.objects.update_or_create(
+                event=event,  # Associe l'acompte à un événement spécifique
+                defaults={
+                    'montant_acompte': montant_acompte,
+                    'mode_payement': form.data.get('mode_payement'),
+                    'date_payement': form.data.get('date_payement'),
+                    'montant_restant': event.prix_proposed - int(montant_acompte),
+                }
+            )
+
+            # 2. Update or create the EventTemplate
+            event_template, created_template = EventTemplate.objects.update_or_create(
+                pk=event.event_template.pk if event.event_template else None,
+                defaults={'directory_name': normalize_name(event)}
+            )
+
+            # 3. Update the event details
+            event.event_template = event_template
+            event.prix_valided = event.prix_proposed
+            event.event_acompte = acompte
+            event.signer_at = now()
+            event.status = 'Acompte OK'
+            event.save()  # Sauvegarder les changements dans la base de données
+
+        # Retour des informations de succès
+        return True
+
+    except Exception as e:
+        return False
+
+
+def process_validation_event(event, form):
+    """
+    Process the event validation steps and track the failing step if any.
+
+    Args:
+        event: The event object to process.
+        form: The submitted form with cleaned data.
+
+    Returns:
+        tuple: (all_success, failing_step)
+            - all_success (bool): True if all steps succeed, False otherwise.
+            - failing_step (str): The name of the first failing step, or None if all succeed.
+    """
+
+    # Initialiser l'acompte à None pour l'utiliser entre les étapes
+    steps = [
+        ("MAJ Event BDD", lambda: process_event_update_bdd(event, form)),
+        ("Envoyer mail confirmation", lambda: send_mail_event(event, 'validation')),
+        ("Deplacement Carte Trello", lambda: to_acompte_ok(event)),
+        ("Génération du code espace client", lambda: generate_code_espace_client(event)),
+        ("Création du répertoire SFTP", lambda: SFTP_STORAGE._create_event_repository(event)),
+        ("Création du dossier pCloud", lambda: create_pcloud_event_folder(event)),
+    ]
+
+    # Retirer conditionnellement certaines étapes si signer_at est défini
+    if event.signer_at:
+        steps = [
+            step for step in steps
+            if step[0] not in {
+                "Envoyer mail confirmation",
+                "Création du répertoire SFTP",
+            }
+        ]
+
+    for step_name, step_function in steps:
+        if not step_function():
+            return False, step_name  # Retourne le statut global et l'étape échouée
+
+    return True, None  # Si toutes les étapes réussissent
+
