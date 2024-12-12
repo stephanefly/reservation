@@ -145,7 +145,8 @@ class EventAcompte(models.Model):
         ('Espece', 'Espece'),
         ('Lydia', 'Lydia'),
         ('Revolut', 'Revolut'),
-        ('Boursorama', 'Boursorama'),
+        ('N26', 'N26'),
+        ('Sumup', 'Sumup'),
     ]
     mode_payement = models.CharField(max_length=255, default='PayPal', choices=MOYEN_PAIEMENT, null=True, blank=True)
     date_payement = models.DateField(null=True, blank=True)
