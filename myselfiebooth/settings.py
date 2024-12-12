@@ -55,6 +55,10 @@ NAS_EVENT_PATH = config.get('NAS_EVENT_PATH')
 PREPA_EVENT_PATH = config.get('PREPA_EVENT_PATH')
 FTP_PORT = config.get('FTP_PORT')
 
+API_PCLOUD_URL = config.get("API_PCLOUD_URL")
+ACCESS_TOKEN = config.get("ACCESS_TOKEN")  # Remplacez par le token obtenu
+ROOT_FOLDER_ID = config.get("ROOT_FOLDER_ID")  # ID du dossier racine
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')
 
