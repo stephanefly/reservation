@@ -71,13 +71,16 @@ def send_mail_event(event, mail_type):
     msg.attach(MIMEText(soup_completed.prettify(), 'html'))
 
     # Si c'est un devis, générer et attacher le PDF
-    if mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'relance_devis_black_friday':
-        event.num_devis = event.num_devis + 1
-        event.save()
+    if mail_type == 'devis' or mail_type == 'relance_devis' or mail_type == 'one_shoot':
+        if event.num_devis is None:
+            make_num_devis(event)
+        else:
+            event.num_devis = event.num_devis + 1
+            event.save()
         buffer = generate_pdf_devis(event)
 
         # Attacher le PDF
-        pdf_name = 'Devis-' + str(event.client.nom) + ".pdf"
+        pdf_name = 'Devis-' + str(event.client.nom) + "-" + str(event.num_devis) +".pdf"
         buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
         part = MIMEApplication(buffer.read(), Name=pdf_name)
         part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'

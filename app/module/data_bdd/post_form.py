@@ -155,8 +155,5 @@ def make_num_devis(event):
 
     today = datetime.now()
     formatted_date = today.strftime("%y%m")
-
-    # Concaténer la date formatée avec l'ID de l'objet
-    event.num_devis = int(f"{formatted_date}{event.id}0")  # Convertir en entier
-
+    event.num_devis = int(f"{formatted_date}{event.id}1")  # Convertir en entier
     event.save()
