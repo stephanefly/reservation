@@ -96,6 +96,7 @@ def update_data(event, request):
             new_directory_name = normalize_name(event)
             if new_directory_name != event.event_template.directory_name:
                 SFTP_STORAGE._rename_event_repository(event, new_directory_name)
+                # TODO Renname Client Event Folder
 
 
     # Mise à jour des produits de l'événement
