@@ -228,7 +228,6 @@ def process_validation_event(event, form):
             step for step in steps
             if step[0] not in {
                 "Envoyer mail confirmation",
-                "Création du répertoire SFTP",
             }
         ]
 
