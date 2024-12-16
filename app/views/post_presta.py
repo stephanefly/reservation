@@ -6,7 +6,8 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
 from ..module.cloud.create_timelaps import get_pcloud_print_folder, create_timelaps
-from ..module.cloud.get_pcloud_data import get_pcloud_link_event_folder, get_pcloud_event_folder_data
+from ..module.cloud.get_pcloud_data import get_pcloud_link_event_folder, get_pcloud_event_folder_data, \
+    find_pcloud_empty_folder
 from ..module.cloud.send_media import check_media_to_send
 from ..module.data_bdd.make_planning import get_member_list
 
@@ -73,6 +74,9 @@ def send_media(request, event_id):
         event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
         event.event_template.save()
         send_mail_event(event, 'send_media')
-        event.event_post_presta.sent = True
+
+    find_pcloud_empty_folder(folder_data)
+    event.event_post_presta.sent = True
+    event.event_post_presta.save()
 
     return redirect('post_presta')

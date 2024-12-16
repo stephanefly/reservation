@@ -65,3 +65,31 @@ def create_pcloud_event_folder(event):
     return False
 
 
+def find_pcloud_empty_folder(folder_data: dict):
+    """
+    Supprime les dossiers vides ou les dossiers appelés 'thumb' dans un répertoire pCloud donné.
+
+    Args:
+        folder_data (dict): Dictionnaire contenant au minimum l'ID du dossier (folderid).
+    """
+    url = f"{API_PCLOUD_URL}/listfolder"
+    params = {'access_token': ACCESS_TOKEN, 'folderid': folder_data["folderid"]}
+
+    # Récupération des métadonnées du dossier
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    # Vérifier le contenu du dossier
+    contents = data.get("metadata", {}).get("contents", [])
+    for subfolder_data in contents:
+        if subfolder_data.get("isfolder"):  # Vérifie si c'est un sous-dossier
+            find_pcloud_empty_folder(subfolder_data)
+
+    if not contents:  # Si le dossier est vide
+        delete_pcloud_empty_folder(folder_data)
+
+
+def delete_pcloud_empty_folder(folder_data: dict):
+    delete_url = f"{API_PCLOUD_URL}/deletefolder"
+    delete_params = {'access_token': ACCESS_TOKEN, 'folderid': folder_data["folderid"]}
+    requests.get(delete_url, params=delete_params)
