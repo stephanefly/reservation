@@ -156,43 +156,48 @@ def process_event_update_bdd(event, form):
         form: The form containing the cleaned data for acompte and other event details.
 
     Returns:
-        dict: Contains the status of acompte and template operations and the updated event.
+        bool: True if the transaction is successful, False otherwise.
     """
     try:
-        with transaction.atomic():
+        with transaction.atomic():  # Garantit une transaction atomique
 
+            # 1. Calculer le montant d'acompte
             montant_acompte = (
                 form.data.get('autre_montant')
                 if form.data.get('montant_acompte') == 'autre_montant'
                 else form.data.get('montant_acompte')
             )
 
+            montant_acompte = int(montant_acompte)
 
+            # 2. Mise à jour ou création de l'acompte
             acompte, created_acompte = EventAcompte.objects.update_or_create(
-                event=event,  # Associe l'acompte à un événement spécifique
+                event=event,
                 defaults={
-                    'montant_acompte': int(montant_acompte),
-                    'mode_payement': form.data.get('mode_payement', ''),  # Défaut vide si non fourni
-                    'date_payement': form.data.get('date_payement', None),  # Défaut None si non fourni
-                    'montant_restant': event.prix_proposed - int(montant_acompte),
+                    'montant_acompte': montant_acompte,
+                    'mode_payement': form.data.get('mode_payement', ''),  # Valeur par défaut vide
+                    'date_payement': form.data.get('date_payement', None),  # Valeur par défaut None
+                    'montant_restant': event.prix_proposed - montant_acompte,
                 }
             )
 
-            # 2. Update or create the EventTemplate
+            # 3. Mise à jour ou création du template de l'événement
             event_template, created_template = EventTemplate.objects.update_or_create(
                 pk=event.event_template.pk if event.event_template else None,
-                defaults={'directory_name': normalize_name(event)}
+                defaults={
+                    'directory_name': normalize_name(event),
+                }
             )
 
-            # 3. Update the event details
+            # 4. Mise à jour des détails de l'événement
             event.event_template = event_template
             event.prix_valided = event.prix_proposed
             event.event_acompte = acompte
             event.signer_at = now()
             event.status = 'Acompte OK'
-            event.save()  # Sauvegarder les changements dans la base de données
+            event.save()  # Sauvegarde les changements
 
-        # Retour des informations de succès
+        # Retour succès
         return True
 
     except Exception as e:

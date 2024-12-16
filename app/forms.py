@@ -27,7 +27,7 @@ class ValidationForm(forms.ModelForm):
     MONTANT_CHOICES = [
         (50, '50 euros'),
         (100, '100 euros'),
-        ('autre', 'Autre montant'),
+        ('autre_montant', 'Autre montant'),
     ]
 
     montant_acompte = forms.ChoiceField(choices=MONTANT_CHOICES, required=True)
@@ -38,7 +38,7 @@ class ValidationForm(forms.ModelForm):
         montant = cleaned_data.get("montant_acompte")
         autre = cleaned_data.get("autre_montant")
 
-        if montant == 'autre' and autre is not None:
+        if montant == 'autre_montant' and autre is not None:
             # Remplacez la valeur de 'montant_acompte' par la valeur de 'autre_montant'
             cleaned_data['montant_acompte'] = autre
 
