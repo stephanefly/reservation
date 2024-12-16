@@ -1,5 +1,5 @@
 from django.urls import path
-from ..views import template_to_do, change_status, upload_image, view_image, team_post_presta,team_planning
+from ..views import template_to_do, change_status, upload_image, view_image, team_post_presta,team_planning, media_collected
 
 urlpatterns = [
     path('template/', template_to_do, name='template_to_do'),
@@ -8,4 +8,6 @@ urlpatterns = [
     path('view-image/<int:event_id>/', view_image, name='view_image'),
     path('post-presta/', team_post_presta, name='team_post_presta'),
     path('planning/', team_planning, name='team_planning'),
+    path('media_collected/<int:event_id>/', media_collected, name='media_collected'),
+
 ]

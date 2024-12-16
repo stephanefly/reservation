@@ -1,4 +1,4 @@
-
+from django.views.decorators.http import require_http_methods
 from ..models import EventTemplate, Event
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
@@ -92,3 +92,11 @@ def team_planning(request):
                       'lst_event_prio': lst_event_prio,
                       'event_lst_member': event_lst_member
                   })
+
+@require_http_methods(["POST"])
+def media_collected(request, event_id):
+
+    event = get_object_or_404(Event, pk=event_id)
+    event.event_post_presta.collected = True
+    event.event_post_presta.save()
+    return redirect('team_post_presta')

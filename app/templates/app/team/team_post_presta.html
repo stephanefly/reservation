@@ -41,20 +41,20 @@
         <tr>
             <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.paid %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.event_post_presta.paid %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
-                {% if not event.post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
+                {% if not event.event_post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.event_post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
+                {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.sent %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
             </td>
         </tr>
 
@@ -166,6 +166,7 @@
                     <th>Nom Dossier</th>
                     <th>Lien Depot Fichier</th>
                     <th>Action</th>
+                    <th>Collecté</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -177,8 +178,14 @@
                         <a href="{{ event.event_template.link_media_shared }}">Lien</a>
                     </td>
                     <td>
-                        <button>Envoyer Fichiers</button>
+                        <form method="POST" action="{% url 'media_collected' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Valider Dépot Fichiers</button>
+                            </form>
                     </td>
+                <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
+                    {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
+                </td>
                 </tr>
                 </tbody>
             </table>

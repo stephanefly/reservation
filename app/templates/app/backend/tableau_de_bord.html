@@ -218,7 +218,8 @@
                                     {% endif %}
                                 </button>
                             </form>
-                        </td><td>
+                        </td>
+                    <td>
                                                     <!-- Formulaire pour relancer l'espace client -->
                             <form method="POST" action="{% url 'relance_espace_client' event.id %}">
                                 {% csrf_token %}
