@@ -167,13 +167,15 @@ def process_event_update_bdd(event, form):
                 else form.data.get('montant_acompte')
             )
 
+            montant_restant = event.prix_proposed -  int(montant_acompte)
+
             acompte, created_acompte = EventAcompte.objects.update_or_create(
                 event=event,  # Associe l'acompte à un événement spécifique
                 defaults={
                     'montant_acompte': montant_acompte,
                     'mode_payement': form.data.get('mode_payement'),
                     'date_payement': form.data.get('date_payement'),
-                    'montant_restant': event.prix_proposed - int(montant_acompte),
+                    'montant_restant': montant_restant,
                 }
             )
 
