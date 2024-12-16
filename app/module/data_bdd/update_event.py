@@ -167,7 +167,7 @@ def process_event_update_bdd(event, form):
                 else form.data.get('montant_acompte')
             )
 
-            montant_restant = event.prix_proposed -  int(montant_acompte)
+            montant_restant = event.prix_proposed - int(montant_acompte)
 
             acompte, created_acompte = EventAcompte.objects.update_or_create(
                 event=event,  # Associe l'acompte à un événement spécifique
@@ -178,6 +178,10 @@ def process_event_update_bdd(event, form):
                     'montant_restant': montant_restant,
                 }
             )
+
+            acompte.montant_acompte = int(montant_acompte)
+            acompte.montant_restant = event.prix_proposed - int(montant_acompte)
+            acompte.save()
 
             # 2. Update or create the EventTemplate
             event_template, created_template = EventTemplate.objects.update_or_create(
