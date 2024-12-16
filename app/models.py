@@ -132,7 +132,8 @@ class EventPostPrestation(models.Model):
     feedback_posted = models.BooleanField(default=False)
     membre_paid = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
-
+    collected = models.BooleanField(default=False)
+    ready_to_send = models.BooleanField(default=False)
 
 
 class EventAcompte(models.Model):
