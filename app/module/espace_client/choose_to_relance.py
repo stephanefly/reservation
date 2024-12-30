@@ -37,12 +37,13 @@ def choose_to_relance_espace_client():
 
 def choose_to_relance_devis_client():
     # Calcul de la date de J+3
-    date_limite = datetime.now() - timedelta(days=3)
+    date_limite = datetime.now() - timedelta(days=2)
 
     # Récupérer tous les événements non signés, créés avant J-3 (inclus)
     lst_event_to_relance = Event.objects.filter(
         created_at__date__lte=date_limite.date(),
         signer_at__isnull=True,
+        status= 'Sended',
         client__raison_sociale=False,
     )
 
