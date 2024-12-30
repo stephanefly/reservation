@@ -142,9 +142,7 @@ def complete_mail(event, soup, mail_type):
         # Récupère le token de l'événement
         event_token = event.event_token
         unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event_token}"
-        unsubscribe_link = soup.find('a', class_='mail_desabonnement')
-        if unsubscribe_link:
-            unsubscribe_link['href'] = unsubscribe_url  # Modification de l'attribut 'href'
+        soup.find('a', class_='mail_desabonnement')['href'] = unsubscribe_url
         soup.find('a', class_='mail_client').string = str(event.client.mail)
     return soup
 
