@@ -3,7 +3,7 @@ PRIX_PRODUITS = {
     'photobooth': 450,
     'photobooth_auto': 350,
 
-    'miroirbooth3h': 450,
+    'miroirbooth3h': 500,
     'miroirbooth': 550,
 
     'videobooth3h': 400,
@@ -12,7 +12,7 @@ PRIX_PRODUITS = {
     'airbooth3h': 400,
     'airbooth': 500,
 
-    'voguebooth': 500,
+    'voguebooth': 550,
     'ipadbooth': 250,
 
     'pack': 850,
