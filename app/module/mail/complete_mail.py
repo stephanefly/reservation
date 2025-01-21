@@ -44,7 +44,7 @@ def _handle_acompte(event, soup, mail_type):
 
 def _handle_devis(event, soup, mail_type):
     # Ajouter 10 jours à la date butoir
-    date_j_plus_10 = datetime.now() + timedelta(days=8)
+    date_j_plus_10 = datetime.now() + timedelta(days=10)
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     # Gestion des réductions
