@@ -63,7 +63,7 @@ def choose_to_last_chance_devis_client():
         signer_at__isnull=True,
         status= 'Resended',
         client__raison_sociale=False,
-        nb_relance_devis=1,
+        client__nb_relance_devis=1,
     ).order_by('-created_at')
 
     for event_to_relance in lst_event_to_relance[:3]:
