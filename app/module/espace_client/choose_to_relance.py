@@ -68,8 +68,8 @@ def choose_to_last_chance_devis_client():
         client__nb_relance_devis=1  # Vérification correcte d'un champ relationnel
     ).order_by('created_at')
 
-    for event_to_relance in lst_event_to_relance[:3]:
+    for event_to_relance in lst_event_to_relance:
         send_mail_event(event_to_relance, 'last_chance_devis')
         event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
         event_to_relance.client.save()
-        time.sleep(30)  # Pause de 30 sec
+        time.sleep(20)  # Pause de 30 sec
