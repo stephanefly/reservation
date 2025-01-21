@@ -32,12 +32,12 @@ def choose_to_relance_espace_client():
         if (event_valid.event_template is None or not event_valid.event_template.url_modele or not event_valid.event_template.text_template or
             event_valid.event_details is None or not event_valid.event_details.horaire):
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(900)  # Pause de 15 minutes
+            time.sleep(30)  # Pause de 30 sec
 
 
 def choose_to_relance_devis_client():
     # Calcul de la date de J+3
-    date_limite = datetime.now() - timedelta(days=2)
+    date_limite = datetime.now() - timedelta(days=1)
 
     # Récupérer tous les événements non signés, créés avant J-3 (inclus)
     lst_event_to_relance = Event.objects.filter(
@@ -49,4 +49,4 @@ def choose_to_relance_devis_client():
 
     for event_to_relance in lst_event_to_relance:
         send_mail_event(event_to_relance, 'relance_devis')
-        time.sleep(400)  # Pause de 6 minutes 40 secondes pour éviter une surcharge
+        time.sleep(30)  # Pause de 30 sec
