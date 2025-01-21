@@ -37,7 +37,7 @@ def choose_to_relance_espace_client():
 
 def choose_to_relance_devis_client():
     # Calcul de la date de J+3
-    date_limite = datetime.now() - timedelta(days=1)
+    date_limite = datetime.now() - timedelta(days=2)
 
     # Récupérer tous les événements non signés, créés avant J-3 (inclus)
     lst_event_to_relance = Event.objects.filter(
@@ -57,7 +57,7 @@ def choose_to_relance_devis_client():
 
 def choose_to_last_chance_devis_client():
     # Calcul de la date de J+8
-    date_limite = datetime.now() - timedelta(days=10)
+    date_limite = datetime.now() - timedelta(days=12)
 
     # Récupérer tous les événements non signés, créés avant J-8 (inclus)
     lst_event_to_relance = Event.objects.filter(
