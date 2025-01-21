@@ -49,6 +49,8 @@ def choose_to_relance_devis_client():
 
     for event_to_relance in lst_event_to_relance:
         send_mail_event(event_to_relance, 'relance_devis')
+        event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
+        event_to_relance.client.save()
         time.sleep(30)  # Pause de 30 sec
 
 def choose_to_last_chance_devis_client():
@@ -57,12 +59,15 @@ def choose_to_last_chance_devis_client():
 
     # Récupérer tous les événements non signés, créés avant J-8 (inclus)
     lst_event_to_relance = Event.objects.filter(
-        created_at__date__lte=date_limite.date(),
+        created_at__date__gte=date_limite.date(),
         signer_at__isnull=True,
         status= 'Resended',
         client__raison_sociale=False,
+        nb_relance_devis=1,
     )
 
     for event_to_relance in lst_event_to_relance:
         send_mail_event(event_to_relance, 'last_chance_devis')
+        event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
+        event_to_relance.client.save()
         time.sleep(30)  # Pause de 30 sec

@@ -80,14 +80,10 @@ def get_mail_template(event, mail_type):
     elif mail_type == 'relance_devis':
         subject = "📸 Nous avons pensé à vous ! 📅✨"
         template_name = "mail_relance_devis.html"
-        event.client.nb_relance_devis = event.client.nb_relance_devis + 1
-        event.client.save()
         need_devis = True
     elif mail_type == 'last_chance_devis':
         subject = "📸 Dernière Chance ! 📅⚠️"
         template_name = "mail_last_chance.html"
-        event.client.nb_relance_devis = event.client.nb_relance_devis + 1
-        event.client.save()
         need_devis = True
     elif mail_type == 'send_media':
         subject = "📸 Vos photos sont là ! " + str(event.client.nom) + " ✨"
