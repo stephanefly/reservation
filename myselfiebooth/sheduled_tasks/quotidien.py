@@ -17,10 +17,12 @@ django.setup()
 
 # Importer et exécuter les tâches planifiées
 from app.module.data_bdd.maj_today_event import maj_today_event
-from app.module.espace_client.choose_to_relance import choose_to_relance_espace_client, choose_to_relance_devis_client
+from app.module.espace_client.choose_to_relance import (choose_to_relance_espace_client,
+                                                        choose_to_relance_devis_client, choose_to_last_chance_devis_client)
 
 maj_today_event()
 choose_to_relance_devis_client()
+choose_to_last_chance_devis_client()
 choose_to_relance_espace_client()
 
 # Backup BDD

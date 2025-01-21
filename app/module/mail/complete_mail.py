@@ -16,13 +16,13 @@ def complete_mail(event, soup, mail_type):
         if prestation_tag:
             prestation_tag.string = selected_booths
 
-    elif mail_type in ['devis', 'relance_devis']:
+    elif mail_type in ['devis', 'relance_devis', 'last_chance_devis']:
         _handle_devis(event, soup, mail_type)
 
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
 
-    if mail_type in ['devis', 'relance_devis', 'one_shoot']:
+    if mail_type in ['devis', 'relance_devis', 'one_shoot', 'last_chance_devis']:
         _handle_unsubscribe(event, soup)
 
     return soup
