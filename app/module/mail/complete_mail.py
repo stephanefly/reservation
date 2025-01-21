@@ -46,12 +46,8 @@ def _handle_devis(event, soup, mail_type):
         soup.find('a', class_='txt_reduc').string = ""
         soup.find('a', class_='reduc_all').string = ""
 
-    if mail_type == 'relance_devis':
-        soup.find('a', class_='mail_client').string = str(event.client.mail)
+    if mail_type == 'relance_devis' or mail_type == 'last_chance_devis':
         soup.find('a', class_='reduc_all_title').string = f"-{reduction}€"
-        event.status = 'Resended'
-        event.save()
-
 
 def _handle_send_media(event, soup):
     soup.find('b', class_='client_nom').string = str(event.client.nom)

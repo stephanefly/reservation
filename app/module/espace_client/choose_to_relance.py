@@ -45,10 +45,12 @@ def choose_to_relance_devis_client():
         signer_at__isnull=True,
         status= 'Sended',
         client__raison_sociale=False,
-    ).order_by('-created_at')
+    ).order_by('created_at')
 
     for event_to_relance in lst_event_to_relance:
         send_mail_event(event_to_relance, 'relance_devis')
+        event_to_relance.status = 'Resended'
+        event_to_relance.save()
         event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
         event_to_relance.client.save()
         time.sleep(30)  # Pause de 30 sec
@@ -64,7 +66,7 @@ def choose_to_last_chance_devis_client():
         status='Resended',
         client__raison_sociale=False,
         client__nb_relance_devis=1  # Vérification correcte d'un champ relationnel
-    ).order_by('-created_at')
+    ).order_by('created_at')
 
     for event_to_relance in lst_event_to_relance[:3]:
         send_mail_event(event_to_relance, 'last_chance_devis')
