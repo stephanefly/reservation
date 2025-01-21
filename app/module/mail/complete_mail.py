@@ -22,10 +22,24 @@ def complete_mail(event, soup, mail_type):
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
 
-    if mail_type in ['devis', 'relance_devis', 'one_shoot', 'last_chance_devis']:
-        _handle_unsubscribe(event, soup)
+    _handle_acompte(event, soup, mail_type)
+
+    _handle_unsubscribe(event, soup)
 
     return soup
+
+
+def _handle_acompte(event, soup, mail_type):
+
+    if event.client.raison_sociale:
+        balise_acompte = soup.find('div', class_='acompte_particulier')
+        balise_acompte.extract()
+    else:
+        balise_acompte = soup.find('div', class_='acompte_entreprise')
+        balise_acompte.extract()
+        # Gestion des acomptes selon le prix proposé
+        acompte = "150 €" if event.prix_proposed >= 1000 else "100 €" if event.prix_proposed >= 600 else "50 €"
+        soup.find('b', class_='acompte').string = acompte
 
 
 def _handle_devis(event, soup, mail_type):
@@ -33,12 +47,9 @@ def _handle_devis(event, soup, mail_type):
     date_j_plus_10 = datetime.now() + timedelta(days=8)
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
-    # Gestion des acomptes selon le prix proposé
-    acompte = "150 €" if event.prix_proposed >= 1000 else "100 €" if event.prix_proposed >= 600 else "50 €"
-    soup.find('b', class_='acompte').string = acompte
-
     # Gestion des réductions
     reduction = event.reduc_product + event.reduc_all
+
     if reduction > 0:
         soup.find('a', class_='txt_reduc').string = " et bénéficier de la réduction de "
         soup.find('a', class_='reduc_all').string = f"{reduction}€"
@@ -48,6 +59,8 @@ def _handle_devis(event, soup, mail_type):
 
     if mail_type == 'relance_devis' or mail_type == 'last_chance_devis':
         soup.find('a', class_='reduc_all_title').string = f"-{reduction}€"
+
+
 
 def _handle_send_media(event, soup):
     soup.find('b', class_='client_nom').string = str(event.client.nom)
