@@ -48,6 +48,10 @@ def _handle_devis(event, soup, mail_type):
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     # Gestion des réductions
+    if mail_type == 'last_chance_devis':
+        event.reduc_all = event.reduc_all+50
+        event.save()
+
     reduction = event.reduc_product + event.reduc_all + event.event_option.total_reduction()
 
     if reduction > 0:
@@ -59,7 +63,6 @@ def _handle_devis(event, soup, mail_type):
 
     if mail_type == 'relance_devis' or mail_type == 'last_chance_devis':
         soup.find('a', class_='reduc_all_title').string = f"-{reduction}€"
-
 
 
 def _handle_send_media(event, soup):
