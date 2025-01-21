@@ -59,7 +59,7 @@ def choose_to_last_chance_devis_client():
 
     # Récupérer tous les événements non signés, créés avant J-8 (inclus)
     lst_event_to_relance = Event.objects.filter(
-        created_at__date__gte=date_limite.date(),
+        created_at__date__lte=date_limite.date(),
         signer_at__isnull=True,
         status= 'Resended',
         client__raison_sociale=False,
