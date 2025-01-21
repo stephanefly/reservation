@@ -61,9 +61,9 @@ def choose_to_last_chance_devis_client():
     lst_event_to_relance = Event.objects.filter(
         created_at__date__lte=date_limite.date(),
         signer_at__isnull=True,
-        status= 'Resended',
+        status='Resended',
         client__raison_sociale=False,
-        client__nb_relance_devis=1,
+        client__nb_relance_devis=1  # Vérification correcte d'un champ relationnel
     ).order_by('-created_at')
 
     for event_to_relance in lst_event_to_relance[:3]:
