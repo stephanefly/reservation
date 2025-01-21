@@ -22,14 +22,16 @@ def complete_mail(event, soup, mail_type):
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
 
-    _handle_acompte(event, soup, mail_type)
+    _handle_date_butoire(event, soup)
+
+    _handle_acompte(event, soup)
 
     _handle_unsubscribe(event, soup)
 
     return soup
 
 
-def _handle_acompte(event, soup, mail_type):
+def _handle_acompte(event, soup):
 
     if event.client.raison_sociale:
         balise_acompte = soup.find('div', class_='acompte_particulier')
@@ -42,17 +44,19 @@ def _handle_acompte(event, soup, mail_type):
         soup.find('b', class_='acompte').string = acompte
 
 
-def _handle_reduc(event, soup, mail_type):
+def _handle_date_butoire(event, soup):
     # Ajouter 10 jours à la date butoir
     date_j_plus_10 = datetime.now() + timedelta(days=10)
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
+
+
+def _handle_reduc(event, soup, mail_type):
 
     # Gestion des réductions
     if mail_type == 'last_chance_devis':
         event.reduc_all = event.reduc_all+50
         event.prix_proposed = event.prix_proposed-50
         event.save()
-
     reduction = event.reduc_product + event.reduc_all + event.event_option.total_reduction()
 
     if reduction > 0:

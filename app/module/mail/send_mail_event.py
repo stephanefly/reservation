@@ -82,7 +82,7 @@ def get_mail_template(event, mail_type):
         template_name = "mail_relance_devis.html"
         need_devis = True
     elif mail_type == 'last_chance_devis':
-        subject = "📸 Dernière Chance ! 📅⚠️"
+        subject = "📸️ Dernière chance! 50€ EN PLUS de remise sur votre offre ! ⚠️"
         template_name = "mail_last_chance.html"
         need_devis = True
     elif mail_type == 'send_media':
