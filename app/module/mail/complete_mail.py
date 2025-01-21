@@ -38,7 +38,7 @@ def _handle_devis(event, soup, mail_type):
     soup.find('b', class_='acompte').string = acompte
 
     # Gestion des réductions
-    reduction = event.reduc_product if event.reduc_all == 0 else event.reduc_all
+    reduction = event.reduc_product + event.reduc_all
     if reduction > 0:
         soup.find('a', class_='txt_reduc').string = " et bénéficier de la réduction de "
         soup.find('a', class_='reduc_all').string = f"{reduction}€"
