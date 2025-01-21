@@ -122,6 +122,21 @@ class EventOption(models.Model):
     def prix_base_magnets(self, magnets):
         return magnets * 2
 
+    def total_reduction(self):
+        reduction_fields = [
+            self.MurFloral_reduc_prix or 0,
+            self.Phonebooth_reduc_prix or 0,
+            self.LivreOr_reduc_prix or 0,
+            self.Fond360_reduc_prix or 0,
+            self.PanneauBienvenue_reduc_prix or 0,
+            self.PhotographeVoguebooth_reduc_prix or 0,
+            self.ImpressionVoguebooth_reduc_prix or 0,
+            self.DecorVoguebooth_reduc_prix or 0,
+            self.Holo3D_reduc_prix or 0,
+            self.magnets_reduc_prix or 0
+        ]
+        return sum(reduction_fields)
+
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 

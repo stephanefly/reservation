@@ -48,7 +48,7 @@ def _handle_devis(event, soup, mail_type):
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
     # Gestion des réductions
-    reduction = event.reduc_product + event.reduc_all
+    reduction = event.reduc_product + event.reduc_all + event.event_option.total_reduction()
 
     if reduction > 0:
         soup.find('a', class_='txt_reduc').string = " et bénéficier de la réduction de "
