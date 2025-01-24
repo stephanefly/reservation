@@ -229,13 +229,13 @@ def process_validation_event(event, form):
     ]
 
     # Retirer conditionnellement certaines étapes si signer_at est défini
-    if event.signer_at:
-        steps = [
-            step for step in steps
-            if step[0] not in {
-                "Envoyer mail confirmation",
-            }
-        ]
+    # if event.signer_at:
+    #     steps = [
+    #         step for step in steps
+    #         if step[0] not in {
+    #             "Envoyer mail confirmation",
+    #         }
+    #     ]
 
     for step_name, step_function in steps:
         if not step_function():
