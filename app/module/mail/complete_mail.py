@@ -18,11 +18,10 @@ def complete_mail(event, soup, mail_type):
 
     elif mail_type in ['devis', 'relance_devis', 'last_chance_devis']:
         _handle_reduc(event, soup, mail_type)
+        _handle_date_butoire(event, soup)
 
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
-
-    _handle_date_butoire(event, soup)
 
     _handle_acompte(event, soup)
 
