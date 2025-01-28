@@ -63,43 +63,71 @@ def send_mail_event(event, mail_type):
 
 def get_mail_template(event, mail_type):
 
-    need_devis = False
+    # Mails nécessitant un devis (need_devis = True)
+    if mail_type == 'devis':
+        # Mail envoyé au client pour lui transmettre un devis personnalisé
+        subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
+        template_name = "devis/mail_devis.html"
+        need_devis = True
 
-    # Définir les sujets et templates en fonction du type de mail
-    if mail_type == 'validation':
+    elif mail_type == 'rappel_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "📸 Nous avons pensé à vous ! ✨"
+        template_name = "devis/mail_first_rappel.html"
+        need_devis = True
+
+    elif mail_type == 'prolongation_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "📸 Nous prolongeons votre offre exceptionnelle ! ✨"
+        template_name = "devis/mail_prolongation_devis.html"
+        need_devis = True
+
+    elif mail_type == 'phonebooth_offert_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "📸 Bonus exclusif : Phonebooth offert avec votre devis ! 🎁"
+        template_name = "devis/mail_phonebooth_offert.html"
+        need_devis = True
+
+    elif mail_type == 'last_chance_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "📸 Dernière chance : 50€ supplémentaires de remise sur votre devis ! ⚠️"
+        template_name = "devis/mail_last_chance.html"
+        need_devis = True
+
+# ---------------------------------------------------------------------------------------------------------------------
+    # Mails ne nécessitant pas de devis (need_devis = False)
+    elif mail_type == 'validation':
+        # Mail de confirmation de réservation envoyé au client
         subject = "📸 Votre prestation est réservée : préparez-vous à vous éclater ! ✨"
         template_name = "mail_validation.html"
+        need_devis = False
+
     elif mail_type == 'relance_espace_client':
+        # Mail pour relancer un client qui n'a pas complété les informations nécessaires dans son espace client
         subject = "📸 Informations manquantes pour votre événement ✨"
         template_name = "mail_relance_espace_client.html"
-    elif mail_type == 'relance_avis':
-        subject = "📸 Votre avis compte ! ✨"
-        template_name = "mail_relance_avis.html"
-        event.client.nb_relance_avis = event.client.nb_relance_avis + 1
-        event.client.save()
-    elif mail_type == 'relance_devis':
-        subject = "📸 Nous avons pensé à vous ! 📅✨"
-        template_name = "mail_relance_devis.html"
-        need_devis = True
-    elif mail_type == 'last_chance_devis':
-        subject = "📸️ Dernière chance! 50€ EN PLUS de remise sur votre offre ! ⚠️"
-        template_name = "mail_last_chance.html"
-        need_devis = True
+        need_devis = False
+
     elif mail_type == 'send_media':
+        # Mail pour envoyer les photos finales au client après l'événement
         subject = "📸 Vos photos sont là ! " + str(event.client.nom) + " ✨"
         template_name = "mail_send_media.html"
+        need_devis = False
+        # Marquer les médias comme envoyés dans la base de données
         event.event_post_presta.sent = True
         event.event_post_presta.save()
-    elif mail_type == 'devis':
-        subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
-        template_name = "mail_devis.html"
-        need_devis = True
 
-    elif mail_type == 'one_shoot':
-        subject = "📸 Nous avons besoin de vous ! ✨"
-        template_name = "mail_sondage.html"
-        need_devis = True
+    elif mail_type == 'relance_avis':
+        # Mail pour demander au client de donner son avis sur la prestation
+        subject = "📸 Votre avis compte ! ✨"
+        template_name = "mail_relance_avis.html"
+        need_devis = False
+        # Mise à jour du nombre de relances pour avis effectuées dans la base de données
+        event.client.nb_relance_avis = event.client.nb_relance_avis + 1
+        event.client.save()
+
     else:
+        # Lever une erreur si le type de mail fourni n'est pas reconnu
         raise ValueError("Type de mail non reconnu.")
 
     return subject, template_name, need_devis

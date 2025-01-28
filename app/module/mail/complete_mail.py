@@ -9,14 +9,7 @@ def complete_mail(event, soup, mail_type):
     except AttributeError:
         pass
 
-    # Gestion des ajouts spécifiques selon le type de mail
-    if mail_type == 'validation':
-        selected_booths = event.event_product.get_selected_booths()
-        prestation_tag = soup.find('b', class_='prestation')
-        if prestation_tag:
-            prestation_tag.string = selected_booths
-
-    elif mail_type in ['devis', 'relance_devis', 'last_chance_devis']:
+    if mail_type in ['devis', 'relance_devis', 'last_chance_devis']:
         _handle_reduc(event, soup, mail_type)
         _handle_date_butoire(event, soup)
         _handle_acompte(event, soup)
