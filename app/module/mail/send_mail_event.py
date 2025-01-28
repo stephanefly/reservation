@@ -84,13 +84,13 @@ def get_mail_template(event, mail_type):
 
     elif mail_type == 'phonebooth_offert_devis':
         # Mail pour relancer un client concernant un devis envoyé précédemment
-        subject = "📸 Bonus exclusif : Phonebooth offert avec votre devis ! 🎁"
+        subject = "📸 Bonus exclusif : Phonebooth offert ! 🎁"
         template_name = "devis/mail_phonebooth_offert.html"
         need_devis = True
 
     elif mail_type == 'last_chance_devis':
         # Mail pour relancer un client concernant un devis envoyé précédemment
-        subject = "📸 Dernière chance : 50€ supplémentaires de remise sur votre devis ! ⚠️"
+        subject = "📸 Dernière chance : 50€ supplémentaires de remise ! ⚠️"
         template_name = "devis/mail_last_chance.html"
         need_devis = True
 
