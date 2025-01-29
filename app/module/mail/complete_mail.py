@@ -102,7 +102,7 @@ def _handle_tracer(event, soup):
         status_devis=event.status,
     )
 
-    tracer_link = f"http://127.0.0.1:8000/track/{email_traced.uuid}"
+    tracer_link = f"https://reservation.myselfiebooth-paris.fr/track_devis/{email_traced.uuid}"
 
     # Trouver l'élément avec la classe `traceur_devis`
     soup.find('img', class_='traceur_devis')['src'] = tracer_link
