@@ -76,10 +76,22 @@ def get_mail_template(event, mail_type):
         template_name = "devis/mail_first_rappel.html"
         need_devis = True
 
+    elif mail_type == 'last_rappel_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "⏳ Derniers jours pour en profiter! 📸"
+        template_name = "devis/mail_last_rappel_devis.html"
+        need_devis = True
+
     elif mail_type == 'prolongation_devis':
         # Mail pour relancer un client concernant un devis envoyé précédemment
         subject = "📸 Nous prolongeons votre offre exceptionnelle ! ✨"
         template_name = "devis/mail_prolongation_devis.html"
+        need_devis = True
+
+    elif mail_type == 'temoingnage_client_devis':
+        # Mail pour relancer un client concernant un devis envoyé précédemment
+        subject = "📸 Ils ont adoré ! Découvrez leur expérience ✨"
+        template_name = "devis/mail_temoingnage_devis.html"
         need_devis = True
 
     elif mail_type == 'phonebooth_offert_devis':

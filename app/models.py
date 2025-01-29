@@ -201,6 +201,11 @@ class Event(models.Model):
         ('Post Presta', 'Post Presta'),
         ('Resended', 'Resended'),
         ('Last Chance', 'Last Chance'),
+        ('First Rappel', 'First Rappel'),
+        ('Last Rappel', 'Last Rappel'),
+        ('Prolongation', 'Prolongation'),
+        ('Temoignage', 'Temoignage'),
+        ('Phonebooth Offert', 'Phonebooth Offert'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 

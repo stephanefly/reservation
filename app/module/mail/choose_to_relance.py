@@ -19,15 +19,6 @@ def process_events(days_offset, current_status, new_status, email_template, upda
     ).order_by('created_at')
 
     for event in lst_event_to_relance:
-        if update_product:
-            event.event_product.Phonebooth = True
-            event.event_product.Phonebooth_reduc_prix = 50
-            event.event_product.save()
-        if apply_discount:
-            event.reduc_all += 50
-            event.prix_proposed -= 50
-            event.client.nb_relance_devis = 9
-
         send_mail_event(event, email_template)
         event.status = new_status
         event.save()
@@ -41,7 +32,7 @@ def choose_to_rappel_devis_client():
 
 
 def choose_to_last_rappel_devis_client():
-    process_events(5, 'First_Rappel', 'Last Rappel', 'last_rappel_devis')
+    process_events(5, 'First Rappel', 'Last Rappel', 'last_rappel_devis')
 
 
 def choose_to_prolonger_devis_client():

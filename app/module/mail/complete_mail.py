@@ -9,7 +9,7 @@ def complete_mail(event, soup, mail_type):
     except AttributeError:
         pass
 
-    if mail_type in ['devis', 'rappel_devis', 'last_chance_devis', 'prolongation_devis', 'phonebooth_offert_devis']:
+    if 'devis' in mail_type:
         _handle_reduc(event, soup, mail_type)
         _handle_date_butoire(event, soup)
         _handle_acompte(event, soup)
@@ -44,6 +44,11 @@ def _handle_date_butoire(event, soup):
 def _handle_reduc(event, soup, mail_type):
 
     # Gestion des réductions
+    if mail_type == 'phonebooth_offert_devis':
+        event.event_option.Phonebooth = True
+        event.event_option.Phonebooth_reduc_prix = 50
+        event.event_option.save()
+
     if mail_type == 'last_chance_devis':
         event.reduc_all = event.reduc_all+50
         event.prix_proposed = event.prix_proposed-50

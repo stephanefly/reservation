@@ -4,6 +4,7 @@ from ..models import Event, EventAcompte, EventTemplate
 
 from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
+from ..module.mail.test_mail_devis import test_mail_devis
 
 from ..module.trello.update_data_card import update_option_labels_trello, update_trello_date
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
@@ -164,10 +165,19 @@ def envoi_mail_devis(request, event_id):
         # Redirigez vers la page de confirmation si la méthode n'est pas POST
         return redirect('confirmation_envoi_mail', event_id=event_id)
 
+def view_test_mail_devis(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    test_mail_devis(event)
+    return redirect('info_event', id=event.id)
 
 def rappel_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'rappel_devis')
+    return redirect('info_event', id=event.id)
+
+def last_rappel_devis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'last_rappel_devis')
     return redirect('info_event', id=event.id)
 
 def prolongation_devis_client(request, event_id):
