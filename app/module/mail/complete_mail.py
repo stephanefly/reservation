@@ -9,7 +9,7 @@ def complete_mail(event, soup, mail_type):
     except AttributeError:
         pass
 
-    if mail_type in ['devis', 'relance_devis', 'last_chance_devis']:
+    if mail_type in ['devis', 'rappel_devis', 'last_chance_devis', 'prolongation_devis', 'phonebooth_offert_devis']:
         _handle_reduc(event, soup, mail_type)
         _handle_date_butoire(event, soup)
         _handle_acompte(event, soup)

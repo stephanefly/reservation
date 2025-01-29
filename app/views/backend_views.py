@@ -165,11 +165,25 @@ def envoi_mail_devis(request, event_id):
         return redirect('confirmation_envoi_mail', event_id=event_id)
 
 
-def relance_devis_client(request, event_id):
+def rappel_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    send_mail_event(event, 'relance_devis')
+    send_mail_event(event, 'rappel_devis')
     return redirect('info_event', id=event.id)
 
+def prolongation_devis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'prolongation_devis')
+    return redirect('info_event', id=event.id)
+
+def phonebooth_offert_devis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'phonebooth_offert_devis')
+    return redirect('info_event', id=event.id)
+
+def last_chance_devis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'last_chance_devis')
+    return redirect('info_event', id=event.id)
 
 def action_once(request):
     return redirect('lst_devis')

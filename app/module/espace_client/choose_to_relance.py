@@ -48,7 +48,7 @@ def choose_to_relance_devis_client():
     ).order_by('created_at')
 
     for event_to_relance in lst_event_to_relance:
-        send_mail_event(event_to_relance, 'relance_devis')
+        send_mail_event(event_to_relance, 'rappel_devis')
         event_to_relance.status = 'Resended'
         event_to_relance.save()
         event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
