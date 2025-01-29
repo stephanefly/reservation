@@ -11,7 +11,7 @@ def complete_mail(event, soup, mail_type):
 
     if 'devis' in mail_type:
         _handle_reduc(event, soup, mail_type)
-        _handle_date_butoire(event, soup)
+        _handle_date_butoire(event, soup, mail_type)
         _handle_acompte(event, soup)
 
     elif mail_type == 'send_media':
@@ -35,9 +35,22 @@ def _handle_acompte(event, soup):
         soup.find('b', class_='acompte').string = acompte
 
 
-def _handle_date_butoire(event, soup):
-    # Ajouter 10 jours à la date butoir
-    date_j_plus_10 = datetime.now() + timedelta(days=10)
+def _handle_date_butoire(event, soup, mail_type):
+    # Ajouter X jours à la date butoir
+    if mail_type == 'devis':
+        jours_restant = 8
+    if mail_type == 'rappel_devis':
+        jours_restant = 6
+    if mail_type == 'last_rappel_devis':
+        jours_restant = 3
+    if mail_type == 'prolongation_devis':
+        jours_restant = 5
+    if mail_type == 'phonebooth_offert_devis':
+        jours_restant = 5
+    if mail_type == 'last_chance_devis':
+        jours_restant = 5
+
+    date_j_plus_10 = datetime.now() + timedelta(days=jours_restant)
     soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
 
 
