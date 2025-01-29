@@ -307,10 +307,6 @@
     {% csrf_token %}
     <button type="submit" class="button-valid">Valider DEVIS</button>
 </form>
-<form method="POST" action="{% url 'rappel_devis_client' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-relance">Rappel devis client</button>
-</form>
 <form method="POST" action="{% url 'relance_espace_client' event.id %}">
     {% csrf_token %}
     <button type="submit" class="button-relance">Relance espace client</button>
