@@ -3,215 +3,353 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>MySelfieBooth - Devis</title>
+      <title>MySelfieBooth</title>
       <style>
          /* Global Styles */
          body {
-            margin: 0;
-            padding: 0;
-            background-color: #faf8f5; /* Ivoire doux */
-            font-family: 'Poppins', sans-serif;
-            color: #333;
+         margin: 0;
+         padding: 0;
+         background-color: #f3fdff;
+         font-family: Arial, sans-serif;
          }
          .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            text-align: center;
+         max-width: 700px;
+         margin: auto;
+         padding: 0px 20px;
+         text-align: center;
          }
          /* Header */
          .header {
-            background-color: #000;
-            padding: 20px 0;
-            text-align: center;
+         background-color: #000000;
+         padding: 10px 0;
+         text-align: center;
          }
          .header img {
-            width: 180px;
-            height: auto;
+         width: 150px;
+         height: auto;
          }
          /* Footer */
          .footer {
-            padding: 15px 0;
-            font-size: 14px;
-            color: #b3b3b3;
-            background-color: #000;
-            text-align: center;
+         padding: 10px 0;
+         font-size: 12px;
+         color: #acacac;
+         background-color: #000000;
+         text-align: center;
          }
-         .footer a {
-            color: #f39c12; /* Or élégant */
-            text-decoration: none;
-            font-weight: bold;
+         /* Separator */
+         hr {
+         border: 0;
+         border-top: 1px solid #8d8d8d;
          }
-         /* Content Section */
-         .content {
-            background: #ffffff;
-            padding: 20px 40px;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            text-align: center;
+         .contact_block {
+         background: #ffffff;
+         padding: 15px;
+         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+         text-align: center;
+         font-family: 'Poppins', sans-serif;
+         color: #333;
          }
-         .content h1 {
-            font-family: 'Georgia', serif;
-            font-size: 28px;
-            color: #310033;
+         .contact_title {
+         font-size: 22px;
+         font-weight: bold;
+         color: #310033;
+         margin: 12px 10px;
          }
-         .content p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin: 15px 0;
+         .contact_info {
+         font-size: 18px;
+         line-height: 1.6;
+         margin: 10px 10px;
          }
-         /* Table Images */
+         .contact_link {
+         color: #ff6600;
+         font-weight: bold;
+         text-decoration: none;
+         }
+         .contact_link:hover {
+         text-decoration: underline;
+         }
+         /* Table globale */
          .image-table {
-            margin: 20px auto;
-            text-align: center;
-            border-spacing: 10px;
+         margin-top: 20px;
+         padding-bottom: 20px;
+         border-collapse: collapse;
          }
-         .image-table img {
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+         /* Cellule contenant l'image */
+         .image-cell {
+         padding: 0 10px;
          }
-         /* Banner */
-         .banner {
-            background: #ffdb6f;
-            color: #000;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-         }
-         /* Contact Block */
-         .contact-block {
-            background: #faf8f5;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            font-size: 18px;
-            text-align: center;
-         }
-         .contact-block a {
-            color: #f39c12;
-            font-weight: bold;
-            text-decoration: none;
-         }
-         .contact-block a:hover {
-            text-decoration: underline;
-         }
-         /* Payment Section */
-         .payment-section {
-            background: #331e00;
-            color: #fff;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-         }
-         .payment-section h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
-         }
-         .payment-section p {
-            font-size: 16px;
-            line-height: 1.6;
-         }
-         /* Final Message */
-         .final-message {
-            background: #fff;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-         }
-         .final-message p {
-            font-size: 18px;
-            line-height: 1.6;
-         }
-         .final-message .highlight {
-            color: #f39c12;
-            font-weight: bold;
-         }
-         /* Testimonial Section */
-         .testimonial {
-            background: #f1fff2;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            font-style: italic;
-         }
-         .testimonial p {
-            font-size: 18px;
-            margin: 0;
-         }
-         .testimonial .author {
-            margin-top: 10px;
-            font-weight: bold;
+         /* Style des images */
+         .image {
+         border: 0;
+         width: 140px;
+         height: auto;
+         max-width: 100%;
+         border-radius: 4px;
+         display: block;
          }
       </style>
    </head>
    <body>
-      <!-- Header -->
+      <!-- Section Head -->
       <div class="header">
-         <img src="https://mcusercontent.com/2c82a9e7bffebfab5cb181400/images/2f88c980-8d24-76b1-0cd5-18977d464211.png" alt="Logo MySelfieBooth">
+         <a href="https://myselfiebooth-paris.fr/" target="_blank">
+         <img class="logo" src="https://mcusercontent.com/2c82a9e7bffebfab5cb181400/images/2f88c980-8d24-76b1-0cd5-18977d464211.png" alt="Logo MySelfieBooth">
+         </a>
       </div>
-
-      <!-- Container -->
+                <!-- Section 4 photo -->
+          <table role="presentation" align="center" valign="top" class="image-table">
+             <tbody>
+                <tr>
+                   <!-- Première image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CwnVM8pKD93/" target="_blank">
+                      <img class="image" alt="369707255_631259045777531_8171012913048138835_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/18013115560722157/thumb/369707255_631259045777531_8171012913048138835_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Deuxième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CwiNkrDKG7l/" target="_blank">
+                      <img class="image" alt="369710619_630251709211598_5962374642370042347_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17999398502038031/thumb/369710619_630251709211598_5962374642370042347_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Troisième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CursfYCqnV0/" target="_blank">
+                      <img class="image" alt="348583334_607893248114111_7071134150613489965_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17884910831887425/thumb/348583334_607893248114111_7071134150613489965_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Quatrième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CtZsKfjo3Rv/" target="_blank">
+                      <img class="image" alt="347444663_588581093378660_7778159767232458402_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17989978136066555/thumb/347444663_588581093378660_7778159767232458402_n.jpg">
+                      </a>
+                   </td>
+                </tr>
+             </tbody>
+          </table>
+          <!-- Section Banierre -->
+          <style>
+             /* Banner */
+             .banierre {
+             background-color: #d4f5ff;
+             color: #000000;
+             padding: 10px;
+             margin-top: 20px;
+             font-weight: bold;
+             font-family: 'Poppins', sans-serif;
+             font-size: 18px;
+             text-align: center;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+             letter-spacing: 1.2px;
+             }
+          </style>
+          <div class="banierre">
+             <p>⚡ Ne manquez pas votre chance : finalisez votre devis aujourd'hui!</p>
+          </div>
       <div class="container">
-         <!-- Devis Section -->
+            <!-- Section Content -->
+          <style>
+             /* Titre principal */
+             .title {
+             color: #000000;
+             font-size: 31px;
+             font-weight: normal;
+             font-family: serif;
+             }
+             /* Texte général */
+             .text {
+             color: #000000;
+             font-size: 15px;
+             line-height: 1.5;
+             }
+             /* Séparateur */
+             .separator {
+             margin: 10px 20px 20px 20px;
+             }
+             /* Nom du client */
+             .client_nom {
+             font-weight: bold;
+             }
+             /* Date de l'évènement */
+             .date_event {
+             font-weight: bold;
+             text-decoration: none;
+             color: inherit;
+             }
+             /* Content Section */
+             .content {
+             background: #eff9ff;
+             color: #252525;
+             padding: 20px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             overflow: hidden;
+             text-align: center;
+                                  margin-top: 10px;
+             }
+          </style>
          <div class="content">
-            <h1>Votre Devis MySelfieBooth</h1>
-            <p>Bonjour <b>[Nom du Client]</b>,</p>
-            <p>Merci de l'intérêt que vous portez à nos services pour votre événement du <b>[Date de l'événement]</b>.</p>
+             <h2 class="reminder">
+               ✉️ Rappel : votre devis expire bientôt !
+             </h2>
+
+             <p>Bonjour <b class="client_nom">[Nom du Client]</b>,</p>
+
+             <p class="text">
+                 Nous vous avons récemment envoyé une offre pour la réservation de votre photobooth. ⏳
+             </p>
+
+             <p class="text">
+                 Nous serions ravis de contribuer à faire de votre événement du
+                 <b><a class="date_event">[date de l'évènement]</a></b> une journée inoubliable !
+             </p>
+
+             <p class="text">
+                 💡 N'attendez pas trop pour valider votre devis et garantir la disponibilité de notre matériel. Nous mettons tout en œuvre pour que votre événement soit une réussite !
+             </p>
+
+             <p class="text">
+                 Si vous avez des questions ou besoin d'assistance pour finaliser votre réservation, contactez-nous. Nous sommes là pour vous aider ! 🤝
+             </p>
          </div>
-
-         <!-- Photos Section -->
-         <table class="image-table">
-            <tr>
-               <td><img src="[Photo1]" alt="Photo 1" width="150"></td>
-               <td><img src="[Photo2]" alt="Photo 2" width="150"></td>
-               <td><img src="[Photo3]" alt="Photo 3" width="150"></td>
-               <td><img src="[Photo4]" alt="Photo 4" width="150"></td>
-            </tr>
-         </table>
-
-         <!-- Bannière -->
-         <div class="banner">Réservez aujourd'hui, payez plus tard !</div>
-
-         <!-- Payment Section -->
-         <div class="payment-section">
-            <h2>💳 Modalités de Paiement</h2>
-            <p>
-               Acompte : <b>[Montant]</b> à régler avant le <b>[Date]</b>.<br>
-               Moyens de paiement : virement, PayPal, ou espèces.
-            </p>
-         </div>
-
-         <!-- Final Message -->
-         <div class="final-message">
-            <p class="highlight">⏳ Ne manquez pas votre date, réservez dès maintenant !</p>
-            <p>Souvenirs inoubliables, animation personnalisée !</p>
-         </div>
-
-         <!-- Testimonial -->
-         <div class="testimonial">
-            <p>"Une expérience incroyable ! Nos invités ont adoré le photobooth."</p>
-            <p class="author">- Julie & Thomas</p>
-         </div>
-
-         <!-- Contact Section -->
-         <div class="contact-block">
-            📞 Appelez-nous : <a href="tel:0699733998">0699733998</a><br>
-            ✉️ Email : <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a>
-         </div>
+          <!-- Section Acompte Particulier -->
+          <style>
+             /* Payment Sections */
+             .acompte_particulier, .acompte_entreprise {
+             padding: 20px;
+             box-shadow: 0 4px 10px rgb(0 0 0 / 32%);
+             font-family: 'Poppins', sans-serif;
+             }
+             .acompte_particulier , .acompte_entreprise{
+             background: #003450;
+             color: #ffffff;
+             }
+             .acompte_particulier h2, .acompte_entreprise h2 {
+             font-size: 24px;
+             font-weight: bold;
+             text-align: center;
+             color: #ffffff;
+             }
+             .acompte_particulier p, .acompte_entreprise p {
+             font-size: 16px;
+             line-height: 1.6;
+             text-align: center;
+             }
+             .acompte_particulier a, .acompte_entreprise a {
+             color: #ff6600;
+             font-weight: bold;
+             text-decoration: none;
+             }
+          </style>
+          <div class="acompte_particulier">
+             <h2>💳 Acompte et Modalités de Paiement</h2>
+             <p>
+                Pour réserver <a class="txt_reduc">[et bénéficier de la reduction de ]</a>
+                <a class="reduc_all"><b>[REDUC]€</b></a>
+                , un acompte de <b class="acompte">[ACCOMPTE]</b>
+                est à verser avant le <b class="date_butoire">[DATE BUTOIRE]</b>.
+                Le solde devra être réglé lors de la livraison ou au moins 2 jours avant l’événement par virement.
+             </p>
+             <hr>
+             <p>
+                <strong>Moyens de paiement :</strong>
+             <ul style="list-style-type: none; padding: 0; font-size: 16px; line-height: 1.6; color: #ffffff; text-align: center;">
+                <li>💳 <strong>Virement bancaire</strong> (RIB dans le devis)</li>
+                <li>📱 <strong>Paylib</strong> <a href="tel:0699733998">0699733998</a> </li>
+                <li>🅿️ <strong>Paypal :</strong> <a href="https://paypal.me/3dmouvstudio" style="color: #ff6600; font-weight: bold;">paypal.me/3dmouvstudio</a></li>
+                <li>🏙️ <strong>Espèces</strong> (Versailles / Vernon / Melun)</li>
+             </ul>
+             </p>
+          </div>
+          <div class="acompte_entreprise">
+             <h2>🏢 Modalités de Paiement </h2>
+             <p>Effectuez votre paiement par <strong>virement bancaire</strong> (RIB dans le devis) ou via un autre mode de paiement.</p>
+    </div>
+          <!-- Section Text Fin -->
+          <style>
+             .text_fin {
+             background: #ffffff;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             text-align: center;
+             }
+             .message {
+             font-size: 18px;
+             line-height: 1.5;
+             margin-bottom: 15px;
+             }
+             .highlight {
+             color: #ff0000;
+             font-weight: bold;
+             }
+             /* Content Section */
+          </style>
+          <div class="text_fin">
+             <p class="message">
+                🚀 Nos dates se remplissent rapidement, ne manquez pas l’occasion d’ajouter une touche inoubliable à votre événement.
+             </p>
+             <p class="message">
+                ✅ Souvenirs instantanés, animation fun et 100% personnalisée !
+             </p>
+             <p class="message highlight">
+                ⏳ Places limitées, réservez dès aujourd’hui pour garantir votre date.
+             </p>
+          </div>
+          <!-- Section Avis Client -->
+          <style>
+             /* Styles pour la section Avis Clients */
+             .avis_clients {
+             background: #f1fff2;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             text-align: center;
+             border: solid 10px #9cdf9c;
+             }
+             .avis_clients h2 {
+             color: #310033;
+             font-size: 24px;
+             font-weight: bold;
+             }
+             .avis_clients p {
+             font-size: 18px;
+             font-style: italic;
+             color: #333;
+             }
+             .avis_clients p:last-child {
+             font-size: 16px;
+             font-weight: bold;
+             color: #ff6600;
+             }
+          </style>
+      <div class="avis_clients">
+         <h2> Avis de nos clients<br>⭐⭐⭐⭐⭐</h2>
+         <p>
+            "Le Voguebooth était absolument incroyable ! Nos invités ont adoré cette animation originale, et les souvenirs sont splendides. Merci à toute l'équipe pour leur professionnalisme et leur énergie. Notre mariage a été encore plus magique grâce à vous !"
+         </p>
+         <p>Anjali & Raj - 01/07/2024</p>
       </div>
-
-      <!-- Footer -->
+      </div>
+      <!-- Section Contact -->
+      <div class="contact_block">
+         <p class="contact_title">📞 Une question ? Contactez-nous!</p>
+         <p class="contact_info">
+            📱 <strong>Téléphone :</strong> <a href="tel:0699733998" class="contact_link">0699733998</a><br>
+            ✉️ <strong>Email :</strong> <a href="mailto:contact@myselfiebooth-paris.fr" class="contact_link">contact@myselfiebooth-paris.fr</a>
+         </p>
+      </div>
+      <!-- Section footer -->
       <div class="footer">
-         <p>© 2025 MySelfieBooth - Tous droits réservés.</p>
-         <p><a href="#">Se désabonner</a></p>
+         <p>© 2025 MySelfieBooth - Tous droits réservés</p>
+         <p>Envoyé à : <a class="mail_client">{{ client_email }}</a></p>
+         <a class="mail_desabonnement" href="#">Se désabonner</a>
       </div>
    </body>
 </html>
