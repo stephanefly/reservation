@@ -6,63 +6,58 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from datetime import datetime, timedelta
 from app.module.mail.send_mail_event import send_mail_event
+from time import sleep
 
+def process_events(days_offset, current_status, new_status, email_template, update_product=False, apply_discount=False):
+    date_limite = datetime.now() - timedelta(days=days_offset)
+    lst_event_to_relance = Event.objects.filter(
+        client__autorisation_mail=True,
+        created_at=date_limite.date(),
+        signer_at__isnull=True,
+        status=current_status,
+        client__raison_sociale=False,
+    ).order_by('created_at')
+
+    for event in lst_event_to_relance:
+        if update_product:
+            event.event_product.Phonebooth = True
+            event.event_product.Phonebooth_reduc_prix = 50
+            event.event_product.save()
+        if apply_discount:
+            event.reduc_all += 50
+            event.prix_proposed -= 50
+            event.client.nb_relance_devis = 9
+
+        send_mail_event(event, email_template)
+        event.status = new_status
+        event.save()
+        event.client.nb_relance_devis += 1
+        event.client.save()
+        sleep(20)
 
 
 def choose_to_rappel_devis_client():
-    # Calcul de la date de J+3
-    date_limite = datetime.now() - timedelta(days=2)
+    process_events(2, 'Sended', 'First Rappel', 'rappel_devis')
 
-    # Récupérer tous les événements non signés, créés avant J-3 (inclus)
-    lst_event_to_relance = Event.objects.filter(
-        created_at__date__lte=date_limite.date(),
-        signer_at__isnull=True,
-        status= 'Sended',
-        client__raison_sociale=False,
-    ).order_by('created_at')
 
-    for event_to_relance in lst_event_to_relance:
-        send_mail_event(event_to_relance, 'rappel_devis')
-        event_to_relance.status = 'Resended'
-        event_to_relance.save()
-        event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
-        event_to_relance.client.save()
-        time.sleep(30)  # Pause de 30 sec
+def choose_to_last_rappel_devis_client():
+    process_events(5, 'First_Rappel', 'Last Rappel', 'last_rappel_devis')
 
 
 def choose_to_prolonger_devis_client():
-    pass
+    process_events(8, 'Last Rappel', 'Prolongation', 'prolongation_devis')
+
+
+def choose_to_temoignage_devis_client():
+    process_events(10, 'Prolongation', 'Temoignage', 'temoingnage_client_devis')
 
 
 def choose_to_phonebooth_offert_devis_client():
-    pass
-
-
-def choose_to_prolonger_devis_client():
-    pass
+    process_events(12, 'Temoignage', 'Phonebooth Offert', 'phonebooth_offert_devis', update_product=True)
 
 
 def choose_to_last_chance_devis_client():
-    # Calcul de la date de J+8
-    date_limite = datetime.now() - timedelta(days=12)
-
-    # Récupérer tous les événements non signés, créés avant J-8 (inclus)
-    lst_event_to_relance = Event.objects.filter(
-        created_at__date__lte=date_limite.date(),
-        signer_at__isnull=True,
-        status='Resended',
-        client__raison_sociale=False,
-    ).order_by('created_at')
-
-    for event_to_relance in lst_event_to_relance[:3]:
-        event_to_relance.reduc_all = event_to_relance.reduc_all + 50
-        event_to_relance.prix_proposed = event_to_relance.prix_proposed - 50
-        event_to_relance.save()
-        send_mail_event(event_to_relance, 'last_chance_devis')
-        event_to_relance.client.nb_relance_devis = event_to_relance.client.nb_relance_devis + 1
-        event_to_relance.client.save()
-        time.sleep(20)  # Pause de 30 sec
-
+    process_events(15, 'Phonebooth Offert', 'Last Chance', 'last_chance_devis', apply_discount=True)
 
 
 def choose_to_relance_espace_client():

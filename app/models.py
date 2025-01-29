@@ -200,6 +200,7 @@ class Event(models.Model):
         ('Presta FINI', 'Presta FINI'),
         ('Post Presta', 'Post Presta'),
         ('Resended', 'Resended'),
+        ('Last Chance', 'Last Chance'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
 
