@@ -5,6 +5,8 @@ from ..models import Event, EventAcompte, EventTemplate, EmailTracking
 from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
 from django.utils.timezone import now
+
+from ..module.mail.test_mail_devis import test_mail_devis
 from ..module.trello.update_data_card import update_option_labels_trello, update_trello_date
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
