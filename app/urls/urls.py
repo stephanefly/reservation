@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from ..views import tableau_de_bord, post_presta, relance_avis_client, presta_fini, update_post_presta_status, \
-    desabonner, action_once
+    desabonner, action_once, track_devis
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -23,4 +23,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # URL de déconnexion
 
     path('backend/action_once', action_once, name='action_once'),
+    path('track_devis/<uuid:uuid>/', track_devis, name='track_devis'),
 ]

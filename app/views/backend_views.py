@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
-from ..models import Event, EventAcompte, EventTemplate
+from ..models import Event, EventAcompte, EventTemplate, EmailTracking
 
 from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
-from ..module.mail.test_mail_devis import test_mail_devis
-
+from django.utils.timezone import now
 from ..module.trello.update_data_card import update_option_labels_trello, update_trello_date
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
@@ -165,55 +164,39 @@ def envoi_mail_devis(request, event_id):
         # Redirigez vers la page de confirmation si la méthode n'est pas POST
         return redirect('confirmation_envoi_mail', event_id=event_id)
 
-def view_test_mail_devis(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    test_mail_devis(event)
-    return redirect('info_event', id=event.id)
 
 def rappel_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'rappel_devis')
-    event.status = 'First Rappel'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
-    return redirect('info_event', id=event.id)
-
-def last_rappel_devis_client(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    send_mail_event(event, 'last_rappel_devis')
-    event.status = 'Last Rappel'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
     return redirect('info_event', id=event.id)
 
 def prolongation_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'prolongation_devis')
-    event.status = 'Prolongation'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
     return redirect('info_event', id=event.id)
 
 def phonebooth_offert_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'phonebooth_offert_devis')
-    event.status = 'Phonebooth Offert'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
     return redirect('info_event', id=event.id)
 
 def last_chance_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'last_chance_devis')
-    event.status = 'Last Chance'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
     return redirect('info_event', id=event.id)
 
 def action_once(request):
     return redirect('lst_devis')
+
+def track_devis(request, uuid):
+    try:
+        tracking = EmailTracking.objects.get(uuid=uuid)
+        tracking.opened = True
+        tracking.opened_at = now()
+        tracking.save()
+    except EmailTracking.DoesNotExist:
+        pass
+
+    # Retourner une image pixel transparente
+    pixel = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B'
+    return HttpResponse(pixel, content_type="image/gif")

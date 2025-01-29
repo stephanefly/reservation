@@ -6,6 +6,7 @@ from email.utils import formataddr
 from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
 
+
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail

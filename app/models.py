@@ -1,3 +1,4 @@
+import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -234,3 +235,11 @@ class Cost(models.Model):
     ]
     frecency = models.CharField(max_length=50, choices=FREQUENCY, default='Ponctuel', null=True)
 
+
+class EmailTracking(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    event_traced = models.IntegerField(null=True, blank=True)
+    status_devis = models.CharField(max_length=100, null=True)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    opened = models.BooleanField(default=False)
+    opened_at = models.DateTimeField(null=True, blank=True)

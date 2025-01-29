@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from app.models import EmailTracking
+
 
 def complete_mail(event, soup, mail_type):
     # Complétion des champs communs
@@ -93,4 +95,14 @@ def _handle_unsubscribe(event, soup):
     soup.find('a', class_='mail_client').string = str(event.client.mail)
 
 def _handle_tracer(event, soup):
-    pass
+
+    # Enregistrer le tracking en base de données
+    email_traced = EmailTracking.objects.create(
+        event_traced=event.id,
+        status_devis=event.status,
+    )
+
+    tracer_link = f"http://127.0.0.1:8000/track/{email_traced.uuid}"
+
+    # Trouver l'élément avec la classe `traceur_devis`
+    soup.find('img', class_='traceur_devis')['src'] = tracer_link
