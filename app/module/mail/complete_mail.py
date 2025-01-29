@@ -13,6 +13,7 @@ def complete_mail(event, soup, mail_type):
         _handle_reduc(event, soup, mail_type)
         _handle_date_butoire(event, soup, mail_type)
         _handle_acompte(event, soup)
+        _handle_tracer(event, soup)
 
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
@@ -90,3 +91,6 @@ def _handle_unsubscribe(event, soup):
     unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event_token}"
     soup.find('a', class_='mail_desabonnement')['href'] = unsubscribe_url
     soup.find('a', class_='mail_client').string = str(event.client.mail)
+
+def _handle_tracer(event, soup):
+    pass
