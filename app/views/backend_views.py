@@ -165,24 +165,54 @@ def envoi_mail_devis(request, event_id):
         return redirect('confirmation_envoi_mail', event_id=event_id)
 
 
+def view_test_mail_devis(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    test_mail_devis(event)
+    return redirect('info_event', id=event.id)
+
 def rappel_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'rappel_devis')
+    event.status = 'First Rappel'
+    event.save()
+    event.client.nb_relance_devis += 1
+    event.client.save()
+    return redirect('info_event', id=event.id)
+
+def last_rappel_devis_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'last_rappel_devis')
+    event.status = 'Last Rappel'
+    event.save()
+    event.client.nb_relance_devis += 1
+    event.client.save()
     return redirect('info_event', id=event.id)
 
 def prolongation_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'prolongation_devis')
+    event.status = 'Prolongation'
+    event.save()
+    event.client.nb_relance_devis += 1
+    event.client.save()
     return redirect('info_event', id=event.id)
 
 def phonebooth_offert_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'phonebooth_offert_devis')
+    event.status = 'Phonebooth Offert'
+    event.save()
+    event.client.nb_relance_devis += 1
+    event.client.save()
     return redirect('info_event', id=event.id)
 
 def last_chance_devis_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'last_chance_devis')
+    event.status = 'Last Chance'
+    event.save()
+    event.client.nb_relance_devis += 1
+    event.client.save()
     return redirect('info_event', id=event.id)
 
 def action_once(request):

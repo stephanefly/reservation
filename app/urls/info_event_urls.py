@@ -4,7 +4,7 @@ from ..views import (
     generate_facture_pdf, confirmation_val_devis, confirmation_del_devis,
     del_devis, refused_devis, confirmation_envoi_mail, envoi_mail_devis, rappel_devis_client,
     prolongation_devis_client, phonebooth_offert_devis_client, last_chance_devis_client, last_rappel_devis_client,
-    view_test_mail_devis
+    view_test_mail_devis,
 )
 
 urlpatterns = [
