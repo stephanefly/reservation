@@ -99,19 +99,19 @@ def get_mail_template(event, mail_type):
     elif mail_type == 'validation':
         # Mail de confirmation de réservation envoyé au client
         subject = "📸 Votre prestation est réservée : préparez-vous à vous éclater ! ✨"
-        template_name = "client/mail_validation.html"
+        template_name = "clients/mail_validation.html"
         need_devis = False
 
     elif mail_type == 'relance_espace_client':
         # Mail pour relancer un client qui n'a pas complété les informations nécessaires dans son espace client
         subject = "📸 Informations manquantes pour votre événement ✨"
-        template_name = "client/mail_relance_espace_client.html"
+        template_name = "clients/mail_relance_espace_client.html"
         need_devis = False
 
     elif mail_type == 'send_media':
         # Mail pour envoyer les photos finales au client après l'événement
         subject = "📸 Vos photos sont là ! " + str(event.client.nom) + " ✨"
-        template_name = "client/mail_send_media.html"
+        template_name = "clients/mail_send_media.html"
         need_devis = False
         # Marquer les médias comme envoyés dans la base de données
         event.event_post_presta.sent = True
@@ -120,7 +120,7 @@ def get_mail_template(event, mail_type):
     elif mail_type == 'relance_avis':
         # Mail pour demander au client de donner son avis sur la prestation
         subject = "📸 Votre avis compte ! ✨"
-        template_name = "client/mail_relance_avis.html"
+        template_name = "clients/mail_relance_avis.html"
         need_devis = False
         # Mise à jour du nombre de relances pour avis effectuées dans la base de données
         event.client.nb_relance_avis = event.client.nb_relance_avis + 1
