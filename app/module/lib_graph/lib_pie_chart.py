@@ -125,17 +125,13 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     df_all_ok['Date-Event'] = pd.to_datetime(df_all_ok['Date-Event'])
     df_all_cost['Date-Event'] = pd.to_datetime(df_all_cost['Date-Event'])
 
-    # Regroupement par mois pour les revenus
-    df_ok_monthly = df_all_ok[df_all_ok['Date-Event'].dt.year == year].groupby(df_all_ok['Date-Event'].dt.month).agg(
-        {'Prix': 'sum'}).reset_index()
-
     # Regroupement par mois et type pour les dépenses
     df_cost_monthly = df_all_cost[df_all_cost['Date-Event'].dt.year == year].groupby(
         [df_all_cost['Date-Event'].dt.month, 'Type']).agg({'Cost': 'sum'}).reset_index()
     df_cost_monthly_pivot = df_cost_monthly.pivot(index='Date-Event', columns='Type', values='Cost').fillna(0)
 
     # Ajouter les mois à la source de données
-    df_cost_monthly_pivot['months'] = [f"{month}-2024" for month in df_cost_monthly_pivot.index]
+    df_cost_monthly_pivot['months'] = [f"{month}-202X" for month in df_cost_monthly_pivot.index]
 
     # Obtenir la liste des noms de colonnes pour les types de coûts
     # Générer dynamiquement une liste de couleurs basée sur le nombre de stackers
@@ -143,16 +139,17 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     if len(stackers) > 20:
         raise ValueError("Il y a plus de types de coûts que de couleurs disponibles dans la palette Category20.")
     elif len(stackers) == 0:
-        colors = 'green'
+        colors = ['green']  # Doit être une liste
+    elif len(stackers) == 1:
+        colors = ["#1f77b4"]
     else:
-        colors = Category20[len(stackers)] if len(stackers) > 2 else ["#1f77b4"]  # Exemple de couleur par défaut
+        colors = Category20[len(stackers)]
 
     # Création de la source de données pour le graphique
     source = ColumnDataSource(df_cost_monthly_pivot)
-    source_ok = ColumnDataSource(df_ok_monthly)
 
     # Configuration des mois pour l'axe x
-    months = [f"{month}-2024" for month in range(1, 13)]
+    months = [f"{month}-202X" for month in range(1, 13)]
 
     p = figure(x_range=FactorRange(*months), width=380, height=200,
                title=f"Répartition des coûts par Type pour chaque Mois {year}",
