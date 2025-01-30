@@ -84,7 +84,7 @@ def _handle_reduc(event, soup, mail_type):
 
 def _handle_send_media(event, soup):
     soup.find('b', class_='client_nom').string = str(event.client.nom)
-    a_tag = soup.find('a', class_='link_media_shared')
+    a_tag = soup.find('a', class_='cta-button btn-download')
     a_tag['href'] = str(event.event_template.link_media_shared)
 
 
