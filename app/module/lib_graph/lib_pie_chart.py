@@ -47,7 +47,7 @@ def tracer_figure_pie_chart_all(df_all_ok, df_all_cost, year):
         ("Rentabilité", "@percentage"),
     ]
     # Création du diagramme
-    p = figure(title=f"Résultats {year}", width=380, height=200,
+    p = figure(title=f"Résultats {year}", width=350, height=250,
                toolbar_location=None, tools='hover', tooltips=TOOLTIPS,
                x_range=(-1, 1))
 
@@ -81,14 +81,15 @@ def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
     # Calculs individuels des types de coûts
     membre = df_cost[df_cost['Type'] == "Membre"]['Cost'].sum()
     invest = df_cost[df_cost['Type'] == "Invest"]['Cost'].sum()
+    marketing = df_cost[df_cost['Type'] == "Marketing"]['Cost'].sum()
     charge = df_cost[df_cost['Type'] == "Charge"]['Cost'].sum()
     delegation = df_cost[df_cost['Type'] == "Delegation"]['Cost'].sum()
 
     # Préparation des données pour le diagramme
-    total = net_total_year + membre + invest + charge + delegation
-    values = [ charge,  invest,membre, net_total_year, delegation,]
-    sectors=['Charge', 'Invest','Membre',  'Bénéfice', 'Delegation']
-    color = [ 'red', 'violet','blue',  'green', 'orange']
+    total = net_total_year + membre + invest + charge + delegation + marketing
+    values = [ charge,  invest,membre, net_total_year, marketing, delegation,]
+    sectors=['Charge', 'Invest','Membre',  'Bénéfice', 'Marketing','Delegation']
+    color = [ 'red', '#9e931b','blue',  'green', 'violet' , 'orange']
     proportions = [value / total for value in values]
     angles = [prop * 2 * pi for prop in proportions]
 
@@ -104,7 +105,7 @@ def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
     source = ColumnDataSource(data=data)
 
     # Création du diagramme
-    p = figure(title="Répartition des coûts et bénéfice pour l'année", width=380, height=200, tools="hover",
+    p = figure(title="Répartition des coûts et bénéfice pour l'année", width=350, height=250, tools="hover",
                tooltips="@sectors: @value{0.00} €", x_range=(-1, 1.0))
 
     p.wedge(x=0, y=1, radius=0.4,
@@ -121,6 +122,14 @@ def tracer_figure_pie_chart_split(df_all_ok, df_all_cost, year):
 
 
 def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
+    TOOLTIPS = [
+        ("Invest", "@Invest{0.00} €"),
+        ("Delegation", "@Delegation{0.00} €"),
+        ("Marketing", "@Marketing{0.00} €"),
+        ("Membre", "@Membre{0.00} €"),
+        ("Charge", "@Charge{0.00} €"),
+    ]
+
     # Conversion des dates et regroupement par mois et type de coût
     df_all_ok['Date-Event'] = pd.to_datetime(df_all_ok['Date-Event'])
     df_all_cost['Date-Event'] = pd.to_datetime(df_all_cost['Date-Event'])
@@ -136,30 +145,36 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
     # Obtenir la liste des noms de colonnes pour les types de coûts
     # Générer dynamiquement une liste de couleurs basée sur le nombre de stackers
     stackers = df_cost_monthly_pivot.columns[:-1].tolist()  # Tous les types de coûts sans la colonne 'months'
-    if len(stackers) > 20:
-        raise ValueError("Il y a plus de types de coûts que de couleurs disponibles dans la palette Category20.")
-    elif len(stackers) == 0:
-        colors = ['green']  # Doit être une liste
-    elif len(stackers) == 1:
-        colors = ["#1f77b4"]
-    else:
-        colors = Category20[len(stackers)]
+    if "Invest" in stackers:
+        stackers.remove("Invest")  # Supprime "Invest" s'il est présent
+        stackers.append("Invest")  # Ajoute "Invest" à la fin
+
+    # Dictionnaire associant chaque stacker à une couleur spécifique
+    color_dict = {
+        'Charge': '#d62728',  # Rouge
+        'Membre': '#1f77b4',  # Bleu
+        'Marketing': '#a71fb4',  # Bleu
+        'Delegation': '#ff7f0e',  # Orange
+        'Invest': '#9e931b',  # Vert
+    }
+    colors = [color_dict[stacker] for stacker in stackers]
 
     # Création de la source de données pour le graphique
     source = ColumnDataSource(df_cost_monthly_pivot)
 
-    # Configuration des mois pour l'axe x
+    # Définition des mois
     months = [f"{month}-202X" for month in range(1, 13)]
 
-    p = figure(x_range=FactorRange(*months), width=380, height=200,
+    p = figure(x_range=FactorRange(*months), width=350, height=250,
                title=f"Répartition des coûts par Type pour chaque Mois {year}",
-               toolbar_location=None, tools="")
+               toolbar_location=None, tools='hover', tooltips=TOOLTIPS)
 
     # Ajout du graphique à barres empilées
-    p.vbar_stack(stackers, x='months', width=0.9, color=colors, source=source)
+    p.vbar_stack(stackers, x='months', width=0.6, color=colors, source=source)
+
 
     # Configuration des propriétés visuelles
-    p.y_range = Range1d(0, 4000)
+    p.y_range = Range1d(0, 6000)
     p.y_range.start = 0
     p.x_range.range_padding = 0.1
     p.xgrid.grid_line_color = None

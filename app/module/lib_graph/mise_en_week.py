@@ -64,7 +64,7 @@ def mise_en_week_avoir(df_all_week, df_cost_all):
 
     df_brut_net = df_all_week.join(df_week_cost_all.set_index('Date-Event'), on='Date-Event', how='outer').fillna(0)
 
-    df_brut_net = df_brut_net[['Date-Event', 'Cost', 'Prix', 'Charge', 'Invest', 'Membre', 'Delegation']]
+    df_brut_net = df_brut_net[['Date-Event', 'Cost', 'Prix', 'Charge', 'Invest', 'Membre', 'Marketing', 'Delegation']]
 
     df_brut_net['BeneficeNet'] = df_brut_net['Prix']-df_brut_net['Cost']
 

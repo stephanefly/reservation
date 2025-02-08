@@ -3,6 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
+
 class Client(models.Model):
     nom = models.CharField(max_length=100)
     mail = models.CharField(max_length=100)
@@ -223,6 +224,7 @@ class Cost(models.Model):
         ('Membre', 'Membre'),
         ('Invest', 'Invest'),
         ('Charge', 'Charge'),
+        ('Marketing', 'Marketing'),
         ('Delegation', 'Delegation'),
     ]
     type_cost = models.CharField(max_length=255, default='Charge', choices=TYPE, null=True)
