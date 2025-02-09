@@ -23,21 +23,6 @@ def get_pcloud_event_folder_data(event_name: str) -> dict:
             return folder_data
 
 
-def get_pcloud_link_event_folder(folder_data: dict) -> str:
-    """
-    Retrieve the public link for a folder by its ID.
-    """
-    url = f"{API_PCLOUD_URL}/getfolderpublink"
-    params = {
-        'access_token': ACCESS_TOKEN,
-        'folderid': folder_data["folderid"]
-    }
-
-    response = requests.get(url, params=params)
-    link_event_folder = response.json()["link"]
-    return link_event_folder
-
-
 def create_pcloud_event_folder(event):
     """
     Create a folder on the pCloud server.
