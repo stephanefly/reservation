@@ -12,7 +12,7 @@ def process_events(days_offset, current_status, new_status, email_template, upda
     date_limite = datetime.now() - timedelta(days=days_offset)
     lst_event_to_relance = Event.objects.filter(
         client__autorisation_mail=True,
-        created_at=date_limite.date(),
+        created_at__date=date_limite.date(),
         signer_at__isnull=True,
         status=current_status,
         client__raison_sociale=False,
