@@ -3,7 +3,7 @@ PRIX_PRODUITS = {
     'photobooth': 450,
     'photobooth_auto': 350,
 
-    'miroirbooth3h': 500,
+    'miroirbooth3h': 450,
     'miroirbooth': 550,
 
     'videobooth3h': 400,
