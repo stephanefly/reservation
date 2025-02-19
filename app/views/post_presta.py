@@ -69,18 +69,12 @@ def send_media(request, event_id):
     folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
 
     if "Prints" in folder_to_send:
-        # TODO if il y a dossier Client Event Prints and if not timelaps exist
         print_folder_data = get_pcloud_print_folder(folder_data)
         create_timelaps(event, folder_data, print_folder_data)
-        event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
-        event.event_template.save()
-        send_mail_event(event, 'send_media')
 
-    elif folder_to_send == ["360"]:
-        event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
-        event.event_template.save()
-        send_mail_event(event, 'send_media')
-
+    event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
+    event.event_template.save()
+    send_mail_event(event, 'send_media')
 
     find_pcloud_empty_folder(folder_data)
     event.event_post_presta.sent = True
