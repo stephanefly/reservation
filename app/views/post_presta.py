@@ -68,7 +68,7 @@ def send_media(request, event_id):
     folder_to_send = check_media_to_send(event)
     folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
 
-    if "Prints" in folder_to_send:
+    if "Prints" in folder_to_send or "360" in folder_to_send:
         # TODO if il y a dossier Client Event Prints and if not timelaps exist
         print_folder_data = get_pcloud_print_folder(folder_data)
         create_timelaps(event, folder_data, print_folder_data)
