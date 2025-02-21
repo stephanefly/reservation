@@ -2,203 +2,234 @@
 {% block content %}
 
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier Moderne</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+    .acompte-ok {
+        background: #28a745 !important;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+    }
 
-        body {
-            text-align: center;
-            padding: 20px;
-            color: white;
-        }
+    .calendar-container {
+        width: auto;
+        margin: auto;
+        background: white;
+        color: black;
+        padding: 10px;
+        margin: 0px 15px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
-        .calendar-container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            color: black;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 24px;
+        font-weight: bold;
+        padding: 15px;
+        background: #007bff;
+        color: white;
+        border-radius: 10px;
+    }
+
+    .calendar-header button {
+        padding: 10px;
+        border: none;
+        background-color: white;
+        color: #007bff;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+
+    .calendar-header button:hover {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .day-name {
+        font-weight: bold;
+        padding: 10px 0px;
+        background: #77b1ff;
+        color: white;
+        border: 1px solid #ddd;
+    }
+
+    .day {
+        border: 1px solid #ddd;
+        font-size: 18px;
+        min-height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.3s;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+    .day:hover {
+        background: #f4f4f4;
+    }
+
+    .today {
+        background: linear-gradient(135deg, #ffcc00, #ff8800);
+        color: black;
+        font-weight: bold;
+        border-radius: 10px;
+        border-color: #ffc800;
+        border-width: thick;
+    }
+
+    .selected {
+        color: #655700 !important;
+        font-weight: bold;
+        border-radius: 10px;
+        border-width: thick;
+    }
+
+    @media (max-width: 768px) {
+        .day {
+            font-size: 14px;
         }
 
         .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            padding: 15px;
-            background: #007bff;
-            color: white;
-            border-radius: 10px;
+            font-size: 20px;
         }
+    }
+    #eventDetails {
+        width: 95%;
+        margin: auto;
+    }
 
-        .calendar-header button {
-            padding: 10px;
-            border: none;
-            background-color: white;
-            color: #007bff;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
+</style>
 
-        .calendar-header button:hover {
-            background-color: #0056b3;
-            color: white;
-        }
 
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .day-name {
-            font-weight: bold;
-            padding: 10px 0px;
-            background: #77b1ff;
-            color: white;
-            border: 1px solid #ddd;
-        }
-
-        .day {
-            border: 1px solid #ddd;
-            font-size: 18px;
-            min-height: 80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.3s;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-
-        .day:hover {
-            background: #f4f4f4;
-        }
-
-        .today {
-            background: linear-gradient(135deg, #ffcc00, #ff8800);
-            color: black;
-            font-weight: bold;
-            border-radius: 10px;
-        }
-
-        .selected {
-            background: #007bff !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .day {
-                font-size: 14px;
-            }
-
-            .calendar-header {
-                font-size: 20px;
-            }
-        }
-    </style>
-</head>
-
-    <div class="calendar-container">
-        <div class="calendar-header">
-            <button onclick="prevMonth()">◀</button>
-            <span id="monthYear"></span>
-            <button onclick="nextMonth()">▶</button>
-        </div>
-        <div class="calendar-days">
-            <!-- Jours de la semaine -->
-            <div class="day-name">Lun</div>
-            <div class="day-name">Mar</div>
-            <div class="day-name">Mer</div>
-            <div class="day-name">Jeu</div>
-            <div class="day-name">Ven</div>
-            <div class="day-name">Sam</div>
-            <div class="day-name">Dim</div>
-        </div>
-        <div class="calendar-days" id="calendarDays"></div>
+<div class="calendar-container">
+    <div class="calendar-header">
+        <button onclick="prevMonth()">◀</button>
+        <span id="monthYear"></span>
+        <button onclick="nextMonth()">▶</button>
     </div>
+    <div class="calendar-days">
+        <!-- Jours de la semaine -->
+        <div class="day-name">Lun</div>
+        <div class="day-name">Mar</div>
+        <div class="day-name">Mer</div>
+        <div class="day-name">Jeu</div>
+        <div class="day-name">Ven</div>
+        <div class="day-name">Sam</div>
+        <div class="day-name">Dim</div>
+    </div>
+    <div class="calendar-days" id="calendarDays"></div>
+</div>
+<hr>
+    <!-- Zone d'affichage des détails d'événement -->
+    <div id="eventDetails"></div>
 
-    <script>
-        let currentDate = new Date();
-        let selectedDay = null;
+<script>
+    let currentDate = new Date();
+    let selectedDay = null;
 
-        function renderCalendar() {
-            const monthYear = document.getElementById("monthYear");
-            const daysContainer = document.getElementById("calendarDays");
+    // Récupération des événements injectés depuis Django (évite les erreurs si vide)
+    let events = {{ events_data|safe }};
+    if (!Array.isArray(events)) {
+        events = [];
+    }
 
-            // Effacer les jours du mois précédent
-            daysContainer.innerHTML = daysContainer.innerHTML.substring(0, daysContainer.innerHTML.indexOf("</div>") + 6);
+    function renderCalendar() {
+        const monthYear = document.getElementById("monthYear");
+        const daysContainer = document.getElementById("calendarDays");
+        daysContainer.innerHTML = "";
 
-            const month = currentDate.getMonth();
-            const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear();
 
-            monthYear.textContent = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentDate);
+        monthYear.textContent = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentDate);
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const lastDate = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
 
-            const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1; // Ajuste le décalage (Lundi = 0)
+        const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1; // Ajuste pour que lundi soit premier
 
-            for (let i = 0; i < adjustedFirstDay; i++) {
-                const emptyDiv = document.createElement("div");
-                emptyDiv.classList.add("day");
-                daysContainer.appendChild(emptyDiv);
+        // Ajout des cases vides pour aligner le début du mois
+        for (let i = 0; i < adjustedFirstDay; i++) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.classList.add("day", "empty");
+            daysContainer.appendChild(emptyDiv);
+        }
+
+        // Ajout des jours du mois
+        for (let day = 1; day <= lastDate; day++) {
+            const dayDiv = document.createElement("div");
+            dayDiv.classList.add("day");
+            dayDiv.textContent = day;
+
+            let dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+            // Vérifie si la date a un événement "Acompte OK" et ajoute la classe CSS
+            if (events.some(event => event.date === dateStr)) {
+                dayDiv.classList.add("acompte-ok");
             }
 
-            for (let day = 1; day <= lastDate; day++) {
-                const dayDiv = document.createElement("div");
-                dayDiv.classList.add("day");
-                dayDiv.textContent = day;
+        // Ajoute l'écouteur d'événement pour la sélection de la case
+        dayDiv.addEventListener("click", () => selectDay(dayDiv, dateStr));
 
-                if (day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-                    dayDiv.classList.add("today");
-                }
-
-                dayDiv.addEventListener("click", () => selectDay(dayDiv));
-
-                daysContainer.appendChild(dayDiv);
-            }
+            daysContainer.appendChild(dayDiv);
         }
+    }
 
-        function selectDay(dayDiv) {
-            if (selectedDay) {
-                selectedDay.classList.remove("selected");
-            }
-            selectedDay = dayDiv;
-            selectedDay.classList.add("selected");
+    function selectDay(dayDiv, date) {
+    // Supprime la sélection précédente
+    if (selectedDay) {
+        selectedDay.classList.remove("selected");
+    }
+
+    // Ajoute la classe "selected" à la nouvelle case
+    selectedDay = dayDiv;
+    selectedDay.classList.add("selected");
+
+    // Affiche les événements du jour sélectionné
+    showEvents(date);
+}
+
+    function showEvents(date) {
+        const eventDetails = document.getElementById("eventDetails");
+        const eventList = events.filter(event => event.date === date);
+
+        if (eventList.length > 0) {
+            eventDetails.innerHTML = `<h3>📅 Événements du ${date} :</h3>` + '<br>' +
+                eventList.map(e => `<p>📌 <strong>${e.title}</strong> <br> ${e.product} - ${e.ville} (${e.code_postal})</p> `).join('') + '<br>';
+            eventDetails.style.display = "block";
+        } else {
+            eventDetails.innerHTML = "<p>📭 Aucun événement ce jour-là.</p>";
+            eventDetails.style.display = "block";
         }
+    }
 
-        function prevMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        }
-
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        }
-
+    function prevMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
         renderCalendar();
-    </script>
+    }
+
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    }
+
+    renderCalendar();
+</script>
 
 
 
 
-            {% endblock %}
+{% endblock %}

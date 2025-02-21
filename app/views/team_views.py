@@ -101,5 +101,23 @@ def media_collected(request, event_id):
     event.event_post_presta.save()
     return redirect('team_post_presta')
 
+
+
 def calendar(request):
-    return render(request, 'app/team/calendar.html')
+    events_ok = Event.objects.filter(status='Acompte OK')
+
+    # Convertir les événements en format JSON
+    events_data = [
+        {
+            "date": e.event_details.date_evenement.strftime('%Y-%m-%d'),
+            "title": e.client.nom,
+            "product": e.event_product.get_selected_booths(),
+            "ville": e.event_details.ville_evenement,
+            "code_postal": str(e.event_details.code_postal_evenement)[:2],
+        }
+        for e in events_ok
+    ]
+
+    print(events_data)
+
+    return render(request, 'app/team/calendar.html', {'events_data': events_data})
