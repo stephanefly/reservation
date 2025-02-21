@@ -100,3 +100,6 @@ def media_collected(request, event_id):
     event.event_post_presta.collected = True
     event.event_post_presta.save()
     return redirect('team_post_presta')
+
+def calendar(request):
+    return render(request, 'app/team/calendar.html')
