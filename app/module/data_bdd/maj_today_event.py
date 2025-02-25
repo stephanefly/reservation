@@ -14,9 +14,9 @@ def maj_today_event():
     # Calculer la date d'hier
     yesterday = today - timedelta(days=1)
 
-    # Filtrer les événements dont la date est exactement celle d'hier
+    # Filtrer les événements dont la date est hier ou antérieure
     events_before_today = Event.objects.filter(
-        event_details__date_evenement=yesterday
+        event_details__date_evenement__lte=yesterday
     )
 
     for event in events_before_today:
