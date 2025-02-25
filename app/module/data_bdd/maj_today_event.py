@@ -37,23 +37,3 @@ def maj_today_event():
         else:
             event.status = "Refused"
         event.save()  # Ensuite, on sauvegarde l'event après avoir associé post_presta
-
-
-    # Filtrer les événements dont la date est hier ou antérieure, avec le statut "Acompte OK" et signer_at non nul
-    events_before_yesterday = Event.objects.filter(
-        Q(event_details__date_evenement__lte=yesterday) &
-        Q(status="Acompte OK") &
-        Q(signer_at__isnull=False)  # Vérifie que signer_at n'est pas nul
-    )
-    for event in events_before_yesterday:
-        event.status = "Post Presta"
-        post_presta = EventPostPrestation()
-        post_presta.save()
-        event.event_post_presta = post_presta
-        if not get_pcloud_event_folder_data(event):
-            create_pcloud_event_folder(event)
-
-        # On créer le lien de téléchargement
-        create_link_event_folder(event)
-        event.save()
-
