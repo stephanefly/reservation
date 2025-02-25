@@ -3,6 +3,8 @@ from app.models import Event, EventPostPrestation
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import Q
+
+from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data, create_pcloud_event_folder
 from app.module.cloud.share_link import create_link_event_folder
 
 
@@ -26,6 +28,9 @@ def maj_today_event():
             post_presta.save()  # On sauvegarde d'abord le post_presta avant de l'associer à l'event
             event.event_post_presta = post_presta
 
+            if not get_pcloud_event_folder_data(event.event_template.directory_name):
+                create_pcloud_event_folder(event)
+
             # On créer le lien de téléchargement
             create_link_event_folder(event)
 
@@ -45,6 +50,10 @@ def maj_today_event():
         post_presta = EventPostPrestation()
         post_presta.save()
         event.event_post_presta = post_presta
+        if not get_pcloud_event_folder_data(event):
+            create_pcloud_event_folder()
+
+        # On créer le lien de téléchargement
         create_link_event_folder(event)
         event.save()
 
