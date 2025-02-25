@@ -51,7 +51,7 @@ def maj_today_event():
         post_presta.save()
         event.event_post_presta = post_presta
         if not get_pcloud_event_folder_data(event):
-            create_pcloud_event_folder()
+            create_pcloud_event_folder(event)
 
         # On créer le lien de téléchargement
         create_link_event_folder(event)
