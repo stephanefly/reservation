@@ -16,7 +16,8 @@ def maj_today_event():
 
     # Filtrer les événements dont la date est hier ou antérieure
     events_before_today = Event.objects.filter(
-        event_details__date_evenement__lte=yesterday
+        event_details__date_evenement__lte=yesterday,
+        status='Acompte OK',
     )
 
     for event in events_before_today:
