@@ -37,7 +37,7 @@ def maj_today_event():
     # Filtrer les événements dont la date est hier ou antérieure, avec le statut "Acompte OK" et signer_at non nul
     events_before_yesterday = Event.objects.filter(
         Q(event_details__date_evenement__lte=yesterday) &
-        Q(event_status="Acompte OK") &
+        Q(status="Acompte OK") &
         Q(signer_at__isnull=False)  # Vérifie que signer_at n'est pas nul
     )
     for event in events_before_yesterday:
