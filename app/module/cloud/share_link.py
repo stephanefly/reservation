@@ -31,6 +31,6 @@ def get_pcloud_link_event_folder(folder_data: dict) -> str:
 
 def create_link_event_folder(event):
     folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
-    event.event_template.directory_name = get_pcloud_link_event_folder(folder_data)
+    event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
     event.event_template.save()
     event.save()
