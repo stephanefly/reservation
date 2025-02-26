@@ -35,19 +35,18 @@ def create_pcloud_event_folder(event):
         'name': folder_client_name,
     }
 
-    response = requests.get(url, params=params)
-    data = response.json()  # Parse the JSON response
-    if data["result"] == 2004:
+    response = requests.post(url, params=params)
+
+    if response.status_code != 200:
+        return False  # Échec de la requête
+
+    data = response.json()  # Parse le JSON
+
+    # Vérifier si le dossier a été créé ou existe déjà
+    if data["result"] == 0 or data["result"] == 2004:
         return True
 
-    # Ensure the 'metadata' key exists and contains 'contents'
-    elif 'metadata' in data and 'contents' in data['metadata']:
-        for item in data['metadata']['contents']:
-            if item.get('name') == folder_client_name and item.get('isfolder'):
-                return True
-
-    # If no matching folder is found
-    return False
+    return False  # Échec si le dossier n'existe pas et n'a pas été créé
 
 
 def find_pcloud_empty_folder(folder_data: dict):
