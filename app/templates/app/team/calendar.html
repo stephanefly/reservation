@@ -10,6 +10,13 @@
         border-radius: 10px;
     }
 
+    .presta-fini {
+        background: #0c3c18 !important;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
     .calendar-container {
         width: auto;
         margin: auto;
@@ -140,11 +147,11 @@
     let currentDate = new Date();
     let selectedDay = null;
 
-    // Récupération des événements injectés depuis Django (évite les erreurs si vide)
-    let events = {{ events_data|safe }};
-    if (!Array.isArray(events)) {
-        events = [];
-    }
+    // ✅ Correction : Utilisation de `|tojson` pour générer du JSON propre
+    let events_ok = {{ events_ok_data|safe }};
+    let events_presta_fini = {{ events_presta_fini_data|safe }};
+
+    console.log("📅 Événements chargés :", { events_ok, events_presta_fini });
 
     function renderCalendar() {
         const monthYear = document.getElementById("monthYear");
@@ -153,22 +160,18 @@
 
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
-
         monthYear.textContent = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentDate);
 
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
+        const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
 
-        const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1; // Ajuste pour que lundi soit premier
-
-        // Ajout des cases vides pour aligner le début du mois
         for (let i = 0; i < adjustedFirstDay; i++) {
             const emptyDiv = document.createElement("div");
             emptyDiv.classList.add("day", "empty");
             daysContainer.appendChild(emptyDiv);
         }
 
-        // Ajout des jours du mois
         for (let day = 1; day <= lastDate; day++) {
             const dayDiv = document.createElement("div");
             dayDiv.classList.add("day");
@@ -176,59 +179,42 @@
 
             let dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
-            // Vérifie si la date a un événement "Acompte OK" et ajoute la classe CSS
-            if (events.some(event => event.date === dateStr)) {
+            if (events_ok.some(event => event.date === dateStr)) {
                 dayDiv.classList.add("acompte-ok");
             }
+            else if (events_presta_fini.some(event => event.date === dateStr)) {
+                dayDiv.classList.add("presta-fini");
+            }
 
-        // Ajoute l'écouteur d'événement pour la sélection de la case
-        dayDiv.addEventListener("click", () => selectDay(dayDiv, dateStr));
-
+            dayDiv.addEventListener("click", () => selectDay(dayDiv, dateStr));
             daysContainer.appendChild(dayDiv);
         }
     }
 
     function selectDay(dayDiv, date) {
-    // Supprime la sélection précédente
-    if (selectedDay) {
-        selectedDay.classList.remove("selected");
+        if (selectedDay) selectedDay.classList.remove("selected");
+        selectedDay = dayDiv;
+        selectedDay.classList.add("selected");
+        showEvents(date);
     }
-
-    // Ajoute la classe "selected" à la nouvelle case
-    selectedDay = dayDiv;
-    selectedDay.classList.add("selected");
-
-    // Affiche les événements du jour sélectionné
-    showEvents(date);
-}
 
     function showEvents(date) {
         const eventDetails = document.getElementById("eventDetails");
-        const eventList = events.filter(event => event.date === date);
+        const eventsOfDay = [...events_ok, ...events_presta_fini].filter(event => event.date === date);
 
-        if (eventList.length > 0) {
-            eventDetails.innerHTML = `<h3>📅 Événements du ${date} :</h3>` + '<br>' +
-                eventList.map(e => `<p>📌 <strong>${e.title}</strong> <br> ${e.product} - ${e.ville} (${e.code_postal})</p> `).join('') + '<br>';
-            eventDetails.style.display = "block";
+        if (eventsOfDay.length > 0) {
+            eventDetails.innerHTML = `<h3>📅 Événements du ${date} :</h3><br>` +
+                eventsOfDay.map(e => `<p>📌 <strong>${e.title}</strong> <br> ${e.product} - ${e.ville} (${e.code_postal})</p>`).join('') + '<br>';
         } else {
             eventDetails.innerHTML = "<p>📭 Aucun événement ce jour-là.</p>";
-            eventDetails.style.display = "block";
         }
     }
 
-    function prevMonth() {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    }
-
-    function nextMonth() {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    }
+    function prevMonth() { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
+    function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
 
     renderCalendar();
 </script>
-
 
 
 

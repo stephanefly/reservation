@@ -102,12 +102,11 @@ def media_collected(request, event_id):
     return redirect('team_post_presta')
 
 
-
-def calendar(request):
-    events_ok = Event.objects.filter(status='Acompte OK')
-
-    # Convertir les événements en format JSON
-    events_data = [
+def transform_event_data(events):
+    """
+    Transforme une liste d'événements en une structure JSON.
+    """
+    return [
         {
             "date": e.event_details.date_evenement.strftime('%Y-%m-%d'),
             "title": e.client.nom,
@@ -115,9 +114,22 @@ def calendar(request):
             "ville": e.event_details.ville_evenement,
             "code_postal": str(e.event_details.code_postal_evenement)[:2],
         }
-        for e in events_ok
+        for e in events
     ]
 
-    print(events_data)
+def calendar(request):
+    # Récupération des événements par statut
+    event_statuses = {
+        "events_ok_data": Event.objects.filter(status="Acompte OK"),
+        "events_presta_fini_data": Event.objects.filter(status="Presta FINI"),
+        "events_devis_en_cours_data": Event.objects.exclude(status__in=[
+            "Acompte OK", "Presta FINI", "Post Presta", "Refused"]),
+    }
 
-    return render(request, 'app/team/calendar.html', {'events_data': events_data})
+    # Transformation des données pour l'affichage
+    event_data = {
+        key: transform_event_data(value)
+        for key, value in event_statuses.items()
+    }
+    print(event_data['events_presta_fini_data'])
+    return render(request, 'app/team/calendar.html', event_data)

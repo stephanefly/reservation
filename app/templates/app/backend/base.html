@@ -54,6 +54,10 @@
                    style="padding-right: 25px; padding-left: 25px;">Planning</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'calendar' %}"
+                   style="padding-right: 25px; padding-left: 25px;">Calendrier</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'post_presta' %}"
                    style="padding-right: 25px; padding-left: 25px;">Post Presta</a>
             </li>
