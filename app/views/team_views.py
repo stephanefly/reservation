@@ -122,6 +122,7 @@ def calendar(request):
     event_statuses = {
         "events_ok_data": Event.objects.filter(status="Acompte OK"),
         "events_presta_fini_data": Event.objects.filter(status="Presta FINI"),
+        "events_post_presta_data": Event.objects.filter(status="Post Presta"),
         "events_devis_en_cours_data": Event.objects.exclude(status__in=[
             "Acompte OK", "Presta FINI", "Post Presta", "Refused"]),
     }

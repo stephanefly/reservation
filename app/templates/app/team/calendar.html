@@ -11,7 +11,13 @@
     }
 
     .presta-fini {
-        background: #0c3c18 !important;
+        background: #005315 !important;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+    .post-presta {
+        background: #8a507d !important;
         color: white;
         font-weight: bold;
         border-radius: 10px;
@@ -150,8 +156,9 @@
     // ✅ Correction : Utilisation de `|tojson` pour générer du JSON propre
     let events_ok = {{ events_ok_data|safe }};
     let events_presta_fini = {{ events_presta_fini_data|safe }};
+    let events_post_presta = {{ events_post_presta_data|safe }};
 
-    console.log("📅 Événements chargés :", { events_ok, events_presta_fini });
+    console.log("📅 Événements chargés :", { events_ok, events_presta_fini, events_post_presta });
 
     function renderCalendar() {
         const monthYear = document.getElementById("monthYear");
@@ -185,6 +192,9 @@
             else if (events_presta_fini.some(event => event.date === dateStr)) {
                 dayDiv.classList.add("presta-fini");
             }
+            else if (events_post_presta.some(event => event.date === dateStr)) {
+                dayDiv.classList.add("post-presta");
+            }
 
             dayDiv.addEventListener("click", () => selectDay(dayDiv, dateStr));
             daysContainer.appendChild(dayDiv);
@@ -200,7 +210,7 @@
 
     function showEvents(date) {
         const eventDetails = document.getElementById("eventDetails");
-        const eventsOfDay = [...events_ok, ...events_presta_fini].filter(event => event.date === date);
+        const eventsOfDay = [...events_ok, ...events_presta_fini, ...events_post_presta].filter(event => event.date === date);
 
         if (eventsOfDay.length > 0) {
             eventDetails.innerHTML = `<h3>📅 Événements du ${date} :</h3><br>` +
