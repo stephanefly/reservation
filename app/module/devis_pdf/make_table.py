@@ -21,7 +21,10 @@ def make_tableau(event):
 
     int_prix_livraison, str_prix_livraison = calcul_prix_distance(event)
 
-    data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, str_prix_livraison, '1', "", str_prix_livraison])
+    if event.event_option.livraison:
+        data_tableau_devis.append(["Livraison - Installation\n" + livraison_details, str_prix_livraison, '1', "", str_prix_livraison])
+    else:
+        data_tableau_devis.append(["Récupération avant le\n" + livraison_details, str_prix_livraison, '1', "", str_prix_livraison])
 
     total_brut_devis += int_prix_livraison
     # ----------------------------------------------------------------------------------------
@@ -45,7 +48,10 @@ def prix_ligne_product(event):
 
     # Ajout des descriptions de produit en fonction des produits sélectionnés
     if event.event_product.photobooth:
-        produits_descriptions.append("Photobooth Tirages Illimités ")
+        if event.event_option.duree == 0:
+            produits_descriptions.append("Photobooth 400 Tirages ")
+        else:
+            produits_descriptions.append("Photobooth Tirages Illimités ")
     if event.event_product.miroirbooth:
         produits_descriptions.append("Miroirbooth Tirages Illimités ")
     if event.event_product.videobooth:
@@ -63,7 +69,7 @@ def prix_ligne_product(event):
         acompte = "50"
 
     if event.event_option.duree == 0:
-        duree = "- Toute la soirée"
+        duree = "- Toute la soirée / Weekend"
     else:
         duree = " - " + str(event.event_option.duree) + "h"
 
