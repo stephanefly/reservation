@@ -138,7 +138,7 @@ def calendar(request):
 
 def relance_client(request):
     event_to_relance = Event.objects.filter(
-        status__in=["Prolongation", "Last Chance", "Last Rappel"]
+        status__in=["Prolongation", "Last Chance", "Last Rappel", "Initied"]
     ).select_related("event_details").order_by("event_details__date_evenement")
 
     return render(request, 'app/team/relance_appel_client.html', {'event_to_relance': event_to_relance})
