@@ -28,18 +28,22 @@
                     <td>{{ event.prix_proposed|default:"0" }} €</td>
                     <td>{{ event.status }}</td>
                     <td>
-                        {% if event.last_relance_membre %}
-                            {{ event.last_relance_membre }}
+                    {% with event.relances.last as last_relance %}
+                        {% if last_relance %}
+                            {{ last_relance.membre }}
                         {% else %}
                             <span class="text-muted">---</span>
                         {% endif %}
+                    {% endwith %}
                     </td>
                     <td>
-                        {% if event.last_relance_commentaire %}
-                            {{ event.last_relance_commentaire }}
+                    {% with event.relances.last as last_relance %}
+                        {% if last_relance %}
+                            {{ last_relance.commentaire }}
                         {% else %}
                             <span class="text-muted">---</span>
                         {% endif %}
+                    {% endwith %}
                     </td>
                 </tr>
             {% endfor %}
