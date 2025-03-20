@@ -1,47 +1,66 @@
 {% extends 'app/team/index.html' %}
 {% block content %}
 <div class="container justify-content-center">
-<table id="table" class="table table-bordered table-striped">
-    <thead>
-    <tr>
-        <th>NOM</th>
-        <th>Tel</th>
-        <th>Create_at</th>
-        <th>DATE-EVENT</th>
-        <th>CP</th>
-        <th>PRIX</th>
-        <th>Assigné</th>
-        <th>Commentaire</th>
-    </tr>
-    </thead>
-    <tbody>
-        {% for event in event_to_relance %}
+    <table id="table_relance" class="table table-bordered table-striped">
+        <thead>
             <tr>
-                <td><a href="{% url 'info_relance_client' event.id %}">{{ event.client.nom }}</a></td>
-                <td>{{ event.client.numero_telephone }}</td>
-                <td>{{ event.created_at|date:"Y-m-d" }}</td>
-                <td>{{ event.event_details.date_evenement|date:"l j F Y" }}</td>
-                <td>{{ event.event_details.code_postal_evenement }}</td>
-                <td>{{ event.prix_proposed }}</td>
-                <td>
-                    {% with event.relances.first as last_relance %}
-                        {% if last_relance %}
-                            {{ last_relance.membre }}
+                <th>NOM</th>
+                <th>Tel</th>
+                <th>Create_at</th>
+                <th>DATE-EVENT</th>
+                <th>CP</th>
+                <th>PRIX</th>
+                <th>Status</th>
+                <th>Assigné</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_to_relance %}
+                <tr>
+                    <td>
+                        <a href="{% url 'info_relance_client' event.id %}">{{ event.client.nom }}</a>
+                    </td>
+                    <td>{{ event.client.numero_telephone }}</td>
+                    <td>{{ event.created_at|date:"Y-m-d" }}</td>
+                    <td>{{ event.event_details.date_evenement|date:"l j F Y" }}</td>
+                    <td>{{ event.event_details.code_postal_evenement }}</td>
+                    <td>{{ event.prix_proposed|default:"0" }} €</td>
+                    <td>{{ event.status }}</td>
+                    <td>
+                        {% if event.last_relance_membre %}
+                            {{ event.last_relance_membre }}
                         {% else %}
                             <span class="text-muted">---</span>
                         {% endif %}
-                    {% endwith %}
-                </td>
-                <td>
-                    {% with event.relances.first as last_relance %}
-                        {% if last_relance %}
-                            {{ last_relance.commentaire }}
+                    </td>
+                    <td>
+                        {% if event.last_relance_commentaire %}
+                            {{ event.last_relance_commentaire }}
+                        {% else %}
+                            <span class="text-muted">---</span>
                         {% endif %}
-                    {% endwith %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table_relance').DataTable({
+            responsive: true,
+            lengthChange: false,
+            paging: false,
+            searching: true,
+            info: true,
+            order: [[2, 'desc']], // Tri par la colonne "Create_at"
+            columnDefs: [
+                { type: 'date', targets: [2, 3] } // Définition explicite des colonnes dates
+            ]
+        });
+    });
+</script>
+
     {% endblock %}
