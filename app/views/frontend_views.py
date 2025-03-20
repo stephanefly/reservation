@@ -46,7 +46,7 @@ def confirmation(request):
 def desabonner(request, token):
     event = Event.objects.get(event_token=token)
     event.client.autorisation_mail = False
-    if event.status != 'Refused':
+    if event.status not in ['Refused', 'Presta FINI']:
         event.status = 'Mail_Refused'
         event.save()
     event.client.save()  # Enregistrer l'objet client
