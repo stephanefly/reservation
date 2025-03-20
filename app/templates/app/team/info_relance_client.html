@@ -14,6 +14,13 @@
         <p><strong>Téléphone :</strong> <a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></p>
         <p><strong>Source :</strong> {{ event.client.how_find }}</p>
         <p><strong>Date de Creation du devis :</strong> {{ event.created_at }}</p>
+                <p><strong>📩 Autorisation Contact :</strong>
+            {% if event.client.autorisation_mail %}
+                ✅
+            {% else %}
+                ❌
+            {% endif %}
+        </p>
     </div>
         </div>
         <div class="col">
@@ -30,13 +37,9 @@
             {% if event.event_option.Fond360 %} Fond 360, {% endif %}
             {% if event.event_option.PanneauBienvenue %} Panneau de Bienvenue, {% endif %}
         </p>
-        <p><strong>📩 Autorisation Contact :</strong>
-            {% if event.client.autorisation_mail %}
-                ✅
-            {% else %}
-                ❌
-            {% endif %}
-        </p>
+        <p><strong>Durée :</strong> {{ event.event_option.duree }}</p>
+        <p><strong>Prix :</strong> {{ event.prix_proposed }}€</p>
+        <p><strong>Reduction :</strong> {{ event.reduc_all }}€</p>
     </div>
     </div>
         </div>
