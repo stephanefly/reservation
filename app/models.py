@@ -210,6 +210,13 @@ class Event(models.Model):
         ('Phonebooth Offert', 'Phonebooth Offert'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
+    def save(self, *args, **kwargs):
+        if self.pk:
+            previous_event = Event.objects.get(pk=self.pk)
+            if previous_event.status != self.status:
+                self.history_status = f"{self.history_status}, {self.status}".strip(", ") if self.history_status else self.status
+
+        super().save(*args, **kwargs)
 
 
 class NameCost(models.Model):
@@ -245,3 +252,11 @@ class EmailTracking(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
     opened = models.BooleanField(default=False)
     opened_at = models.DateTimeField(null=True, blank=True)
+
+
+class EventRelance(models.Model):
+    event = models.ForeignKey("Event", on_delete=models.CASCADE, related_name="relances")
+    membre = models.CharField(max_length=100, null=True)
+    date_relance = models.DateTimeField(null=True, blank=True)
+    commentaire = models.TextField(blank=True, null=True)
+    qualification = models.PositiveSmallIntegerField(default=0)  # Valeur entre 0 et 5

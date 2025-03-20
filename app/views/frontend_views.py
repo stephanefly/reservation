@@ -46,6 +46,9 @@ def confirmation(request):
 def desabonner(request, token):
     event = Event.objects.get(event_token=token)
     event.client.autorisation_mail = False
+    if event.status != 'Refused':
+        event.status = 'Mail_Refused'
+        event.save()
     event.client.save()  # Enregistrer l'objet client
     return render(request, 'app/frontend/desabonnement.html')
 

@@ -39,6 +39,11 @@
                         <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
                            style="padding-right: 25px;padding-left: 25px;">Calendrier</a>
                     </li>
+                    {% url 'relance_client' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
+                           style="padding-right: 25px;padding-left: 25px;">Relance</a>
+                    </li>
                 </ul>
             </div>
     </nav>

@@ -1,5 +1,5 @@
 from django.views.decorators.http import require_http_methods
-from ..models import EventTemplate, Event
+from ..models import EventTemplate, Event, EventRelance
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
@@ -11,6 +11,7 @@ from ..module.data_bdd.make_planning import get_member_list
 from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
 
 today_date = datetime.now().date()
+from django.utils.timezone import now
 
 
 def template_to_do(request):
@@ -38,7 +39,6 @@ def upload_image(request, event_id):
     if request.method == 'POST':
         image = request.FILES.get('myTemplate')
         if image:
-
             # Sauvegarder l'image sur le NAS via SFTPStorage
             saved_path = SFTP_STORAGE._save_png(image, event_id)
 
@@ -60,7 +60,6 @@ def view_image(request, event_id):
 
 
 def team_post_presta(request):
-
     lst_post_event = Event.objects.filter(
         signer_at__isnull=False,
         status='Post Presta'
@@ -93,9 +92,9 @@ def team_planning(request):
                       'event_lst_member': event_lst_member
                   })
 
+
 @require_http_methods(["POST"])
 def media_collected(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
     event.event_post_presta.collected = True
     event.event_post_presta.save()
@@ -117,6 +116,7 @@ def transform_event_data(events):
         for e in events
     ]
 
+
 def calendar(request):
     # Récupération des événements par statut
     event_statuses = {
@@ -134,3 +134,34 @@ def calendar(request):
     }
     print(event_data['events_presta_fini_data'])
     return render(request, 'app/team/calendar.html', event_data)
+
+
+def relance_client(request):
+    event_to_relance = Event.objects.filter(status="Prolongation").order_by('event_details__date_evenement')
+
+    return render(request, 'app/team/relance_appel_client.html', {'event_to_relance': event_to_relance})
+
+
+def info_relance_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    lst_relance_event = EventRelance.objects.filter(event=event).order_by('date_relance')
+
+    if request.method == "POST":
+        membre = request.POST.get("membre")
+        date_relance = request.POST.get("date_relance")
+        commentaire = request.POST.get("commentaire")
+        qualification = int(request.POST.get("qualification", 0))
+
+        # Création de la relance
+        EventRelance.objects.create(
+            event=event,
+            membre=membre,
+            date_relance=date_relance if date_relance else now(),
+            commentaire=commentaire,
+            qualification=qualification,
+        )
+
+        return redirect("info_relance_client", event_id=event.id)  # Rafraîchir la page après l'ajout
+
+    return render(request, "app/team/info_relance_client.html",
+                  {"event": event, "lst_relance_event": lst_relance_event,  "now": now(),})

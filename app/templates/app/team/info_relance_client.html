@@ -1,0 +1,115 @@
+{% extends 'app/team/index.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📅 Relance pour l'Événement - {{ event.client.nom }}</h2>
+    <br>
+    <!-- Informations sur le client -->
+    <div class="row">
+        <div class="col">
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="card-title">👤 Informations Client</h5>
+        <p><strong>Nom :</strong> {{ event.client.nom }}</p>
+        <p><strong>Email :</strong> <a href="mailto:{{ event.client.mail }}">{{ event.client.mail }}</a></p>
+        <p><strong>Téléphone :</strong> <a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></p>
+        <p><strong>Source :</strong> {{ event.client.how_find }}</p>
+        <p><strong>Date de Creation du devis :</strong> {{ event.created_at }}</p>
+    </div>
+        </div>
+        <div class="col">
+    <!-- Informations sur l'événement -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="card-title">📍 Détails de l'Événement </h5>
+        <p><strong>Date de l'évenement :</strong> {{ event.event_details.date_evenement|date:"l j F Y" }}</p>
+        <p><strong>Adresse :</strong> {{ event.event_details.adresse_evenement }}, {{ event.event_details.ville_evenement }} ({{ event.event_details.code_postal_evenement }})</p>
+        <p><strong>Produits :</strong> {{ event.event_product.get_selected_booths }}</p>
+        <p><strong>Options :</strong>
+            {% if event.event_option.MurFloral %} Mur Floral, {% endif %}
+            {% if event.event_option.Phonebooth %} Phonebooth, {% endif %}
+            {% if event.event_option.LivreOr %} Livre d'Or, {% endif %}
+            {% if event.event_option.Fond360 %} Fond 360, {% endif %}
+            {% if event.event_option.PanneauBienvenue %} Panneau de Bienvenue, {% endif %}
+        </p>
+        <p><strong>📩 Autorisation Contact :</strong>
+            {% if event.client.autorisation_mail %}
+                ✅
+            {% else %}
+                ❌
+            {% endif %}
+        </p>
+    </div>
+    </div>
+        </div>
+
+    <!-- Formulaire de relance -->
+    <div class="card shadow-lg p-4">
+        <h5 class="card-title">✍️ Ajouter une Relance</h5>
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="membre" class="form-label">👤 Membre responsable :</label>
+                <input type="text" class="form-control" name="membre" id="membre" value="{{ request.user.username }}" required readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="date_relance" class="form-label">📆 Date de relance :</label>
+            <input type="datetime-local" class="form-control" name="date_relance" id="date_relance"
+                   value="{{ now|date:'Y-m-d\TH:i' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="commentaire" class="form-label">📝 Commentaire :</label>
+                <textarea name="commentaire" id="commentaire" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="qualification" class="form-label">⭐ Qualification (0 à 5) :</label>
+                <select class="form-select" name="qualification" id="qualification">
+                    <option value="0">0 - Très Froid ❄️</option>
+                    <option value="1">1 - Froid</option>
+                    <option value="2">2 - Tiède 🌡️</option>
+                    <option value="3">3 - Intéressé</option>
+                    <option value="4">4 - Chaud 🔥</option>
+                    <option value="5">5 - Très Chaud 🚀</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">💾 Enregistrer la Relance</button>
+        </form>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Affichage des relances existantes -->
+    <h3 class="text-center">📜 Historique des Relances</h3>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>👤 Membre</th>
+                    <th>📅 Date Relance</th>
+                    <th>⭐ Qualification</th>
+                    <th>📝 Commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for relance in lst_relance_event %}
+                <tr>
+                    <td>{{ relance.membre }}</td>
+                    <td>{{ relance.date_relance|date:"d/m/Y H:i" }}</td>
+                    <td>{{ relance.qualification }}</td>
+                    <td>{{ relance.commentaire }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Aucune relance enregistrée pour cet événement.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

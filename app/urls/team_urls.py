@@ -1,5 +1,6 @@
 from django.urls import path
-from ..views import template_to_do, change_status, upload_image, view_image, team_post_presta,team_planning, media_collected, calendar
+from ..views import template_to_do, change_status, upload_image, view_image, team_post_presta, team_planning, \
+    media_collected, calendar, relance_client, info_relance_client
 
 urlpatterns = [
     path('template/', template_to_do, name='template_to_do'),
@@ -9,6 +10,8 @@ urlpatterns = [
     path('post-presta/', team_post_presta, name='team_post_presta'),
     path('planning/', team_planning, name='team_planning'),
     path('calendar/', calendar, name='calendar'),
+    path('relance_client/', relance_client, name='relance_client'),
+    path('relance_client/<int:event_id>/', info_relance_client, name='info_relance_client'),
     path('media_collected/<int:event_id>/', media_collected, name='media_collected'),
 
 ]
