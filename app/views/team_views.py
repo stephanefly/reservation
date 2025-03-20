@@ -147,6 +147,7 @@ def relance_client(request):
 def info_relance_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     lst_relance_event = EventRelance.objects.filter(event=event).order_by('date_relance')
+    event_reduc_total = event.reduc_all + event.reduc_product
 
     if request.method == "POST":
         membre = request.POST.get("membre")
@@ -166,4 +167,4 @@ def info_relance_client(request, event_id):
         return redirect("info_relance_client", event_id=event.id)  # Rafraîchir la page après l'ajout
 
     return render(request, "app/team/info_relance_client.html",
-                  {"event": event, "lst_relance_event": lst_relance_event,  "now": now(),})
+                  {"event": event, "lst_relance_event": lst_relance_event,  "now": now(),"event_reduc_total":event_reduc_total})
