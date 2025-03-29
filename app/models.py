@@ -217,6 +217,7 @@ class Event(models.Model):
         ('Phonebooth Offert', 'Phonebooth Offert'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
+    history_status = models.TextField(default="", blank=True)  # Stocke l'historique des statuts
     def save(self, *args, **kwargs):
         if self.pk:
             previous_event = Event.objects.get(pk=self.pk)
