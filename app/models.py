@@ -150,12 +150,12 @@ class EventPostPrestation(models.Model):
     membre_paid = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
-    # date_media_sent = models.DateTimeField(null=True, blank=True)
-    #
-    # def save(self, *args, **kwargs):
-    #     if self.sent and self.date_media_sent is None:
-    #         self.date_sent = datetime.now()
-    #     super().save(*args, **kwargs)
+    date_media_sent = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.sent and self.date_media_sent is None:
+            self.date_sent = datetime.now()
+        super().save(*args, **kwargs)
 
 
 class EventAcompte(models.Model):
