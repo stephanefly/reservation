@@ -24,262 +24,285 @@
         color: black; /* Pour que le texte reste lisible sur un fond skyblue */
         padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
     }
+    .ajax-btn {
+    background-color: #007bff; /* Bleu professionnel */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.ajax-btn:hover {
+    background-color: #0056b3;
+}
+
+.ajax-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
 </style>
 
 
-    <table id="table" class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
-            <th>NOM</th>
-            <th>DATE-EVENT</th>
-            <th>Presta Payé</th>
-            <th>Membre Payé</th>
-            <th>Feedback</th>
-            <th>Feedback Posté</th>
-            <th>Envoi</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for event in lst_post_event %}
-        <tr>
-            <td>                <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></td>
-            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td class="{% if event.post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.paid %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
-                {% if not event.post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.post_presta.sent %}Pas OK{% else %}Fait{% endif %}
-            </td>
-        </tr>
-
-        {% endfor %}
-        </tbody>
-    </table>
-
+<table id="table" class="table table-bordered table-striped" style="background-color:white">
+    <thead>
+    <tr>
+        <th>NOM</th>
+        <th>DATE-EVENT</th>
+        <th>Presta Payé</th>
+        <th>Membre Payé</th>
+        <th>Feedback</th>
+        <th>Feedback Posté</th>
+        <th>Envoi</th>
+    </tr>
+    </thead>
+    <tbody>
     {% for event in lst_post_event %}
-    <div class="card" style="border: #1b1b1b 2px solid">
-        <div class="card-header">
-            <h5>
-                <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
-            </h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Mail</th>
-                    <th>Date-Event</th>
-                    <th>PRIX</th>
-                    <th>Acompte</th>
-                    <th>Restant</th>
-                    <th>Mode</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{{ event.client.mail }}</td>
-                    <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-                    <td id="prix_valided">{{ event.prix_valided }}</td>
-                    <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                    <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-                    <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-                </tr>
-                </tbody>
-            </table>
-            <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Prestation</th>
-                    <th>Option</th>
-                    <th>Membre</th>
-                    <th>Num PC</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {% if event.event_product.photobooth %}
-                        <span class="highlight-prestation">Photobooth</span>
-                        , {% endif %}
-                        {% if event.event_product.miroirbooth %}
-                        <span class="highlight-prestation">Miroirbooth</span>
-                        , {% endif %}
-                        {% if event.event_product.videobooth %}
-                        <span class="highlight-prestation">360Booth</span>
-                        , {% endif %}
-                        {% if event.event_product.voguebooth %}
-                        <span class="highlight-prestation">VogueBooth</span>
-                        , {% endif %}
-                        {% if event.event_product.ipadbooth %}
-                        <span class="highlight-prestation">Ipadebooth</span>
-                        , {% endif %}
-                        {% if event.event_product.airbooth %}
-                        <span class="highlight-prestation">Ipadebooth</span>
-                        , {% endif %}
-                    </td>
-                    <td>
-                        {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>
-                        , {% endif %}
-                        {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>
-                        , {% endif %}
-                        {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>
-                        , {% endif %}
-                        {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>
-                        , {% endif %}
-                        {% if event.event_option.PanneauBienvenue %}
-                        <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                        {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>
-                        , {% endif %}
-                        {% if event.event_option.PhotographeVoguebooth %}
-                        <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                        {% if event.event_option.ImpressionVoguebooth %}
-                        <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                        {% if event.event_option.DecorVoguebooth %}
-                        <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                        {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
-                        , {% endif %}
-                    </td>
-                    <td>
-                        {% for event_name, membres in event_lst_member.items %}
-                        {% if event_name == event.client.nom %}
-                        {% for membre in membres %}
-                        <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %},
-                        {% endif %}
-                        {% empty %}
-                        Aucun membre associé
-                        {% endfor %}
-                        {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td><span class="highlight-pc">PCX</span></td>
-                </tr>
-                </tbody>
-            </table>
-            <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Nom Dossier</th>
-                    <th>Path Depot Fichier</th>
-                    <th>Lien Depot Fichier</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {{ event.event_template.directory_name }}
-                    </td>
-                    <td>
-                        <a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a>
-                    </td>
-                    <td>
-                        <a href="{{ event.event_template.link_media_shared }}">Lien</a>
-                    </td>
-                    <td>
-                        <form method="POST" action="{% url 'send_media' event.id %}">
-                            {% csrf_token %}
-                            <button type="submit">
-                                Envoyer Fichiers
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <table class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Payé</th>
-                    <th>Membre Payé</th>
-                    <th>Feedback</th>
-                    <th>Feedback Posté</th>
-                    <th>Envoi</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {% if not event.post_presta.paid %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}" data-action="paid">
-                            OK
-                        </button>
-                        {% else %}
-                        Fait
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not event.post_presta.membre_paid %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                                data-action="membre_paid">OK
-                        </button>
-                        {% else %}
-                        Fait
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not event.post_presta.feedback %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                                data-action="feedback">OK
-                        </button>
-                        <form method="POST" action="{% url 'relance_avis_client' event.id %}">
-                            {% csrf_token %}
-                            <button type="submit">
-                                Relance avis
-                            </button>
-                        </form>
-                        {% else %}
-                        Fait
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not event.post_presta.feedback_posted %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                                data-action="feedback_posted">OK
-                        </button>
-                        {% else %}
-                        Fait
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not event.post_presta.sent %}
-                        {% csrf_token %}
-                        <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}" data-action="sent">
-                            OK
-                        </button>
-                        {% else %}
-                        Fait
-                        {% endif %}
-                    </td>
-                    <td>
-                        <form method="POST" action="{% url 'presta_fini' event.id %}">
-                            {% csrf_token %}
-                            <button type="submit">
-                                Finir Presta
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+    <tr>
+        <td><a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></td>
+        <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+        <td class="{% if event.event_post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
+            {% if not event.event_post_presta.paid %}Pas OK{% else %}Fait{% endif %}
+        </td>
+        <td class="{% if event.event_post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
+            {% if not event.event_post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
+        </td>
+        <td class="{% if event.event_post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
+            {% if not event.event_post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
+        </td>
+        <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
+            {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
+        </td>
+        <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+            {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
+        </td>
+    </tr>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <br>
     {% endfor %}
+    </tbody>
+</table>
+
+{% for event in lst_post_event %}
+<div class="card" style="border: #1b1b1b 2px solid">
+    <div class="card-header">
+        <h5>
+            <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
+        </h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+            <tr>
+                <th>Mail</th>
+                <th>Date-Event</th>
+                <th>PRIX</th>
+                <th>Acompte</th>
+                <th>Restant</th>
+                <th>Mode</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ event.client.mail }}</td>
+                <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                <td id="prix_valided">{{ event.prix_valided }}</td>
+                <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+                <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+            <tr>
+                <th>Prestation</th>
+                <th>Option</th>
+                <th>Membre</th>
+                <th>Num PC</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {% if event.event_product.photobooth %}
+                    <span class="highlight-prestation">Photobooth</span>
+                    , {% endif %}
+                    {% if event.event_product.miroirbooth %}
+                    <span class="highlight-prestation">Miroirbooth</span>
+                    , {% endif %}
+                    {% if event.event_product.videobooth %}
+                    <span class="highlight-prestation">360Booth</span>
+                    , {% endif %}
+                    {% if event.event_product.voguebooth %}
+                    <span class="highlight-prestation">VogueBooth</span>
+                    , {% endif %}
+                    {% if event.event_product.ipadbooth %}
+                    <span class="highlight-prestation">Ipadebooth</span>
+                    , {% endif %}
+                    {% if event.event_product.airbooth %}
+                    <span class="highlight-prestation">Ipadebooth</span>
+                    , {% endif %}
+                </td>
+                <td>
+                    {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>
+                    , {% endif %}
+                    {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>
+                    , {% endif %}
+                    {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>
+                    , {% endif %}
+                    {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>
+                    , {% endif %}
+                    {% if event.event_option.PanneauBienvenue %}
+                    <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
+                    {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>
+                    , {% endif %}
+                    {% if event.event_option.PhotographeVoguebooth %}
+                    <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
+                    {% if event.event_option.ImpressionVoguebooth %}
+                    <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
+                    {% if event.event_option.DecorVoguebooth %}
+                    <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
+                    {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
+                    , {% endif %}
+                </td>
+                <td>
+                    {% for event_name, membres in event_lst_member.items %}
+                    {% if event_name == event.client.nom %}
+                    {% for membre in membres %}
+                    <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %},
+                    {% endif %}
+                    {% empty %}
+                    Aucun membre associé
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td><span class="highlight-pc">PCX</span></td>
+            </tr>
+            </tbody>
+        </table>
+        <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+            <tr>
+                <th>Nom Dossier</th>
+                <th>Path Depot Fichier</th>
+                <th>Lien Depot Fichier</th>
+                                <th>Envoi</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {{ event.event_template.directory_name }}
+                </td>
+                <td>
+                    <a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a>
+                </td>
+                <td>
+                    <a href="{{ event.event_template.link_media_shared }}">Lien</a>
+                </td>
+                                <td>
+                    {% if not event.event_post_presta.sent %}
+                        <span style="background-color:#f44336; color:white; padding:4px 8px; border-radius:12px; font-weight:bold;">
+                            Non
+                        </span>
+                    {% else %}
+                        <span style="background-color:#4caf50; color:white; padding:4px 8px; border-radius:12px; font-weight:bold;">
+                            Fait
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{% url 'send_media' event.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit">
+                            Envoyer Fichiers
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+            <tr>
+                <th>Payé</th>
+                <th>Membre Payé</th>
+                <th>Feedback</th>
+                <th>Feedback Posté</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {% if not event.event_post_presta.paid %}
+                    {% csrf_token %}
+                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}" data-action="paid">
+                        OK
+                    </button>
+                    {% else %}
+                    Fait
+                    {% endif %}
+                </td>
+                <td>
+                    {% if event.event_post_presta.membre_paid %}
+                    Fait
+                    {% else %}
+                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
+                            data-action="membre_paid">OK
+                    </button>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not event.event_post_presta.feedback %}
+                    {% csrf_token %}
+                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
+                            data-action="feedback">OK
+                    </button>
+
+                    {% else %}
+                    Fait
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not event.event_post_presta.feedback_posted %}
+                    {% csrf_token %}
+                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
+                            data-action="feedback_posted">OK
+                    </button>
+                    {% else %}
+                    Fait
+                    {% endif %}
+                </td>
+
+                <td>
+                    <form method="POST" action="{% url 'presta_fini' event.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-success" type="submit">
+                            Finir Presta
+                        </button>
+                    </form>
+                                        <form method="POST" action="{% url 'relance_avis_client' event.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-warning" type="submit">
+                            Relance avis
+                        </button>
+                    </form>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<br>
+{% endfor %}
 
 
 <script>
