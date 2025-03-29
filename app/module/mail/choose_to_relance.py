@@ -76,3 +76,19 @@ def choose_to_relance_espace_client():
             event_valid.event_details is None or not event_valid.event_details.horaire):
             send_mail_event(event_valid, 'relance_espace_client')
             time.sleep(30)  # Pause de 30 sec
+
+
+def choose_to_make_review():
+    some_days_ago = timezone.now().date() - relativedelta(days=2)
+
+    # Utilise Q pour filtrer les événements qui ont lieu exactement dans une semaine ou dans un mois
+    lst_event_to_make_review = Event.objects.filter(
+        date_media_sent=some_days_ago,
+        client__autorisation_mail=True,
+        event_post_presta__feedback=False,
+        status='Sent Media',
+    )
+
+    for event in lst_event_to_make_review:
+        send_mail_event(event, 'relance_avis')
+        time.sleep(30)  # Pause de 30 sec

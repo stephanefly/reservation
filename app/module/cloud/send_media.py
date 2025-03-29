@@ -48,3 +48,5 @@ def send_media_logic(event_id):
     find_pcloud_empty_folder(folder_data)
     event.event_post_presta.sent = True
     event.event_post_presta.save()
+    event.status = 'Sent Media'
+    event.save()

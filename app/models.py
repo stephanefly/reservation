@@ -1,7 +1,7 @@
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
+from datetime import datetime
 
 
 class Client(models.Model):
@@ -148,8 +148,14 @@ class EventPostPrestation(models.Model):
     feedback = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
     membre_paid = models.BooleanField(default=False)
-    sent = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
+    sent = models.BooleanField(default=False)
+    date_media_sent = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.sent and self.date_media_sent is None:
+            self.date_sent = datetime.now()
+        super().save(*args, **kwargs)
 
 
 class EventAcompte(models.Model):
@@ -201,6 +207,7 @@ class Event(models.Model):
         ('Refused', 'Refused'),
         ('Presta FINI', 'Presta FINI'),
         ('Post Presta', 'Post Presta'),
+        ('Sent Media', 'Sent Media'),
         ('Resended', 'Resended'),
         ('Last Chance', 'Last Chance'),
         ('First Rappel', 'First Rappel'),

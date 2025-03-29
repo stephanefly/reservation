@@ -21,16 +21,18 @@ from app.module.mail.choose_to_relance import (choose_to_rappel_devis_client, ch
                                                choose_to_phonebooth_offert_devis_client,
                                                choose_to_last_chance_devis_client,
                                                choose_to_relance_espace_client, choose_to_temoignage_devis_client,
-                                               choose_to_last_rappel_devis_client)
+                                               choose_to_last_rappel_devis_client, choose_to_make_review
+                                               )
 
 maj_today_event()
 choose_to_rappel_devis_client()
 choose_to_last_rappel_devis_client()
 choose_to_prolonger_devis_client()
 # choose_to_temoignage_devis_client()
-choose_to_phonebooth_offert_devis_client()
-choose_to_last_chance_devis_client()
+# choose_to_phonebooth_offert_devis_client()
+# choose_to_last_chance_devis_client()
 choose_to_relance_espace_client()
+choose_to_make_review()
 
 # Backup BDD
 # launch_relance devis (2 jours hors vendredi/samedi/dimanche, 1 semaine plus tard, debut du mois prochain)
