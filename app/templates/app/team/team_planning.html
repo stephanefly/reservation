@@ -27,21 +27,15 @@
             <th>J</th>
             <th>DATE-EVENT</th>
             <th>CP</th>
-            <th>PRIX</th>
-            <th>Acompte</th>
-            <th>Restant</th>
         </tr>
         </thead>
         <tbody>
         {% for event in lst_event_prio %}
             <tr>
-                <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+                <td>{{ event.client.nom }}</td>
                 <td>{{ event.event_details.date_evenement|date:"D" }}</td>
                 <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
                 <td>{{ event.event_details.code_postal_evenement }}</td>
-                <td id="prix_valided">{{ event.prix_valided }}</td>
-                <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                <td id="difference">{{ event.event_acompte.montant_restant }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -61,7 +55,8 @@
             <br>
         <div class="card">
         <div class="card-header">
-            <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
+            <h5>{{ event.client.nom }} - <a href="tel:{{ event.client.numero_telephone }}">
+                {{ event.client.numero_telephone }}</a></h5>
                     </div>
         <div class="card-body">
             <table class="table table-bordered table-striped" style="background-color:white">
@@ -131,6 +126,22 @@
                         {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
                         {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
                     </td>
+                </tr>
+                </tbody>
+            </table>
+            <table id="table_argent" class="table table-bordered table-striped" style="background-color:white">
+                <thead>
+                <tr>
+                    <th>PRIX</th>
+                    <th>Acompte</th>
+                    <th>Restant</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="prix_valided">{{ event.prix_valided }}</td>
+                    <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                    <td id="difference">{{ event.event_acompte.montant_restant }}</td>
                 </tr>
                 </tbody>
             </table>
