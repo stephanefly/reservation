@@ -305,7 +305,9 @@
 
                <div class="form-group">
                   <label for="url_modele">URL du Modèle de Tirage:</label>
-                  <input type="url" class="form-control" id="url_modele" name="url_modele" value="{{ event.event_template.url_modele|default:'' }}" placeholder="https://">
+<input type="url" class="form-control" id="url_modele" name="url_modele"
+       value="{{ event.event_template.url_modele|default:'' }}"
+       placeholder="Collez ici l'URL exacte du modèle choisi sur Etsy">
                </div>
             </div>
             <div class="modal-footer">
@@ -371,6 +373,40 @@
       </div>
    </div>
 </div>
-    
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("url_modele");
+    const form = input.closest("form");
+
+    const forbiddenShops = [
+        "https://www.etsy.com/shop/MyCreativeTemplateCo",
+        "https://www.etsy.com/shop/YourCreativeTemplate",
+        "https://www.etsy.com/shop/TemplateBux"
+    ];
+
+    input.addEventListener("input", function () {
+        const value = input.value.trim();
+        const errorMessage = document.getElementById("urlErrorMessage");
+
+        const isForbidden = forbiddenShops.some(shopUrl => value.startsWith(shopUrl));
+
+        if (isForbidden) {
+            input.setCustomValidity("Veuillez sélectionner un modèle précis et non une page de boutique Etsy.");
+            if (!errorMessage) {
+                const error = document.createElement("div");
+                error.className = "text-danger mt-2";
+                error.id = "urlErrorMessage";
+                error.textContent = "⚠️ Ne collez pas le lien de la boutique. Chaque boutique contient des centaines de modèles. Merci de sélectionner un modèle précis.";
+                input.parentNode.appendChild(error);
+            }
+        } else {
+            input.setCustomValidity("");
+            if (errorMessage) errorMessage.remove();
+        }
+    });
+});
+</script>
+
 
 {% endblock %}
