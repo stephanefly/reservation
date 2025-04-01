@@ -93,38 +93,65 @@
                 </tr>
                 </tbody>
             </table>
-            <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>TEMPLATE</th>
-                    <th>ENVOYER</th>
-                    <th>TEMPLATE</th>
-                </tr>
-                </thead>
-                <tbody>
-                <form id="uploadmyTemplate" method="post" enctype="multipart/form-data"
-                      action="{% url 'upload_image' event.id %}">
-                    {% csrf_token %}
-                    <tr>
-                        <td>
-                            <input type="file" name="myTemplate" id="image" accept="image/png" required>
-                        </td>
-                        <td>
-                            <button type="submit">Upload</button>
-                        </td>
+            <div class="card-header" style="border-radius: 10px;">
+                <h5 class="mb-3">🖼️ Gestion du Modèle de Tirage</h5>
+            </div>
+            <div class="card p-3"
+                 style="background-color: white; border: 2px solid {% if event.event_template.image_name %}#28a745{% else %}#dc3545{% endif %}; border-radius: 10px;">
 
-                        {% if event.event_template.image_name %}
-                        <td style="background-color: #6da37a">
-                            <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
-                        </td>
-                        {% endif %}
-                    </tr>
+
+                <!-- Formulaire d'import -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_image' event.id %}"
+                      class="mb-2">
+                    {% csrf_token %}
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <label for="myTemplate" class="form-label">🎨 Sélectionnez un fichier PNG :</label>
+                            <input type="file" name="myTemplate" id="myTemplate" accept="image/png" class="form-control"
+                                   required>
+                        </div>
+                        <div class="col-md-3 mt-3 mt-md-0">
+                            <button type="submit" class="btn btn-primary w-100">📥 Importer le modèle</button>
+                        </div>
+                    </div>
                 </form>
 
-                </tbody>
-            </table>
-        </div></div>
-        {% endfor %}
-        {% endwith %}
+                <!-- Aperçu -->
+                <div class="mt-2">
+                    {% if event.event_template.image_name %}
+                    <label class="form-label">📎 Modèle actuellement importé :</label><br>
+                    <a href="{% url 'view_image' event.id %}" target="_blank">
+                        <b>Voir le modèle de tirage</b>
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Aucun modèle importé pour l’instant.</p>
+                    {% endif %}
+                </div>
+                <br>
+                <!-- Formulaire d'envoi -->
+                <form method="post" action="{% url 'send_template_to_client' event.id %}">
+                    {% csrf_token %}
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-warning w-100"
+                                    {% if not event.event_template.image_name %}disabled{% endif %}>
+                                Envoyer au client
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if not event.event_template.image_name %}
+                <p class="text-danger mt-2">⚠️ Aucun modèle importé. Vous devez d'abord importer un modèle PNG.</p>
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
     </div>
-    {% endblock %}
+    {% endfor %}
+    {% endwith %}
+</div>
+{% endblock %}

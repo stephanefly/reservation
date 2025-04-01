@@ -46,6 +46,8 @@ def upload_image(request, event_id):
 
     return redirect('template_to_do')
 
+def send_template_to_client(request, event_id):
+    return redirect('template_to_do')
 
 def view_image(request, event_id):
     sftp_storage = SFTP_STORAGE  # Utilisez votre instance de connexion SFTP
