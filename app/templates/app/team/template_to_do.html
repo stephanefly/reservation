@@ -129,7 +129,7 @@
                 </div>
                 <br>
                 <!-- Formulaire d'envoi -->
-                <form method="post" action="{% url 'send_template_to_client' event.id %}">
+<form method="post" action="{% url 'send_template_to_client' event.id %}" onsubmit="return confirm('Confirmer l’envoi du template au client ?')">
                     {% csrf_token %}
                     <div class="row align-items-center">
                         <div class="col-md-3">
