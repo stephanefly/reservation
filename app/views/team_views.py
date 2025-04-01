@@ -9,6 +9,7 @@ import os
 
 from ..module.data_bdd.make_planning import get_member_list
 from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
+from ..module.mail.send_mail_event import send_mail_event
 
 today_date = datetime.now().date()
 from django.utils.timezone import now
@@ -47,6 +48,8 @@ def upload_image(request, event_id):
     return redirect('template_to_do')
 
 def send_template_to_client(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    send_mail_event(event, 'envoi_template')
     return redirect('template_to_do')
 
 def view_image(request, event_id):
