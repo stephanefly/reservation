@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 import os
-import threading
 
 from ..module.data_bdd.make_planning import get_member_list
 from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
@@ -50,8 +49,7 @@ def upload_image(request, event_id):
 
 def send_template_to_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    thread = threading.Thread(target=send_mail_event, args=(event,'envoi_template', ))
-    thread.start()
+    send_mail_event(event, 'envoi_template')
     return redirect('template_to_do')
 
 def view_image(request, event_id):
