@@ -159,7 +159,7 @@ def get_mail_template(event, mail_type):
         subject = "📸 Votre Modèle est prêt ! ✨"
         template_name = "clients/mail_envoi_template.html"
         file_to_send.append('template_file')
-        copy_mail.append("cartier.djordan@gmail.com")
+        copy_mail.append("djordan.cartier@myselfiebooth-paris.fr")
 
     else:
         # Lever une erreur si le type de mail fourni n'est pas reconnu
