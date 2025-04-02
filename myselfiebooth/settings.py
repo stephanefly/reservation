@@ -44,7 +44,6 @@ IBAN_B = config.get('IBAN_B')
 BIC_B = config.get('BIC_B')
 
 MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
-MAIL_COPIE = config.get('MAIL_COPIE')
 MAIL_BCC = config.get('MAIL_BCC')
 MP = config.get('MP')
 # Remplacez ces informations par celles de votre NAS

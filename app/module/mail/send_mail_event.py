@@ -10,7 +10,7 @@ from app.module.cloud.connect_ftp_nas import SFTP_STORAGE
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail
-from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_COPIE, MAIL_BCC
+from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_BCC
 
 
 def send_mail_event(event, mail_type):
@@ -18,14 +18,15 @@ def send_mail_event(event, mail_type):
     server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
     server.login(MAIL_MYSELFIEBOOTH, MP)
 
-    subject, template_name, file_to_send = get_mail_template(event, mail_type)
+    subject, template_name, file_to_send, copy_mail = get_mail_template(event, mail_type)
 
     # Configuration de l'email
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
     msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
-    msg['Cc'] = MAIL_COPIE
     msg['To'] = event.client.mail
+    if copy_mail:
+        msg['Cc'] = ",".join(copy_mail)
 
     # Lecture du template HTML
     template_path = os.path.join(MAIL_TEMPLATE_REPOSITORY, template_name)
@@ -80,6 +81,7 @@ def complete_mail_with_file_to_send(event, file_to_send):
 def get_mail_template(event, mail_type):
 
     file_to_send = []
+    copy_mail = []
 
     # Mails nécessitant un devis
     if mail_type == 'devis':
@@ -87,7 +89,6 @@ def get_mail_template(event, mail_type):
         subject = "📸 Votre devis - " + str(event.client.nom) + " ✨"
         template_name = "devis/mail_devis.html"
         file_to_send.append('devis_file')
-
 
     elif mail_type == 'rappel_devis':
         # Mail pour relancer un client concernant un devis envoyé précédemment
@@ -158,10 +159,11 @@ def get_mail_template(event, mail_type):
         subject = "📸 Votre Modèle est prêt ! ✨"
         template_name = "clients/mail_envoi_template.html"
         file_to_send.append('template_file')
+        copy_mail.append("cartier.djordan@gmail.com")
 
     else:
         # Lever une erreur si le type de mail fourni n'est pas reconnu
         raise ValueError("Type de mail non reconnu.")
 
-    return subject, template_name, file_to_send
+    return subject, template_name, file_to_send, copy_mail
 
