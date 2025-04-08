@@ -7,7 +7,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 from app.module.mail.send_mail_event import send_mail_event
 from time import sleep
-from app.module.mail.send_sms_event import send_sms_event
+# from app.module.mail.send_sms_event import send_sms_event
 
 
 def process_events(days_offset, current_status, new_status, email_template, update_product=False, apply_discount=False):
@@ -95,18 +95,18 @@ def choose_to_make_review_mail():
         send_mail_event(event, 'relance_avis')
         time.sleep(30)  # Pause de 30 sec
 
-
-def choose_to_make_review_sms():
-    some_days_ago = timezone.now().date() - relativedelta(days=4)
-
-    # Utilise Q pour filtrer les événements qui ont lieu exactement dans une semaine ou dans un mois
-    lst_event_to_make_review = Event.objects.filter(
-        date_media_sent=some_days_ago,
-        client__autorisation_mail=True,
-        event_post_presta__feedback=False,
-        status='Sent Media',
-    )
-
-    for event in lst_event_to_make_review:
-        send_sms_event(event, 'relance_avis')
-        time.sleep(30)  # Pause de 30 sec
+#
+# def choose_to_make_review_sms():
+#     some_days_ago = timezone.now().date() - relativedelta(days=4)
+#
+#     # Utilise Q pour filtrer les événements qui ont lieu exactement dans une semaine ou dans un mois
+#     lst_event_to_make_review = Event.objects.filter(
+#         date_media_sent=some_days_ago,
+#         client__autorisation_mail=True,
+#         event_post_presta__feedback=False,
+#         status='Sent Media',
+#     )
+#
+#     for event in lst_event_to_make_review:
+#         send_sms_event(event, 'relance_avis')
+#         time.sleep(30)  # Pause de 30 sec
