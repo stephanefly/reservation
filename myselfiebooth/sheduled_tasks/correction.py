@@ -36,4 +36,4 @@ for event in lst_event_to_corriger:
         event.save()
         event.client.nb_relance_devis += 1
         event.client.save()
-        sleep(20)
+        sleep(15)
