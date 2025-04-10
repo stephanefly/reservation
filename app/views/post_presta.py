@@ -60,8 +60,5 @@ def post_presta(request):
 
 
 def send_media(request, event_id):
-    # Lance la tâche dans un nouveau thread
-    thread = threading.Thread(target=send_media_logic, args=(event_id,))
-    thread.start()
-
+    send_media_logic(event_id)
     return redirect('post_presta')
