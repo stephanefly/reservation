@@ -4,3 +4,4 @@ donnees
 /myselfiebooth/settings.yaml
 /facture.pdf
 /backup/
+__pycache__/
