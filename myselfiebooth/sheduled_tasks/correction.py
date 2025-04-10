@@ -16,24 +16,22 @@ import django
 
 django.setup()
 
-from app.models import Event
-from app.module.mail.send_mail_event import send_mail_event
+from app.models import Event, EventPostPrestation
 
 lst_event_to_corriger = Event.objects.filter(
-    status='Sended',
-    signer_at__isnull=True,
-    client__autorisation_mail=True,
+    status='Post Presta',
     )
 
 for event in lst_event_to_corriger:
+    if not hasattr(event, "event_post_presta") or event.event_post_presta is None:
+        print(f"[INFO] Création d'un EventPostPrestation pour l'événement ID {event.id}")
+        post_presta = EventPostPrestation()
+        post_presta.save()
+        print(f"[INFO] PostPresta ID {post_presta.id} créé")
 
-    if event.event_details.date_evenement < datetime.now().date():
-        event.status = 'Refused'
+        event.event_post_presta = post_presta
         event.save()
-    else :
-        send_mail_event(event, 'last_rappel_devis')
-        event.status = 'Last Rappel'
-        event.save()
-        event.client.nb_relance_devis += 1
-        event.client.save()
-        sleep(20)
+        print(f"[SUCCESS] Event ID {event.id} mis à jour avec PostPresta ID {post_presta.id}")
+    else:
+        print(f"[SKIP] Event ID {event.id} a déjà un EventPostPrestation associé (ID {event.event_post_presta.id})")
+
