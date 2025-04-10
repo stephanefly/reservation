@@ -28,7 +28,8 @@ def update_post_presta_status(request, post_presta_id, action):
     actions = {
         'paid': 'paid',
         'membre_paid': 'membre_paid',
-        'feedback': 'feedback',
+        'feedback_message': 'feedback_message',
+        'feedback_google': 'feedback_google',
         'feedback_posted': 'feedback_posted',
         'sent': 'sent',
     }

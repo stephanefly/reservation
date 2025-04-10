@@ -145,7 +145,8 @@ class EventOption(models.Model):
 
 class EventPostPrestation(models.Model):
     paid = models.BooleanField(default=False)
-    feedback = models.BooleanField(default=False)
+    feedback_message = models.BooleanField(default=False)
+    feedback_google = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
     membre_paid = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
@@ -154,7 +155,7 @@ class EventPostPrestation(models.Model):
 
     def save(self, *args, **kwargs):
         if self.sent and self.date_media_sent is None:
-            self.date_sent = datetime.now()
+            self.date_media_sent = datetime.now()
         super().save(*args, **kwargs)
 
 

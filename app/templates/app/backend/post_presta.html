@@ -55,7 +55,8 @@
         <th>DATE-EVENT</th>
         <th>Presta Payé</th>
         <th>Membre Payé</th>
-        <th>Feedback</th>
+        <th>Feedback Message</th>
+        <th>Feedback Google</th>
         <th>Feedback Posté</th>
         <th>Envoi</th>
     </tr>
@@ -71,8 +72,11 @@
         <td class="{% if event.event_post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
             {% if not event.event_post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
         </td>
-        <td class="{% if event.event_post_presta.feedback %}bg-success{% else %}bg-warning{% endif %}">
-            {% if not event.event_post_presta.feedback %}Pas OK{% else %}Fait{% endif %}
+        <td class="{% if event.event_post_presta.feedback_message %}bg-success{% else %}bg-warning{% endif %}">
+            {% if not event.event_post_presta.feedback_message %}Pas OK{% else %}Fait{% endif %}
+        </td>
+        <td class="{% if event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
+            {% if not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
         </td>
         <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
             {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
@@ -233,7 +237,8 @@
             <tr>
                 <th>Payé</th>
                 <th>Membre Payé</th>
-                <th>Feedback</th>
+                <th>Feedback Message</th>
+                <th>Feedback Google</th>
                 <th>Feedback Posté</th>
                 <th>Action</th>
             </tr>
@@ -260,10 +265,21 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if not event.event_post_presta.feedback %}
+                    {% if not event.event_post_presta.feedback_message %}
                     {% csrf_token %}
                     <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                            data-action="feedback">OK
+                            data-action="feedback_message">OK
+                    </button>
+
+                    {% else %}
+                    Fait
+                    {% endif %}
+                </td>
+                                <td>
+                    {% if not event.event_post_presta.feedback_google %}
+                    {% csrf_token %}
+                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
+                            data-action="feedback_google">OK
                     </button>
 
                     {% else %}

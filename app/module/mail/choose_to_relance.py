@@ -87,7 +87,7 @@ def choose_to_make_review_mail():
     lst_event_to_make_review = Event.objects.filter(
         date_media_sent=some_days_ago,
         client__autorisation_mail=True,
-        event_post_presta__feedback=False,
+        event_post_presta__feedback_google=False,
         status='Sent Media',
     )
 
