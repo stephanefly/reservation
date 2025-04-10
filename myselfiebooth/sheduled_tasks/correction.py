@@ -1,5 +1,7 @@
 import os
 import sys
+from datetime import datetime
+from time import sleep
 
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,13 +17,24 @@ import django
 django.setup()
 
 from app.models import Event
-from app.module.cloud.rennaming import normalize_name
+from app.module.mail.send_mail_event import send_mail_event
 
-lst_event_to_corriger = Event.objects.filter(status='Post Presta')
+lst_event_to_corriger = Event.objects.filter(
+    status='Sended',
+    signer_at__isnull=True,
+    client__autorisation_mail=True,
+    )
 
 for event in lst_event_to_corriger:
 
-    event.event_template.link_media_shared = str(event.event_template.directory_name)
-    event.event_template.save()
-    event.event_template.directory_name = normalize_name(event)
-    event.event_template.save()
+    if event.event_details.date_evenement < datetime.now().date():
+        event.status = 'Refused'
+        event.save()
+    else :
+        send_mail_event(event, 'last_rappel_devis')
+        event.status = 'Last Rappel'
+        event.save()
+        event.client.nb_relance_devis += 1
+        event.client.save()
+        sleep(20)
+
