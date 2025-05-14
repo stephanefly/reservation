@@ -56,6 +56,7 @@
         <th>Feedback Message</th>
         <th>Feedback Google</th>
         <th>Feedback Posté</th>
+        <th>Media Collecté</th>
         <th>Envoi</th>
     </tr>
     </thead>
@@ -73,6 +74,9 @@
         <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
             {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
         </td>
+                    <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
+            </td>
         <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
             {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
         </td>
