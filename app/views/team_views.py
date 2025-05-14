@@ -67,7 +67,7 @@ def view_image(request, event_id):
 def team_post_presta(request):
     lst_post_event = Event.objects.filter(
         signer_at__isnull=False,
-        status__in=['Post Presta','Sent Media']
+        status__in=['Post Presta']
     ).order_by('event_details__date_evenement')
 
     event_lst_member = get_member_list(lst_post_event)
