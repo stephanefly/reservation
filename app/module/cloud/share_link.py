@@ -5,8 +5,8 @@ from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data
 from myselfiebooth.settings import API_PCLOUD_URL, ACCESS_TOKEN
 import requests
 
-MAX_DOWNLOADS = 10  # Nombre maximal de téléchargements
-MAX_TRAFFIC = 10000 * 1024 * 1024  # 10000 Mo en octets
+MAX_DOWNLOADS = 100  # Nombre maximal de téléchargements
+MAX_TRAFFIC = 100000 * 1024 * 1024  # 100000 Mo en octets
 EXPIRE_DAYS = 45 # Nombre de jours avant expiration
 expire_datetime = datetime.utcnow() + timedelta(days=EXPIRE_DAYS)
 
