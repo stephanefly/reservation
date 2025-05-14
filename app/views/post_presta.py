@@ -26,8 +26,6 @@ def presta_fini(request, event_id):
 def update_post_presta_status(request, post_presta_id, action):
     post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
     actions = {
-        'paid': 'paid',
-        'membre_paid': 'membre_paid',
         'feedback_message': 'feedback_message',
         'feedback_google': 'feedback_google',
         'feedback_posted': 'feedback_posted',

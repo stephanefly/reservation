@@ -29,12 +29,8 @@
         <tr>
             <th>NOM</th>
             <th>DATE-EVENT</th>
-            <th>Presta Payé</th>
-            <th>Membre Payé</th>
-            <th>Feedback Message</th>
-            <th>Feedback Google</th>
-            <th>Feedback Posté</th>
-            <th>Envoi</th>
+            <th>Media Collecté</th>
+            <th>Media Envoyé</th>
         </tr>
         </thead>
         <tbody>
@@ -42,22 +38,10 @@
         <tr>
             <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td class="{% if event.event_post_presta.paid %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.event_post_presta.paid %}Pas OK{% else %}Fait{% endif %}
+            <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
             </td>
-            <td class="{% if event.event_post_presta.membre_paid %}bg-success{% else %}bg-info{% endif %}">
-                {% if not event.event_post_presta.membre_paid %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.event_post_presta.feedback_message %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.event_post_presta.feedback_message %}Pas OK{% else %}Fait{% endif %}
-            </td>
-                        <td class="{% if event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-warning{% endif %}">
                 {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
             </td>
         </tr>

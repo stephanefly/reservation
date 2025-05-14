@@ -144,11 +144,9 @@ class EventOption(models.Model):
 
 
 class EventPostPrestation(models.Model):
-    paid = models.BooleanField(default=False)
     feedback_message = models.BooleanField(default=False)
     feedback_google = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
-    membre_paid = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
     date_media_sent = models.DateTimeField(null=True, blank=True)
