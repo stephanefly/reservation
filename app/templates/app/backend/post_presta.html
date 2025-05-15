@@ -53,6 +53,7 @@
     <tr>
         <th>NOM</th>
         <th>DATE-EVENT</th>
+        <th>Tel</th>
         <th>Feedback Message</th>
         <th>Feedback Google</th>
         <th>Feedback Posté</th>
@@ -65,6 +66,7 @@
     <tr>
         <td><a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></td>
         <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+        <td><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></td>
         <td class="{% if event.event_post_presta.feedback_message %}bg-success{% else %}bg-warning{% endif %}">
             {% if not event.event_post_presta.feedback_message %}Pas OK{% else %}Fait{% endif %}
         </td>
