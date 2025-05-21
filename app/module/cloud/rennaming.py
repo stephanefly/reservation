@@ -23,11 +23,11 @@ def normalize_name(event):
 
     return normalized_name
 
-def rennaming_pcloud_event_folder(event, new_directory_name):
+def rennaming_pcloud_event_folder(event, new_directory_name, prepa: bool = False):
     """
     Renname a folder on the pCloud server.
     """
-    folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
+    folder_data = get_pcloud_event_folder_data(event.event_template.directory_name, prepa)
 
     url = f"{API_PCLOUD_URL}/renamefolder"
     folder_client_name = event.event_template.directory_name

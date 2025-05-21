@@ -1,7 +1,6 @@
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
-from app.module.cloud.connect_ftp_nas import SFTP_STORAGE
 from app.module.cloud.rennaming import normalize_name, rennaming_pcloud_event_folder
 from django.utils.timezone import now
 from app.models import EventTemplate, EventAcompte
@@ -97,7 +96,7 @@ def update_data(event, request):
         else:
             new_directory_name = normalize_name(event)
             if new_directory_name != event.event_template.directory_name:
-                SFTP_STORAGE._rename_event_repository(event, new_directory_name)
+                rennaming_pcloud_event_folder(event, new_directory_name, prepa=True)
                 rennaming_pcloud_event_folder(event, new_directory_name)
                 event.event_template.directory_name = new_directory_name
                 event.event_template.save()
@@ -224,7 +223,7 @@ def process_validation_event(event, form):
         ("Envoyer mail confirmation", lambda: send_mail_event(event, 'validation')),
         ("Deplacement Carte Trello", lambda: to_acompte_ok(event)),
         ("Génération du code espace client", lambda: generate_code_espace_client(event)),
-        ("Création du répertoire SFTP", lambda: SFTP_STORAGE._create_event_repository(event)),
+        ("Création du répertoire SFTP", lambda: create_pcloud_event_folder(event, prepa=True)),
         ("Création du dossier pCloud", lambda: create_pcloud_event_folder(event)),
     ]
 

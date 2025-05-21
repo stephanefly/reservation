@@ -3,12 +3,14 @@ from ..models import EventTemplate, Event, EventRelance
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 import os
 
+from ..module.cloud.create_timelaps import upload_file_to_pcloud
+from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data
+from ..module.cloud.share_link import upload_template_to_pcloud, get_public_image_link_from_path
 from ..module.data_bdd.make_planning import get_member_list
-from ..module.cloud.connect_ftp_nas import SFTP_STORAGE
 from ..module.mail.send_mail_event import send_mail_event
 
 today_date = datetime.now().date()
@@ -37,11 +39,13 @@ def change_status(request, pk):
 
 
 def upload_image(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
     if request.method == 'POST':
         image = request.FILES.get('myTemplate')
         if image:
             # Sauvegarder l'image sur le NAS via SFTPStorage
-            saved_path = SFTP_STORAGE._save_png(image, event_id)
+            folder_data = get_pcloud_event_folder_data(event.event_template.directory_name, prepa=True)
+            upload_template_to_pcloud(event, image, folder_data)
 
             return redirect('template_to_do')
 
@@ -53,15 +57,10 @@ def send_template_to_client(request, event_id):
     return redirect('template_to_do')
 
 def view_image(request, event_id):
-    sftp_storage = SFTP_STORAGE  # Utilisez votre instance de connexion SFTP
-    file_data, file_name = sftp_storage._get_last_image(event_id)  # Récupérer l'image
-
-    # Détectez le type de contenu (vous pouvez ajuster selon votre fichier)
-    content_type = "image/jpeg" if file_name.endswith(".jpg") or file_name.endswith(".jpeg") else "image/png"
-
-    # Retourne l'image sans forcer le téléchargement
-    response = HttpResponse(file_data, content_type=content_type)
-    return response
+    event = Event.objects.get(id=event_id)
+    full_path = r"/PREPA-EVENT/" + str(event.event_template.directory_name) + "/" + str(event.event_template.image_name)
+    template_url = get_public_image_link_from_path(full_path)
+    return HttpResponseRedirect(template_url)
 
 
 def team_post_presta(request):

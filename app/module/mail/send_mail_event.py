@@ -5,8 +5,8 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
-
-from app.module.cloud.connect_ftp_nas import SFTP_STORAGE
+import requests
+from app.module.cloud.share_link import get_public_image_link_from_path
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail
@@ -69,10 +69,13 @@ def complete_mail_with_file_to_send(event, file_to_send):
         part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
 
     if 'template_file' in file_to_send:
-        sftp_storage = SFTP_STORAGE  # Connexion SFTP active
-        file_data, file_name = sftp_storage._get_last_image(event.id)
+        full_path = r"/PREPA-EVENT/" + str(event.event_template.directory_name) + "/" + str(
+            event.event_template.image_name)
+        template_url = get_public_image_link_from_path(full_path)
+        response = requests.get(template_url)
+        file_name = event.event_template.image_name
 
-        part = MIMEApplication(file_data, Name=file_name)
+        part = MIMEApplication(response.content, Name=file_name)
         part['Content-Disposition'] = f'attachment; filename="{file_name}"'
 
     return part

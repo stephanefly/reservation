@@ -2,17 +2,19 @@ import os
 import json
 import requests
 
-from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN
+from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID
 
 
-def get_pcloud_event_folder_data(event_name: str) -> dict:
+def get_pcloud_event_folder_data(event_name, prepa: bool = False):
     """
     Retrieve the folder ID from pCloud by event name.
     """
     url = f"{API_PCLOUD_URL}/listfolder"
+
+    folder_id = ROOT_FOLDER_PREPA_ID if prepa else ROOT_FOLDER_ID
     params = {
         'access_token': ACCESS_TOKEN,
-        'folderid': ROOT_FOLDER_ID
+        'folderid': folder_id
     }
 
     response = requests.post(url, params=params)
@@ -23,15 +25,24 @@ def get_pcloud_event_folder_data(event_name: str) -> dict:
             return folder_data
 
 
-def create_pcloud_event_folder(event):
+def create_pcloud_event_folder(event, prepa: bool = False):
     """
-    Create a folder on the pCloud server.
+    Create a folder on the pCloud server, either in the standard event folder or in the preparation folder.
+
+    Args:
+        event: L'objet événement contenant un template avec un nom de dossier.
+        prepa (bool): Si True, crée le dossier dans le dossier 'préparation'. Sinon, dans le dossier principal.
+
+    Returns:
+        bool: True si succès ou dossier déjà existant, False sinon.
     """
     url = f"{API_PCLOUD_URL}/createfolder"
     folder_client_name = event.event_template.directory_name
+    folder_id = ROOT_FOLDER_PREPA_ID if prepa else ROOT_FOLDER_ID
+
     params = {
         'access_token': ACCESS_TOKEN,
-        'folderid': ROOT_FOLDER_ID,
+        'folderid': folder_id,
         'name': folder_client_name,
     }
 
@@ -40,7 +51,7 @@ def create_pcloud_event_folder(event):
     if response.status_code != 200:
         return False  # Échec de la requête
 
-    data = response.json()  # Parse le JSON
+    data = response.json()
 
     # Vérifier si le dossier a été créé ou existe déjà
     if data["result"] == 0 or data["result"] == 2004:

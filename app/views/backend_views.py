@@ -90,7 +90,6 @@ def confirmation_val_devis(request, id):
     form = ValidationForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        print(form)
 
         all_success, failing_step = process_validation_event(event, form)
 
