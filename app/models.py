@@ -41,8 +41,7 @@ class EventTemplate(models.Model):
     directory_name = models.CharField(max_length=100, null=True)
     image_name = models.CharField(max_length=100, null=True)
     num_template = models.IntegerField(default=1)
-    link_media_shared = models.URLField(null=True, blank=True)
-
+    url_pcloud_template_folder = models.URLField(null=True, blank=True)
 
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
@@ -150,6 +149,7 @@ class EventPostPrestation(models.Model):
     collected = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
     date_media_sent = models.DateTimeField(null=True, blank=True)
+    link_media_shared = models.URLField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.sent and self.date_media_sent is None:

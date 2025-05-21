@@ -68,7 +68,7 @@
                      {% endif %}
                   </td>
                   <td>{{ event.event_template.text_template }}</td>
-                  <td><a href="{{ event.event_template.link_media_shared }}">{{ event.event_template.directory_name }}</a></td>
+                  <td><a href="{{ event.event_template.url_pcloud_template_folder }}">{{ event.event_template.directory_name }}</a></td>
                   <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
                      {% if event.event_template.statut %}
                      Prêt

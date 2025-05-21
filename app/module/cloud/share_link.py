@@ -58,7 +58,7 @@ def upload_template_to_pcloud(event, uploaded_file, folder_data: dict):
     response = requests.post(url, params=params, files=files)
 
     if response.status_code == 200:
-        event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
+        event.event_template.url_pcloud_template_folder = get_pcloud_link_event_folder(folder_data)
         event.event_template.save()
         event.save()
         return response.json()
