@@ -73,6 +73,7 @@ def get_public_image_link_from_path(path: str) -> str:
     params = {
         "access_token": ACCESS_TOKEN,
         "path": path,
+        "contenttype": "image/png"
     }
     response = requests.get(url, params=params)
     data = response.json()
