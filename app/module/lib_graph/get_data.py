@@ -9,6 +9,7 @@ def get_ok_data():
     results = Event.objects.filter(
         Q(status__icontains="Presta FINI")
         |Q(status__icontains="Acompte OK")
+        |Q(status__icontains="Sent Media")
         |Q(status__icontains="Post Presta")
     ).filter(signer_at__isnull=False
     ).select_related(
