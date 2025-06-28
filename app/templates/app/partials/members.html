@@ -1,0 +1,8 @@
+{% for member in event.event_team_members.all %}
+  <span class="badge bg-secondary">
+    {{ member.name }}
+    <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1 remove-member-btn" data-event-id="{{ event.id }}" data-member-id="{{ member.id }}">✖</button>
+  </span>
+{% empty %}
+  Aucun membre
+{% endfor %}
