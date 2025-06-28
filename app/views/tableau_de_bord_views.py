@@ -30,10 +30,10 @@ def api_add_member(request, event_id):
     event = Event.objects.get(id=event_id)
     member = TeamMember.objects.get(id=data['member_id'])
     event.event_team_members.add(member)
-    return HttpResponse(render_to_string('partials/members.html', {'event': event}))
+    return HttpResponse(render_to_string('app/partials/members.html', {'event': event}))
 
 def api_remove_member(request, event_id, member_id):
     event = Event.objects.get(id=event_id)
     member = TeamMember.objects.get(id=member_id)
     event.event_team_members.remove(member)
-    return HttpResponse(render_to_string('partials/members.html', {'event': event}))
+    return HttpResponse(render_to_string('app/partials/members.html', {'event': event}))

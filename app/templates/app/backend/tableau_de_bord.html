@@ -20,264 +20,270 @@
    border: solid 5px;
    }
 </style>
-
-   <table id="table" class="table table-bordered table-striped" style="background-color:white">
-      <thead>
-         <tr>
-            <th>NOM</th>
-            <th>J</th>
-            <th>DATE-EVENT</th>
-            <th>CP</th>
-            <th>PRIX</th>
-            <th>Acompte</th>
-            <th>Restant</th>
-            <th>Mode</th>
-         </tr>
-      </thead>
-      <tbody>
-         {% for event in lst_event_prio %}
-         <tr style="background-color: {% if event.event_template.statut %}#13be0061{% else %}#ff000061{% endif %}; ">
-            <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
-            <td>{{ event.event_details.date_evenement|date:"D" }}</td>
-            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td>{{ event.event_details.code_postal_evenement }}</td>
-            <td id="prix_valided">{{ event.prix_valided }}</td>
-            <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-            <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-         </tr>
-         {% endfor %}
-      </tbody>
-   </table>
-   {% with prev_date=None %}
-   {% for event in lst_event_prio %}
-   {% ifchanged event.event_details.date_evenement %}
-   {% if prev_date %}
-   <hr class="my-4 mx-auto" style="color: #1b1b1b;">
-   {% endif %}
-   <br>
-   <div class="date-block" style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
-      <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
+<table id="table" class="table table-bordered table-striped" style="background-color:white">
+   <thead>
+      <tr>
+         <th>NOM</th>
+         <th>J</th>
+         <th>DATE-EVENT</th>
+         <th>CP</th>
+         <th>PRIX</th>
+         <th>Acompte</th>
+         <th>Restant</th>
+         <th>Mode</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for event in lst_event_prio %}
+      <tr style="background-color: {% if event.event_template.statut %}#13be0061{% else %}#ff000061{% endif %}; ">
+         <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
+         <td>{{ event.event_details.date_evenement|date:"D" }}</td>
+         <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+         <td>{{ event.event_details.code_postal_evenement }}</td>
+         <td id="prix_valided">{{ event.prix_valided }}</td>
+         <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+         <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+         <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+      </tr>
+      {% endfor %}
+   </tbody>
+</table>
+{% with prev_date=None %}
+{% for event in lst_event_prio %}
+{% ifchanged event.event_details.date_evenement %}
+{% if prev_date %}
+<hr class="my-4 mx-auto" style="color: #1b1b1b;">
+{% endif %}
+<br>
+<div class="date-block" style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
+   <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
+</div>
+{% endifchanged %}
+<br>
+<div class="card" style="border-color: {% if event.event_template.statut %}#00bc2d{% else %}#ff0505{% endif %}; ">
+   <div class="card-header">
+      <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
    </div>
-   {% endifchanged %}
-   <br>
-   <div class="card" style="border-color: {% if event.event_template.statut %}#00bc2d{% else %}#ff0505{% endif %}; ">
-      <div class="card-header">
-         <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
-      </div>
-      <div class="card-body" style="background-color: rgba(184,184,184,0.49)">
-         <table class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Durée</th>
-                  <th>Horaire</th>
-                  <th>Adresse</th>
-                  <th>Equipe</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>{{ event.event_option.duree }}h</td>
-                  <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-                  <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
-<td>
-  <select class="form-select form-select-sm" onchange="addMember(this, {{ event.id }})">
-    <option value="">➕ Ajouter un membre</option>
-    {% for member in team_members %}
-      <option value="{{ member.id }}">{{ member.name }}</option>
-    {% endfor %}
-  </select>
+   <div class="card-body" style="background-color: rgba(184,184,184,0.49)">
+      <table class="table table-bordered table-striped" style="background-color:white">
+         <thead>
+            <tr>
+               <th>Durée</th>
+               <th>Horaire</th>
+               <th>Adresse</th>
+               <th>Equipe</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td>{{ event.event_option.duree }}h</td>
+               <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
+               <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
+               <td>
+                  <select class="form-select form-select-sm member-select" data-event-id="{{ event.id }}">
+                     <option value="">➕ Ajouter un membre</option>
+                     {% for member in team_members %}
+                     <option value="{{ member.id }}">{{ member.name }}</option>
+                     {% endfor %}
+                  </select>
+                  <div id="members-{{ event.id }}" class="d-flex flex-wrap gap-1 mt-2">
+                     {% include 'app/partials/members.html' with event=event %}
+                  </div>
+               </td>
+               <script>
+                  function getCSRFToken() {
+                    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                  }
 
-  <div id="members-{{ event.id }}">
-    {% for m in event.event_team_members.all %}
-      <span>
-        {{ m.name }}
-        <button onclick="removeMember({{ event.id }}, {{ m.id }})">✖</button>
-      </span>
-    {% empty %} Aucun {% endfor %}
-  </div>
-</td>
-<script>
-function getCSRFToken() {
-  return '{{ csrf_token }}';
-}
+                  // Ajouter un membre
+                  function addMember(eventId, memberId, selectElement) {
+                    fetch(`/api/ajouter-membre/${eventId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ member_id: memberId })
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                      document.getElementById(`members-${eventId}`).innerHTML = html;
+                      attachRemoveButtons(); // Reconnecter les boutons ✖
+                      selectElement.value = ""; // Reset du select
+                    });
+                  }
 
-function addMember(select, eventId) {
-  const memberId = select.value;
-  if (!memberId) return;
+                  // Supprimer un membre
+                  function removeMember(eventId, memberId) {
+                    fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': getCSRFToken()
+                      }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                      document.getElementById(`members-${eventId}`).innerHTML = html;
+                      attachRemoveButtons(); // Reconnecter après suppression
+                    });
+                  }
 
-  fetch(`/api/ajouter-membre/${eventId}/`, {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': getCSRFToken(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ member_id: memberId })
-  })
-  .then(r => r.text())
-  .then(html => {
-    document.getElementById(`members-${eventId}`).innerHTML = html;
-    select.value = "";  // reset
-  });
-}
+                  // Connecter les boutons ✖
+                  function attachRemoveButtons() {
+                    document.querySelectorAll('.remove-member').forEach(button => {
+                      button.onclick = () => {
+                        const eventId = button.dataset.eventId;
+                        const memberId = button.dataset.memberId;
+                        removeMember(eventId, memberId);
+                      };
+                    });
+                  }
 
-function removeMember(eventId, memberId) {
-  fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
-    method: 'POST',
-    headers: { 'X-CSRFToken': getCSRFToken() }
-  })
-  .then(r => r.text())
-  .then(html => {
-    document.getElementById(`members-${eventId}`).innerHTML = html;
-  });
-}
-</script>
+                  // Connecter les selecteurs
+                  document.querySelectorAll('.member-select').forEach(select => {
+                    select.addEventListener('change', () => {
+                      const eventId = select.dataset.eventId;
+                      const memberId = select.value;
+                      if (memberId) {
+                        addMember(eventId, memberId, select);
+                      }
+                    });
+                  });
 
-
-
-               </tr>
-            </tbody>
-         </table>
-
-         <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Prestation</th>
-                  <th>Option</th>
-                                     <th>Statut</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>
-                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>, {% endif %}
-                     {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
-                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>, {% endif %}
-                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>, {% endif %}
-                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>, {% endif %}
-                      {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>, {% endif %}
-                  </td>
-                    <td>
-                        {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>, {% endif %}
-                        {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
-                        {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
-                        {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
-                        {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                        {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
-                        {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                        {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                        {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                        {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                    </td>
-                                       <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
-                    <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                        {% if event.event_template.statut %}
-                            Prêt
-                        {% else %}
-                            Pas OK
-                        {% endif %}
-                    </td>
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>URL ESTY</th>
-                  <th>Texte</th>
-
-                  <th>TEMPLATE</th>
-                  <th>Path Depot Template</th>
-               </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <!-- Colonne pour le lien vers le modèle avec un fond conditionnel -->
-                    <td style="background-color: {% if event.event_template.url_modele %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.url_modele %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                        {% if event.event_template.url_modele %}
-                            <a href="{{ event.event_template.url_modele }}">MODEL</a>
-                        {% else %}
-                            Pas de modèle
-                        {% endif %}
-                    </td>
-
-                    <!-- Colonne pour le texte du template -->
-                    <td style="background-color: {% if event.event_template.text_template %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.text_template %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                        {{ event.event_template.text_template }}
-                    </td>
-
-
-
-                    <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
-                    <td style="background-color: {% if event.event_template.image_name %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.image_name %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-
-                                                {% if event.event_template.image_name %}
-                            <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
-                                                {% endif %}
-                        </td>
-
-
-                    <!-- Colonne pour les prepa-template -->
-                    <td>
-                    <a href="P:\PREPA-EVENT\{{ event.event_template.directory_name }}">
-                        {{ event.event_template.directory_name }}
-                    </a>
-</td>
-                </tr>
-
-            </tbody>
-         </table>
-
-         <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Commentaire Client</th>
-                  <th>Commentaire</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>{{ event.event_details.comment_client }}</td>
-                  <td>{{ event.event_details.comment }}</td>
-               </tr>
-            </tbody>
-         </table>
-                             <table id="table_action" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-               </tr>
-            </thead>
-            <tbody>
-                <tr>
-
-                    <!-- Colonne pour les actions -->
-                    <td>
-                            <!-- Formulaire pour changer le statut -->
-                            <form action="{% url 'change_status' event.event_template.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="btn {% if event.event_template.statut %}btn-danger{% else %}btn-success{% endif %}">
-                                    {% if event.event_template.statut %}
-                                        Marquer comme Pas OK
-                                    {% else %}
-                                        Valider
-                                    {% endif %}
-                                </button>
-                            </form>
-                        </td>
-                    <td>
-                                                    <!-- Formulaire pour relancer l'espace client -->
-                            <form method="POST" action="{% url 'relance_espace_client' event.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-warning">Relancer espace</button>
-                            </form>
-                    </td>
-                </tr>
-
-            </tbody>
-         </table>
-      </div>
+                  // Initialisation au chargement
+                  document.addEventListener('DOMContentLoaded', () => {
+                    attachRemoveButtons();
+                  });
+               </script>
+            </tr>
+         </tbody>
+      </table>
+      <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+         <thead>
+            <tr>
+               <th>Prestation</th>
+               <th>Option</th>
+               <th>Statut</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td>
+                  {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>, {% endif %}
+                  {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
+                  {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>, {% endif %}
+                  {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>, {% endif %}
+                  {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>, {% endif %}
+                  {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>, {% endif %}
+               </td>
+               <td>
+                  {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>, {% endif %}
+                  {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
+                  {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
+                  {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
+                  {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
+                  {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
+                  {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
+                  {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
+                  {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
+                  {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
+               </td>
+               <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
+               <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                  {% if event.event_template.statut %}
+                  Prêt
+                  {% else %}
+                  Pas OK
+                  {% endif %}
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
+         <thead>
+            <tr>
+               <th>URL ESTY</th>
+               <th>Texte</th>
+               <th>TEMPLATE</th>
+               <th>Path Depot Template</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <!-- Colonne pour le lien vers le modèle avec un fond conditionnel -->
+               <td style="background-color: {% if event.event_template.url_modele %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.url_modele %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                  {% if event.event_template.url_modele %}
+                  <a href="{{ event.event_template.url_modele }}">MODEL</a>
+                  {% else %}
+                  Pas de modèle
+                  {% endif %}
+               </td>
+               <!-- Colonne pour le texte du template -->
+               <td style="background-color: {% if event.event_template.text_template %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.text_template %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                  {{ event.event_template.text_template }}
+               </td>
+               <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
+               <td style="background-color: {% if event.event_template.image_name %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.image_name %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
+                  {% if event.event_template.image_name %}
+                  <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
+                  {% endif %}
+               </td>
+               <!-- Colonne pour les prepa-template -->
+               <td>
+                  <a href="P:\PREPA-EVENT\{{ event.event_template.directory_name }}">
+                  {{ event.event_template.directory_name }}
+                  </a>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+         <thead>
+            <tr>
+               <th>Commentaire Client</th>
+               <th>Commentaire</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td>{{ event.event_details.comment_client }}</td>
+               <td>{{ event.event_details.comment }}</td>
+            </tr>
+         </tbody>
+      </table>
+      <table id="table_action" class="table table-bordered table-striped" style="background-color:white">
+         <thead>
+            <tr>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <!-- Colonne pour les actions -->
+               <td>
+                  <!-- Formulaire pour changer le statut -->
+                  <form action="{% url 'change_status' event.event_template.id %}" method="post">
+                     {% csrf_token %}
+                     <button type="submit" class="btn {% if event.event_template.statut %}btn-danger{% else %}btn-success{% endif %}">
+                     {% if event.event_template.statut %}
+                     Marquer comme Pas OK
+                     {% else %}
+                     Valider
+                     {% endif %}
+                     </button>
+                  </form>
+               </td>
+               <td>
+                  <!-- Formulaire pour relancer l'espace client -->
+                  <form method="POST" action="{% url 'relance_espace_client' event.id %}">
+                     {% csrf_token %}
+                     <button type="submit" class="btn btn-warning">Relancer espace</button>
+                  </form>
+               </td>
+            </tr>
+         </tbody>
+      </table>
    </div>
-   {% endfor %}
-   {% endwith %}
-
+</div>
+{% endfor %}
+{% endwith %}
 {% endblock %}
