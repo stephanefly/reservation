@@ -1,18 +1,18 @@
 from django.views.decorators.http import require_http_methods
-from ..models import EventTemplate, Event, EventRelance
+from ..models import EventTemplate, Event, EventRelance, TeamMember
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 import os
-
+import json
 from ..module.cloud.create_timelaps import upload_file_to_pcloud
 from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data
 from ..module.cloud.share_link import upload_template_to_pcloud, get_public_image_link_from_path
 from ..module.data_bdd.make_planning import get_member_list
 from ..module.mail.send_mail_event import send_mail_event
-
+from django.template.loader import render_to_string
 today_date = datetime.now().date()
 from django.utils.timezone import now
 
@@ -88,13 +88,12 @@ def team_planning(request):
         event_details__date_evenement__range=[today_minus_6h, end_week_date]
     ).order_by('event_details__date_evenement')
 
-    event_lst_member = get_member_list(lst_event_prio)
-    print(event_lst_member)
+    team_members = TeamMember.objects.all()
 
     return render(request, 'app/team/team_planning.html',
                   {
                       'lst_event_prio': lst_event_prio,
-                      'event_lst_member': event_lst_member
+                      'team_members': team_members,
                   })
 
 
@@ -173,3 +172,5 @@ def info_relance_client(request, event_id):
 
     return render(request, "app/team/info_relance_client.html",
                   {"event": event, "lst_relance_event": lst_relance_event,  "now": now(),"event_reduc_total":event_reduc_total})
+
+

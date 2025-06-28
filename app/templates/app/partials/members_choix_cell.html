@@ -1,0 +1,11 @@
+
+  <select class="form-select form-select-sm member-select" data-event-id="{{ event.id }}">
+    <option value="">➕ Ajouter un membre</option>
+    {% for member in team_members %}
+      <option value="{{ member.id }}">{{ member.name }}</option>
+    {% endfor %}
+  </select>
+  <div id="members-{{ event.id }}" class="d-flex flex-wrap gap-1 mt-2">
+    {% include 'app/partials/members.html' with event=event %}
+  </div>
+

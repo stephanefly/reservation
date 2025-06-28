@@ -1,5 +1,5 @@
 {% for m in event.event_team_members.all %}
-  <span class="badge bg-warning text-dark me-1 d-inline-flex align-items-center">
+  <span class="badge bg-info text-dark me-1 d-inline-flex align-items-center">
     {{ m.name }}
     <button class="btn-close btn-sm ms-2 remove-member"
             data-event-id="{{ event.id }}"

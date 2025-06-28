@@ -74,18 +74,10 @@
                     <td {% if event.event_details.horaire == "None" %}
                         style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
                     <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
-                    <td>
-                        {% for event_name, membres in event_lst_member.items %}
-                            {% if event_name == event.client.nom %}
-                                {% for membre in membres %}
-                                    <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %},
-                                {% endif %}
-                                {% empty %}
-                                    Aucun membre associé
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
+               <td>
+                  {% include 'app/partials/members_choix_cell.html' %}
+               </td>
+
 
 
                 </tr>
@@ -163,4 +155,66 @@
         {% endfor %}
     {% endwith %}
 </div>
+
+<script>
+  function getCSRFToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+  }
+
+  function addMember(eventId, memberId, selectElement) {
+    fetch(`/api/ajouter-membre/${eventId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCSRFToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ member_id: memberId })
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById(`members-${eventId}`).innerHTML = html;
+      attachRemoveButtons();
+      if (selectElement) selectElement.value = "";
+    });
+  }
+
+  function removeMember(eventId, memberId) {
+    fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCSRFToken()
+      }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById(`members-${eventId}`).innerHTML = html;
+      attachRemoveButtons();
+    });
+  }
+
+  function attachRemoveButtons() {
+    document.querySelectorAll('.remove-member').forEach(button => {
+      button.onclick = () => {
+        const eventId = button.dataset.eventId;
+        const memberId = button.dataset.memberId;
+        removeMember(eventId, memberId);
+      };
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    attachRemoveButtons();
+    document.querySelectorAll('.member-select').forEach(select => {
+      select.addEventListener('change', () => {
+        const eventId = select.dataset.eventId;
+        const memberId = select.value;
+        if (memberId) {
+          addMember(eventId, memberId, select);
+        }
+      });
+    });
+  });
+</script>
+
 {% endblock %}
