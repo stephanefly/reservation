@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
-from ..models import Event, EventAcompte, EventTemplate, EmailTracking
+from ..models import Event, EventAcompte, EventTemplate, EmailTracking, TeamMember
 
 from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
@@ -15,8 +15,96 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Q
-
+from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 today_date = datetime.now().date()
+
+from datetime import datetime
+from django.shortcuts import redirect
+from django.utils import timezone
+import requests
+
+def action_once(request):
+    today_date = timezone.now().date()
+    board_id = "bm6IDBqY"
+    presta_fini_list_id = get_presta_fini_list_id(board_id)
+
+    all_event = Event.objects.all().order_by('-id')
+    for event in all_event:
+        print(f"🔍 {event}")
+
+        if not event.signer_at:
+            continue  # ❌ Non signé
+        if event.event_details.date_evenement > today_date:
+            continue  # ❌ Pas encore passé
+
+        # Récupération des labels (direct ou fallback)
+        labels = get_labels_from_trello(event, presta_fini_list_id)
+
+        for label in labels:
+            if label['color'] == 'orange_dark':
+                name = label['name']
+                try:
+                    member = TeamMember.objects.get(name=name)
+                    if member not in event.event_team_members.all():
+                        event.event_team_members.add(member)
+                        print(f"✅ {member.name} ajouté à {event.client.nom}")
+                except TeamMember.DoesNotExist:
+                    print(f"⚠️ Aucun TeamMember trouvé pour : {name}")
+
+    return redirect('lst_devis')
+
+def get_labels_from_trello(event, presta_fini_list_id):
+    id_card = event.id_card
+    url = f"https://api.trello.com/1/cards/{id_card}/labels"
+    params = {
+        'key': KEY_TRELLO,
+        'token': TOKEN_TRELLO,
+    }
+
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        labels = response.json()
+        if any(label.get('color') == 'orange_dark' for label in labels):
+            return labels
+
+
+    print(f"🔁 Carte introuvable pour {event.client.nom}, recherche dans 'PRESTA FINI'...")
+
+
+    cards_url = f"https://api.trello.com/1/lists/{presta_fini_list_id}/cards"
+    cards_response = requests.get(cards_url, params=params)
+
+
+    for card in cards_response.json():
+        if event.client.nom in card.get('name', ''):
+            id_card_found = card['id']
+            # Met à jour l'event si on trouve la carte
+            event.id_card = id_card_found
+            event.save(update_fields=['id_card'])
+
+            labels_url = f"https://api.trello.com/1/cards/{id_card_found}/labels"
+            label_response = requests.get(labels_url, params=params)
+            if label_response.status_code == 200:
+                print(f"✅ Carte trouvée par fallback : {card['name']}")
+                return label_response.json()
+
+    print(f"❌ Aucune carte correspondante pour {event.client.nom} dans 'PRESTA FINI'")
+    return []
+
+def get_presta_fini_list_id(board_id):
+    url = f"https://api.trello.com/1/boards/{board_id}/lists"
+    params = {
+        'key': KEY_TRELLO,
+        'token': TOKEN_TRELLO,
+    }
+    response = requests.get(url, params=params)
+    if response.status_code != 200:
+        return None
+
+    for liste in response.json():
+        if liste['name'].upper().strip() == "PRESTA FINI":
+            return liste['id']
+    return None
 
 def lst_devis(request):
     # Récupération des paramètres de filtre
@@ -216,8 +304,6 @@ def last_chance_devis_client(request, event_id):
     event.client.save()
     return redirect('info_event', id=event.id)
 
-def action_once(request):
-    return redirect('lst_devis')
 
 def track_devis(request, uuid):
     try:
@@ -231,3 +317,5 @@ def track_devis(request, uuid):
     # Retourner une image pixel transparente
     pixel = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B'
     return HttpResponse(pixel, content_type="image/gif")
+
+

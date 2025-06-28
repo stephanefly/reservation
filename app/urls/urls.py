@@ -1,13 +1,15 @@
 from django.urls import path, include
 
 from ..views import tableau_de_bord, post_presta, relance_avis_client, presta_fini, update_post_presta_status, \
-    desabonner, action_once, track_devis
+    desabonner, action_once, track_devis, api_add_member, api_remove_member
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', include('app.urls.frontend_urls')),
 
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
+    path('api/ajouter-membre/<int:event_id>/', api_add_member, name='api_add_member'),
+    path('api/remove-membre/<int:event_id>/<int:member_id>/', api_remove_member, name='api_remove_member'),
 
     path('backend/post_presta/', include('app.urls.post_presta_urls')),
     path('backend/info-event/', include('app.urls.info_event_urls')),

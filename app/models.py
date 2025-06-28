@@ -174,6 +174,12 @@ class EventAcompte(models.Model):
     date_payement = models.DateField(null=True, blank=True)
     montant_restant = models.IntegerField(null=True, blank=True)
 
+class TeamMember(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    def __str__(self):
+        return self.name
 
 class Event(models.Model):
     id_card = models.CharField(max_length=100, null=True)
@@ -187,6 +193,7 @@ class Event(models.Model):
     event_acompte = models.ForeignKey(EventAcompte, on_delete=models.CASCADE, null=True)
     event_template = models.ForeignKey(EventTemplate, on_delete=models.CASCADE, null=True)
     event_post_presta = models.ForeignKey(EventPostPrestation, on_delete=models.CASCADE, null=True)
+    event_team_members = models.ManyToManyField(TeamMember, related_name="events")
 
     prix_brut = models.IntegerField()
     reduc_product = models.IntegerField(null=True, blank=True)

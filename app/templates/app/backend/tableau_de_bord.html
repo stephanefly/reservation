@@ -80,20 +80,65 @@
                   <td>{{ event.event_option.duree }}h</td>
                   <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
                   <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
-                  <td>
-                     {% for event_name, membres in event_lst_member.items %}
-                     {% if event_name == event.client.nom %}
-                     {% for membre in membres %}
-                     <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %}, {% endif %}
-                     {% empty %}
-                     Aucun membre associé
-                     {% endfor %}
-                     {% endif %}
-                     {% endfor %}
-                  </td>
+<td>
+  <select class="form-select form-select-sm" onchange="addMember(this, {{ event.id }})">
+    <option value="">➕ Ajouter un membre</option>
+    {% for member in team_members %}
+      <option value="{{ member.id }}">{{ member.name }}</option>
+    {% endfor %}
+  </select>
+
+  <div id="members-{{ event.id }}">
+    {% for m in event.event_team_members.all %}
+      <span>
+        {{ m.name }}
+        <button onclick="removeMember({{ event.id }}, {{ m.id }})">✖</button>
+      </span>
+    {% empty %} Aucun {% endfor %}
+  </div>
+</td>
+<script>
+function getCSRFToken() {
+  return '{{ csrf_token }}';
+}
+
+function addMember(select, eventId) {
+  const memberId = select.value;
+  if (!memberId) return;
+
+  fetch(`/api/ajouter-membre/${eventId}/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCSRFToken(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ member_id: memberId })
+  })
+  .then(r => r.text())
+  .then(html => {
+    document.getElementById(`members-${eventId}`).innerHTML = html;
+    select.value = "";  // reset
+  });
+}
+
+function removeMember(eventId, memberId) {
+  fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCSRFToken() }
+  })
+  .then(r => r.text())
+  .then(html => {
+    document.getElementById(`members-${eventId}`).innerHTML = html;
+  });
+}
+</script>
+
+
+
                </tr>
             </tbody>
          </table>
+
          <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
             <thead>
                <tr>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from ..models import Event, EventPostPrestation
+from ..models import Event, EventPostPrestation, TeamMember
 from app.module.mail.send_mail_event import send_mail_event
 from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -49,12 +49,10 @@ def post_presta(request):
         status__in=['Post Presta','Sent Media']
     ).order_by('event_details__date_evenement')
 
-    event_lst_member = get_member_list(lst_post_event)
 
     return render(request, 'app/backend/post_presta.html',
                   {
                       'lst_post_event': lst_post_event,
-                      'event_lst_member': event_lst_member
                   })
 
 
