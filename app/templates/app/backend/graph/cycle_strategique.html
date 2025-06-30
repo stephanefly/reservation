@@ -1,0 +1,92 @@
+{% extends 'app/backend/base.html' %}
+{% block content %}
+{% load static %}
+  <style>
+      .container-cycle {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      height: 900px;
+      margin: auto;
+    }
+.bubble {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+  /* Centrage vertical et horizontal */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Supprime les padding/line-height inutiles */
+  padding: 0;
+  line-height: normal;
+}
+
+
+    /* Domaines avec leurs couleurs */
+    .attraction         { background: #F97316; top: 8%; left: 40%; }
+    .conversion         { background: #DC2626; top: 24%; left: 60%; }
+    .preparation        { background: #8B5CF6; top: 53%; left: 52%; }
+    .prestation         { background: #2563EB; top: 53%; left: 28%; }
+    .postprestation     { background: #10B981; top: 24%; left: 20%; }
+    .rnd                { background: #3B82F6; top: -2%; left: 18%; }
+    .amelioration       { background: #14532D; top: 33%; left: 40%; }
+
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Flèches précises */
+.arrow1  { top: 24%; left: 59%; border-left: 50px solid #F97316; border-width: 16px; transform: rotate(30deg); }
+.arrow2  { top: 61%; left: 47%; border-left: 50px solid #8B5CF6; border-width: 16px; transform: rotate(180deg); }
+.arrow3  { top: 49%; left: 64%; border-left: 50px solid #DC2626; border-width: 16px; transform: rotate(110deg); }
+.arrow4  { top: 11%; left: 38%; border-left: 50px solid #3B82F6; border-width: 16px; transform: rotate(30deg); }
+.arrow5  { top: 47%; left: 31%; border-left: 50px solid #2563EB; border-width: 16px; transform: rotate(250deg); }
+.arrow6  { top: 22%; left: 38%; border-left: 50px solid #10B981; border-width: 16px; transform: rotate(320deg); }
+
+
+    .score {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      background: #ffffffaa;
+      color: black;
+      border-radius: 8px;
+      padding: 2px 8px;
+      display: inline-block;
+    }
+  </style>
+
+  <h1 style="text-align:center;">Cycle Stratégique</h1>
+  <div class="container-cycle">
+    <div class="bubble rnd">R&D<br><span class="score">2 / 5</span></div>
+    <div class="bubble attraction">Attraction<br><span class="score"></span></div>
+    <div class="bubble conversion">Conversion<br><span class="score">{{len_conversion}}</span></div>
+    <div class="bubble preparation">Préparation<br><span class="score">{{len_preparation}}</span></div>
+    <div class="bubble prestation">Prestation<br><span class="score"></span></div>
+    <div class="bubble postprestation">Post-Prestation<br><span class="score">{{len_postprestation}}</span></div>
+    <div class="bubble amelioration">Amélioration Continue<br><span class="score"></span></div>
+
+    <!-- Flèches -->
+<div class="arrow arrow1"></div>
+<div class="arrow arrow2"></div>
+<div class="arrow arrow3"></div>
+<div class="arrow arrow4"></div>
+<div class="arrow arrow5"></div>
+<div class="arrow arrow6"></div>
+<div class="arrow arrow7"></div>
+  </div>
+{% endblock %}
