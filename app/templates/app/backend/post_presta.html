@@ -305,10 +305,10 @@
   $(document).ready(function () {
     $('#table-haut').DataTable({
       responsive: true,
-      dom: 'Bfrtip',
-      paging: false,           // ❌ Désactive la pagination
-      info: false,             // ❌ Cache le texte "Showing x of x entries"
-      buttons: ['csv', 'excel'],
+      dom: 'Bfrtip',                     // Affiche boutons en haut du tableau
+      buttons: ['csv', 'excel'],         // Active les boutons
+      paging: false,
+      info: false,
       language: {
         url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
       }

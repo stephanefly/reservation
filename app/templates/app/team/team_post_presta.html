@@ -29,8 +29,8 @@
         <tr>
             <th>NOM</th>
             <th>DATE-EVENT</th>
+            <th>MEMBRE</th>
             <th>Media Collecté</th>
-            <th>Media Envoyé</th>
         </tr>
         </thead>
         <tbody>
@@ -38,11 +38,15 @@
         <tr>
             <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
             <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+                            <td>
+                    {% for m in event.event_team_members.all %}
+                  <span class="highlight-membre">{{ m.name }}</span>
+                {% empty %}
+                  <span class="text-muted">Aucun membre</span>
+                {% endfor %}
+                </td>
             <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
                 {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
-            </td>
-            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-warning{% endif %}">
-                {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
             </td>
         </tr>
 

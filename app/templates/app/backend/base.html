@@ -5,16 +5,12 @@
 
 <html lang="fr">
 <head>
-    <meta name="csrf-token" content="{{ csrf_token }}">
-        {% bootstrap_css %}
-    {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-          content="Réservation facile et rapide de photobooth pour vos événements. Photobooth classique, miroir et 360 disponibles.">
-    <meta name="keywords"
-          content="photobooth, réservation photobooth, photobooth événements, photobooth mariage, photobooth entreprise">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="description" content="Réservation facile et rapide de photobooth pour vos événements. Photobooth classique, miroir et 360 disponibles.">
+    <meta name="keywords" content="photobooth, réservation photobooth, photobooth événements, photobooth mariage, photobooth entreprise">
     <meta name="author" content="Votre Nom d'Entreprise">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="MySelfieBooth">
@@ -22,25 +18,46 @@
     <meta property="og:image" content="{% static 'img/logo.ico' %}">
     <meta property="og:url" content="{% static 'img/logo.ico' %}">
     <meta name="twitter:card" content="summary_large_image">
+
+    <title>MySelfieBooth - Réservation</title>
+
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
+
+    <!-- CSS Custom -->
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+    <!-- Bootstrap (via Django tags pour éviter doublons) -->
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <!-- Bootstrap CSS uniquement -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
-    <title>MySelfieBooth - Reservation</title>
-    <!-- Bootstrap JS, Popper.js, et jQuery -->
+
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
+
+    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <!--Bockeh-->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+    <!-- JSZip pour Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Bokeh (optionnel) -->
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.1.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.1.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-3.1.0.min.js"></script>
-
 </head>
+
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">MySelfieBooth Paris</a>
