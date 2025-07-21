@@ -48,12 +48,13 @@
 </style>
 
 
-<table id="table" class="table table-bordered table-striped" style="background-color:white">
+<table id="table-haut" class="table table-bordered table-striped" style="background-color:white">
     <thead>
     <tr>
         <th>NOM</th>
         <th>DATE-EVENT</th>
         <th>Tel</th>
+        <td>Membres</td>
         <th>Feedback Message</th>
         <th>Feedback Google</th>
         <th>Feedback Posté</th>
@@ -67,6 +68,13 @@
         <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
         <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
         <td><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></td>
+                <td>
+                    {% for m in event.event_team_members.all %}
+                  <span class="highlight-membre">{{ m.name }}</span>
+                {% empty %}
+                  <span class="text-muted">Aucun membre</span>
+                {% endfor %}
+                </td>
         <td class="{% if event.event_post_presta.feedback_message %}bg-success{% else %}bg-warning{% endif %}">
             {% if not event.event_post_presta.feedback_message %}Pas OK{% else %}Fait{% endif %}
         </td>
@@ -87,7 +95,7 @@
     {% endfor %}
     </tbody>
 </table>
-
+<br>
 {% for event in lst_post_event %}
 <div id="event-{{ event.id }}" class="card" style="border: #1b1b1b 2px solid">
     <div class="card-header">
@@ -293,6 +301,20 @@
 <br>
 {% endfor %}
 
+<script>
+  $(document).ready(function () {
+    $('#table-haut').DataTable({
+      responsive: true,
+      dom: 'Bfrtip',
+      paging: false,           // ❌ Désactive la pagination
+      info: false,             // ❌ Cache le texte "Showing x of x entries"
+      buttons: ['csv', 'excel'],
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
+      }
+    });
+  });
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
