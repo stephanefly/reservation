@@ -223,8 +223,9 @@ def process_validation_event(event, form):
         ("Envoyer mail confirmation", lambda: send_mail_event(event, 'validation')),
         ("Deplacement Carte Trello", lambda: to_acompte_ok(event)),
         ("Génération du code espace client", lambda: generate_code_espace_client(event)),
-        ("Création du répertoire SFTP", lambda: create_pcloud_event_folder(event, prepa=True)),
-        ("Création du dossier pCloud", lambda: create_pcloud_event_folder(event)),
+        ("Création du dossier PREPA", lambda: create_pcloud_event_folder(event, prepa=True)),
+        ("Création du dossier CLIENT", lambda: create_pcloud_event_folder(event)),
+        ("Création du dossier MONTAGE", lambda: create_pcloud_event_folder(event, montage=True)),
     ]
 
     # Retirer conditionnellement certaines étapes si signer_at est défini

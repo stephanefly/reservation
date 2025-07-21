@@ -51,6 +51,8 @@ API_PCLOUD_URL = config.get("API_PCLOUD_URL")
 ACCESS_TOKEN = config.get("ACCESS_TOKEN")  # Remplacez par le token obtenu
 ROOT_FOLDER_ID = config.get("ROOT_FOLDER_ID")  # ID du dossier racine
 ROOT_FOLDER_PREPA_ID = config.get("ROOT_FOLDER_PREPA_ID")  # ID du dossier racine
+ROOT_FOLDER_MONTAGE_2025 = config.get("ROOT_FOLDER_MONTAGE_2025")  # ID du dossier racine
+ROOT_FOLDER_MONTAGE_2026 = config.get("ROOT_FOLDER_MONTAGE_2026")  # ID du dossier racine
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')

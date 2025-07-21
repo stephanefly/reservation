@@ -2,7 +2,8 @@ import os
 import json
 import requests
 
-from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID
+from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID, \
+    ROOT_FOLDER_MONTAGE_2025, ROOT_FOLDER_MONTAGE_2026
 
 
 def get_pcloud_event_folder_data(event_name, prepa: bool = False):
@@ -25,7 +26,7 @@ def get_pcloud_event_folder_data(event_name, prepa: bool = False):
             return folder_data
 
 
-def create_pcloud_event_folder(event, prepa: bool = False):
+def create_pcloud_event_folder(event, prepa: bool = False, montage: bool = False):
     """
     Create a folder on the pCloud server, either in the standard event folder or in the preparation folder.
 
@@ -38,11 +39,21 @@ def create_pcloud_event_folder(event, prepa: bool = False):
     """
     url = f"{API_PCLOUD_URL}/createfolder"
     folder_client_name = event.event_template.directory_name
-    folder_id = ROOT_FOLDER_PREPA_ID if prepa else ROOT_FOLDER_ID
+
+    # Détermination de l'ID parent selon les options
+    if montage:
+        if folder_client_name[:4] == "2025":
+            parent_folder_id = ROOT_FOLDER_MONTAGE_2025
+        else:
+            parent_folder_id = ROOT_FOLDER_MONTAGE_2026
+    elif prepa:
+        parent_folder_id = ROOT_FOLDER_PREPA_ID
+    else:
+        parent_folder_id = ROOT_FOLDER_ID
 
     params = {
         'access_token': ACCESS_TOKEN,
-        'folderid': folder_id,
+        'folderid': parent_folder_id,
         'name': folder_client_name,
     }
 
