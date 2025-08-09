@@ -43,6 +43,7 @@ class EventTemplate(models.Model):
     num_template = models.IntegerField(default=1)
     url_pcloud_template_folder = models.URLField(null=True, blank=True)
 
+
 class EventProduct(models.Model):
     photobooth = models.BooleanField(default=False)
     miroirbooth = models.BooleanField(default=False)
@@ -174,12 +175,14 @@ class EventAcompte(models.Model):
     date_payement = models.DateField(null=True, blank=True)
     montant_restant = models.IntegerField(null=True, blank=True)
 
+
 class TeamMember(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     def __str__(self):
         return self.name
+
 
 class Event(models.Model):
     id_card = models.CharField(max_length=100, null=True)

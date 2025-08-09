@@ -175,7 +175,11 @@
          <tbody>
             <tr>
                <td>{{ event.event_details.comment_client }}</td>
-               <td>{{ event.event_details.comment }}</td>
+               <td contenteditable="true" style="background:#fff8dc; outline:1px dashed #ccc;"
+                    data-url="{% url 'update_comment' event.id %}"
+                    onblur="saveComment(this)">
+                  {{ event.event_details.comment|default_if_none:''|default:'' }}
+                </td>
             </tr>
          </tbody>
       </table>
@@ -279,4 +283,26 @@
                     attachRemoveButtons();
                   });
             </script>
+
+<script>
+  function getCookie(name){
+    const m = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');
+    return m ? decodeURIComponent(m.pop()) : '';
+  }
+
+  function saveComment(el){
+    fetch(el.dataset.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        event_id: el.dataset.id,
+        value: el.innerText.trim()
+      })
+    }).catch(console.error);
+  }
+</script>
 {% endblock %}

@@ -169,7 +169,7 @@
         <label>Code Postal: <input type="text" name="code_postal_evenement"
                                    value="{{ event.event_details.code_postal_evenement }}"></label><br>
         <label>Commentaire Client: <br><textarea name="comment_client"
-                                                 value="{{ event.event_details.comment_client }}"></textarea></label><br>
+                                                 value="{{ event.event_details.comment_client }}">{{ event.event_details.comment_client }}</textarea></label><br>
         <label>Commentaire: <br><textarea name="comment"
                                           value="{{ event.event_details.comment }}">{{ event.event_details.comment }}</textarea></label><br>
         <label>Horaire: <input type="time" name="horaire" value="{{ event.event_details.horaire }}"></label><br>

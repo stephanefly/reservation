@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+
 from ..models import Event, TeamMember
 from ..module.data_bdd.make_planning import get_member_list
 from datetime import datetime, timedelta, timezone
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 
 def tableau_de_bord(request):
@@ -37,3 +39,15 @@ def api_remove_member(request, event_id, member_id):
     member = TeamMember.objects.get(id=member_id)
     event.event_team_members.remove(member)
     return HttpResponse(render_to_string('app/partials/members.html', {'event': event}))
+
+@require_POST
+def update_comment(request, event_id):
+    payload = json.loads(request.body.decode("utf-8"))
+    value = payload.get("value", "").strip()
+    event = get_object_or_404(Event, id=event_id)
+
+    # Mise à jour du champ comment de la table event_details
+    event.event_details.comment = value
+    event.event_details.save(update_fields=["comment"])
+
+    return JsonResponse({"success": True, "event_id": event_id, "comment": value})
