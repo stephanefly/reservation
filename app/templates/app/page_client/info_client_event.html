@@ -3,8 +3,18 @@
 
 <div class="container">
 <h4>Bienvenue {{ event.client.nom }} !</h4>
+<div class="info-block alert alert-light">
+    <p style="margin:0;">
+        ✨📸 Nous aurons le plaisir de sublimer votre événement
+        <strong>au {{ event.event_details.get_adresse }}</strong>,
+        le <strong>{{ event.event_details.date_evenement|date:"d F Y" }}</strong>.
+    </p>
+    <p style="margin-top:10px; color:#6a6a6a;">
+        Préparez-vous à vivre une expérience unique et inoubliable.
+    </p>
+</div>
 
-{% if not event.event_details.horaire or not event.event_template.text_template or not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele %}
+{% if not event.event_details.horaire or not event.event_template.text_template or not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele or event.event_product.need_music and not event.event_template.url_music_360 %}
 <div class="info-block alert alert-warning">
     <p>Les informations suivantes sont à compléter :</p>
     <ul>
@@ -23,6 +33,10 @@
         {% if not event.event_option.mur_floral_style %}
         <li>Mur de Fond / Backdrop</li>
         {% endif %}
+
+        {% if event.event_product.need_music and not event.event_option.url_music_360 %}
+        <li>Musique pour la video 360</li>
+        {% endif %}
     </ul>
 </div>
 {% else %}
@@ -32,7 +46,6 @@
 </div>
 {% endif %}
 
-   <br>
    <div class="info-block" >
       <h5>Informations Prestation</h5>
       {%  if event.num_devis %}
@@ -97,6 +110,10 @@
     {% endif %}
    <div class="info-block">
       <h5>Informations évènement</h5>
+       <div class="info-row">
+         <div class="info-label">Date:</div>
+         <div class="info-value">{{ event.event_details.date_evenement }}</div>
+      </div>
       <div class="info-row">
          <div class="info-label">Adresse:</div>
          <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
@@ -133,7 +150,7 @@
             <div class="info-value">
                 {% if event.event_template.url_modele %}
                     <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i> 
+                        <i class="bi bi-check-circle-fill"></i>
                         <strong><a href="{{ event.event_template.url_modele }}" target="_blank" class="text-success" style="text-decoration: none;"><u>OK (voir modèle)</u></a></strong>
                     </span>
                 {% else %}
@@ -143,12 +160,38 @@
                 {% endif %}
             </div>
       </div>
-      <div class="info-row">
+       <div class="info-row">
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
          {% if event.event_template.url_modele %}
-         Modifier le Modèle de Tirage
+         Modifier le Modèle
          {% else %}
-         Choisir le Modèle de Tirage
+         Choisir le Modèle
+         {% endif %}
+         </button>
+      </div>
+      {% endif %}
+      {% if event.event_product.need_music %}
+      <div class="info-row">
+         <div class="info-label">Musique Videobooth :</div>
+            <div class="info-value">
+                {% if event.event_template.url_music_360 %}
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <strong><a href="{{ event.event_template.url_music_360 }}" target="_blank" class="text-success" style="text-decoration: none;"><u>OK (voir musique)</u></a></strong>
+                    </span>
+                {% else %}
+                    <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
+                    </span>
+                {% endif %}
+            </div>
+      </div>
+      <div class="info-row">
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MusicModal">
+         {% if event.event_template.url_music_360 %}
+         Modifier la Musique
+         {% else %}
+         Choisir le la Musique
          {% endif %}
          </button>
       </div>
@@ -357,6 +400,51 @@
 </div>
 {% endif %}
 
+{% if event.event_product.need_music %}
+<!-- Modal for editing music -->
+<div class="modal fade" id="MusicModal" tabindex="-1" role="dialog" aria-labelledby="MusicModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="MusicModalLabel">
+                    🎵 Ajouter une musique
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <form method="post" action="{% url 'edit_music' event.id %}">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="alert alert-warning">
+                    <strong>Personnalisez votre expérience :</strong><br>
+                    Sélectionnez une vidéo sur
+                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    et collez son URL ci-dessous pour l’intégrer à votre animation 360°.
+                </div>
+
+
+                <div class="form-group">
+                    <label for="url_music_360" class="fw-bold">URL de la vidéo YouTube :</label>
+                    <input type="url" class="form-control mt-1" id="url_music_360" name="url_music_360"
+                        value="{{ event.event_template.url_music_360|default:'' }}"
+                        placeholder="Exemple : https://www.youtube.com/watch?v=xxxxxxx">
+                </div>
+            </div>
+                                   {% load static %}
+                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
+        <img src="/static/img/music.gif" alt="Description de l'image" style="max-width: 100%;">
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+               <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+{% endif %}
+
+
 <!-- Modal for editing texte -->
 <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
@@ -385,6 +473,7 @@
       </div>
    </div>
 </div>
+
 
 <!-- Modal for mur floral -->
 <div class="modal fade" id="MurFloralModal" tabindex="-1" role="dialog" aria-labelledby="MurFloralModalLabel" aria-hidden="true">

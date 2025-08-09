@@ -40,8 +40,9 @@
             <thead>
                <tr>
                   <th>Prestation</th>
-                  <th>URL</th>
                   <th>Texte</th>
+                  <th>URL MODEL</th>
+                  <th>URL MUSIC</th>
                   <th>DOSSIER pCLOUD</th>
                   <th>Statut</th>
                </tr>
@@ -60,14 +61,66 @@
                      {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadbooth</span>
                      , {% endif %}
                   </td>
-                  <td style="{% if event.event_template.url_modele %}background-color: rgb(255,255,255);{% else %}background-color: rgba(255,0,0,0.47);{% endif %}">
-                     {% if event.event_template.url_modele %}
-                     <a href="{{ event.event_template.url_modele }}">MODEL</a>
+                  <td style="
+                     {% if not event.event_template.text_template %}
+                     background-color: rgba(255,0,0,0.47);"  {% endif %}>{{ event.event_template.text_template }}</td>
+                  <td style="
+                     {% if not event.event_product.need_design %}
+                     background-color: #e9ecef;
+                     background-image: repeating-linear-gradient(
+                     45deg,
+                     #e9ecef,
+                     #e9ecef 10px,
+                     #d6d8db 10px,
+                     #d6d8db 20px
+                     );
+                     color: #6c757d;
+                     {% elif event.event_template.url_modele %}
+                     background-color: rgb(255,255,255);
                      {% else %}
-                     Pas de model
+                     background-color: rgba(255,0,0,0.47);
+                     {% endif %}
+                     padding: 5px;
+                     border-radius: 4px;
+                     ">                      {% if event.event_product.need_design %}
+                     {% if event.event_template.url_modele %}
+                     <a href="{{ event.event_template.url_modele }}" target="_blank" rel="noopener noreferrer">
+                     MODELE
+                     </a>
+                     {% endif %}
+                     {% else %}
+                     <span>Non applicable</span>
                      {% endif %}
                   </td>
-                  <td>{{ event.event_template.text_template }}</td>
+                  <td style="
+                     {% if not event.event_product.need_music %}
+                     background-color: #e9ecef;
+                     background-image: repeating-linear-gradient(
+                     45deg,
+                     #e9ecef,
+                     #e9ecef 10px,
+                     #d6d8db 10px,
+                     #d6d8db 20px
+                     );
+                     color: #6c757d;
+                     {% elif event.event_template.url_music_360 %}
+                     background-color: rgb(255,255,255);
+                     {% else %}
+                     background-color: rgba(255,0,0,0.47);
+                     {% endif %}
+                     padding: 5px;
+                     border-radius: 4px;
+                     ">
+                     {% if event.event_product.videobooth %}
+                     {% if event.event_template.url_music_360 %}
+                     <a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener noreferrer">
+                     MUSIC
+                     </a>
+                     {% endif %}
+                     {% else %}
+                     <span>Non applicable</span>
+                     {% endif %}
+                  </td>
                   <td><a href="{{ event.event_template.url_pcloud_template_folder }}">{{ event.event_template.directory_name }}</a></td>
                   <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
                      {% if event.event_template.statut %}
@@ -122,7 +175,6 @@
                <p class="text-muted">Aucun modèle importé pour l’instant.</p>
                {% endif %}
             </div>
-
             <br>
             <!-- Formulaire d'envoi -->
             <form method="post" action="{% url 'send_template_to_client' event.id %}" onsubmit="return confirm('Confirmer l’envoi du template au client ?')">

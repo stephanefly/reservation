@@ -78,7 +78,20 @@
             <tr>
                <td>{{ event.event_option.duree }}h</td>
                <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-               <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
+<td>
+    {{ event.event_details.get_adresse }}<br>
+    <a href="https://www.google.com/maps/search/?api=1&query={{ event.event_details.get_adresse|urlencode }}"
+       target="_blank"
+       rel="noopener noreferrer">
+        📍 Google Maps
+    </a> |
+    <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
+       target="_blank"
+       rel="noopener noreferrer">
+        🚗 Waze
+    </a>
+</td>
+
                <td>
                   {% include 'app/partials/members_choix_cell.html' %}
                </td>
@@ -134,6 +147,7 @@
                <th>URL ESTY</th>
                <th>Texte</th>
                <th>TEMPLATE</th>
+               <th>MUSIC</th>
                <th>Path Depot Template</th>
             </tr>
          </thead>
@@ -152,13 +166,72 @@
                   {{ event.event_template.text_template }}
                </td>
                <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
-               <td style="background-color: {% if event.event_template.image_name %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.image_name %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                  {% if event.event_template.image_name %}
-                  <a href="{% url 'view_image' event.id %}" target="_blank">TEMPLATE</a>
-                  {% endif %}
+               <td style="
+                   {% if not event.event_product.need_design %}
+                       background-color: #e9ecef;
+                       background-image: repeating-linear-gradient(
+                           45deg,
+                           #e9ecef,
+                           #e9ecef 10px,
+                           #d6d8db 10px,
+                           #d6d8db 20px
+                       );
+                       color: #6c757d;
+                   {% elif event.event_template.image_name %}
+                       background-color: #d4edda;
+                       color: #155724;
+                   {% else %}
+                       background-color: #f8d7da;
+                       color: #721c24;
+                   {% endif %}
+                   padding: 5px;
+                   border-radius: 4px;
+               ">
+                   {% if event.event_product.need_design %}
+                       {% if event.event_template.image_name %}
+                           <a href="{% url 'view_image' event.id %}" target="_blank" rel="noopener noreferrer">
+                               TEMPLATE
+                           </a>
+                       {% endif %}
+                   {% else %}
+                       <span>Non applicable</span>
+                   {% endif %}
                </td>
+               <!-- Colonne pour le lien de la video (ouvre dans un nouvel onglet) -->
+               <td style="
+                   {% if not event.event_product.need_music %}
+                       background-color: #e9ecef;
+                       background-image: repeating-linear-gradient(
+                           45deg,
+                           #e9ecef,
+                           #e9ecef 10px,
+                           #d6d8db 10px,
+                           #d6d8db 20px
+                       );
+                       color: #6c757d;
+                   {% elif event.event_template.url_music_360 %}
+                       background-color: #d4edda;
+                       color: #155724;
+                   {% else %}
+                       background-color: #f8d7da;
+                       color: #721c24;
+                   {% endif %}
+                   padding: 5px;
+                   border-radius: 4px;
+               ">
+                   {% if event.event_product.need_music %}
+                       {% if event.event_template.url_music_360 %}
+                           <a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener noreferrer">
+                               MUSIC
+                           </a>
+                       {% endif %}
+                   {% else %}
+                       <span>Non applicable</span>
+                   {% endif %}
+               </td>
+
                <!-- Colonne pour les prepa-template -->
-               <td>
+               <td style="width: 30%">
                   <a href="P:\PREPA-EVENT\{{ event.event_template.directory_name }}">
                   {{ event.event_template.directory_name }}
                   </a>

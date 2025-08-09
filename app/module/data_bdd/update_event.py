@@ -87,6 +87,8 @@ def update_data(event, request):
         event_template.url_modele = request.POST.get('url_modele')
         event_template.text_template = request.POST.get('text_template')
         event_template.link_media_shared = request.POST.get('link_media_shared')
+        if event_product.videobooth and event.prix_valided:
+            event_template.url_music_360 = request.POST.get('url_music_360')
         event_template.save()
 
         if not event.event_template:
@@ -110,6 +112,8 @@ def update_data(event, request):
     event_product.ipadbooth = request.POST.get('ipadbooth') == 'on'
     event_product.airbooth = request.POST.get('airbooth') == 'on'
     event_product.save()
+
+
 
     # Mise à jour des options de l'événement et calcul du total
     total_option = update_event_option(request, event_option)

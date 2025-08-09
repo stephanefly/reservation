@@ -33,6 +33,8 @@ class EventDetails(models.Model):
     comment_client = models.TextField(null=True)
     horaire = models.CharField(max_length=100, null=True)
 
+    def get_adresse(self):
+        return f"{self.adresse_evenement}, {self.code_postal_evenement} {self.ville_evenement}"
 
 class EventTemplate(models.Model):
     url_modele = models.TextField(null=True)
@@ -42,6 +44,7 @@ class EventTemplate(models.Model):
     image_name = models.CharField(max_length=100, null=True)
     num_template = models.IntegerField(default=1)
     url_pcloud_template_folder = models.URLField(null=True, blank=True)
+    url_music_360 = models.CharField(max_length=100, null=True)
 
 
 class EventProduct(models.Model):

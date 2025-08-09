@@ -177,23 +177,8 @@
                                   value="{{ event.event_template.url_modele }}"></label><br>
         <label>Texte modèle: <br><textarea name="text_template"
                                            value="{{ event.event_template.text_template }}">{{ event.event_template.text_template }}</textarea></label><br>
-<label>Mur Floral</label>
-
-        <select name="mur_floral_style" id="mur_floral_style"
-                {% if not event.event_option.MurFloral %}disabled{% endif %}>
-            <option value="">-- Sélectionnez --</option>
-            <option value="rideau_blanc" {% if event.event_option.mur_floral_style == "rideau_blanc" %}selected{% endif %}>Rideau blanc</option>
-            <option value="gatsby" {% if event.event_option.mur_floral_style == "gatsby" %}selected{% endif %}>Gatsby</option>
-            <option value="blanc" {% if event.event_option.mur_floral_style == "blanc" %}selected{% endif %}>Blanc</option>
-            <option value="rose_rouge" {% if event.event_option.mur_floral_style == "rose_rouge" %}selected{% endif %}>Rose rouge</option>
-            <option value="paillette_rose" {% if event.event_option.mur_floral_style == "paillette_rose" %}selected{% endif %}>Paillette rose</option>
-            <option value="vegetale" {% if event.event_option.mur_floral_style == "vegetale" %}selected{% endif %}>Végétale</option>
-            <option value="blanc_rose" {% if event.event_option.mur_floral_style == "blanc_rose" %}selected{% endif %}>Blanc & Rose</option>
-            <option value="fond_lumineux" {% if event.event_option.mur_floral_style == "fond_lumineux" %}selected{% endif %}>Fond lumineux</option>
-            <option value="paillette_doree" {% if event.event_option.mur_floral_style == "paillette_doree" %}selected{% endif %}>Paillette dorée</option>
-            <option value="fleurs_rouge_blanc" {% if event.event_option.mur_floral_style == "fleurs_rouge_blanc" %}selected{% endif %}>Fleurs rouge & blanc</option>
-        </select>
-
+        <label>Url Music 360: <input type="text" name="url_music_360"
+                                  value="{{ event.event_template.url_music_360 }}"></label><br>
 
 
         <label>Template Directory:
@@ -247,6 +232,22 @@
         </script>
         <label>Mur Floral Reduc<input type="number" name="MurFloral_reduc_prix"
                                       value="{{ event.event_option.MurFloral_reduc_prix }}"></label><br>
+<label>Mur Floral Style</label>
+
+        <select name="mur_floral_style" id="mur_floral_style"
+                {% if not event.event_option.MurFloral %}disabled{% endif %}>
+            <option value="">-- Sélectionnez --</option>
+            <option value="rideau_blanc" {% if event.event_option.mur_floral_style == "rideau_blanc" %}selected{% endif %}>Rideau blanc</option>
+            <option value="gatsby" {% if event.event_option.mur_floral_style == "gatsby" %}selected{% endif %}>Gatsby</option>
+            <option value="blanc" {% if event.event_option.mur_floral_style == "blanc" %}selected{% endif %}>Blanc</option>
+            <option value="rose_rouge" {% if event.event_option.mur_floral_style == "rose_rouge" %}selected{% endif %}>Rose rouge</option>
+            <option value="paillette_rose" {% if event.event_option.mur_floral_style == "paillette_rose" %}selected{% endif %}>Paillette rose</option>
+            <option value="vegetale" {% if event.event_option.mur_floral_style == "vegetale" %}selected{% endif %}>Végétale</option>
+            <option value="blanc_rose" {% if event.event_option.mur_floral_style == "blanc_rose" %}selected{% endif %}>Blanc & Rose</option>
+            <option value="fond_lumineux" {% if event.event_option.mur_floral_style == "fond_lumineux" %}selected{% endif %}>Fond lumineux</option>
+            <option value="paillette_doree" {% if event.event_option.mur_floral_style == "paillette_doree" %}selected{% endif %}>Paillette dorée</option>
+            <option value="fleurs_rouge_blanc" {% if event.event_option.mur_floral_style == "fleurs_rouge_blanc" %}selected{% endif %}>Fleurs rouge & blanc</option>
+        </select>
 
         <label><input type="checkbox" name="Phonebooth" {% if event.event_option.Phonebooth %}checked{% endif %}>
             Phonebooth</label><br>
