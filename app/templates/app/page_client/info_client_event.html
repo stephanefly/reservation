@@ -119,6 +119,7 @@
    </div>
    <div class="info-block">
       <h5>Design</h5>
+       {% if event.event_product.need_design %}
       <div class="info-row">
          <div class="info-label">Model de Tirage:</div>
             <div class="info-value">
@@ -143,6 +144,8 @@
          {% endif %}
          </button>
       </div>
+       {% endif %}
+
       <div class="info-row">
          <div class="info-label">Texte:</div>
                    <div class="info-value">
@@ -277,6 +280,7 @@
    </div>
 </div>
 
+{% if event.event_product.need_design %}
 <!-- Modal for editing template -->
 <div class="modal fade" id="templateModal" tabindex="-1" role="dialog" aria-labelledby="templateModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
@@ -317,7 +321,7 @@
       </div>
    </div>
 </div>
-
+{% endif %}
 
 <!-- Modal for editing texte -->
 <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">

@@ -56,29 +56,41 @@ def choose_to_last_chance_devis_client():
 def choose_to_relance_espace_client():
     # Calcul de la date actuelle, une semaine dans le futur, et un mois dans le futur
     now = timezone.now().date()
-    some_days_later = now + relativedelta(days=4)
-    one_week_later = now + relativedelta(weeks=1, days=3)
-    two_week_later = now + relativedelta(weeks=2, days=2)
-    three_week_later = now + relativedelta(weeks=3, days=1)
-    one_month_later = now + relativedelta(months=1)
 
-    # Utilise Q pour filtrer les événements qui ont lieu exactement dans une semaine ou dans un mois
-    lst_event_valid = Event.objects.filter(
-        Q(event_details__date_evenement=some_days_later) |
-        Q(event_details__date_evenement=one_week_later) |
-        Q(event_details__date_evenement=two_week_later) |
-        Q(event_details__date_evenement=three_week_later) |
-        Q(event_details__date_evenement=one_month_later),
-        status='Acompte OK'
-    ).select_related('event_template', 'event_details')
+    # Liste des dates cibles
+    target_dates = [
+        now + relativedelta(days=4),
+        now + relativedelta(weeks=1, days=3),
+        now + relativedelta(weeks=2, days=2),
+        now + relativedelta(weeks=3, days=1),
+        now + relativedelta(months=1),
+    ]
+
+    # Récupération des événements correspondants
+    lst_event_valid = (
+        Event.objects.filter(
+            Q(event_details__date_evenement__in=target_dates),
+            status='Acompte OK'
+        )
+        .select_related('event_template', 'event_details', 'event_product')
+    )
 
     for event_valid in lst_event_valid:
-        # Vérifie si des informations essentielles sont manquantes pour l'événement
-        if (event_valid.event_template is None or not event_valid.event_template.url_modele or not event_valid.event_template.text_template or
-            event_valid.event_details is None or not event_valid.event_details.horaire):
+        # Vérifications obligatoires pour tous les événements
+        if (
+            event_valid.event_template is None
+            or not event_valid.event_template.text_template
+            or event_valid.event_details is None
+            or not event_valid.event_details.horaire
+        ):
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(30)  # Pause de 30 sec
+            time.sleep(30)
+            continue
 
+        # Vérification spécifique si un design est nécessaire
+        if event_valid.event_product.need_design() and not event_valid.event_template.url_modele:
+            send_mail_event(event_valid, 'relance_espace_client')
+            time.sleep(30)
 
 def choose_to_make_review_mail():
     some_days_ago = timezone.now().date() - relativedelta(days=2)

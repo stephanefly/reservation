@@ -70,6 +70,18 @@ class EventProduct(models.Model):
         elif selected_booths:
             return selected_booths[0]
 
+    def need_design(self):
+        if self.photobooth or self.miroirbooth:
+            return True
+        else:
+            return False
+
+    def need_music(self):
+        if self.videobooth or self.airbooth:
+            return True
+        else:
+            return False
+
 
 class EventOption(models.Model):
 
