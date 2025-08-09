@@ -91,6 +91,13 @@ def choose_to_relance_espace_client():
         if event_valid.event_product.need_design() and not event_valid.event_template.url_modele:
             send_mail_event(event_valid, 'relance_espace_client')
             time.sleep(30)
+            continue
+
+        # Vérification spécifique si un mur floral est nécéssaire
+        if event_valid.event_option.MurFloral and not event_valid.event_option.mur_floral_style:
+            send_mail_event(event_valid, 'relance_espace_client')
+            time.sleep(30)
+            continue
 
 def choose_to_make_review_mail():
     some_days_ago = timezone.now().date() - relativedelta(days=2)

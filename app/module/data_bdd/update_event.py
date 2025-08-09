@@ -116,6 +116,8 @@ def update_data(event, request):
 
     # LIVRAISON
     event_option.MurFloral = request.POST.get('MurFloral') == 'on'
+    if event_option.MurFloral :
+        event_option.mur_floral_style = request.POST.get('mur_floral_style')
     event_option.Phonebooth = request.POST.get('Phonebooth') == 'on'
     event_option.LivreOr = request.POST.get('LivreOr') == 'on'
     event_option.Fond360 = request.POST.get('Fond360') == 'on'

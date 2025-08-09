@@ -105,7 +105,8 @@
                   {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>, {% endif %}
                </td>
                <td>
-                  {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>, {% endif %}
+                  {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral :
+                  {% if event.event_option.mur_floral_style %} {{ event.event_option.get_mur_floral_style_display }}</span>, {% else %} --- {% endif %}{% endif %}
                   {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
                   {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
                   {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}

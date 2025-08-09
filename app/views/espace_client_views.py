@@ -52,6 +52,10 @@ def edit_text(request, event_id):
 def edit_template(request, event_id):
     return update_event_and_redirect(request, event_id, 'url_modele', 'event_template', 'choix_client')
 
+@require_http_methods(["POST"])
+def edit_mur_floral(request, event_id):
+    return update_event_and_redirect(request, event_id, 'mur_floral_style', 'event_option', 'choix_client')
+
 
 def relance_espace_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)

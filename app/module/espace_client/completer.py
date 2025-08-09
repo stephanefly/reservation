@@ -14,6 +14,9 @@ def update_event_and_redirect(request, event_id, data_type_template, update_fiel
     if update_field == 'event_details':
         setattr(event.event_details, data_type_template, new_data)
         event.event_details.save()
+    elif update_field == 'event_option':
+        setattr(event.event_option, data_type_template, new_data)
+        event.event_option.save()
     elif update_field == 'event_template':
         if event.event_template:
             setattr(event.event_template, data_type_template, new_data)

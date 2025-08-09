@@ -86,6 +86,23 @@ class EventProduct(models.Model):
 class EventOption(models.Model):
 
     MurFloral = models.BooleanField(default=False)
+    mur_floral_style = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=[
+            ('rideau_blanc', 'Rideau blanc'),
+            ('gatsby', 'Gatsby'),
+            ('blanc', 'Blanc'),
+            ('rose_rouge', 'Rose rouge'),
+            ('paillette_rose', 'Paillette rose'),
+            ('vegetale', 'Végétale'),
+            ('blanc_rose', 'Blanc & Rose'),
+            ('fond_lumineux', 'Fond lumineux'),
+            ('paillette_doree', 'Paillette dorée'),
+            ('fleurs_rouge_blanc', 'Fleurs rouge & blanc'),
+        ]
+    )
     MurFloral_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_MurFloral(self):
         return 50

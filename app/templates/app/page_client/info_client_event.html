@@ -2,27 +2,35 @@
 {% block content %}
 
 <div class="container">
-   <h4>Bienvenue {{ event.client.nom }} !</h4>
-   {% if not event.event_details.horaire or not event.event_template.text_template or not event.event_template.url_modele %}
-   <div class="info-block alert alert-warning">
-      <p>Les informations suivantes sont à compléter :</p>
-      <ul>
-         {% if not event.event_details.horaire %}
-         <li>Horaire de la prestation</li>
-         {% endif %}
-         {% if not event.event_template.text_template %}
-         <li>Texte du modèle</li>
-         {% endif %}
-         {% if not event.event_template.url_modele %}
-         <li>Modèle de tirage</li>
-         {% endif %}
-      </ul>
-   </div>
-   {% else %} 
-   <div class="info-block alert alert-success">
-        <p>Merci ! Toutes les informations nécessaires sont complètes.<br> Une validation et un retour sera faite par notre équipe</p>
-       </div>
-   {% endif %}
+<h4>Bienvenue {{ event.client.nom }} !</h4>
+
+{% if not event.event_details.horaire or not event.event_template.text_template or not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele %}
+<div class="info-block alert alert-warning">
+    <p>Les informations suivantes sont à compléter :</p>
+    <ul>
+        {% if not event.event_details.horaire %}
+        <li>Horaire de la prestation</li>
+        {% endif %}
+
+        {% if not event.event_template.text_template %}
+        <li>Texte du modèle</li>
+        {% endif %}
+
+        {% if event.event_product.need_design and not event.event_template.url_modele %}
+        <li>Modèle de tirage</li>
+        {% endif %}
+
+        {% if not event.event_option.mur_floral_style %}
+        <li>Mur de Fond / Backdrop</li>
+        {% endif %}
+    </ul>
+</div>
+{% else %}
+<div class="info-block alert alert-success">
+    <p>Merci ! Toutes les informations nécessaires sont complètes.<br>
+    Une validation et un retour sera faite par notre équipe.</p>
+</div>
+{% endif %}
 
    <br>
    <div class="info-block" >
@@ -170,6 +178,32 @@
          </button>
       </div>
    </div>
+    {% if event.event_option.MurFloral %}
+    <div class="info-block">
+      <h5>Décoration</h5>
+      <div class="info-row">
+         <div class="info-label">Mur de Fond : </div>
+                   <div class="info-value">
+                {% if event.event_option.mur_floral_style %}
+                    <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_option.get_mur_floral_style_display }}</strong>
+                    </span>
+                {% else %}
+                    <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
+                    </span>
+                {% endif %}
+            </div>
+      </div>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MurFloralModal">
+      {% if event.event_option.mur_floral_style %}
+      Modifier le Mur de Fond / Backdrop
+      {% else %}
+      Choisir un Mur de Fond / Backdrop
+      {% endif %}
+      </button>
+   </div>
+    {% endif %}
    <div class="info-block">
       <h5>Informations supplémentaires</h5>
       <div class="info-row">
@@ -351,7 +385,47 @@
       </div>
    </div>
 </div>
-    
+
+<!-- Modal for mur floral -->
+<div class="modal fade" id="MurFloralModal" tabindex="-1" role="dialog" aria-labelledby="MurFloralModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="MurFloralModalLabel">Ajouter/Modifier le Mur de Fond</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <form method="post" action="{% url 'edit_mur_floral' event.id %}">
+            {% csrf_token %}
+            <div class="modal-body">
+               <p>Voici nos modèles de murs floraux disponibles :</p>
+               <img src="{% static 'img/allmur.jpg' %}" alt="Murs floraux" class="img-fluid mb-3">
+
+               <div class="form-group">
+                  <label for="mur_floral_style">Choisissez votre mur floral :</label>
+                  <select name="mur_floral_style" id="mur_floral_style" class="form-control">
+                      <option value="">-- Sélectionnez --</option>
+                      <option value="rideau_blanc" {% if event.event_option.mur_floral_style == 'rideau_blanc' %}selected{% endif %}>Rideau blanc</option>
+                      <option value="gatsby" {% if event.event_option.mur_floral_style == 'gatsby' %}selected{% endif %}>Gatsby</option>
+                      <option value="blanc" {% if event.event_option.mur_floral_style == 'blanc' %}selected{% endif %}>Blanc</option>
+                      <option value="rose_rouge" {% if event.event_option.mur_floral_style == 'rose_rouge' %}selected{% endif %}>Rose rouge</option>
+                      <option value="paillette_rose" {% if event.event_option.mur_floral_style == 'paillette_rose' %}selected{% endif %}>Paillette rose</option>
+                      <option value="vegetale" {% if event.event_option.mur_floral_style == 'vegetale' %}selected{% endif %}>Végétale</option>
+                      <option value="blanc_rose" {% if event.event_option.mur_floral_style == 'blanc_rose' %}selected{% endif %}>Blanc & Rose</option>
+                      <option value="fond_lumineux" {% if event.event_option.mur_floral_style == 'fond_lumineux' %}selected{% endif %}>Fond lumineux</option>
+                      <option value="paillette_doree" {% if event.event_option.mur_floral_style == 'paillette_doree' %}selected{% endif %}>Paillette dorée</option>
+                      <option value="fleurs_rouge_blanc" {% if event.event_option.mur_floral_style == 'fleurs_rouge_blanc' %}selected{% endif %}>Fleurs rouge & blanc</option>
+                  </select>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+               <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
 <!-- Modal for adding/editing commentaire client -->
 <div class="modal fade" id="commentaireModal" tabindex="-1" role="dialog" aria-labelledby="commentaireModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
