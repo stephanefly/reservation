@@ -1,221 +1,223 @@
 {% extends 'app/team/index.html' %}
 {% block content %}
 <style>
-    .highlight-prestation {
-        background-color: blue;
-        color: white; /* Pour que le texte reste lisible sur un fond bleu */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-
-    .highlight-option {
-        background-color: skyblue;
-        color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-
-    .highlight-membre {
-        background-color: #f1cd9d;
-        color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
+   .highlight-prestation {
+   background-color: blue;
+   color: white; /* Pour que le texte reste lisible sur un fond bleu */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
+   .highlight-option {
+   background-color: skyblue;
+   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
+   .highlight-membre {
+   background-color: #f1cd9d;
+   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
+   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
+   }
 </style>
 <div class="container">
-    <table id="table" class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
+   <table id="table" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+         <tr>
             <th>NOM</th>
             <th>J</th>
             <th>DATE-EVENT</th>
             <th>CP</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for event in lst_event_prio %}
-            <tr>
-                <td>{{ event.client.nom }}</td>
-                <td>{{ event.event_details.date_evenement|date:"D" }}</td>
-                <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-                <td>{{ event.event_details.code_postal_evenement }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% with prev_date=None %}
-        {% for event in lst_event_prio %}
-            {% ifchanged event.event_details.date_evenement %}
-                {% if prev_date %}
-                    <hr class="my-4 mx-auto" style="color: #1b1b1b;">
-                {% endif %}
-                <br>
-                <div class="date-block"
-                     style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
-                    <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
-                </div>
-            {% endifchanged %}
-            <br>
-        <div class="card">
-        <div class="card-header">
-            <h5>{{ event.client.nom }} - <a href="tel:{{ event.client.numero_telephone }}">
-                {{ event.client.numero_telephone }}</a></h5>
-                    </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Durée</th>
-                    <th>Horaire</th>
-                    <th>Adresse</th>
-                    <th>Equipe</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{{ event.event_option.duree }}h</td>
-                    <td {% if event.event_details.horaire == "None" %}
-                        style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-                    <td>{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</td>
-               <td>
-                  {% include 'app/partials/members_choix_cell.html' %}
-               </td>
-
-
-
-                </tr>
-                </tbody>
-            </table>
-            <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Prestation</th>
-                    <th>Option</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
-                            , {% endif %}
-                        {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>
-                            , {% endif %}
-                        {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
-                            , {% endif %}
-                        {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
-                            , {% endif %}
-                        {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>
-                            , {% endif %}
-                        {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>
-                            , {% endif %}
-                    </td>
-                    <td>
-                  {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral :
-                  {% if event.event_option.mur_floral_style %} {{ event.event_option.get_mur_floral_style_display }}</span>, {% else %} --- {% endif %}{% endif %}
-                        {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
-                        {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
-                        {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
-                        {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                        {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
-                        {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                        {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                        {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                        {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <table id="table_argent" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>PRIX</th>
-                    <th>Acompte</th>
-                    <th>Restant</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td id="prix_valided">{{ event.prix_valided }}</td>
-                    <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                    <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-                </tr>
-                </tbody>
-            </table>
-            <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Commentaire Client</th>
-                    <th>Commentaire</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{{ event.event_details.comment_client }}</td>
-                    <td>{{ event.event_details.comment }}</td>
-                </tr>
-                </tbody>
-            </table>
-                    </div></div>
-        {% endfor %}
-    {% endwith %}
+         </tr>
+      </thead>
+      <tbody>
+         {% for event in lst_event_prio %}
+         <tr>
+            <td>{{ event.client.nom }}</td>
+            <td>{{ event.event_details.date_evenement|date:"D" }}</td>
+            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+            <td>{{ event.event_details.code_postal_evenement }}</td>
+         </tr>
+         {% endfor %}
+      </tbody>
+   </table>
+   {% with prev_date=None %}
+   {% for event in lst_event_prio %}
+   {% ifchanged event.event_details.date_evenement %}
+   {% if prev_date %}
+   <hr class="my-4 mx-auto" style="color: #1b1b1b;">
+   {% endif %}
+   <br>
+   <div class="date-block"
+      style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
+      <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
+   </div>
+   {% endifchanged %}
+   <br>
+   <div class="card">
+      <div class="card-header">
+         <h5>{{ event.client.nom }} - <a href="tel:{{ event.client.numero_telephone }}">
+            {{ event.client.numero_telephone }}</a>
+         </h5>
+      </div>
+      <div class="card-body">
+         <table class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Durée</th>
+                  <th>Horaire</th>
+                  <th>Adresse</th>
+                  <th>Equipe</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>{{ event.event_option.duree }}h</td>
+                  <td {% if event.event_details.horaire == "None" %}
+                  style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
+                  <td>
+                     {{ event.event_details.get_adresse }}<br>
+                     <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                     🚗 Waze
+                     </a>
+                  </td>
+                  <td>
+                     {% include 'app/partials/members_choix_cell.html' %}
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Prestation</th>
+                  <th>Option</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>
+                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
+                     , {% endif %}
+                     {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>
+                     , {% endif %}
+                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
+                     , {% endif %}
+                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
+                     , {% endif %}
+                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>
+                     , {% endif %}
+                     {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>
+                     , {% endif %}
+                  </td>
+                  <td>
+                     {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral :
+                     {% if event.event_option.mur_floral_style %} {{ event.event_option.get_mur_floral_style_display }}</span>, {% else %} --- {% endif %}{% endif %}
+                     {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
+                     {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
+                     {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
+                     {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
+                     {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
+                     {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
+                     {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
+                     {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
+                     {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <table id="table_argent" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>PRIX</th>
+                  <th>Acompte</th>
+                  <th>Restant</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td id="prix_valided">{{ event.prix_valided }}</td>
+                  <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+                  <td id="difference">{{ event.event_acompte.montant_restant }}</td>
+               </tr>
+            </tbody>
+         </table>
+         <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+            <thead>
+               <tr>
+                  <th>Commentaire Client</th>
+                  <th>Commentaire</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>{{ event.event_details.comment_client }}</td>
+                  <td>{{ event.event_details.comment }}</td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+   {% endfor %}
+   {% endwith %}
 </div>
-
 <script>
-  function getCSRFToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : '';
-  }
+   function getCSRFToken() {
+     const meta = document.querySelector('meta[name="csrf-token"]');
+     return meta ? meta.getAttribute('content') : '';
+   }
 
-  function addMember(eventId, memberId, selectElement) {
-    fetch(`/api/ajouter-membre/${eventId}/`, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': getCSRFToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ member_id: memberId })
-    })
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById(`members-${eventId}`).innerHTML = html;
-      attachRemoveButtons();
-      if (selectElement) selectElement.value = "";
-    });
-  }
+   function addMember(eventId, memberId, selectElement) {
+     fetch(`/api/ajouter-membre/${eventId}/`, {
+       method: 'POST',
+       headers: {
+         'X-CSRFToken': getCSRFToken(),
+         'Content-Type': 'application/json'
+       },
+       body: JSON.stringify({ member_id: memberId })
+     })
+     .then(response => response.text())
+     .then(html => {
+       document.getElementById(`members-${eventId}`).innerHTML = html;
+       attachRemoveButtons();
+       if (selectElement) selectElement.value = "";
+     });
+   }
 
-  function removeMember(eventId, memberId) {
-    fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': getCSRFToken()
-      }
-    })
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById(`members-${eventId}`).innerHTML = html;
-      attachRemoveButtons();
-    });
-  }
+   function removeMember(eventId, memberId) {
+     fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
+       method: 'POST',
+       headers: {
+         'X-CSRFToken': getCSRFToken()
+       }
+     })
+     .then(response => response.text())
+     .then(html => {
+       document.getElementById(`members-${eventId}`).innerHTML = html;
+       attachRemoveButtons();
+     });
+   }
 
-  function attachRemoveButtons() {
-    document.querySelectorAll('.remove-member').forEach(button => {
-      button.onclick = () => {
-        const eventId = button.dataset.eventId;
-        const memberId = button.dataset.memberId;
-        removeMember(eventId, memberId);
-      };
-    });
-  }
+   function attachRemoveButtons() {
+     document.querySelectorAll('.remove-member').forEach(button => {
+       button.onclick = () => {
+         const eventId = button.dataset.eventId;
+         const memberId = button.dataset.memberId;
+         removeMember(eventId, memberId);
+       };
+     });
+   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    attachRemoveButtons();
-    document.querySelectorAll('.member-select').forEach(select => {
-      select.addEventListener('change', () => {
-        const eventId = select.dataset.eventId;
-        const memberId = select.value;
-        if (memberId) {
-          addMember(eventId, memberId, select);
-        }
-      });
-    });
-  });
+   document.addEventListener('DOMContentLoaded', () => {
+     attachRemoveButtons();
+     document.querySelectorAll('.member-select').forEach(select => {
+       select.addEventListener('change', () => {
+         const eventId = select.dataset.eventId;
+         const memberId = select.value;
+         if (memberId) {
+           addMember(eventId, memberId, select);
+         }
+       });
+     });
+   });
 </script>
-
 {% endblock %}

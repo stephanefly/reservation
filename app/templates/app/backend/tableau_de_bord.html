@@ -78,19 +78,14 @@
             <tr>
                <td>{{ event.event_option.duree }}h</td>
                <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-<td>
-    {{ event.event_details.get_adresse }}<br>
-    <a href="https://www.google.com/maps/search/?api=1&query={{ event.event_details.get_adresse|urlencode }}"
-       target="_blank"
-       rel="noopener noreferrer">
-        📍 Google Maps
-    </a> |
-    <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
-       target="_blank"
-       rel="noopener noreferrer">
-        🚗 Waze
-    </a>
-</td>
+               <td>
+                   {{ event.event_details.get_adresse }}<br>
+                   <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
+                      target="_blank"
+                      rel="noopener noreferrer">
+                       🚗 Waze
+                   </a>
+               </td>
 
                <td>
                   {% include 'app/partials/members_choix_cell.html' %}
