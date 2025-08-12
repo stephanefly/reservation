@@ -14,6 +14,7 @@ urlpatterns = [
 
 
     path('backend/post_presta/', include('app.urls.post_presta_urls')),
+    path('backend/comptabilite/', include('app.urls.comptabilite_urls')),
     path('backend/info-event/', include('app.urls.info_event_urls')),
     path('backend/cost/', include('app.urls.cost_urls')),
     path('backend/graph/', include('app.urls.graph_urls')),

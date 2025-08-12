@@ -1,368 +1,458 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
 <style>
-    .highlight-prestation {
-        background-color: blue;
-        color: white; /* Pour que le texte reste lisible sur un fond bleu */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-
-    .highlight-option {
-        background-color: skyblue;
-        color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-
-    .highlight-membre {
-        background-color: #f1cd9d;
-        color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-
-    .highlight-pc {
-        background-color: #f19d9d;
-        color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-        padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-    }
-    .ajax-btn {
-    background-color: #007bff; /* Bleu professionnel */
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 5px 12px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.ajax-btn:hover {
-    background-color: #0056b3;
-}
-
-.ajax-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
+  .highlight-prestation{background-color:blue;color:#fff;padding:0 3px}
+  .highlight-option{background-color:skyblue;color:#000;padding:0 3px}
+  .highlight-membre{background-color:#f1cd9d;color:#000;padding:0 3px}
+  .highlight-pc{background-color:#f19d9d;color:#000;padding:0 3px}
+  .ajax-btn{background:#007bff;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:600;font-size:14px;cursor:pointer;transition:background-color .2s}
+  .ajax-btn:hover{background:#0056b3}
+  .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
 </style>
 
-
 <table id="table-haut" class="table table-bordered table-striped" style="background-color:white">
-    <thead>
+  <thead>
     <tr>
-        <th>NOM</th>
-        <th>DATE-EVENT</th>
-        <th>Tel</th>
-        <td>Membres</td>
-        <th>Feedback Message</th>
-        <th>Feedback Google</th>
-        <th>Feedback Posté</th>
-        <th>Media Collecté</th>
-        <th>Envoi</th>
+      <th>NOM</th>
+      <th>DATE-EVENT</th>
+      <th>Tel</th>
+      <th>Membres</th>
+      <th>Feedback</th>
+      <th>Feedback Posté</th>
+      <th>Media Collecté</th>
+      <th>Envoi</th>
+      <th>Client Paid</th>
+      <th>Membre Paid</th>
+      <th>Sold ok</th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     {% for event in lst_post_event %}
     <tr>
-        <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
-        <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-        <td><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></td>
-                <td>
-                    {% for m in event.event_team_members.all %}
-                  <span class="highlight-membre">{{ m.name }}</span>
-                {% empty %}
-                  <span class="text-muted">Aucun membre</span>
-                {% endfor %}
-                </td>
-        <td class="{% if event.event_post_presta.feedback_message %}bg-success{% else %}bg-warning{% endif %}">
-            {% if not event.event_post_presta.feedback_message %}Pas OK{% else %}Fait{% endif %}
-        </td>
-        <td class="{% if event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
-            {% if not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
-        </td>
-        <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
-            {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
-        </td>
-                    <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
-            </td>
-        <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
-            {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
-        </td>
+      <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
+      <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+      <td><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></td>
+      <td>
+        {% for m in event.event_team_members.all %}
+          <span class="highlight-membre">{{ m.name }}</span>
+        {% empty %}
+          <span class="text-muted">Aucun membre</span>
+        {% endfor %}
+      </td>
+      <td class="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
+        {% if not event.event_post_presta.feedback_message and not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
+        {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
+        {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+        {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
+        {% if not event.event_post_presta.client_paid %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.members_paid %}bg-success{% else %}bg-danger{% endif %}">
+        {% if not event.event_post_presta.members_paid %}Pas OK{% else %}Fait{% endif %}
+      </td>
+      <td class="{% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
+        {% if not event.event_post_presta.sold_ok %}Pas OK{% else %}Fait{% endif %}
+      </td>
     </tr>
-
     {% endfor %}
-    </tbody>
+  </tbody>
 </table>
+
 <br>
+
 {% for event in lst_post_event %}
-<div id="event-{{ event.id }}" class="card" style="border: #1b1b1b 2px solid">
-    <div class="card-header">
-        <h5>
-            <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
-        </h5>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-            <tr>
-                <th>Mail</th>
-                <th>Date-Event</th>
-                <th>PRIX</th>
-                <th>Acompte</th>
-                <th>Restant</th>
-                <th>Mode</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ event.client.mail }}</td>
-                <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-                <td id="prix_valided">{{ event.prix_valided }}</td>
-                <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-                <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-            </tr>
-            </tbody>
-        </table>
-        <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-            <tr>
-                <th>Prestation</th>
-                <th>Option</th>
-                <th>Membre</th>
-                <th>Num PC</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    {% if event.event_product.photobooth %}
-                    <span class="highlight-prestation">Photobooth</span>
-                    , {% endif %}
-                    {% if event.event_product.miroirbooth %}
-                    <span class="highlight-prestation">Miroirbooth</span>
-                    , {% endif %}
-                    {% if event.event_product.videobooth %}
-                    <span class="highlight-prestation">360Booth</span>
-                    , {% endif %}
-                    {% if event.event_product.voguebooth %}
-                    <span class="highlight-prestation">VogueBooth</span>
-                    , {% endif %}
-                    {% if event.event_product.ipadbooth %}
-                    <span class="highlight-prestation">Ipadebooth</span>
-                    , {% endif %}
-                    {% if event.event_product.airbooth %}
-                    <span class="highlight-prestation">Ipadebooth</span>
-                    , {% endif %}
-                </td>
-                <td>
-                    {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>
-                    , {% endif %}
-                    {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>
-                    , {% endif %}
-                    {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>
-                    , {% endif %}
-                    {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>
-                    , {% endif %}
-                    {% if event.event_option.PanneauBienvenue %}
-                    <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                    {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>
-                    , {% endif %}
-                    {% if event.event_option.PhotographeVoguebooth %}
-                    <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                    {% if event.event_option.ImpressionVoguebooth %}
-                    <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                    {% if event.event_option.DecorVoguebooth %}
-                    <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                    {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
-                    , {% endif %}
-                </td>
-                <td>
-                {% for m in event.event_team_members.all %}
-                  <span class="highlight-membre">{{ m.name }}</span>
-                {% empty %}
-                  <span class="text-muted">Aucun membre</span>
-                {% endfor %}
+<div id="event-{{ event.id }}" class="card" style="border:#1b1b1b 2px solid">
+  <div class="card-header">
+    <h5><a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></h5>
+  </div>
 
-                </td>
-                <td><span class="highlight-pc">PCX</span></td>
-            </tr>
-            </tbody>
-        </table>
-        <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-            <tr>
-                <th>Nom Dossier</th>
-                <th>Path Depot Fichier</th>
-                <th>Lien Depot Fichier</th>
-                                <th>Envoi</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    {{ event.event_template.directory_name }}
-                </td>
-                <td>
-                    <a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a>
-                </td>
-                <td>
-                    <a href="{{ event.event_template.link_media_shared }}">Lien</a>
-                </td>
-                                <td>
-                    {% if not event.event_post_presta.sent %}
-                        <span style="background-color:#f44336; color:white; padding:4px 8px; border-radius:12px; font-weight:bold;">
-                            Non
-                        </span>
-                    {% else %}
-                        <span style="background-color:#4caf50; color:white; padding:4px 8px; border-radius:12px; font-weight:bold;">
-                            Fait - {{ event.event_post_presta.date_media_sent|date:"d/m/y" }}
-                        </span>
-                    {% endif %}
-                </td>
-                <td>
-                    <form method="POST" action="{% url 'send_media' event.id %}">
-                        {% csrf_token %}
-                        <button class="btn btn-primary" type="submit">
-                            Envoyer Fichiers
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <table class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-            <tr>
-                <th>Feedback Message</th>
-                <th>Feedback Google</th>
-                <th>Feedback Posté</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    {% if not event.event_post_presta.feedback_message %}
-                    {% csrf_token %}
-                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                            data-action="feedback_message">OK
-                    </button>
+  <div class="card-body">
+    <table class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          <th>Mail</th>
+          <th>Date-Event</th>
+          <th>PRIX</th>
+          <th>Acompte</th>
+          <th>Restant</th>
+          <th>Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ event.client.mail }}</td>
+          <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
+          <td class="prix_valided">{{ event.prix_valided }}</td>
+          <td class="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
+          <td class="difference">{{ event.event_acompte.montant_restant }}</td>
+          <td class="mode_payement">{{ event.event_acompte.mode_payement }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-                    {% else %}
-                    Fait
-                    {% endif %}
-                </td>
-                                <td>
-                    {% if not event.event_post_presta.feedback_google %}
-                    {% csrf_token %}
-                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                            data-action="feedback_google">OK
-                    </button>
+    <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr><th>Prestation</th><th>Option</th><th>Num PC</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>, {% endif %}
+            {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>, {% endif %}
+            {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>, {% endif %}
+            {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>, {% endif %}
+            {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadebooth</span>, {% endif %}
+            {% if event.event_product.airbooth %}<span class="highlight-prestation">Ipadebooth</span>, {% endif %}
+          </td>
+          <td>
+            {% if event.event_option.MurFloral %}<span class="highlight-option">MurFloral</span>, {% endif %}
+            {% if event.event_option.Phonebooth %}<span class="highlight-option">Phonebooth</span>, {% endif %}
+            {% if event.event_option.LivreOr %}<span class="highlight-option">LivreDor</span>, {% endif %}
+            {% if event.event_option.Fond360 %}<span class="highlight-option">Fond360</span>, {% endif %}
+            {% if event.event_option.PanneauBienvenue %}<span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
+            {% if event.event_option.Holo3D %}<span class="highlight-option">Holo3d</span>, {% endif %}
+            {% if event.event_option.PhotographeVoguebooth %}<span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
+            {% if event.event_option.ImpressionVoguebooth %}<span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
+            {% if event.event_option.DecorVoguebooth %}<span class="highlight-option">DecorVoguebooth</span>, {% endif %}
+            {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>, {% endif %}
+          </td>
+          <td><span class="highlight-pc">PCX</span></td>
+        </tr>
+      </tbody>
+    </table>
 
-                    {% else %}
-                    Fait
-                    {% endif %}
-                </td>
-                <td>
-                    {% if not event.event_post_presta.feedback_posted %}
-                    {% csrf_token %}
-                    <button class="ajax-btn" data-id="{{ event.event_post_presta.id }}"
-                            data-action="feedback_posted">OK
-                    </button>
-                    {% else %}
-                    Fait
-                    {% endif %}
-                </td>
+    <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          <th>Nom Dossier</th>
+          <th>Path Depot Fichier</th>
+          <th>Lien Depot Fichier</th>
+          <th>Envoi</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ event.event_template.directory_name }}</td>
+          <td><a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a></td>
+          <td><a href="{{ event.event_template.link_media_shared }}">Lien</a></td>
+          <td>
+            {% if not event.event_post_presta.sent %}
+              <span style="background-color:#f44336;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Non</span>
+            {% else %}
+              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">
+                Fait - {{ event.event_post_presta.date_media_sent|date:"d/m/y" }}
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'send_media' event.id %}">{% csrf_token %}
+              <button class="btn btn-primary" type="submit">Envoyer Fichiers</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-                <td>
-                    <form method="POST" action="{% url 'presta_fini' event.id %}">
-                        {% csrf_token %}
-                        <button class="btn btn-success" type="submit">
-                            Finir Presta
-                        </button>
-                    </form>
-                                        <form method="POST" action="{% url 'relance_avis_client' event.id %}">
-                        {% csrf_token %}
-                        <button class="btn btn-warning" type="submit">
-                            Relance avis
-                        </button>
-                    </form>
-                </td>
-            </tr>
+    <table id="table_payement" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          {% for m in event.event_team_members.all|dictsort:"name" %}
+            <th><span class="highlight-membre">{{ m.name }}</span></th>
+          {% endfor %}
+          <th>Charge</th>
+          <th>Client Paid</th>
+          <th>Membre Paid</th>
+          <th>Sold OK</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {# Salaires membres par règle 1:150 | 2:100,50 | 3+:100,100,50... #}
+          {% with n=event.event_team_members.count %}
+            {% for m in event.event_team_members.all|dictsort:"name" %}
+              {% if n == 1 %}
+                <td><input class="member-salary-input" type="number" min="0" step="1" value="150" {% if event.event_post_presta.members_paid %}disabled{% endif %}></td>
+              {% elif n == 2 %}
+                <td><input class="member-salary-input" type="number" min="0" step="1" value="{% if forloop.first %}100{% else %}50{% endif %}" {% if event.event_post_presta.members_paid %}disabled{% endif %}></td>
+              {% else %}
+                <td><input class="member-salary-input" type="number" min="0" step="1" value="{% if forloop.counter <= 2 %}100{% else %}50{% endif %}" {% if event.event_post_presta.members_paid %}disabled{% endif %}></td>
+              {% endif %}
+            {% endfor %}
+          {% endwith %}
 
-            </tbody>
-        </table>
-    </div>
+          <!-- Colonne Charges -->
+          <td class="flag-cell {% if event.event_post_presta.charge > 0 %}bg-success{% else %}bg-danger{% endif %}">
+              <span class="status-text">
+                  {% if event.event_post_presta.charge > 0 %}
+                      {{ event.event_post_presta.charge }} €
+                  {% else %}
+                      Pas défini
+                  {% endif %}
+              </span>
+              <button type="button"
+                  class="btn btn-sm btn-info js-flag-toggle-charge"
+                  data-url="{% url 'mark_charge' event.id %}">
+                  Mettre à jour charges
+              </button>
+          </td>
+
+          {# CLIENT PAID #}
+          <td class="flag-cell {% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
+            <span class="status-text">{% if event.event_post_presta.client_paid %}Fait{% else %}Pas OK{% endif %}</span>
+            <button type="button"
+              class="btn btn-sm js-flag-toggle {% if event.event_post_presta.client_paid %}btn-warning{% else %}btn-success{% endif %}"
+              data-flag="client_paid"
+              data-url-true="{% url 'mark_client_paid' event.id %}"
+              data-url-false="{% url 'mark_client_unpaid' event.id %}"
+              data-current="{% if event.event_post_presta.client_paid %}true{% else %}false{% endif %}">
+              {% if event.event_post_presta.client_paid %}Mettre en Pas OK{% else %}Marquer Fait{% endif %}
+            </button>
+          </td>
+
+          {# MEMBERS PAID (somme + disable inputs) #}
+          <td class="flag-cell {% if event.event_post_presta.members_paid %}bg-success{% else %}bg-danger{% endif %}">
+            <span class="status-text">{% if event.event_post_presta.members_paid %}Fait{% else %}Pas OK{% endif %}</span>
+            <button type="button"
+              class="btn btn-sm js-flag-toggle {% if event.event_post_presta.members_paid %}btn-warning{% else %}btn-success{% endif %}"
+              data-flag="members_paid"
+              data-url-true="{% url 'mark_members_paid' event.id %}"
+              data-url-false="{% url 'mark_members_unpaid' event.id %}"
+              data-current="{% if event.event_post_presta.members_paid %}true{% else %}false{% endif %}">
+              {% if event.event_post_presta.members_paid %}Mettre en Pas OK{% else %}Marquer Fait{% endif %}
+            </button>
+          </td>
+
+          {# SOLD OK #}
+          <td class="flag-cell {% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
+            <span class="status-text">{% if event.event_post_presta.sold_ok %}Fait{% else %}Pas OK{% endif %}</span>
+            <button type="button"
+              class="btn btn-sm js-flag-toggle {% if event.event_post_presta.sold_ok %}btn-warning{% else %}btn-success{% endif %}"
+              data-flag="sold_ok"
+              data-url-true="{% url 'mark_sold_ok' event.id %}"
+              data-url-false="{% url 'mark_sold_not_ok' event.id %}"
+              data-current="{% if event.event_post_presta.sold_ok %}true{% else %}false{% endif %}">
+              {% if event.event_post_presta.sold_ok %}Mettre en Pas OK{% else %}Marquer Fait{% endif %}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          <th>Feedback Message</th>
+          <th>Feedback Google</th>
+          <th>Feedback Posté</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {% if not event.event_post_presta.feedback_message %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_message' %}">
+                OK
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            {% if not event.event_post_presta.feedback_google %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_google' %}">
+                OK
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            {% if not event.event_post_presta.feedback_posted %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_posted' %}">
+                OK
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'presta_fini' event.id %}">{% csrf_token %}
+              <button class="btn btn-success" type="submit">Finir Presta</button>
+            </form>
+            <form method="POST" action="{% url 'relance_avis_client' event.id %}">{% csrf_token %}
+              <button class="btn btn-warning" type="submit">Relance avis</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <br>
 {% endfor %}
 
 <script>
-  $(document).ready(function () {
+  $(document).ready(function(){
     $('#table-haut').DataTable({
-      responsive: true,
-      dom: 'Bfrtip',                     // Affiche boutons en haut du tableau
-      buttons: ['csv', 'excel'],         // Active les boutons
-      paging: false,
-      info: false,
-      language: {
-        url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
-      }
+      responsive:true,
+      dom:'Bfrtip',
+      buttons:['csv','excel'],
+      paging:false,
+      info:false,
+      language:{ url:"//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json" }
     });
   });
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#event-"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    })
+  });
+
+  const csrftoken = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+
+  // Boutons "OK" feedback_* (POST -> value=True)
+  document.addEventListener('click', async e=>{
+    const btn = e.target.closest('.ajax-btn');
+    if(!btn) return;
+    btn.disabled = true;
+    try{
+      const res = await fetch(btn.dataset.url,{
+        method:'POST',
+        headers:{'X-CSRFToken':csrftoken,'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json'},
+        body: JSON.stringify({value:true})
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      if(data.ok || data.success){ btn.outerHTML = '<span>Fait</span>'; }
+      else alert(data.message||'Erreur');
+    }catch(err){ alert(err.message); }
+    btn.disabled = false;
+  });
+
+  // Toggle flags (client_paid / members_paid / sold_ok)
+  document.addEventListener('click', async e=>{
+    const btn = e.target.closest('.js-flag-toggle');
+    if(!btn) return;
+
+    const td   = btn.closest('td');
+    const row  = btn.closest('tr');
+    const flag = btn.dataset.flag; // "client_paid" | "members_paid" | "sold_ok"
+    const current = btn.dataset.current === 'true';
+    const toTrue  = !current;
+    const url     = toTrue ? btn.dataset.urlTrue : btn.dataset.urlFalse;
+
+    // members_paid -> sommer inputs + envoyer salary_total quand on passe à True
+    let body = undefined;
+    if(flag === 'members_paid' && toTrue){
+      let total = 0;
+      row.querySelectorAll('.member-salary-input').forEach(i=>{
+        const v = parseInt(i.value||'0',10);
+        if(!isNaN(v)) total += v;
+      });
+      body = JSON.stringify({ salary_total: total });
+    }
+
+    btn.disabled = true;
+    try{
+      const res = await fetch(url,{
+        method:'POST',
+        headers:{'X-CSRFToken':csrftoken,'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json'},
+        body
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.message||'Erreur');
+
+      // MAJ UI
+      const text = td.querySelector('.status-text');
+      td.classList.toggle('bg-success', toTrue);
+      td.classList.toggle('bg-danger', !toTrue);
+      text.textContent = toTrue ? 'Fait' : 'Pas OK';
+      btn.textContent  = toTrue ? 'Mettre en Pas OK' : 'Marquer Fait';
+      btn.classList.toggle('btn-warning', toTrue);
+      btn.classList.toggle('btn-success', !toTrue);
+      btn.dataset.current = toTrue ? 'true' : 'false';
+
+      // (dés)activer inputs salaires si members_paid
+      if(flag === 'members_paid'){
+        row.querySelectorAll('.member-salary-input').forEach(i=> i.disabled = toTrue);
+      }
+    }catch(err){
+      alert('Erreur : '+err.message);
+    }finally{
+      btn.disabled = false;
+    }
+  });
 </script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOM chargé, script actif');
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+document.addEventListener("DOMContentLoaded", () => {
+    // --- Fonction utilitaire pour récupérer le CSRF ---
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
 
-        document.querySelectorAll('.ajax-btn').forEach(button => {
-            console.log('Bouton trouvé:', button);
-            button.addEventListener('click', function () {
-                console.log('Bouton cliqué:', this.dataset.id, this.dataset.action);
-
-                const id = this.dataset.id;
-                const action = this.dataset.action;
-
-                // Génération de la partie statique de l'URL en utilisant Django, sans les paramètres
-                const url = `{% url 'update_post_presta_status' 0 'placeholder' %}`.replace('0', id).replace('placeholder', action);
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => {
-                        console.log('Réponse reçue:', response);
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Données reçues:', data);
-                        if (data.success) {
-                            this.outerHTML = `<span>${data.action === 'relance_avis' ? 'Relancé' : 'Fait'}</span>`;
-                        } else {
-                            alert('Erreur: ' + data.message);
-                        }
-                    })
-                    .catch(error => console.error('Erreur:', error));
+    // --- Fonction utilitaire pour POST AJAX avec gestion d'erreurs ---
+    async function ajaxPost(url, body = {}) {
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(body).toString()
             });
-        });
-    });
-</script>
-<script>
-document.querySelectorAll('a[href^="#event-"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
+
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.message || "Erreur inconnue");
+
+            return data;
+        } catch (err) {
+            alert("❌ " + err.message);
+            throw err;
+        }
+    }
+
+    // --- Bouton "Charges" ---
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".js-flag-toggle-charge");
+        if (!btn) return;
+
+        const chargeVal = prompt("Entrez le montant des charges (€) :");
+        if (chargeVal === null) return;
+        if (isNaN(chargeVal) || chargeVal.trim() === "") {
+            alert("❌ Veuillez entrer un nombre valide.");
+            return;
+        }
+
+        btn.disabled = true;
+        try {
+            const data = await ajaxPost(btn.dataset.url, { charge: chargeVal });
+
+            const cell = btn.closest(".flag-cell");
+            cell.classList.remove("bg-danger");
+            cell.classList.add("bg-success");
+            cell.querySelector(".status-text").textContent = `${chargeVal} €`;
+        } finally {
+            btn.disabled = false;
         }
     });
 });

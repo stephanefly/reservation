@@ -1,0 +1,62 @@
+{% extends 'app/backend/base.html' %}
+{% block content %}
+
+<style>
+body {
+    background-image: None;
+}
+</style>
+<h3>Comptabilité</h3>
+<br>
+
+<div class="row">
+    {% for member in members %}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    {{ member.name }} ({{ member.nb_prestations }} prestations)
+                </div>
+{% load math_filters %}
+
+<div class="card-body">
+    {% if member.post_events %}
+        <table id="table-haut" class="table table-bordered table-striped" style="background-color:white">
+            <thead class="table-dark">
+                <tr>
+                    <th>Event</th>
+                    <th>Client</th>
+                    <th>Salaire</th>
+                    <th>Charge</th>
+                    <th>A me donner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in member.post_events %}
+                <tr>
+                    <td>{{ event.event_template.directory_name }}</td>
+                    <td>{{ event.event_acompte.montant_restant }} €</td>
+                    <td>{{ event.event_post_presta.membre_salary  }} €</td>
+                    <td>{{ event.event_post_presta.charge  }} €</td>
+                    <td>{% subtract_three event.event_acompte.montant_restant event.event_post_presta.membre_salary event.event_post_presta.charge as reste %}
+                    {{ reste }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                {% total_to_me member.post_events member.salary as total_membre %}
+                <tr class="table-secondary">
+                    <th colspan="4" class="text-end">TOTAL À ME PASSER :</th>
+                    <th>{{ total_membre }} €</th>
+                </tr>
+            </tfoot>
+        </table>
+    {% endif %}
+</div>
+
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
