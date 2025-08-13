@@ -3,8 +3,6 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from app.module.mail.send_mail_event import send_mail_event
-
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
