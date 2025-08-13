@@ -96,12 +96,13 @@ class EventOption(models.Model):
         choices=[
             ('rideau_blanc', 'Rideau blanc'),
             ('gatsby', 'Gatsby'),
-            ('blanc', 'Blanc'),
-            ('rose_rouge', 'Rose rouge'),
+            ('rose_blanche', 'Rose Blanche'),
+            ('rose_rouge', 'Roses rouge'),
             ('paillette_rose', 'Paillette rose'),
             ('vegetale', 'Végétale'),
             ('blanc_rose', 'Blanc & Rose'),
             ('fond_lumineux', 'Fond lumineux'),
+            ('rose_rose', 'Roses Rose'),
             ('paillette_doree', 'Paillette dorée'),
             ('fleurs_rouge_blanc', 'Fleurs rouge & blanc'),
         ]

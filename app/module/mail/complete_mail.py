@@ -20,6 +20,9 @@ def complete_mail(event, soup, mail_type):
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
 
+    elif mail_type == 'relance_espace_client':
+        _handle_relance_espace_client(event, soup)
+
     _handle_unsubscribe(event, soup)
 
     return soup
@@ -87,12 +90,41 @@ def _handle_send_media(event, soup):
     a_tag = soup.find('a', class_='cta-button btn-download')
     a_tag['href'] = str(event.event_template.link_media_shared)
 
+def _handle_relance_espace_client(event, soup):
+    """Vérifie les éléments manquants dans l'espace client pour relance."""
+    manquants = []
+
+    # Vérifications
+    if not event.event_details.horaire:
+        manquants.append("🕒 Horaire de début de prestation")
+    if not event.event_template.text_template:
+        manquants.append("✍️ Texte personnalisé")
+    if event.event_option.MurFloral and not event.event_option.mur_floral_style:
+        manquants.append("🌸 Mur Floral")
+    if event.event_product.need_design and not event.event_template.url_modele:
+        manquants.append("📸🎨 Modèle de design")
+    if event.event_product.need_music and not event.event_template.url_music_360:
+        manquants.append("🎵 Musique pour le 360 Booth")
+
+    # Si des infos sont manquantes, on peut préparer un message ou injecter dans le HTML
+    # Injection dans la balise <ul> avec id
+    ul_tag = soup.find("ul", id="elements-a-renseigner")
+    if ul_tag:
+        ul_tag.clear()  # au cas où il y aurait déjà du contenu
+        for item in manquants:
+            li_tag = soup.new_tag("li")
+            li_tag.string = item
+            ul_tag.append(li_tag)
+
+    return soup
+
 
 def _handle_unsubscribe(event, soup):
     event_token = event.event_token
     unsubscribe_url = f"https://reservation.myselfiebooth-paris.fr/desabonner/{event_token}"
     soup.find('a', class_='mail_desabonnement')['href'] = unsubscribe_url
     soup.find('a', class_='mail_client').string = str(event.client.mail)
+
 
 def _handle_tracer(event, soup):
 
