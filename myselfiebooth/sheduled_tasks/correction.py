@@ -18,7 +18,8 @@ import django
 
 django.setup()
 
-from app.models import Event, EventPostPrestation
+from app.models import Event
+from app.module.mail.send_mail_event import send_mail_event
 
 lst_event_to_relance = Event.objects.filter(
     status='Prolongation',
