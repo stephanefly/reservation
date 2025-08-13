@@ -10,7 +10,7 @@ from time import sleep
 # from app.module.mail.send_sms_event import send_sms_event
 
 
-def process_events(days_offset, current_status, new_status, email_template, update_product=False, apply_discount=False):
+def process_events(days_offset, current_status, new_status, email_template):
     date_limite = datetime.now() - timedelta(days=days_offset)
     lst_event_to_relance = Event.objects.filter(
         client__autorisation_mail=True,
@@ -46,11 +46,11 @@ def choose_to_prolonger_devis_client():
 #
 #
 # def choose_to_phonebooth_offert_devis_client():
-#     process_events(12, 'Temoignage', 'Phonebooth Offert', 'phonebooth_offert_devis', update_product=True)
+#     process_events(12, 'Temoignage', 'Phonebooth Offert', 'phonebooth_offert_devis')
 
 
 def choose_to_last_chance_devis_client():
-    process_events(14, 'Prolongation', 'Last Chance', 'last_chance_devis', apply_discount=True)
+    process_events(14, 'Prolongation', 'Last Chance', 'last_chance_devis')
 
 
 def choose_to_relance_espace_client():
