@@ -50,7 +50,7 @@ def choose_to_phonebooth_offert_devis_client():
 
 
 def choose_to_last_chance_devis_client():
-    process_events(15, 'Phonebooth Offert', 'Last Chance', 'last_chance_devis', apply_discount=True)
+    process_events(14, 'Phonebooth Offert', 'Last Chance', 'last_chance_devis', apply_discount=True)
 
 
 def choose_to_relance_espace_client():
