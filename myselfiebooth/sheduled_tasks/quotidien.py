@@ -18,9 +18,8 @@ django.setup()
 # Importer et exécuter les tâches planifiées
 from app.module.data_bdd.maj_today_event import maj_today_event
 from app.module.mail.choose_to_relance import (choose_to_rappel_devis_client, choose_to_prolonger_devis_client,
-                                               choose_to_phonebooth_offert_devis_client,
                                                choose_to_last_chance_devis_client,
-                                               choose_to_relance_espace_client, choose_to_temoignage_devis_client,
+                                               choose_to_relance_espace_client,
                                                choose_to_last_rappel_devis_client, choose_to_make_review_mail,
                                                )
 

@@ -17,7 +17,7 @@ def process_events(days_offset, current_status, new_status, email_template, upda
         created_at__date=date_limite.date(),
         signer_at__isnull=True,
         status=current_status,
-        client__raison_sociale=False,
+        # client__raison_sociale=False,
     ).order_by('created_at')
 
     for event in lst_event_to_relance:
@@ -41,16 +41,16 @@ def choose_to_prolonger_devis_client():
     process_events(8, 'Last Rappel', 'Prolongation', 'prolongation_devis')
 
 
-def choose_to_temoignage_devis_client():
-    process_events(10, 'Prolongation', 'Temoignage', 'temoingnage_client_devis')
-
-
-def choose_to_phonebooth_offert_devis_client():
-    process_events(12, 'Temoignage', 'Phonebooth Offert', 'phonebooth_offert_devis', update_product=True)
+# def choose_to_temoignage_devis_client():
+#     process_events(10, 'Prolongation', 'Temoignage', 'temoingnage_client_devis')
+#
+#
+# def choose_to_phonebooth_offert_devis_client():
+#     process_events(12, 'Temoignage', 'Phonebooth Offert', 'phonebooth_offert_devis', update_product=True)
 
 
 def choose_to_last_chance_devis_client():
-    process_events(14, 'Phonebooth Offert', 'Last Chance', 'last_chance_devis', apply_discount=True)
+    process_events(14, 'Prolongation', 'Last Chance', 'last_chance_devis', apply_discount=True)
 
 
 def choose_to_relance_espace_client():
