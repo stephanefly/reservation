@@ -10,7 +10,6 @@ import json
 from ..module.cloud.create_timelaps import upload_file_to_pcloud
 from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data
 from ..module.cloud.share_link import upload_template_to_pcloud, get_public_image_link_from_path
-from ..module.data_bdd.make_planning import get_member_list
 from ..module.mail.send_mail_event import send_mail_event
 from django.template.loader import render_to_string
 today_date = datetime.now().date()
@@ -69,12 +68,9 @@ def team_post_presta(request):
         status__in=['Post Presta']
     ).order_by('event_details__date_evenement')
 
-    event_lst_member = get_member_list(lst_post_event)
-
     return render(request, 'app/team/team_post_presta.html',
                   {
                       'lst_post_event': lst_post_event,
-                      'event_lst_member': event_lst_member
                   })
 
 

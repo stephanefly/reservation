@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from ..models import Event, TeamMember
-from ..module.data_bdd.make_planning import get_member_list
 from datetime import datetime, timedelta, timezone
 import json
 from django.http import HttpResponse, JsonResponse

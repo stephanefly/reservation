@@ -136,18 +136,13 @@
                                 {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
                                     , {% endif %}
                             </td>
-                                                <td>
-                        {% for event_name, membres in event_lst_member.items %}
-                            {% if event_name == event.client.nom %}
-                                {% for membre in membres %}
-                                    <span class="highlight-membre">{{ membre }}</span>{% if not forloop.last %},
-                                {% endif %}
-                                {% empty %}
-                                    Aucun membre associé
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
+                            <td>
+                    {% for m in event.event_team_members.all %}
+                  <span class="highlight-membre">{{ m.name }}</span>
+                {% empty %}
+                  <span class="text-muted">Aucun membre</span>
+                {% endfor %}
+                </td>
                             <td> <span class="highlight-pc">PCX</span></td>
                         </tr>
                         </tbody>
