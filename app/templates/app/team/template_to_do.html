@@ -61,10 +61,9 @@
                      {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadbooth</span>
                      , {% endif %}
                   </td>
-               <td style="{% if not event.event_template.text_template %}background-color: rgba(255,0,0,0.47);{% endif %}">
-                  {{ event.event_template.text_template }}
-               </td>
-
+                  <td style="
+                     {% if not event.event_template.text_template %}
+                     background-color: rgba(255,0,0,0.47);"  {% endif %}>{{ event.event_template.text_template }}</td>
                   <td style="
                      {% if not event.event_product.need_design %}
                      background-color: #e9ecef;
