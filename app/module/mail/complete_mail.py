@@ -101,9 +101,9 @@ def _handle_relance_espace_client(event, soup):
         manquants.append("✍️ Texte personnalisé")
     if event.event_option.MurFloral and not event.event_option.mur_floral_style:
         manquants.append("🌸 Mur Floral")
-    if event.event_product.need_design and not event.event_template.url_modele:
+    if event.event_product.need_design() and not event.event_template.url_modele:
         manquants.append("📸🎨 Modèle de design")
-    if event.event_product.need_music and not event.event_template.url_music_360:
+    if event.event_product.need_music() and not event.event_template.url_music_360:
         manquants.append("🎵 Musique pour le 360 Booth")
 
     # Si des infos sont manquantes, on peut préparer un message ou injecter dans le HTML
