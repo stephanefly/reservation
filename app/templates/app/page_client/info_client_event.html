@@ -1,4 +1,5 @@
 {% extends 'app/page_client/base_client.html' %}
+{% load static %}
 {% block content %}
 
 <div class="container">
@@ -14,41 +15,37 @@
     </p>
 </div>
 
-{% if not event.event_details.horaire
-   or not event.event_template.text_template
-   or (event.event_option.MurFloral and not event.event_option.mur_floral_style)
-   or (event.event_product.need_design and not event.event_template.url_modele)
-   or (event.event_product.need_music and not event.event_option.url_music_360) %}
-<div class="info-block alert alert-warning">
-    <p>Les informations suivantes sont à compléter :</p>
-    <ul>
-        {% if not event.event_details.horaire %}
-        <li>Horaire de la prestation</li>
-        {% endif %}
+{% if not event.event_details.horaire or not event.event_template.text_template or event.event_option.MurFloral and not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele or event.event_product.need_music and not event.event_template.url_music_360 %}
+    <div class="info-block alert alert-warning">
+        <p>Les informations suivantes sont à compléter :</p>
+        <ul>
+            {% if not event.event_details.horaire %}
+                <li>Horaire de la prestation</li>
+            {% endif %}
 
-        {% if not event.event_template.text_template %}
-        <li>Texte du modèle</li>
-        {% endif %}
+            {% if not event.event_template.text_template %}
+                <li>Texte du modèle</li>
+            {% endif %}
 
-        {% if event.event_product.need_design and not event.event_template.url_modele %}
-        <li>Modèle de tirage</li>
-        {% endif %}
+            {% if event.event_product.need_design and not event.event_template.url_modele %}
+                <li>Modèle de tirage</li>
+            {% endif %}
 
-        {% if event.event_option.MurFloral and not event.event_option.mur_floral_style %}
-        <li>Mur de Fond / Backdrop</li>
-        {% endif %}
+            {% if event.event_option.MurFloral and not event.event_option.mur_floral_style %}
+                <li>Mur de Fond / Backdrop</li>
+            {% endif %}
 
-        {% if event.event_product.need_music and not event.event_option.url_music_360 %}
-        <li>Musique pour la vidéo 360</li>
-        {% endif %}
-    </ul>
-</div>
+            {% if event.event_product.need_music and not event.event_template.url_music_360 %}
+                <li>Musique pour la vidéo 360</li>
+            {% endif %}
+        </ul>
+    </div>
 
 {% else %}
-<div class="info-block alert alert-success">
-    <p>Merci ! Toutes les informations nécessaires sont complètes.<br>
-    Une validation et un retour sera faite par notre équipe.</p>
-</div>
+    <div class="info-block alert alert-success">
+        <p>Merci ! Toutes les informations nécessaires sont complètes.<br>
+        Une validation et un retour sera faite par notre équipe.</p>
+    </div>
 {% endif %}
 
 
