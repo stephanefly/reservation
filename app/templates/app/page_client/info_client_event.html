@@ -30,7 +30,7 @@
         <li>Texte du modèle</li>
         {% endif %}
 
-        {% if event.event_product.need_design() and not event.event_template.url_modele %}
+        {% if event.event_product.need_design and not event.event_template.url_modele %}
         <li>Modèle de tirage</li>
         {% endif %}
 
@@ -38,7 +38,7 @@
         <li>Mur de Fond / Backdrop</li>
         {% endif %}
 
-        {% if event.event_product.need_music() and not event.event_option.url_music_360 %}
+        {% if event.event_product.need_music and not event.event_option.url_music_360 %}
         <li>Musique pour la vidéo 360</li>
         {% endif %}
     </ul>
