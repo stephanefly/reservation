@@ -31,6 +31,7 @@
             <th>DATE-EVENT</th>
             <th>MEMBRE</th>
             <th>Media Collecté</th>
+            <th>Rush Collecté</th>
         </tr>
         </thead>
         <tbody>
@@ -47,6 +48,9 @@
                 </td>
             <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
                 {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
+            </td>
+                        <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-danger{% endif %}">
+                {% if not event.event_post_presta.rush_collected  %}Pas OK{% else %}Fait{% endif %}
             </td>
         </tr>
 

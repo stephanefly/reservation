@@ -41,8 +41,10 @@ def send_media_logic(event_id):
         print_folder_data = get_pcloud_print_folder(folder_data)
         create_timelaps(event, folder_data, print_folder_data)
 
-    event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
-    event.event_template.save()
+    if not event.event_post_presta.link_media_shared:
+        event.event_post_presta.link_media_shared = get_pcloud_link_event_folder(folder_data)
+        event.event_post_presta.save()
+
     send_mail_event(event, 'send_media')
 
     find_pcloud_empty_folder(folder_data)

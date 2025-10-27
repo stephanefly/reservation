@@ -2,6 +2,7 @@ import os
 import json
 import requests
 
+from app.module.cloud.share_link import get_pcloud_link_event_folder
 from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID, \
     ROOT_FOLDER_MONTAGE_2025, ROOT_FOLDER_MONTAGE_2026
 
@@ -66,6 +67,9 @@ def create_pcloud_event_folder(event, prepa: bool = False, montage: bool = False
 
     # Vérifier si le dossier a été créé ou existe déjà
     if data["result"] == 0 or data["result"] == 2004:
+        folder_data = get_pcloud_event_folder_data(folder_client_name)
+        event.event_post_presta.link_media_shared = get_pcloud_link_event_folder(folder_data)
+        event.event_post_presta.save()
         return True
 
     return False  # Échec si le dossier n'existe pas et n'a pas été créé

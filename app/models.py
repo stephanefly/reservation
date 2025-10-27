@@ -181,6 +181,9 @@ class EventPostPrestation(models.Model):
     feedback_google = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
+    go_post_photo = models.BooleanField(default=False)
+    post_photo = models.BooleanField(default=False)
+    rush_collected = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
     date_media_sent = models.DateTimeField(null=True, blank=True)
     link_media_shared = models.URLField(null=True, blank=True)
@@ -189,6 +192,9 @@ class EventPostPrestation(models.Model):
     sold_ok = models.BooleanField(default=False)
     charge = models.IntegerField(default=0)
     membre_salary = models.IntegerField(default=0)
+    go_montage = models.BooleanField(default=False)
+    post_montage = models.BooleanField(default=False)
+    commentaire = models.TextField(default="", blank=True)
 
     def save(self, *args, **kwargs):
         if self.sent and self.date_media_sent is None:
