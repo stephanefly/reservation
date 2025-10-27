@@ -1,7 +1,6 @@
 
 from datetime import datetime, timedelta
 
-from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data
 from myselfiebooth.settings import API_PCLOUD_URL, ACCESS_TOKEN
 import requests
 
