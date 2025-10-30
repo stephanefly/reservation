@@ -86,9 +86,11 @@ def post_presta(request):
 
 @require_POST
 def send_media(request, event_id):
-
-    send_media_logic(event_id)
+    event = get_object_or_404(Event, pk=event_id)
+    event.status = "Pending"
+    event.save(update_fields=["status"])
     return redirect('post_presta')
+
 
 
 # ------------------- Helper DRY pour flags booléens -------------------

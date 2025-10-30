@@ -268,6 +268,8 @@ class Event(models.Model):
         ('Prolongation', 'Prolongation'),
         ('Temoignage', 'Temoignage'),
         ('Phonebooth Offert', 'Phonebooth Offert'),
+        ('Pending', 'Pending'),
+        ('Media KO', 'Media KO'),
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
     history_status = models.TextField(default="", blank=True)  # Stocke l'historique des statuts
