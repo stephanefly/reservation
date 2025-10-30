@@ -8,7 +8,7 @@ from typing import Optional
 from ..models import Event, EventPostPrestation
 from app.module.mail.send_mail_event import send_mail_event
 from ..module.cloud.send_media import send_media_logic
-
+from app.module.data_bdd.thread_executor import executor
 
 # ------------------- Actions email / statut d’event -------------------
 
@@ -87,7 +87,8 @@ def post_presta(request):
 
 @require_POST
 def send_media(request, event_id):
-    send_media_logic(event_id)
+    # Lancement en background
+    executor.submit(send_media_logic, event_id)
     return redirect('post_presta')
 
 
