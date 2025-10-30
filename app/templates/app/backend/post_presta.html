@@ -16,10 +16,12 @@
   <thead>
     <tr>
       <th>NOM</th>
+            <th>Status</th>
+            <th>Media Collecté</th>
+      <th>Envoi</th>
       <th>Feedback</th>
       <th>Feedback Posté</th>
-      <th>Media Collecté</th>
-      <th>Envoi</th>
+
       <th>Photo ?</th>
       <th>Photo Post ?</th>
       <th>Rush Collecté</th>
@@ -28,25 +30,39 @@
       <th>Client Paid</th>
       <th>Membre Paid</th>
       <th>Sold ok</th>
-      <th>Status</th>
+
     </tr>
   </thead>
   <tbody>
     {% for event in lst_post_event %}
     <tr>
       <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
+      <td
+  {% if event.status == "Pending" %}
+      style="background:#a5d6a7;color:black;font-weight:bold;"   <!-- vert clair -->
+  {% elif event.status == "Sent Media" %}
+      style="background:#43a047;color:white;font-weight:bold;"   <!-- vert -->
+  {% elif event.status == "Post Presta" %}
+      style="background:#8e24aa;color:white;font-weight:bold;"   <!-- violet -->
+  {% elif event.status == "Media KO" %}
+      style="background:#e53935;color:white;font-weight:bold;"   <!-- rouge -->
+  {% endif %}
+
+    {{ event.status }}
+</td>
+            <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
+        {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
+      </td>
+            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
+        {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
+      </td>
       <td class="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
         {% if not event.event_post_presta.feedback_message and not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
       </td>
       <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
         {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
       </td>
-      <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
-      </td>
-            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
-      </td>
+
 
             <td class="{% if event.event_post_presta.go_post_photo %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.go_post_photo %}Pas OK{% else %}Fait{% endif %}
@@ -72,19 +88,7 @@
       <td class="{% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
         {% if not event.event_post_presta.sold_ok %}Pas OK{% else %}Fait{% endif %}
       </td>
-<td
-  {% if event.status == "Pending" %}
-      style="background:#a5d6a7;color:black;font-weight:bold;"   <!-- vert clair -->
-  {% elif event.status == "Sent Media" %}
-      style="background:#43a047;color:white;font-weight:bold;"   <!-- vert -->
-  {% elif event.status == "Post Presta" %}
-      style="background:#8e24aa;color:white;font-weight:bold;"   <!-- violet -->
-  {% elif event.status == "Media KO" %}
-      style="background:#e53935;color:white;font-weight:bold;"   <!-- rouge -->
-  {% endif %}
 
-    {{ event.status }}
-</td>
 
 
     </tr>
