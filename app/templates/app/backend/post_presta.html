@@ -8,6 +8,20 @@
   .ajax-btn{background:#007bff;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:600;font-size:14px;cursor:pointer;transition:background-color .2s}
   .ajax-btn:hover{background:#0056b3}
   .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
+#backToTopFixed {
+    background: #1976d2;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+#backToTopFixed:hover {
+    background: #0f4fa8;
+}
 
 
 </style>
@@ -101,7 +115,18 @@
 {% for event in lst_post_event %}
 <div id="event-{{ event.id }}" class="card" style="border:#1b1b1b 2px solid">
   <div class="card-header">
-    <h5><a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a></h5>
+
+    <h5 style="display:inline-block;">
+      <a href="{% url 'info_event' event.id %}" class="btn btn-link">
+        {{ event.client.nom }}
+      </a>
+    </h5>
+
+    <button id="backToTopFixed"
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+        ↑ Haut de page
+    </button>
+
   </div>
 
   <div class="card-body">
@@ -586,6 +611,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<!--retour en haut-->
+<script>
+    const btn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", function() {
+        if (window.scrollY > 300) {
+            btn.style.display = "block";
+        } else {
+            btn.style.display = "none";
+        }
+    });
+</script>
 
 <!--commentaire -->
 <script>
