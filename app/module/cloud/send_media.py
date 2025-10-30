@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404, redirect
 
 from app.models import Event
 from app.module.cloud.create_timelaps import get_pcloud_print_folder, create_timelaps
-from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data, find_pcloud_empty_folder
-from app.module.cloud.share_link import get_pcloud_link_event_folder
+from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data, find_pcloud_empty_folder, \
+    get_pcloud_link_event_folder
 from app.module.mail.send_mail_event import send_mail_event
 
 

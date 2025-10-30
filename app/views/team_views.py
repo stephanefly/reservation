@@ -8,8 +8,8 @@ from django.shortcuts import get_object_or_404
 import os
 import json
 from ..module.cloud.create_timelaps import upload_file_to_pcloud
-from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data
-from ..module.cloud.share_link import upload_template_to_pcloud, get_public_image_link_from_path
+from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data, upload_template_to_pcloud, \
+    get_public_image_link_from_path
 from ..module.mail.send_mail_event import send_mail_event
 from django.template.loader import render_to_string
 today_date = datetime.now().date()

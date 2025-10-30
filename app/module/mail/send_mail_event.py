@@ -6,7 +6,8 @@ from email.utils import formataddr
 from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
 import requests
-from app.module.cloud.share_link import get_public_image_link_from_path
+
+from app.module.cloud.get_pcloud_data import get_public_image_link_from_path
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail
