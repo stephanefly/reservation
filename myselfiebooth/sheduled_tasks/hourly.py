@@ -21,10 +21,18 @@ from app.module.cloud.send_media import send_media_logic
 events = Event.objects.filter(status='Pending')
 
 for event in events:
+    print(f"\n==============================")
+    print(f"[TEMPLATE] {event.event_template.directory_name}")
+    print(f"[STATUS] Starting send_media_logic...")
+
     try:
         send_media_logic(event.id)
         event.status = "Sent Media"
         event.save(update_fields=["status"])
+        print(f"[RESULT] Sent Media OK")
+
     except Exception as e:
         event.status = "Media KO"
         event.save(update_fields=["status"])
+        print(f"[RESULT] Media KO")
+        print(f"[ERROR] {str(e)}")
