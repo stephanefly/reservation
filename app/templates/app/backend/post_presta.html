@@ -109,7 +109,7 @@
 
     <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
       <thead>
-        <tr><th>Prestation</th><th>Option</th><th>Num PC</th></tr>
+        <tr><th>Prestation</th><th>Option</th><th>Num PC</th><th>Status</th></tr>
       </thead>
       <tbody>
         <tr>
@@ -134,6 +134,7 @@
             {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>, {% endif %}
           </td>
           <td><span class="highlight-pc">PCX</span></td>
+          <td>{{ event.status}}</td>
         </tr>
       </tbody>
     </table>

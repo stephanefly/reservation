@@ -71,7 +71,7 @@ def update_post_presta_status(request, post_presta_id, action):
 def post_presta(request):
     lst_post_event = (
         Event.objects
-        .filter(signer_at__isnull=False, status__in=['Post Presta', 'Sent Media'])
+        .filter(signer_at__isnull=False, status__in=['Post Presta', 'Sent Media', 'Pending', 'Media KO'])
         .select_related(
             'client', 'event_details', 'event_product', 'event_option',
             'event_acompte', 'event_template', 'event_post_presta'
