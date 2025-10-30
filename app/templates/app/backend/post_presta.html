@@ -9,6 +9,7 @@
   .ajax-btn:hover{background:#0056b3}
   .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
 
+
 </style>
 
 <table id="table-haut" class="table table-bordered table-sticky table-hover bg-white">
@@ -27,6 +28,7 @@
       <th>Client Paid</th>
       <th>Membre Paid</th>
       <th>Sold ok</th>
+      <th>Status</th>
     </tr>
   </thead>
   <tbody>
@@ -70,6 +72,21 @@
       <td class="{% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
         {% if not event.event_post_presta.sold_ok %}Pas OK{% else %}Fait{% endif %}
       </td>
+<td
+  {% if event.status == "Pending" %}
+      style="background:#a5d6a7;color:black;font-weight:bold;"   <!-- vert clair -->
+  {% elif event.status == "Sent Media" %}
+      style="background:#43a047;color:white;font-weight:bold;"   <!-- vert -->
+  {% elif event.status == "Post Presta" %}
+      style="background:#8e24aa;color:white;font-weight:bold;"   <!-- violet -->
+  {% elif event.status == "Media KO" %}
+      style="background:#e53935;color:white;font-weight:bold;"   <!-- rouge -->
+  {% endif %}
+
+    {{ event.status }}
+</td>
+
+
     </tr>
     {% endfor %}
   </tbody>
