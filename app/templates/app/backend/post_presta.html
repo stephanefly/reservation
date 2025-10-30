@@ -8,9 +8,10 @@
   .ajax-btn{background:#007bff;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:600;font-size:14px;cursor:pointer;transition:background-color .2s}
   .ajax-btn:hover{background:#0056b3}
   .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
+
 </style>
 
-<table id="table-haut" class="table table-bordered" style="background-color:white">
+<table id="table-haut" class="table table-bordered table-sticky table-hover bg-white">
   <thead>
     <tr>
       <th>NOM</th>
@@ -41,7 +42,7 @@
       <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
       </td>
-            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-danger{% endif %}">
+            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
       </td>
 
@@ -51,13 +52,13 @@
                   <td class="{% if event.event_post_presta.post_photo %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.post_photo %}Pas OK{% else %}Fait{% endif %}
       </td>
-            <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-info{% endif %}">
+            <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.rush_collected %}Pas OK{% else %}Fait{% endif %}
       </td>
-                  <td class="{% if event.event_post_presta.go_montage %}bg-success{% else %}bg-info{% endif %}">
+                  <td class="{% if event.event_post_presta.go_montage %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.go_montage %}Pas OK{% else %}Fait{% endif %}
       </td>
-                  <td class="{% if event.event_post_presta.post_montage %}bg-success{% else %}bg-info{% endif %}">
+                  <td class="{% if event.event_post_presta.post_montage %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.post_montage %}Pas OK{% else %}Fait{% endif %}
       </td>
       <td class="{% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
@@ -141,6 +142,7 @@
       <thead>
         <tr>
           <th>Nom Dossier</th>
+          <th>Media Collecté</th>
           <th>Path Depot Fichier</th>
           <th>Lien Depot Fichier</th>
           <th>Envoi</th>
@@ -150,6 +152,15 @@
       <tbody>
         <tr>
           <td>{{ event.event_template.directory_name }}</td>
+          <td>
+                        {% if not event.event_post_presta.collected %}
+              <span style="background-color:#f44336;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Non</span>
+            {% else %}
+              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">
+                Fait
+              </span>
+            {% endif %}
+          </td>
           <td><a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a></td>
           <td><a href="{{ event.event_post_presta.link_media_shared }}">Lien</a></td>
           <td>
@@ -255,7 +266,68 @@
       </tbody>
     </table>
 
-    <table class="table table-bordered table-striped" style="background-color:white">
+    <table id="table_montage" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          <th>A poster ?</th>
+          <th>Posté</th>
+          <th>Rush Collecté</th>
+          <th>Montage à faire ?</th>
+          <th>Montage Posté</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {% if not event.event_post_presta.go_post_photo %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_post_photo' %}">
+                Oui
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            {% if not event.event_post_presta.post_photo %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_photo' %}">
+                Oui
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            {% if not event.event_post_presta.rush_collected %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'rush_collected' %}">
+                Oui
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+          <td>
+            {% if not event.event_post_presta.go_montage %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_montage' %}">
+                Oui
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+                    <td>
+            {% if not event.event_post_presta.post_montage %}
+              {% csrf_token %}
+              <button class="ajax-btn"
+                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_montage' %}">
+                Oui
+              </button>
+            {% else %}Fait{% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table id="table_feedback" class="table table-bordered table-striped" style="background-color:white">
       <thead>
         <tr>
           <th>Feedback Message</th>
@@ -271,7 +343,7 @@
               {% csrf_token %}
               <button class="ajax-btn"
                 data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_message' %}">
-                OK
+                Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
@@ -280,7 +352,7 @@
               {% csrf_token %}
               <button class="ajax-btn"
                 data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_google' %}">
-                OK
+                Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
@@ -289,7 +361,7 @@
               {% csrf_token %}
               <button class="ajax-btn"
                 data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_posted' %}">
-                OK
+                Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
@@ -304,6 +376,32 @@
         </tr>
       </tbody>
     </table>
+
+    <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
+      <thead>
+        <tr>
+          <th>Commentaire Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+      <td>
+        <form method="POST"
+              action="{% url 'update_post_presta_commentaire' event.event_post_presta.id %}"
+              class="ajax-comment-form">
+          {% csrf_token %}
+          <textarea name="commentaire"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Ajouter un commentaire...">{{ event.event_post_presta.commentaire }}</textarea>
+          <br>
+          <button type="submit" class="btn btn-primary btn-sm">💾 Enregistrer</button>
+          <span class="save-status text-muted small ms-2"></span>
+        </form>
+      </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 <br>
@@ -312,7 +410,6 @@
 <script>
   $(document).ready(function(){
     $('#table-haut').DataTable({
-      responsive:true,
       dom:'Bfrtip',
       buttons:['csv','excel'],
       paging:false,
@@ -464,6 +561,48 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.disabled = false;
         }
     });
+});
+</script>
+
+
+<!--commentaire -->
+<script>
+document.addEventListener("submit", async (e) => {
+  const form = e.target.closest(".ajax-comment-form");
+  if (!form) return;
+  e.preventDefault();
+
+  const textarea = form.querySelector("textarea");
+  const status = form.querySelector(".save-status");
+
+  const data = new FormData(form);
+  form.querySelector("button").disabled = true;
+  status.textContent = "Enregistrement...";
+
+  try {
+    const res = await fetch(form.action, {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: data
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const result = await res.json();
+
+    if (result.ok) {
+      status.textContent = "✅ Sauvegardé avec succès";
+      status.classList.remove("text-danger");
+      status.classList.add("text-success");
+    } else {
+      throw new Error(result.message || "Erreur");
+    }
+  } catch (err) {
+    status.textContent = "❌ " + err.message;
+    status.classList.add("text-danger");
+  } finally {
+    form.querySelector("button").disabled = false;
+    setTimeout(() => (status.textContent = ""), 4000);
+  }
 });
 </script>
 

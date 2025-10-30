@@ -33,6 +33,11 @@ ALLOWED_FLAGS_UPDATE = {
     'feedback_message': 'feedback_message',
     'feedback_google': 'feedback_google',
     'feedback_posted': 'feedback_posted',
+    'go_post_photo': 'go_post_photo',
+    'post_photo': 'post_photo',
+    'rush_collected': 'rush_collected',
+    'go_montage': 'go_montage',
+    'post_montage': 'post_montage',
     'sent': 'sent',
 }
 
@@ -180,3 +185,14 @@ def mark_charge(request, event_id):
         return JsonResponse({"ok": False, "message": "Valeur de charge invalide."}, status=400)
 
     return _set_flag(event_id, "members_paid", True, charge=charge_val)
+
+@require_POST
+def update_post_presta_commentaire(request, pk):
+    """Met à jour le commentaire feedback d'un EventPostPrestation."""
+    post_presta = get_object_or_404(EventPostPrestation, pk=pk)
+    commentaire = request.POST.get("commentaire", "").strip()
+
+    post_presta.commentaire = commentaire
+    post_presta.save(update_fields=["commentaire"])
+
+    return JsonResponse({"ok": True, "message": "Commentaire enregistré"})

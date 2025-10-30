@@ -1,7 +1,8 @@
 from django.urls import path
 from ..views import (post_presta, presta_fini, update_post_presta_status, relance_avis_client, send_media,
-                     mark_client_unpaid, mark_client_paid, mark_members_unpaid, mark_members_paid, mark_sold_not_ok, mark_sold_ok,
-                     mark_charge)
+                     mark_client_unpaid, mark_client_paid, mark_members_unpaid, mark_members_paid, mark_sold_not_ok,
+                     mark_sold_ok,
+                     mark_charge, update_post_presta_commentaire)
 
 urlpatterns = [
     path('', post_presta, name='post_presta'),
@@ -20,5 +21,7 @@ urlpatterns = [
     path("mark_sold_ok/<int:event_id>/", mark_sold_ok, name="mark_sold_ok"),
     # charges
     path("mark_charge/<int:event_id>/", mark_charge, name="mark_charge"),
+    # commentaire
+    path('postpresta/<int:pk>/update-commentaire/', update_post_presta_commentaire, name='update_post_presta_commentaire'),
 
 ]
