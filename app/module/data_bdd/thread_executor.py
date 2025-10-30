@@ -1,4 +1,4 @@
 from concurrent.futures import ThreadPoolExecutor
 
 # Pool global pour toute l'app
-executor = ThreadPoolExecutor(max_workers=5)
+executor = ThreadPoolExecutor(max_workers=8)
