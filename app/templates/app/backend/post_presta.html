@@ -1,5 +1,6 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
+
 <style>
   .highlight-prestation{background-color:blue;color:#fff;padding:0 3px}
   .highlight-option{background-color:skyblue;color:#000;padding:0 3px}
@@ -8,21 +9,26 @@
   .ajax-btn{background:#007bff;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:600;font-size:14px;cursor:pointer;transition:background-color .2s}
   .ajax-btn:hover{background:#0056b3}
   .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
-#backToTopFixed {
+  .backToTopFixed{
+    background:#1976d2;color:white;padding:8px 14px;border:none;border-radius:6px;
+    cursor:pointer;font-size:14px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  }
+  .backToTopFixed:hover{background:#0f4fa8}
+  .flag-cell .status-text{font-weight:600}
+  .save-status{margin-left:.5rem;font-size:.9rem;opacity:.9}
+  #backToTopFixed {
     background: #1976d2;
     color: white;
-    padding: 8px 14px;
+    padding: 5px 12px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 #backToTopFixed:hover {
     background: #0f4fa8;
 }
-
 
 </style>
 
@@ -30,12 +36,11 @@
   <thead>
     <tr>
       <th>NOM</th>
-            <th>Status</th>
-            <th>Media Collecté</th>
+      <th>Status</th>
+      <th>Media Collecté</th>
       <th>Envoi</th>
       <th>Feedback</th>
       <th>Feedback Posté</th>
-
       <th>Photo ?</th>
       <th>Photo Post ?</th>
       <th>Rush Collecté</th>
@@ -44,30 +49,32 @@
       <th>Client Paid</th>
       <th>Membre Paid</th>
       <th>Sold ok</th>
-
     </tr>
   </thead>
   <tbody>
     {% for event in lst_post_event %}
     <tr>
       <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
-      <td
-  {% if event.status == "Pending" %}
-      style="background:#a5d6a7;color:black;font-weight:bold;"   <!-- vert clair -->
-  {% elif event.status == "Sent Media" %}
-      style="background:#43a047;color:white;font-weight:bold;"   <!-- vert -->
-  {% elif event.status == "Post Presta" %}
-      style="background:#8e24aa;color:white;font-weight:bold;"   <!-- violet -->
-  {% elif event.status == "Media KO" %}
-      style="background:#e53935;color:white;font-weight:bold;"   <!-- rouge -->
-  {% endif %}
 
-    {{ event.status }}
-</td>
-            <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
+      {# Status cell: style + contenu valides #}
+      <td
+        {% if event.status == "Pending" %}
+          style="background:#a5d6a7;color:black;font-weight:bold;"
+        {% elif event.status == "Sent Media" %}
+          style="background:#43a047;color:white;font-weight:bold;"
+        {% elif event.status == "Post Presta" %}
+          style="background:#8e24aa;color:white;font-weight:bold;"
+        {% elif event.status == "Media KO" %}
+          style="background:#e53935;color:white;font-weight:bold;"
+        {% endif %}
+      >
+        {{ event.status }}
+      </td>
+
+      <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
       </td>
-            <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
+      <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
       </td>
       <td class="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
@@ -77,20 +84,31 @@
         {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
       </td>
 
+{% with val=event.event_post_presta.go_post_photo %}
+<td class="
+  {% if val == 'oui' %}bg-success
+  {% elif val == 'non' %}bg-danger
+  {% else %}bg-warning
+  {% endif %}
+">
+  {% if val == 'oui' %}Oui
+  {% elif val == 'non' %}Non
+  {% else %}À définir
+  {% endif %}
+</td>
+{% endwith %}
 
-            <td class="{% if event.event_post_presta.go_post_photo %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.go_post_photo %}Pas OK{% else %}Fait{% endif %}
-      </td>
-                  <td class="{% if event.event_post_presta.post_photo %}bg-success{% else %}bg-info{% endif %}">
+
+      <td class="{% if event.event_post_presta.post_photo %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.post_photo %}Pas OK{% else %}Fait{% endif %}
       </td>
-            <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-primary{% endif %}">
+      <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.rush_collected %}Pas OK{% else %}Fait{% endif %}
       </td>
-                  <td class="{% if event.event_post_presta.go_montage %}bg-success{% else %}bg-primary{% endif %}">
+      <td class="{% if event.event_post_presta.go_montage %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.go_montage %}Pas OK{% else %}Fait{% endif %}
       </td>
-                  <td class="{% if event.event_post_presta.post_montage %}bg-success{% else %}bg-primary{% endif %}">
+      <td class="{% if event.event_post_presta.post_montage %}bg-success{% else %}bg-primary{% endif %}">
         {% if not event.event_post_presta.post_montage %}Pas OK{% else %}Fait{% endif %}
       </td>
       <td class="{% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
@@ -102,9 +120,6 @@
       <td class="{% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
         {% if not event.event_post_presta.sold_ok %}Pas OK{% else %}Fait{% endif %}
       </td>
-
-
-
     </tr>
     {% endfor %}
   </tbody>
@@ -114,8 +129,7 @@
 
 {% for event in lst_post_event %}
 <div id="event-{{ event.id }}" class="card" style="border:#1b1b1b 2px solid">
-  <div class="card-header">
-
+  <div class="card-header d-flex align-items-center justify-content-between">
     <h5 style="display:inline-block;">
       <a href="{% url 'info_event' event.id %}" class="btn btn-link">
         {{ event.client.nom }}
@@ -130,7 +144,9 @@
   </div>
 
   <div class="card-body">
-    <table class="table table-bordered table-striped" style="background-color:white">
+
+    {# --- Informations client / event --- #}
+    <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>Mail</th>
@@ -153,10 +169,9 @@
       </tbody>
     </table>
 
-    <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-      <thead>
-        <tr><th>Prestation</th><th>Option</th><th>Num PC</th><th>Status</th></tr>
-      </thead>
+    {# --- Produits / options --- #}
+    <table id="table_produit" class="table table-bordered table-striped bg-white">
+      <thead><tr><th>Prestation</th><th>Option</th><th>Num PC</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td>
@@ -180,12 +195,13 @@
             {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>, {% endif %}
           </td>
           <td><span class="highlight-pc">PCX</span></td>
-          <td>{{ event.status}}</td>
+          <td>{{ event.status }}</td>
         </tr>
       </tbody>
     </table>
 
-    <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
+    {# --- Liens / envoi --- #}
+    <table id="table_lien" class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>Nom Dossier</th>
@@ -200,12 +216,10 @@
         <tr>
           <td>{{ event.event_template.directory_name }}</td>
           <td>
-                        {% if not event.event_post_presta.collected %}
+            {% if not event.event_post_presta.collected %}
               <span style="background-color:#f44336;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Non</span>
             {% else %}
-              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">
-                Fait
-              </span>
+              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Fait</span>
             {% endif %}
           </td>
           <td><a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a></td>
@@ -228,7 +242,8 @@
       </tbody>
     </table>
 
-    <table id="table_payement" class="table table-bordered table-striped" style="background-color:white">
+    {# --- Paiements / flags --- #}
+    <table id="table_payement" class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           {% for m in event.event_team_members.all|dictsort:"name" %}
@@ -242,7 +257,6 @@
       </thead>
       <tbody>
         <tr>
-          {# Salaires membres par règle 1:150 | 2:100,50 | 3+:100,100,50... #}
           {% with n=event.event_team_members.count %}
             {% for m in event.event_team_members.all|dictsort:"name" %}
               {% if n == 1 %}
@@ -255,23 +269,16 @@
             {% endfor %}
           {% endwith %}
 
-          <!-- Colonne Charges -->
           <td class="flag-cell {% if event.event_post_presta.charge > 0 %}bg-success{% else %}bg-danger{% endif %}">
-              <span class="status-text">
-                  {% if event.event_post_presta.charge > 0 %}
-                      {{ event.event_post_presta.charge }} €
-                  {% else %}
-                      Pas défini
-                  {% endif %}
-              </span>
-              <button type="button"
-                  class="btn btn-sm btn-info js-flag-toggle-charge"
-                  data-url="{% url 'mark_charge' event.id %}">
-                  Mettre à jour charges
-              </button>
+            <span class="status-text">
+              {% if event.event_post_presta.charge > 0 %}{{ event.event_post_presta.charge }} €{% else %}Pas défini{% endif %}
+            </span>
+            <button type="button" class="btn btn-sm btn-info js-flag-toggle-charge"
+                    data-url="{% url 'mark_charge' event.id %}">
+              Mettre à jour charges
+            </button>
           </td>
 
-          {# CLIENT PAID #}
           <td class="flag-cell {% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
             <span class="status-text">{% if event.event_post_presta.client_paid %}Fait{% else %}Pas OK{% endif %}</span>
             <button type="button"
@@ -284,7 +291,6 @@
             </button>
           </td>
 
-          {# MEMBERS PAID (somme + disable inputs) #}
           <td class="flag-cell {% if event.event_post_presta.members_paid %}bg-success{% else %}bg-danger{% endif %}">
             <span class="status-text">{% if event.event_post_presta.members_paid %}Fait{% else %}Pas OK{% endif %}</span>
             <button type="button"
@@ -297,7 +303,6 @@
             </button>
           </td>
 
-          {# SOLD OK #}
           <td class="flag-cell {% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
             <span class="status-text">{% if event.event_post_presta.sold_ok %}Fait{% else %}Pas OK{% endif %}</span>
             <button type="button"
@@ -313,7 +318,8 @@
       </tbody>
     </table>
 
-    <table id="table_montage" class="table table-bordered table-striped" style="background-color:white">
+    {# --- Montage / go_post_photo (select modifiable en continu) --- #}
+    <table id="table_montage" class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>A poster ?</th>
@@ -325,47 +331,52 @@
       </thead>
       <tbody>
         <tr>
-          <td>
-            {% if not event.event_post_presta.go_post_photo %}
-              {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_post_photo' %}">
-                Oui
-              </button>
-            {% else %}Fait{% endif %}
-          </td>
+<td><form class="ajax-form-go_post_photo"
+      data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_post_photo' %}">
+  {% csrf_token %}
+  <select name="value" class="go_post_photo-select">
+    <option value="">-- Choisir --</option>
+    <option value="oui"       {% if event.event_post_presta.go_post_photo == 'oui' %}selected{% endif %}>Oui</option>
+    <option value="non"       {% if event.event_post_presta.go_post_photo == 'non' %}selected{% endif %}>Non</option>
+    <option value="à définir" {% if event.event_post_presta.go_post_photo == 'à définir' %}selected{% endif %}>À définir</option>
+  </select>
+  <button type="submit" class="save-btn">Enregistrer</button>
+  <span class="save-status" aria-live="polite"></span>
+</form>
+</td>
+
+
           <td>
             {% if not event.event_post_presta.post_photo %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_photo' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_photo' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
+
           <td>
             {% if not event.event_post_presta.rush_collected %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'rush_collected' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'rush_collected' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
+
           <td>
             {% if not event.event_post_presta.go_montage %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_montage' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'go_montage' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
           </td>
-                    <td>
+
+          <td>
             {% if not event.event_post_presta.post_montage %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_montage' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_montage' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -374,7 +385,8 @@
       </tbody>
     </table>
 
-    <table id="table_feedback" class="table table-bordered table-striped" style="background-color:white">
+    {# --- Feedback + actions --- #}
+    <table id="table_feedback" class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>Feedback Message</th>
@@ -388,8 +400,7 @@
           <td>
             {% if not event.event_post_presta.feedback_message %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_message' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_message' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -397,8 +408,7 @@
           <td>
             {% if not event.event_post_presta.feedback_google %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_google' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_google' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -406,8 +416,7 @@
           <td>
             {% if not event.event_post_presta.feedback_posted %}
               {% csrf_token %}
-              <button class="ajax-btn"
-                data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_posted' %}">
+              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'feedback_posted' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -424,243 +433,371 @@
       </tbody>
     </table>
 
-    <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-      <thead>
-        <tr>
-          <th>Commentaire Feedback</th>
-        </tr>
-      </thead>
+    {# --- Commentaire --- #}
+    <table id="table_commentaire" class="table table-bordered table-striped bg-white">
+      <thead><tr><th>Commentaire Feedback</th></tr></thead>
       <tbody>
         <tr>
-      <td>
-        <form method="POST"
-              action="{% url 'update_post_presta_commentaire' event.event_post_presta.id %}"
-              class="ajax-comment-form">
-          {% csrf_token %}
-          <textarea name="commentaire"
-                    class="form-control"
-                    rows="3"
-                    placeholder="Ajouter un commentaire...">{{ event.event_post_presta.commentaire }}</textarea>
-          <br>
-          <button type="submit" class="btn btn-primary btn-sm">💾 Enregistrer</button>
-          <span class="save-status text-muted small ms-2"></span>
-        </form>
-      </td>
+          <td>
+            <form method="POST" action="{% url 'update_post_presta_commentaire' event.event_post_presta.id %}"
+                  class="ajax-comment-form">
+              {% csrf_token %}
+              <textarea name="commentaire" class="form-control" rows="3"
+                        placeholder="Ajouter un commentaire...">{{ event.event_post_presta.commentaire }}</textarea>
+              <br>
+              <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+              <span class="save-status text-muted small ms-2"></span>
+            </form>
+          </td>
         </tr>
       </tbody>
     </table>
+
   </div>
 </div>
 <br>
 {% endfor %}
 
+<!-- =============================== -->
+<!--  SCRIPT 1 : UTILS (CSRF + Debounce) -->
+<!-- =============================== -->
 <script>
-  $(document).ready(function(){
-    $('#table-haut').DataTable({
-      dom:'Bfrtip',
-      buttons:['csv','excel'],
-      paging:false,
-      info:false,
-      language:{ url:"//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json" }
-    });
-  });
+// CSRF utilitaire
+function getCookie(name){
+  const m = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
+const CSRFTOKEN = getCookie('csrftoken');
 
-  // Smooth scroll
-  document.querySelectorAll('a[href^="#event-"]').forEach(a=>{
-    a.addEventListener('click',e=>{
-      e.preventDefault();
-      const t=document.querySelector(a.getAttribute('href'));
-      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
-    })
-  });
-
-  const csrftoken = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
-
-  // Boutons "OK" feedback_* (POST -> value=True)
-  document.addEventListener('click', async e=>{
-    const btn = e.target.closest('.ajax-btn');
-    if(!btn) return;
-    btn.disabled = true;
-    try{
-      const res = await fetch(btn.dataset.url,{
-        method:'POST',
-        headers:{'X-CSRFToken':csrftoken,'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json'},
-        body: JSON.stringify({value:true})
-      });
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      if(data.ok || data.success){ btn.outerHTML = '<span>Fait</span>'; }
-      else alert(data.message||'Erreur');
-    }catch(err){ alert(err.message); }
-    btn.disabled = false;
-  });
-
-  // Toggle flags (client_paid / members_paid / sold_ok)
-  document.addEventListener('click', async e=>{
-    const btn = e.target.closest('.js-flag-toggle');
-    if(!btn) return;
-
-    const td   = btn.closest('td');
-    const row  = btn.closest('tr');
-    const flag = btn.dataset.flag; // "client_paid" | "members_paid" | "sold_ok"
-    const current = btn.dataset.current === 'true';
-    const toTrue  = !current;
-    const url     = toTrue ? btn.dataset.urlTrue : btn.dataset.urlFalse;
-
-    // members_paid -> sommer inputs + envoyer salary_total quand on passe à True
-    let body = undefined;
-    if(flag === 'members_paid' && toTrue){
-      let total = 0;
-      row.querySelectorAll('.member-salary-input').forEach(i=>{
-        const v = parseInt(i.value||'0',10);
-        if(!isNaN(v)) total += v;
-      });
-      body = JSON.stringify({ salary_total: total });
-    }
-
-    btn.disabled = true;
-    try{
-      const res = await fetch(url,{
-        method:'POST',
-        headers:{'X-CSRFToken':csrftoken,'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json'},
-        body
-      });
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      if(!data.ok) throw new Error(data.message||'Erreur');
-
-      // MAJ UI
-      const text = td.querySelector('.status-text');
-      td.classList.toggle('bg-success', toTrue);
-      td.classList.toggle('bg-danger', !toTrue);
-      text.textContent = toTrue ? 'Fait' : 'Pas OK';
-      btn.textContent  = toTrue ? 'Mettre en Pas OK' : 'Marquer Fait';
-      btn.classList.toggle('btn-warning', toTrue);
-      btn.classList.toggle('btn-success', !toTrue);
-      btn.dataset.current = toTrue ? 'true' : 'false';
-
-      // (dés)activer inputs salaires si members_paid
-      if(flag === 'members_paid'){
-        row.querySelectorAll('.member-salary-input').forEach(i=> i.disabled = toTrue);
-      }
-    }catch(err){
-      alert('Erreur : '+err.message);
-    }finally{
-      btn.disabled = false;
-    }
-  });
+// Debounce utilitaire
+function debounce(fn, delay=700){
+  let t;
+  return (...args)=>{
+    clearTimeout(t);
+    t = setTimeout(()=>fn(...args), delay);
+  };
+}
 </script>
+
+
+<!-- =============================== -->
+<!--  SCRIPT 2 : Scroll doux vers #event-X -->
+<!-- =============================== -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    // --- Fonction utilitaire pour récupérer le CSRF ---
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-    }
-
-    // --- Fonction utilitaire pour POST AJAX avec gestion d'erreurs ---
-    async function ajaxPost(url, body = {}) {
-        try {
-            const res = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie("csrftoken"),
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams(body).toString()
-            });
-
-            if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
-
-            const data = await res.json();
-            if (!data.ok) throw new Error(data.message || "Erreur inconnue");
-
-            return data;
-        } catch (err) {
-            alert("❌ " + err.message);
-            throw err;
-        }
-    }
-
-    // --- Bouton "Charges" ---
-    document.addEventListener("click", async (e) => {
-        const btn = e.target.closest(".js-flag-toggle-charge");
-        if (!btn) return;
-
-        const chargeVal = prompt("Entrez le montant des charges (€) :");
-        if (chargeVal === null) return;
-        if (isNaN(chargeVal) || chargeVal.trim() === "") {
-            alert("❌ Veuillez entrer un nombre valide.");
-            return;
-        }
-
-        btn.disabled = true;
-        try {
-            const data = await ajaxPost(btn.dataset.url, { charge: chargeVal });
-
-            const cell = btn.closest(".flag-cell");
-            cell.classList.remove("bg-danger");
-            cell.classList.add("bg-success");
-            cell.querySelector(".status-text").textContent = `${chargeVal} €`;
-        } finally {
-            btn.disabled = false;
-        }
-    });
+document.querySelectorAll('a[href^="#event-"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth'});
+  });
 });
 </script>
 
-<!--retour en haut-->
-<script>
-    const btn = document.getElementById("backToTopBtn");
 
-    window.addEventListener("scroll", function() {
-        if (window.scrollY > 300) {
-            btn.style.display = "block";
-        } else {
-            btn.style.display = "none";
-        }
-    });
+<!-- =============================== -->
+<!--  SCRIPT 3 : Bouton retour en haut -->
+<!-- =============================== -->
+<script>
+const backBtn = document.getElementById("backToTopFixed");
+
+window.addEventListener("scroll", () => {
+  if (!backBtn) return;
+  backBtn.style.display = window.scrollY > 300 ? "inline-block" : "none";
+});
+
+backBtn?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 </script>
 
-<!--commentaire -->
+
+
+<!-- =============================== -->
+<!--  SCRIPT 4 : DataTable pour #table-haut -->
+<!-- =============================== -->
 <script>
-document.addEventListener("submit", async (e) => {
-  const form = e.target.closest(".ajax-comment-form");
-  if (!form) return;
-  e.preventDefault();
+$(document).ready(function(){
+  $('#table-haut').DataTable({
+    dom:'Bfrtip',
+    buttons:['csv','excel'],
+    paging:false,
+    info:false,
+    language:{ url:"//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json" }
+  });
+});
+</script>
 
-  const textarea = form.querySelector("textarea");
-  const status = form.querySelector(".save-status");
 
-  const data = new FormData(form);
-  form.querySelector("button").disabled = true;
-  status.textContent = "Enregistrement...";
+<!-- =============================== -->
+<!--  SCRIPT 5 : Boutons AJAX classiques -->
+<!--  (feedback_message, feedback_google, feedback_posted) -->
+<!-- =============================== -->
+<script>
+document.addEventListener('click', async e=>{
+  const btn = e.target.closest('.ajax-btn');
+  if(!btn) return;
 
-  try {
-    const res = await fetch(form.action, {
-      method: "POST",
-      headers: { "X-Requested-With": "XMLHttpRequest" },
-      body: data
+  btn.disabled = true;
+
+  try{
+    const res = await fetch(btn.dataset.url,{
+      method:'POST',
+      headers:{
+        'X-CSRFToken': CSRFTOKEN,
+        'X-Requested-With':'XMLHttpRequest',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({value:true})
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const result = await res.json();
+    const raw = await res.text();
+    let data=null; try{ data=JSON.parse(raw); }catch(err){}
 
-    if (result.ok) {
-      status.textContent = "✅ Sauvegardé avec succès";
-      status.classList.remove("text-danger");
-      status.classList.add("text-success");
-    } else {
-      throw new Error(result.message || "Erreur");
+    if(!res.ok) throw new Error('HTTP '+res.status+' — '+raw);
+
+    if(data && (data.ok || data.success)){
+      btn.outerHTML = '<span>Fait</span>';
+    }else{
+      throw new Error(data?.message || 'Erreur');
     }
-  } catch (err) {
-    status.textContent = "❌ " + err.message;
-    status.classList.add("text-danger");
-  } finally {
-    form.querySelector("button").disabled = false;
-    setTimeout(() => (status.textContent = ""), 4000);
+  }catch(err){
+    alert(err.message);
+  }
+
+  btn.disabled = false;
+});
+</script>
+
+
+<!-- =============================== -->
+<!--  SCRIPT 6 : GO_POST_PHOTO (select + autosave) -->
+<!-- =============================== -->
+<script>
+const goControllers = new WeakMap();
+
+async function saveGoPostPhoto(form){
+  const url = form.dataset.url;
+  const select = form.querySelector('.go_post_photo-select');
+  const btn = form.querySelector('.save-btn');
+  const status = form.querySelector('.save-status');
+
+  // Conversion propre : 'na' => null
+  const map = { 'oui': true, 'non': false, 'na': null, '': null };
+  const payload = { value: select.value || null };
+  // Annuler ancienne requête
+  const prev = goControllers.get(form);
+  if(prev) prev.abort();
+  const ctrl = new AbortController();
+  goControllers.set(form, ctrl);
+
+  btn.disabled = true;
+  select.disabled = true;
+  status.textContent = "Enregistrement...";
+
+  try{
+    const res = await fetch(url,{
+      method:'POST',
+      headers:{
+        'X-CSRFToken': CSRFTOKEN,
+        'X-Requested-With':'XMLHttpRequest',
+        'Content-Type':'application/json'
+      },
+      signal: ctrl.signal,
+      body: JSON.stringify(payload)
+    });
+
+    const raw = await res.text();
+    let data=null; try{ data=JSON.parse(raw); }catch(e){}
+
+    if(!res.ok) throw new Error("HTTP "+res.status+" — "+raw);
+    if(goControllers.get(form) !== ctrl) return;
+
+    if(data && (data.ok || data.success)){
+      status.textContent = "Enregistré";
+      setTimeout(()=>{ status.textContent = ""; },1200);
+    } else {
+      throw new Error(data?.message || "Erreur");
+    }
+  }
+  catch(err){
+    if(err.name !== "AbortError") status.textContent = err.message;
+  }
+  finally{
+    if(goControllers.get(form) === ctrl){
+      btn.disabled = false;
+      select.disabled = false;
+    }
+  }
+}
+
+// Submit manuel
+document.addEventListener('submit', e=>{
+  const form = e.target.closest('.ajax-form-go_post_photo');
+  if(!form) return;
+  e.preventDefault();
+  saveGoPostPhoto(form);
+});
+
+// Autosave automatique
+const debouncedGoAuto = debounce(form => saveGoPostPhoto(form), 700);
+
+document.addEventListener('change', e=>{
+  const select = e.target.closest('.go_post_photo-select');
+  if(!select) return;
+  const form = select.closest('.ajax-form-go_post_photo');
+  form.querySelector('.save-status').textContent = "Modification détectée...";
+  debouncedGoAuto(form);
+});
+</script>
+
+
+<!-- =============================== -->
+<!--  SCRIPT 7 : Toggle flags (client_paid, members_paid, sold_ok) -->
+<!-- =============================== -->
+<script>
+document.addEventListener('click', async e=>{
+  const btn = e.target.closest('.js-flag-toggle');
+  if(!btn) return;
+
+  const td   = btn.closest('td');
+  const row  = btn.closest('tr');
+  const flag = btn.dataset.flag;
+  const current = btn.dataset.current === 'true';
+  const toTrue = !current;
+
+  const url = toTrue ? btn.dataset.urlTrue : btn.dataset.urlFalse;
+  let body;
+
+  if(flag === "members_paid" && toTrue){
+    let total = 0;
+    row.querySelectorAll('.member-salary-input').forEach(i=>{
+      total += parseInt(i.value||'0',10);
+    });
+    body = JSON.stringify({ salary_total: total });
+  }
+
+  btn.disabled = true;
+
+  try{
+    const res = await fetch(url,{
+      method:'POST',
+      headers:{
+        'X-CSRFToken': CSRFTOKEN,
+        'X-Requested-With':'XMLHttpRequest',
+        'Content-Type':'application/json'
+      },
+      body
+    });
+
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.message);
+
+    const text = td.querySelector('.status-text');
+    td.classList.toggle('bg-success', toTrue);
+    td.classList.toggle('bg-danger', !toTrue);
+    text.textContent = toTrue ? "Fait" : "Pas OK";
+
+    btn.textContent = toTrue ? "Mettre en Pas OK" : "Marquer Fait";
+    btn.classList.toggle('btn-warning', toTrue);
+    btn.classList.toggle('btn-success', !toTrue);
+    btn.dataset.current = toTrue;
+
+    if(flag==="members_paid"){
+      row.querySelectorAll('.member-salary-input').forEach(i=> i.disabled = toTrue);
+    }
+  }
+  catch(err){
+    alert("Erreur : "+err.message);
+  }
+  finally{
+    btn.disabled = false;
+  }
+});
+</script>
+
+
+<!-- =============================== -->
+<!--  SCRIPT 8 : Charges -->
+<!-- =============================== -->
+<script>
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".js-flag-toggle-charge");
+  if (!btn) return;
+
+  const chargeVal = prompt("Entrez le montant des charges (€) :");
+  if (chargeVal === null) return;
+  if (isNaN(chargeVal) || chargeVal.trim()===""){
+    alert("Veuillez entrer un nombre valide."); return;
+  }
+
+  btn.disabled = true;
+
+  try{
+    const res = await fetch(btn.dataset.url,{
+      method:"POST",
+      headers:{
+        "X-CSRFToken": CSRFTOKEN,
+        "X-Requested-With":"XMLHttpRequest",
+        "Content-Type":"application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ charge: chargeVal }).toString()
+    });
+
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.message);
+
+    const cell = btn.closest(".flag-cell");
+    cell.classList.remove("bg-danger");
+    cell.classList.add("bg-success");
+    cell.querySelector(".status-text").textContent = `${chargeVal} €`;
+  }
+  catch(err){
+    alert(err.message);
+  }
+  finally{
+    btn.disabled = false;
+  }
+});
+</script>
+
+
+<!-- =============================== -->
+<!--  SCRIPT 9 : Commentaires (AJAX POST) -->
+<!-- =============================== -->
+<script>
+document.addEventListener("submit", async (e)=>{
+  const form = e.target.closest(".ajax-comment-form");
+  if(!form) return;
+
+  e.preventDefault();
+
+  const status = form.querySelector(".save-status");
+  const data = new FormData(form);
+
+  status.textContent = "Enregistrement...";
+
+  try{
+    const res = await fetch(form.action,{
+      method:"POST",
+      headers:{
+        "X-Requested-With":"XMLHttpRequest",
+        "X-CSRFToken": CSRFTOKEN
+      },
+      body:data
+    });
+
+    const result = await res.json();
+    if(result.ok){
+      status.textContent = "Sauvegardé ✅";
+    }else{
+      throw new Error(result.message);
+    }
+  }
+  catch(err){
+    status.textContent = "Erreur : "+err.message;
+  }
+  finally{
+    setTimeout(()=>status.textContent="",3000);
   }
 });
 </script>

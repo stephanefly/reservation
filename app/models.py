@@ -181,7 +181,21 @@ class EventPostPrestation(models.Model):
     feedback_google = models.BooleanField(default=False)
     feedback_posted = models.BooleanField(default=False)
     collected = models.BooleanField(default=False)
-    go_post_photo = models.BooleanField(default=False)
+
+    STATUS_CHOICES = [
+        ("oui", "Oui"),
+        ("non", "Non"),
+        ("à définir", "À définir"),
+    ]
+
+    go_post_photo = models.CharField(
+        max_length=12,  # important
+        choices=STATUS_CHOICES,
+        null=True,
+        blank=True,
+        default=None
+    )
+
     post_photo = models.BooleanField(default=False)
     rush_collected = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)

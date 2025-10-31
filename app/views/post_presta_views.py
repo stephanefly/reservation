@@ -32,13 +32,17 @@ ALLOWED_FLAGS_UPDATE = {
     'feedback_message': 'feedback_message',
     'feedback_google': 'feedback_google',
     'feedback_posted': 'feedback_posted',
-    'go_post_photo': 'go_post_photo',
+    'go_post_photo': 'go_post_photo',  # tri-état
     'post_photo': 'post_photo',
     'rush_collected': 'rush_collected',
     'go_montage': 'go_montage',
     'post_montage': 'post_montage',
     'sent': 'sent',
 }
+
+TRISTATE_FIELDS = {'go_post_photo'}               # ✅ valeurs texte
+TRISTATE_ALLOWED = {'oui', 'non', 'à définir'}    # ✅ valeurs autorisées
+
 
 @require_http_methods(["POST"])
 def update_post_presta_status(request, post_presta_id, action):
@@ -47,23 +51,45 @@ def update_post_presta_status(request, post_presta_id, action):
     if not field:
         return JsonResponse({'ok': False, 'message': 'Action inconnue.'}, status=400)
 
+    # ✅ Récup JSON
     try:
         payload = json.loads(request.body or '{}')
     except json.JSONDecodeError:
         payload = {}
-    value = bool(payload.get('value', True))
+
+    raw_value = payload.get('value', None)
+
+    # ✅ Cas particulier : go_post_photo → tri-état (pas de conversion en bool)
+    if field in TRISTATE_FIELDS:
+        if raw_value in (None, "", "null"):
+            value = None
+        else:
+            value = str(raw_value)
+            if value not in TRISTATE_ALLOWED:
+                return JsonResponse({'ok': False, 'message': 'Valeur non autorisée.'}, status=400)
+
+    else:
+        # ✅ Garde ton comportement précédent pour TOUT LE RESTE :
+        value = bool(raw_value)
 
     prev = getattr(post_presta, field, None)
     setattr(post_presta, field, value)
 
-    # Date d’envoi quand "sent" passe à True
+    # ✅ Cas spécial que tu avais déjà
     if field == 'sent' and value:
         post_presta.date_media_sent = timezone.now()
         post_presta.save(update_fields=[field, 'date_media_sent'])
     else:
         post_presta.save(update_fields=[field])
 
-    return JsonResponse({'ok': True, 'action': action, 'field': field, 'value': value, 'prev': prev})
+    return JsonResponse({
+        'ok': True,
+        'action': action,
+        'field': field,
+        'value': value,
+        'prev': prev
+    })
+
 
 
 # ------------------- Page principale -------------------
