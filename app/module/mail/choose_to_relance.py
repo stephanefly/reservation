@@ -1,16 +1,16 @@
 import time
 
 from app.models import Event
-from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
-from datetime import datetime, timedelta
 from app.module.mail.send_mail_event import send_mail_event
-from time import sleep
+
 from datetime import datetime, timedelta, time
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import F
+
+COOLDOWN_AFTER_STATUS_CHANGE = timedelta(days=1)  # empêche 2 mails le même jour
 
 def _day_floor_n_days_ago(n: int):
     tz = timezone.get_current_timezone()
@@ -19,47 +19,57 @@ def _day_floor_n_days_ago(n: int):
 
 def process_events_until(min_days_ago: int, current_status: str, new_status: str, email_template: str):
     """
-    Rattrapage : traite TOUT ce qui est plus ancien ou égal à J-min_days_ago.
-    Concrètement: created_at < minuit(J-min_days_ago).
-    Ex: min_days_ago=2 -> tous les events créés avant 00:00 de J-2.
+    Catch-up ouvert vers le passé (<= J-N) + 'one-step-per-run' (cooldown).
+    Empêche l'envoi de 2 étapes le même jour lors d'un rattrapage massif.
     """
-    cutoff = _day_floor_n_days_ago(min_days_ago)  # borne haute exclusive
+    batch_started_at = timezone.now()
+    cutoff = _day_floor_n_days_ago(min_days_ago)
+    cooldown_gate = batch_started_at - COOLDOWN_AFTER_STATUS_CHANGE
 
-    qs = (
+    # 1) On récupère uniquement les IDs pour limiter la mémoire
+    ids = list(
         Event.objects
-        .select_related('client')
         .filter(
             client__autorisation_mail=True,
             signer_at__isnull=True,
             status=current_status,
-            created_at__lt=cutoff,  # <= J-N (fenêtre ouverte vers le passé)
+            created_at__lt=cutoff,           # catch-up <= J-N
+            updated_at__lt=cooldown_gate,    # évite double étape le même jour
         )
         .order_by('created_at')
+        .values_list('pk', flat=True)
     )
 
-    # Parcours en flux; on verrouille par sécurité contre la concurrence
-    for event in qs.iterator(chunk_size=200):
+    # 2) Traitement sûr par ligne
+    for pk in ids:
         with transaction.atomic():
-            evt = (
-                Event.objects
-                .select_related('client')
-                .select_for_update(skip_locked=True)
-                .get(pk=event.pk)
-            )
-
-            # Vérif temps réel & idempotence
-            if evt.status != current_status or evt.signer_at is not None or evt.created_at >= cutoff:
+            try:
+                evt = (
+                    Event.objects
+                    .select_related('client')
+                    .select_for_update(skip_locked=True)
+                    .get(pk=pk)
+                )
+            except Event.DoesNotExist:
                 continue
 
-            # Envoi email (idéalement asynchrone)
+            # Double-check en temps réel
+            if (evt.status != current_status
+                or evt.signer_at is not None
+                or evt.created_at >= cutoff
+                or evt.updated_at >= cooldown_gate):
+                continue
+
+            # Envoi
             send_mail_event(evt, email_template)
 
-            # MàJ atomiques
+            # MAJ atomiques
             evt.status = new_status
-            evt.save(update_fields=['status'])
+            evt.save(update_fields=['status', 'updated_at'])
 
             evt.client.nb_relance_devis = F('nb_relance_devis') + 1
             evt.client.save(update_fields=['nb_relance_devis'])
+
 
 
 # --- Raccourcis “catch-up” par étape ---
