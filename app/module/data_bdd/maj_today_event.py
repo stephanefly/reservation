@@ -4,8 +4,8 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import Q
 
-from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data, create_pcloud_event_folder
-from app.module.cloud.share_link import create_link_event_folder
+from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data, create_pcloud_event_folder, \
+    create_link_event_folder
 
 
 def maj_today_event():
