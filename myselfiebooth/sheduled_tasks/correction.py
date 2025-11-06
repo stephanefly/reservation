@@ -19,6 +19,7 @@ import django
 django.setup()
 
 from app.models import Event
+from app.module.google.contact import create_google_contact
 
 lst_events_contact = (
     Event.objects
