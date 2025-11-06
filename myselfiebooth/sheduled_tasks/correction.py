@@ -1,9 +1,5 @@
 import os
 import sys
-from datetime import datetime
-from time import sleep
-
-from app.module.google.contact import create_google_contact
 
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
