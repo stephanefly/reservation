@@ -1,5 +1,59 @@
 {% extends 'app/frontend/index.html' %}
 {% block content %}
+<style>
+/* Overlay plein écran */
+#overlay-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Spinner centré dans le bouton */
+.btn-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-top: 3px solid #5a4300;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animation "Chargement..." */
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s infinite steps(4, end);
+}
+
+@keyframes dots {
+    0%   { content: ''; }
+    25%  { content: '.'; }
+    50%  { content: '..'; }
+    75%  { content: '...'; }
+    100% { content: ''; }
+}
+</style>
+
+<div id="overlay-loading">
+    <div>
+        <div class="btn-spinner" style="margin: 0 auto;"></div>
+        <p style="text-align:center; font-size:18px; margin-top:10px;">Traitement en cours…</p>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header bg-primary text-white" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
         <h2 class="text-center">Confirmez vos informations</h2>
@@ -110,10 +164,54 @@
                 <input type="hidden" name="heure_range" value="{{ form_data.heure_range }}">
             </div>
             <div class="text-center">
-                <input type="submit" value="Confirmer" class="btn btn-success" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300); border: 1px solid goldenrod;"/>
+<button
+    type="submit"
+    id="btn-confirm"
+    class="btn btn-success"
+    style="background-image: linear-gradient(to bottom, #ffef96, #5a4300); border: 1px solid goldenrod; display:flex; align-items:center; justify-content:center; gap:8px; width:200px;"
+>
+    <div id="spinner" class="btn-spinner" style="display:none;"></div>
+    <span id="btn-text">Confirmer</span>
+</button>
+
                 <a href="{% url 'demande_devis' %}" class="btn btn-secondary">Modifier</a>
             </div>
         </form>
     </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("form");
+  const btn  = document.getElementById("btn-confirm");
+  const txt  = document.getElementById("btn-text");
+  const spn  = document.getElementById("spinner");
+  const overlay = document.getElementById("overlay-loading");
+
+  form.addEventListener("submit", function (e) {
+    // Affiche le loader, NE BLOQUE PAS la soumission (pas de preventDefault ici)
+    btn.disabled = true;
+    spn.style.display = "inline-block";
+    txt.textContent = "Envoi de la demande de devis";
+    btn.style.opacity = "0.7";
+    btn.style.cursor = "not-allowed";
+    overlay.style.display = "flex";
+  });
+
+  // Quand on quitte la page (navigation/redirect), on masque l’overlay côté page sortante
+  window.addEventListener("beforeunload", () => {
+    overlay.style.display = "none";
+  });
+
+  // Watchdog : si pas de réponse sous 20s, message d’info
+  setTimeout(() => {
+    if (overlay.style.display === "flex") {
+      const p = overlay.querySelector("p");
+      if (p) p.textContent = "Toujours en cours… (le traitement peut prendre un peu de temps)";
+    }
+  }, 20000);
+});
+</script>
+
+
+
 {% endblock %}
