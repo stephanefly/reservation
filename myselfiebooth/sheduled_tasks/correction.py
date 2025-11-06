@@ -16,16 +16,22 @@ django.setup()
 
 from app.models import Event
 from app.module.google.contact import create_google_contact
+from time import sleep
 
-lst_events_contact = (
-    Event.objects
-    .order_by("client__numero_telephone", "-created_at")
-    .distinct("client__numero_telephone")
-)
-total = lst_events_contact.count()
-print(f"{total} contacts à créer.\n")
+events = Event.objects.order_by("-created_at")
 
-for index, event in enumerate(lst_events_contact, start=1):
-    print(f"{index} / {total} → Création Google Contact → {event.client.nom}")
+seen = set()
+unique_events = []
+
+for event in events:
+    phone = event.client.numero_telephone
+    if phone not in seen:
+        seen.add(phone)
+        unique_events.append(event)
+
+print(f"{len(unique_events)} contacts à créer.")
+
+for i, event in enumerate(unique_events, 1):
+    print(f"{i}/{len(unique_events)} - {event.client.nom}")
     create_google_contact(event)
     sleep(1)
