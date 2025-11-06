@@ -1,14 +1,15 @@
 
-import threading
+import secrets
 
 from django.http import QueryDict
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import timedelta, datetime
 
 from ..models import Event
-from ..module.data_bdd.post_form import initialize_event, get_confirmation_data, proceed_confirmation_event
+from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
 from ..module.data_bdd.price import PRIX_PRODUITS
-
+from ..module.google.contact import create_google_contact
+from ..module.trello.create_card import create_card
 
 today_date = datetime.now().date()
 
@@ -35,12 +36,21 @@ def demande_devis(request):
 def confirmation(request):
     if request.method == 'POST':
         post_data = get_confirmation_data(request)
-        # Lancement du traitement en arrière-plan
-        threading.Thread(
-            target=proceed_confirmation_event,
-            args=(post_data,),
-            daemon=True
-        ).start()
+
+        # Initialise l'event AVANT redirect
+        event = initialize_event(post_data)
+        event.event_token = secrets.token_hex(32)
+        event.save()
+
+        # Création Google Contact
+        create_google_contact(event)
+
+        # Création carte
+        id_card = create_card(post_data)
+        event.id_card = id_card
+
+        # Mise à jour finale
+        event.save()
         return redirect('remerciement')
 
     return render(request, 'app/frontend/confirmation.html')
