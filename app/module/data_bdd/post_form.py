@@ -2,6 +2,9 @@ from app.models import Client, EventDetails, EventProduct, EventOption, Event
 from django.db import transaction
 from datetime import datetime
 from app.module.data_bdd.price import PRIX_PRODUITS
+from app.module.google.contact import create_google_contact
+from app.module.trello.create_card import create_card
+import secrets
 
 def get_confirmation_data(request):
     if request.POST.get('raison_sociale'):
@@ -34,6 +37,23 @@ def get_confirmation_data(request):
         "heure_range": int(request.POST.get('heure_range')) if request.POST.get('heure_range') else None
     }
     return post_data
+
+
+def proceed_confirmation_event(post_data):
+    # Initialise l'event AVANT redirect
+    event = initialize_event(post_data)
+    event.event_token = secrets.token_hex(32)
+    event.save()
+
+    # Création Google Contact
+    create_google_contact(event)
+
+    # Création carte
+    id_card = create_card(post_data)
+    event.id_card = id_card
+
+    # Mise à jour finale
+    event.save()
 
 def initialize_event(post_data):
     print("initialize_event : " +str(post_data))

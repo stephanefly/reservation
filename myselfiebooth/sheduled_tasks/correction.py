@@ -3,6 +3,8 @@ import sys
 from datetime import datetime
 from time import sleep
 
+from app.module.google.contact import create_google_contact
+
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
@@ -17,19 +19,16 @@ import django
 django.setup()
 
 from app.models import Event
-from app.module.mail.send_mail_event import send_mail_event
 
-lst_event_to_relance = Event.objects.filter(
-    status='Prolongation',
-    client__autorisation_mail=True,
-    signer_at__isnull=True,
-    client__raison_sociale=False,
-).order_by('created_at')
+lst_events_contact = (
+    Event.objects
+    .order_by("client__numero_telephone", "-created_at")
+    .distinct("client__numero_telephone")
+)
+total = lst_events_contact.count()
+print(f"{total} contacts à créer.\n")
 
-for event in lst_event_to_relance:
-    send_mail_event(event, 'last_chance_devis')
-    event.status = 'Last Chance'
-    event.save()
-    event.client.nb_relance_devis += 1
-    event.client.save()
-    sleep(20)
+for index, event in enumerate(lst_events_contact, start=1):
+    print(f"{index} / {total} → Création Google Contact → {event.client.nom}")
+    create_google_contact(event)
+    sleep(1)

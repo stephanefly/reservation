@@ -54,6 +54,8 @@ ROOT_FOLDER_PREPA_ID = config.get("ROOT_FOLDER_PREPA_ID")  # ID du dossier racin
 ROOT_FOLDER_MONTAGE_2025 = config.get("ROOT_FOLDER_MONTAGE_2025")  # ID du dossier racine
 ROOT_FOLDER_MONTAGE_2026 = config.get("ROOT_FOLDER_MONTAGE_2026")  # ID du dossier racine
 
+GOOGLE_TOKEN = config.get("GOOGLE_TOKEN")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')
 

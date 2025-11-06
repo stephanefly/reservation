@@ -3,6 +3,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from datetime import datetime
 
+from app.module.google.contact import update_contact_keep_phone
+
 
 class Client(models.Model):
     nom = models.CharField(max_length=100)
@@ -292,6 +294,7 @@ class Event(models.Model):
             previous_event = Event.objects.get(pk=self.pk)
             if previous_event.status != self.status:
                 self.history_status = f"{self.history_status}, {self.status}".strip(", ") if self.history_status else self.status
+                update_contact_keep_phone(self)
 
         super().save(*args, **kwargs)
 
