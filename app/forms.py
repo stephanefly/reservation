@@ -25,6 +25,7 @@ class ValidationForm(forms.ModelForm):
         widget=forms.DateInput(attrs={'type': 'date'})
     )
     MONTANT_CHOICES = [
+        (0, '0 euros'),
         (50, '50 euros'),
         (100, '100 euros'),
         ('autre_montant', 'Autre montant'),

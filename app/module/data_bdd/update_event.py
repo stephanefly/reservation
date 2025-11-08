@@ -6,9 +6,11 @@ from django.utils.timezone import now
 from app.models import EventTemplate, EventAcompte
 from app.module.mail.send_mail_event import send_mail_event
 from app.module.trello.move_card import to_acompte_ok
-
 from django.db import transaction
 from django.utils.timezone import now
+from app.module.trello.notion_service import create_notion_card
+
+
 def parse_int(value, default=0):
     try:
         return int(value) if value is not None and value.strip() != '' else default
@@ -211,41 +213,39 @@ def process_event_update_bdd(event, form):
 
 def process_validation_event(event, form):
     """
-    Process the event validation steps and track the failing step if any.
-
-    Args:
-        event: The event object to process.
-        form: The submitted form with cleaned data.
-
-    Returns:
-        tuple: (all_success, failing_step)
-            - all_success (bool): True if all steps succeed, False otherwise.
-            - failing_step (str): The name of the first failing step, or None if all succeed.
+    Retourne :
+        all_success : bool
+        failing_steps : liste de tuples (step_name, error_message)
     """
 
-    # Initialiser l'acompte à None pour l'utiliser entre les étapes
     steps = [
-        ("MAJ Event BDD", lambda: process_event_update_bdd(event, form)),
-        ("Envoyer mail confirmation", lambda: send_mail_event(event, 'validation')),
-        ("Deplacement Carte Trello", lambda: to_acompte_ok(event)),
-        ("Génération du code espace client", lambda: generate_code_espace_client(event)),
-        ("Création du dossier PREPA", lambda: create_pcloud_event_folder(event, prepa=True)),
-        ("Création du dossier CLIENT", lambda: create_pcloud_event_folder(event)),
-        ("Création du dossier MONTAGE", lambda: create_pcloud_event_folder(event, montage=True)),
+        ("MAJ Event BDD",                     lambda: process_event_update_bdd(event, form)),
+        ("Envoyer mail confirmation",         lambda: send_mail_event(event, 'validation')),
+        ("Deplacement Carte Trello",          lambda: to_acompte_ok(event)),
+        ("Création Calendrier Notion",        lambda: create_notion_card(event)),
+        ("Génération du code espace client",  lambda: generate_code_espace_client(event)),
+        ("Création du dossier PREPA",         lambda: create_pcloud_event_folder(event, prepa=True)),
+        ("Création du dossier CLIENT",        lambda: create_pcloud_event_folder(event)),
+        ("Création du dossier MONTAGE",       lambda: create_pcloud_event_folder(event, montage=True)),
     ]
 
-    # Retirer conditionnellement certaines étapes si signer_at est défini
     if event.signer_at:
         steps = [
-            step for step in steps
-            if step[0] not in {
-                "Envoyer mail confirmation",
-            }
+            (name, fn) for name, fn in steps
+            if name not in {"Envoyer mail confirmation"}
         ]
 
-    for step_name, step_function in steps:
-        if not step_function():
-            return False, step_name  # Retourne le statut global et l'étape échouée
+    failing = []
 
-    return True, None  # Si toutes les étapes réussissent
+    for step_name, fn in steps:
+        try:
+            result = fn()
+            if not result:
+                failing.append((step_name, "La fonction a renvoyé False ou None"))
+        except Exception as e:
+            failing.append((step_name, str(e)))
+
+    all_success = len(failing) == 0
+
+    return all_success, failing
 

@@ -179,14 +179,14 @@ def confirmation_val_devis(request, id):
 
     if request.method == 'POST' and form.is_valid():
 
-        all_success, failing_step = process_validation_event(event, form)
+        all_success, failing_steps = process_validation_event(event, form)
 
         return render(request, 'app/backend/validation_process_event.html', {
-            'failing_step': failing_step,
+            'failing_steps': failing_steps,  # liste de tuples
             'all_success': all_success,
             'event': event,
-        }
-                      )
+        })
+
 
     return render(request, 'app/backend/confirmation_val_devis.html', {
         'form': form,

@@ -1,25 +1,49 @@
 {% extends 'app/backend/base.html' %}
 {% block content %}
 
-
 {% if all_success %}
-    <div class="alert alert-success" role="alert">
-        <h2>Succès !</h2>
-        <p>Toutes les étapes de validation ont été complétées avec succès pour <strong>{{ event.client.nom }}</strong>.</p>
-    </div>
+  <div class="alert alert-success" role="alert">
+    <h2>Succès</h2>
+    <p>Toutes les étapes de validation ont été complétées pour <strong>{{ event.client.nom }}</strong>.</p>
+  </div>
 {% else %}
-    <div class="alert alert-danger" role="alert">
-        <h2>Erreur !</h2>
-        <p>Une erreur est survenue à l'étape : <strong>{{ failing_step }}</strong>.</p>
-        <p>Veuillez vérifier les données ou réessayer plus tard.</p>
-    </div>
+  <div class="alert alert-danger" role="alert">
+    <h2>Erreurs détectées</h2>
+    <p>{{ failing_steps|length }} étape(s) ont échoué pour <strong>{{ event.client.nom }}</strong>.</p>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th style="width:35%">Étape</th>
+        <th>Message d’erreur</th>
+      </tr>
+    </thead>
+    <tbody>
+      {# failing_steps est une liste de tuples: (step_name, error_message) #}
+      {% for step_name, error_msg in failing_steps %}
+        <tr>
+          <td>{{ step_name }}</td>
+          <td>
+            {% if error_msg %}
+              <pre class="mb-0" style="white-space:pre-wrap">{{ error_msg }}</pre>
+            {% else %}
+              (aucun détail)
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="2">Aucune erreur listée.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endif %}
-<br>
-<a href="{% url 'lst_devis' %}" class="btn btn-primary">Retour liste Devis</a>
-<br>
-<br>
-<a href="{% url 'info_event' event.id %}" class="btn btn-primary">Retour info Event</a>
 
-
+<div class="d-flex gap-2 mt-3">
+  <a href="{% url 'lst_devis' %}" class="btn btn-primary">Retour liste Devis</a>
+  <a href="{% url 'info_event' event.id %}" class="btn btn-secondary">Retour info Event</a>
+</div>
 
 {% endblock %}
