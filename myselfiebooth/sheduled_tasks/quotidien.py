@@ -31,7 +31,7 @@ choose_to_prolonger_devis_client()
 # choose_to_phonebooth_offert_devis_client()
 choose_to_last_chance_devis_client()
 choose_to_relance_espace_client()
-choose_to_make_review_mail()
+# choose_to_make_review_mail()
 # choose_to_make_review_sms()
 
 # Backup BDD
