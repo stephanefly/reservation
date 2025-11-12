@@ -71,3 +71,6 @@ def remerciement(request):
 
 def tarifs(request):
     return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})
+
+def brochure(request):
+    return render(request, 'app/frontend/brochure.html', )
