@@ -1,20 +1,18 @@
-import time
+from time import sleep
+from datetime import datetime, timedelta, time
 
 from app.models import Event
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from django.db.models import Q
-from datetime import datetime, timedelta
-from app.module.mail.send_mail_event import send_mail_event
-from time import sleep
-from datetime import datetime, timedelta, time
-from django.utils import timezone
+from django.db.models import Q, F
 from django.db import transaction
-from django.db.models import F
+from app.module.mail.send_mail_event import send_mail_event
 
-def _day_floor_n_days_ago(n: int):
+
+
+def _day_floor_n_days_ago(n):
     tz = timezone.get_current_timezone()
-    target_date = (timezone.now() - timedelta(days=n)).date()
+    target_date = timezone.localdate() - timedelta(days=n)
     return timezone.make_aware(datetime.combine(target_date, time.min), tz)
 
 def process_events_until(min_days_ago: int, current_status: str, new_status: str, email_template: str):
@@ -118,25 +116,25 @@ def choose_to_relance_espace_client():
             or not event_valid.event_details.horaire
         ):
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(30)
+            sleep(30)
             continue
 
         # Vérification spécifique si un design est nécessaire
         if event_valid.event_product.need_design() and not event_valid.event_template.url_modele:
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(30)
+            sleep(30)
             continue
 
         # Vérification spécifique si la musique est nécessaire
         if event_valid.event_product.need_music() and not event_valid.event_template.url_music_360:
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(30)
+            sleep(30)
             continue
 
         # Vérification spécifique si un mur floral est nécéssaire
         if event_valid.event_option.MurFloral and not event_valid.event_option.mur_floral_style:
             send_mail_event(event_valid, 'relance_espace_client')
-            time.sleep(30)
+            sleep(30)
             continue
 
 
@@ -153,7 +151,7 @@ def choose_to_make_review_mail():
 
     for event in lst_event_to_make_review:
         send_mail_event(event, 'relance_avis')
-        time.sleep(30)  # Pause de 30 sec
+        sleep(30)  # Pause de 30 sec
 
 #
 # def choose_to_make_review_sms():
