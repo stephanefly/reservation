@@ -1,9 +1,15 @@
 from typing import Optional, Tuple, List, Dict, Any
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
+
 from googleapiclient.errors import HttpError
 from app.module.cloud.rennaming import normalize_name
 from myselfiebooth.settings import GOOGLE_TOKEN
+import pathlib
+import json
+
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 
 # Portée minimale : création & mise à jour des contacts
 SCOPES: List[str] = ["https://www.googleapis.com/auth/contacts"]
@@ -13,12 +19,32 @@ SCOPES: List[str] = ["https://www.googleapis.com/auth/contacts"]
 # Services & utilitaires
 # ────────────────────────────────────────────────────────────────────────────────
 
-def _service(token_path: str):
-    """
-    Construit un client Google People API à partir d'un token OAuth utilisateur.
-    Le token doit déjà être autorisé pour les SCOPES définis.
-    """
-    creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+def _service(token_path):
+    # Accepte une string (depuis settings) ou un Path
+    token_path = pathlib.Path(token_path)
+
+    print(token_path)
+    if not token_path.exists():
+        # Ici tu forces l’admin à lancer generate_token.py une fois
+        raise RuntimeError("token.json manquant, lance d'abord generate_token.py")
+
+    creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            try:
+                creds.refresh(Request())
+                # On sauve les nouveaux tokens sur disque
+                token_path.write_text(creds.to_json(), encoding="utf-8")
+                print(" Token rafraîchi automatiquement dans _service()")
+            except RefreshError:
+                # Refresh impossible → invalid_grant → on supprime et on force une nouvelle auth
+                token_path.unlink(missing_ok=True)
+                raise RuntimeError("Refresh impossible (invalid_grant). Relance generate_token.py")
+        else:
+            # Pas de refresh_token / pas valide → on force la régénération via generate_token.py
+            raise RuntimeError("Pas de credentials valides. Relance generate_token.py")
+
     return build("people", "v1", credentials=creds)
 
 
