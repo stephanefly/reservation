@@ -21,12 +21,12 @@ from app.module.google.contact import update_contact_keep_phone
 
 def daily_event_integrity_check():
     # Exemple : tous les events "OK" mais avec des indices d'incomplet
-    # events_ok = Event.objects.filter(
-    #     signer_at__isnull=False,
-    #     status__in=["Acompte OK", "Post Presta", "Sent Media", "Media KO"],
-    # )
+    events_ok = Event.objects.filter(
+        signer_at__isnull=False,
+        status__in=["Acompte OK", "Post Presta", "Sent Media", "Media KO"],
+    )
 
-    events_ok = Event.objects.filter(pk__in=[2766])
+    # events_ok = Event.objects.filter(pk__in=[2766])
 
     event_errors = {}  # event_id → dict des KO
 
