@@ -32,7 +32,6 @@ def _service(token_path):
     # Accepte une string (depuis settings) ou un Path
     token_path = pathlib.Path(token_path)
 
-    print(token_path)
     if not token_path.exists():
         # Ici tu forces l’admin à lancer generate_token.py une fois
         raise RuntimeError("token.json manquant, lance d'abord generate_token.py")
@@ -98,7 +97,6 @@ def update_contact_keep_phone(event):
     svc = _service(GOOGLE_TOKEN)
     raw_phone = event.client.numero_telephone
     phone = normalize_fr_phone(raw_phone)
-    print("Recherche Google Contacts avec :", phone)
 
     try:
         person, resource, etag = find_contact_by_event_id(svc, event.id)

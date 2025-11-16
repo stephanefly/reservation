@@ -1,10 +1,4 @@
 from notion_client import Client as Notion
-
-from myselfiebooth.settings import NOTION_TOKEN, DATABASE_ID
-
-notion = Notion(auth=NOTION_TOKEN)
-
-from notion_client import Client as Notion
 from myselfiebooth.settings import NOTION_TOKEN, DATABASE_ID
 
 notion = Notion(auth=NOTION_TOKEN)
