@@ -131,14 +131,17 @@ def create_link_event_folder(event):
     Génère et sauvegarde le lien public du dossier pCloud
     pour cet event uniquement. Crée event_post_presta si absent.
     """
-    # 1) On récupère ou crée automatiquement le post-presta
-    post = getattr(event, "event_post_presta", None)
+
+    # 1) Récupérer ou créer l'objet post-presta
+    post = event.event_post_presta
 
     if post is None:
         print(f"[pCloud] Aucun post-presta pour event {event.id} → création automatique")
         post = EventPostPrestation.objects.create(event=event)
+        event.event_post_presta = post
+        event.save(update_fields=["event_post_presta"])
 
-    # 2) Récupération des données du dossier pCloud
+    # 2) Récupération du dossier pCloud
     folder_name = event.event_template.directory_name
     folder_data = get_pcloud_event_folder_data(folder_name)
 
@@ -149,13 +152,13 @@ def create_link_event_folder(event):
     # 3) Génération du lien public
     link = get_pcloud_link_event_folder(folder_data)
 
-    # 4) Enregistrement si pas déjà existant
+    # 4) Sauvegarde dans le post-presta
     if not post.link_media_shared:
         post.link_media_shared = link
         post.save(update_fields=["link_media_shared"])
-        print(f"[pCloud] Lien enregistré pour event {event.id} : {link}")
+        print(f"[pCloud] Lien enregistré pour event {event.id}")
     else:
-        print(f"[pCloud] Lien déjà présent pour event {event.id} → rien à faire")
+        print(f"[pCloud] Lien déjà existant pour event {event.id}")
 
     return True
 
