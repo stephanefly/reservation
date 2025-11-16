@@ -26,46 +26,92 @@ def daily_event_integrity_check():
         status__in=["Acompte OK", "Post Presta", "Sent Media", "Media KO"],
     )
 
-    event_ko = []
+    event_errors = {}  # event_id → dict des KO
+
+    def mark_error(event, key):
+        """Marque une fonction comme KO pour un event."""
+        if event.id not in event_errors:
+            event_errors[event.id] = {}
+        event_errors[event.id][key] = True
+
+    # ========= PREMIER PASSAGE =========
     for event in events_ok:
+
+        print(f"\n---- Event {event.id} (1er passage) ----")
+        event_errors.setdefault(event.id, {})  # structure prête
 
         # --- PCLOUD CLIENT ---
         try:
             create_pcloud_event_folder(event)
+            event_errors[event.id]["pcloud_client"] = False
         except Exception as e:
-            event_ko.append(event)
             print(f"[KO] pCloud (CLIENT) → {e}")
+            mark_error(event, "pcloud_client")
 
         # --- PCLOUD PREPA ---
         try:
             create_pcloud_event_folder(event, prepa=True)
+            event_errors[event.id]["pcloud_prepa"] = False
         except Exception as e:
-            event_ko.append(event)
             print(f"[KO] pCloud (PREPA) → {e}")
+            mark_error(event, "pcloud_prepa")
 
         # --- PCLOUD MONTAGE ---
         try:
             create_pcloud_event_folder(event, montage=True)
+            event_errors[event.id]["pcloud_montage"] = False
         except Exception as e:
-            event_ko.append(event)
             print(f"[KO] pCloud (MONTAGE) → {e}")
+            mark_error(event, "pcloud_montage")
 
         # --- NOTION ---
         try:
             create_notion_card(event)
+            event_errors[event.id]["notion"] = False
         except Exception as e:
-            event_ko.append(event)
             print(f"[KO] Notion → {e}")
+            mark_error(event, "notion")
 
         # --- GOOGLE CONTACTS ---
         try:
             update_contact_keep_phone(event)
+            event_errors[event.id]["google"] = False
         except Exception as e:
-            event_ko.append(event)
             print(f"[KO] Google Contacts → {e}")
+            mark_error(event, "google")
 
-    print(f"Liste Event KO : {event_ko}")
-    for event in event_ko:
-        update_contact_keep_phone(event)
+    # ========= LISTE DES EVENTS KO =========
+    print("\n==== Events KO après 1er passage ====")
+    events_ko = [eid for eid, errs in event_errors.items() if any(errs.values())]
+
+    for eid in events_ko:
+        print(f"- Event {eid}")
+
+    for event_id in events_ko:
+        event = Event.objects.get(id=event_id)
+        print(f"\n---- Event {event.id} (2e passage) ----")
+
+        errs = event_errors[event_id]
+
+        if errs.get("pcloud_client"):
+            create_pcloud_event_folder(event)
+            print("[DONE] pCloud CLIENT")
+
+        if errs.get("pcloud_prepa"):
+            create_pcloud_event_folder(event, prepa=True)
+            print("[DONE] pCloud PREPA")
+
+        if errs.get("pcloud_montage"):
+            create_pcloud_event_folder(event, montage=True)
+            print("[DONE] pCloud MONTAGE")
+
+        if errs.get("notion"):
+            create_notion_card(event)
+            print("[DONE] Notion")
+
+        if errs.get("google"):
+            update_contact_keep_phone(event)
+            print("[DONE] Google Contacts")
+
 
 daily_event_integrity_check()
