@@ -86,22 +86,26 @@ def find_contact_by_event_id(service, event_id: int):
 # ────────────────────────────────────────────────────────────────────────────────
 
 def update_contact_keep_phone(event):
-
     svc = _service(GOOGLE_TOKEN)
     raw_phone = event.client.numero_telephone
     phone = normalize_fr_phone(raw_phone)
     print("Recherche Google Contacts avec :", phone)
 
-    person, resource, etag = find_contact_by_event_id(svc, event.id)
+    try:
+        person, resource, etag = find_contact_by_event_id(svc, event.id)
+    except Exception as e:
+        print(f"Erreur dans find_contact_by_event_id pour event {event.id}: {e}")
+        return False
+
     if not person or not resource or not etag:
         print(f"Contact introuvable pour le numéro normalisé : {phone}")
         return False
 
     current_name = (person.get("names") or [{}])[0]
-    body: Dict[str, Any] = {"etag": etag}
+    body = {"etag": etag}
 
     event_name = normalize_name(event)
-    # Construire le body minimal, uniquement pour les champs demandés
+
     if (event_name is not None) or (event.status is not None):
         body["names"] = [{
             "givenName": event.status if event.status is not None else current_name.get("givenName", ""),
@@ -109,7 +113,6 @@ def update_contact_keep_phone(event):
         }]
 
     if event.client.mail is not None:
-        # email == "" → efface
         body["emailAddresses"] = [{"value": event.client.mail}] if event.client.mail else []
 
     if event.event_product:
@@ -117,19 +120,15 @@ def update_contact_keep_phone(event):
         price = str(event.prix_proposed) if event.prix_proposed is not None else ""
         text = f"{booths} : {price}".strip()
         if text:
-            body["biographies"] = [{
-                "value": text
-            }]
+            body["biographies"] = [{"value": text}]
 
-
-    # Champs réellement modifiés
-    fields: List[str] = []
+    fields = []
     for key in ("names", "emailAddresses", "organizations", "biographies", "phoneNumbers"):
         if key in body:
             fields.append(key)
 
     if not fields:
-        print("Rien à mettre à jour (aucun champ spécifié).")
+        print(f"Event {event.id}: rien à mettre à jour (aucun champ spécifié).")
         return False
 
     try:
@@ -139,10 +138,13 @@ def update_contact_keep_phone(event):
             body=body,
         ).execute()
     except HttpError as e:
-        print(f"Erreur People API (updateContact): {e}")
+        print(f"Erreur People API (updateContact) pour event {event.id}: {e}")
+        return False
+    except Exception as e:
+        print(f"Erreur inconnue (updateContact) pour event {event.id}: {e}")
         return False
 
-    print(f"Contact mis à jour (tel conservé): {resource}")
+    print(f"Contact mis à jour (tel conservé) pour event {event.id}: {resource}")
     return True
 
 

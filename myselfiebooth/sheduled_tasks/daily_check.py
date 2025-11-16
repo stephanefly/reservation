@@ -1,9 +1,6 @@
 import os
 import sys
 
-from app.models import Event
-from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
-from app.module.trello.notion_service import create_notion_card
 
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,12 +15,14 @@ import django
 
 django.setup()
 
+from app.models import Event
+from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
+from app.module.trello.notion_service import create_notion_card
 
 def daily_event_integrity_check():
     # Exemple : tous les events "OK" mais avec des indices d'incomplet
     events_ok = Event.objects.filter(
-        status="Acompte OK",
-        event_post_presta__link_media_shared="",
+        signer_at__isnull=False,
     )
 
     for event in events_ok:
