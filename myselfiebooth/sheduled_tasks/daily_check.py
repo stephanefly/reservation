@@ -16,7 +16,7 @@ django.setup()
 
 from app.models import Event, EventPostPrestation
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
-from app.module.trello.notion_service import create_notion_card
+from app.module.notion.notion_service import create_notion_card
 from app.module.google.contact import update_contact_keep_phone
 
 def daily_event_integrity_check():

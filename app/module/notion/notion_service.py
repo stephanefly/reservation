@@ -60,29 +60,29 @@ def create_notion_card(event):
         return True
 
     # 2) Sinon, on la crée
-    try:
-        page = notion.pages.create(
-            parent={"database_id": DATABASE_ID},
-            properties={
-                "Nom": {
-                    "title": [
-                        {
-                            "type": "text",
-                            "text": {"content": event.client.nom}
-                        }
-                    ]
-                },
-                "Échéance": {
-                    "date": {
-                        "start": event.event_details.date_evenement.isoformat()
+    page = notion.pages.create(
+        parent={"database_id": DATABASE_ID},
+        properties={
+            "Nom": {
+                "title": [
+                    {
+                        "type": "text",
+                        "text": {"content": event.client.nom}
                     }
-                },
-                "Domaine": {
-                    "select": {"name": "RESERVATION"}
+                ]
+            },
+            "Échéance": {
+                "date": {
+                    "start": event.event_details.date_evenement.isoformat()
                 }
+            },
+            "Domaine": {
+                "select": {"name": "RESERVATION"}
             }
-        )
-    except Exception:
-        return False
+        }
+    )
 
-    return bool(page)
+    if page:
+        return True
+    else:
+        return False

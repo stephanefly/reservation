@@ -2,13 +2,12 @@ from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
 from app.module.cloud.rennaming import normalize_name, rennaming_pcloud_event_folder
-from django.utils.timezone import now
 from app.models import EventTemplate, EventAcompte
 from app.module.mail.send_mail_event import send_mail_event
 from app.module.trello.move_card import to_acompte_ok
 from django.db import transaction
 from django.utils.timezone import now
-from app.module.trello.notion_service import create_notion_card
+from app.module.notion.notion_service import create_notion_card
 
 
 def parse_int(value, default=0):
