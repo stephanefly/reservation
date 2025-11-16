@@ -14,7 +14,7 @@ import django
 
 django.setup()
 
-from app.models import Event
+from app.models import Event, EventPostPrestation
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.trello.notion_service import create_notion_card
 from app.module.google.contact import update_contact_keep_phone
@@ -39,6 +39,11 @@ def daily_event_integrity_check():
 
         print(f"\n---- Event {event.id} (1er passage) ----")
         event_errors.setdefault(event.id, {})  # structure prête
+
+        if event.event_post_presta is None:
+            post_presta = EventPostPrestation.objects.create()  # juste ça
+            event.event_post_presta = post_presta
+            event.save(update_fields=["event_post_presta"])
 
         # --- PCLOUD CLIENT ---
         try:

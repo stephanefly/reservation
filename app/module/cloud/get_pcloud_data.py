@@ -1,4 +1,3 @@
-from app.models import EventPostPrestation
 from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID, \
     ROOT_FOLDER_MONTAGE_2025, ROOT_FOLDER_MONTAGE_2026
 from datetime import datetime, timedelta
@@ -61,11 +60,6 @@ def create_pcloud_event_folder(event, prepa: bool = False, montage: bool = False
     }
 
     response = requests.post(url, params=params)
-
-    if event.event_post_presta is None:
-        post_presta = EventPostPrestation.objects.create()  # juste ça
-        event.event_post_presta = post_presta
-        event.save(update_fields=["event_post_presta"])
 
     if response.status_code != 200:
         return False  # Échec de la requête
@@ -137,15 +131,6 @@ def create_link_event_folder(event):
     pour cet event uniquement. Crée event_post_presta si absent.
     """
 
-    # 1) Récupérer ou créer l'objet post-presta
-    post = event.event_post_presta
-
-    if post is None:
-        print(f"[pCloud] Aucun post-presta pour event {event.id} → création automatique")
-        post = EventPostPrestation.objects.create(event=event)
-        event.event_post_presta = post
-        event.save(update_fields=["event_post_presta"])
-
     # 2) Récupération du dossier pCloud
     folder_name = event.event_template.directory_name
     folder_data = get_pcloud_event_folder_data(folder_name)
@@ -158,9 +143,9 @@ def create_link_event_folder(event):
     link = get_pcloud_link_event_folder(folder_data)
 
     # 4) Sauvegarde dans le post-presta
-    if not post.link_media_shared:
-        post.link_media_shared = link
-        post.save(update_fields=["link_media_shared"])
+    if not event.event_post_presta.link_media_shared:
+        event.event_post_presta.link_media_shared = link
+        event.event_post_presta.save(update_fields=["link_media_shared"])
         print(f"[pCloud] Lien enregistré pour event {event.id}")
     else:
         print(f"[pCloud] Lien déjà existant pour event {event.id}")
