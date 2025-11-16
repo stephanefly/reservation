@@ -24,9 +24,10 @@ def maj_today_event():
     for event in events_yesterday:
         if event.signer_at:
             event.status = "Post Presta"
-            post_presta = EventPostPrestation()
-            post_presta.save()  # On sauvegarde d'abord le post_presta avant de l'associer à l'event
-            event.event_post_presta = post_presta
+            if event.event_post_presta is None:
+                post_presta = EventPostPrestation.objects.create()  # juste ça
+                event.event_post_presta = post_presta
+                event.save(update_fields=["event_post_presta"])
 
             if not get_pcloud_event_folder_data(event.event_template.directory_name):
                 create_pcloud_event_folder(event)

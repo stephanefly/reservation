@@ -62,6 +62,11 @@ def create_pcloud_event_folder(event, prepa: bool = False, montage: bool = False
 
     response = requests.post(url, params=params)
 
+    if event.event_post_presta is None:
+        post_presta = EventPostPrestation.objects.create()  # juste ça
+        event.event_post_presta = post_presta
+        event.save(update_fields=["event_post_presta"])
+
     if response.status_code != 200:
         return False  # Échec de la requête
 
