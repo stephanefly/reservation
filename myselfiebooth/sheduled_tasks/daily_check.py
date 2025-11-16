@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
@@ -18,6 +17,7 @@ django.setup()
 from app.models import Event
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.trello.notion_service import create_notion_card
+from app.module.google.contact import update_contact_keep_phone
 
 def daily_event_integrity_check():
     # Exemple : tous les events "OK" mais avec des indices d'incomplet
@@ -31,6 +31,7 @@ def daily_event_integrity_check():
         create_pcloud_event_folder(event, prepa=True)
         create_pcloud_event_folder(event, montage=True)
         create_notion_card(event)
+        update_contact_keep_phone(event)
 
 if __name__ == "__main__":
     daily_event_integrity_check()
