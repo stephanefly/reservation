@@ -1,5 +1,5 @@
 from notion_client import Client as Notion
-from myselfiebooth.settings import NOTION_TOKEN, DATABASE_ID
+from myselfiebooth.settings import NOTION_TOKEN, DATABASE_NOTION_ID
 
 notion = Notion(auth=NOTION_TOKEN)
 
@@ -13,7 +13,7 @@ def get_notion_reservation_page(event):
     try:
         response = notion.databases.query(
             **{
-                "database_id": DATABASE_ID,
+                "database_id": DATABASE_NOTION_ID,
                 "filter": {
                     "and": [
                         {

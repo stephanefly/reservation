@@ -57,7 +57,7 @@ ROOT_FOLDER_MONTAGE_2026 = config.get("ROOT_FOLDER_MONTAGE_2026")  # ID du dossi
 GOOGLE_TOKEN = config.get("GOOGLE_TOKEN")
 
 NOTION_TOKEN = config.get("NOTION_TOKEN")
-DATABASE_ID   = config.get("DATABASE_ID")
+DATABASE_NOTION_ID   = config.get("DATABASE_NOTION_ID")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')
