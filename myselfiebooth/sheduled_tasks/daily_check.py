@@ -43,6 +43,4 @@ def daily_event_integrity_check():
     for event in event_ko:
         update_contact_keep_phone(event)
 
-
-if __name__ == "__main__":
-    daily_event_integrity_check()
+daily_event_integrity_check()
