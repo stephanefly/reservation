@@ -1,4 +1,4 @@
-
+from app.models import EventPostPrestation
 from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN, ROOT_FOLDER_PREPA_ID, \
     ROOT_FOLDER_MONTAGE_2025, ROOT_FOLDER_MONTAGE_2026
 from datetime import datetime, timedelta
@@ -127,10 +127,39 @@ def get_pcloud_link_event_folder(folder_data: dict) -> str:
 
 
 def create_link_event_folder(event):
-    folder_data = get_pcloud_event_folder_data(event.event_template.directory_name)
-    event.event_template.link_media_shared = get_pcloud_link_event_folder(folder_data)
-    event.event_template.save()
-    event.save()
+    """
+    Génère et sauvegarde le lien public du dossier pCloud
+    pour cet event uniquement. Crée event_post_presta si absent.
+    """
+    # 1) On récupère ou crée automatiquement le post-presta
+    post = getattr(event, "event_post_presta", None)
+
+    if post is None:
+        print(f"[pCloud] Aucun post-presta pour event {event.id} → création automatique")
+        post = EventPostPrestation.objects.create(event=event)
+
+    # 2) Récupération des données du dossier pCloud
+    folder_name = event.event_template.directory_name
+    folder_data = get_pcloud_event_folder_data(folder_name)
+
+    if not folder_data:
+        print(f"[pCloud] Dossier introuvable pour event {event.id}")
+        return False
+
+    # 3) Génération du lien public
+    link = get_pcloud_link_event_folder(folder_data)
+
+    # 4) Enregistrement si pas déjà existant
+    if not post.link_media_shared:
+        post.link_media_shared = link
+        post.save(update_fields=["link_media_shared"])
+        print(f"[pCloud] Lien enregistré pour event {event.id} : {link}")
+    else:
+        print(f"[pCloud] Lien déjà présent pour event {event.id} → rien à faire")
+
+    return True
+
+
 
 
 def upload_template_to_pcloud(event, uploaded_file, folder_data: dict):
