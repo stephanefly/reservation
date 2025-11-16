@@ -1,3 +1,12 @@
+import warnings
+
+# Masquer uniquement le FutureWarning de google.api_core
+warnings.filterwarnings(
+    "ignore",
+    category=FutureWarning,
+    module="google.api_core._python_version_support",
+)
+
 from typing import Optional, Tuple, List, Dict, Any
 
 from googleapiclient.errors import HttpError

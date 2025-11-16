@@ -27,13 +27,22 @@ def daily_event_integrity_check():
         event_post_presta__link_media_shared="",
     )
 
+    event_ko = []
     for event in events_ok:
         # On essaie de réparer automatiquement
         create_pcloud_event_folder(event)
         create_pcloud_event_folder(event, prepa=True)
         create_pcloud_event_folder(event, montage=True)
         create_notion_card(event)
+        try:
+            update_contact_keep_phone(event)
+        except Exception as e:
+            print(f"Erreur Google Contacts pour event {event.id}: {e}")
+            event_ko.append(event)
+
+    for event in event_ko:
         update_contact_keep_phone(event)
+
 
 if __name__ == "__main__":
     daily_event_integrity_check()
