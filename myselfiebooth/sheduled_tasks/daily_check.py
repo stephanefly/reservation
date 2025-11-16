@@ -28,18 +28,43 @@ def daily_event_integrity_check():
 
     event_ko = []
     for event in events_ok:
-        # On essaie de réparer automatiquement
+
+        # --- PCLOUD CLIENT ---
         try:
             create_pcloud_event_folder(event)
+        except Exception as e:
+            event_ko.append(event)
+            print(f"[KO] pCloud (CLIENT) → {e}")
+
+        # --- PCLOUD PREPA ---
+        try:
             create_pcloud_event_folder(event, prepa=True)
+        except Exception as e:
+            event_ko.append(event)
+            print(f"[KO] pCloud (PREPA) → {e}")
+
+        # --- PCLOUD MONTAGE ---
+        try:
             create_pcloud_event_folder(event, montage=True)
+        except Exception as e:
+            event_ko.append(event)
+            print(f"[KO] pCloud (MONTAGE) → {e}")
+
+        # --- NOTION ---
+        try:
             create_notion_card(event)
+        except Exception as e:
+            event_ko.append(event)
+            print(f"[KO] Notion → {e}")
+
+        # --- GOOGLE CONTACTS ---
+        try:
             update_contact_keep_phone(event)
         except Exception as e:
-            print(f"Erreur Google Contacts pour event {event.id}: {e}")
             event_ko.append(event)
+            print(f"[KO] Google Contacts → {e}")
 
-    print(event_ko)
+    print(f"Liste Event KO : {event_ko}")
     for event in event_ko:
         update_contact_keep_phone(event)
 
