@@ -61,7 +61,7 @@ def create_notion_card(event):
 
     # 2) Sinon, on la crée
     page = notion.pages.create(
-        parent={"database_id": DATABASE_ID},
+        parent={"database_id": DATABASE_NOTION_ID},
         properties={
             "Nom": {
                 "title": [
