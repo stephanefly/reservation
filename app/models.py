@@ -294,7 +294,10 @@ class Event(models.Model):
             previous_event = Event.objects.get(pk=self.pk)
             if previous_event.status != self.status:
                 self.history_status = f"{self.history_status}, {self.status}".strip(", ") if self.history_status else self.status
-                update_contact_keep_phone(self)
+                try:
+                    update_contact_keep_phone(self)
+                except:
+                    pass
 
         super().save(*args, **kwargs)
 
