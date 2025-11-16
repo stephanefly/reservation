@@ -24,7 +24,6 @@ def daily_event_integrity_check():
     events_ok = Event.objects.filter(
         signer_at__isnull=False,
         status__in=["Acompte OK", "Post Presta", "Sent Media", "Media KO"],
-        event_post_presta__link_media_shared="",
     )
 
     event_ko = []
