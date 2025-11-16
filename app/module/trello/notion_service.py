@@ -4,28 +4,91 @@ from myselfiebooth.settings import NOTION_TOKEN, DATABASE_ID
 
 notion = Notion(auth=NOTION_TOKEN)
 
+from notion_client import Client as Notion
+from myselfiebooth.settings import NOTION_TOKEN, DATABASE_ID
+
+notion = Notion(auth=NOTION_TOKEN)
+
+
+def get_notion_reservation_page(event):
+    """
+    Retourne la page Notion existante pour cet event si elle existe,
+    sinon None.
+    Critères : Nom + Échéance + Domaine = RESERVATION
+    """
+    try:
+        response = notion.databases.query(
+            **{
+                "database_id": DATABASE_ID,
+                "filter": {
+                    "and": [
+                        {
+                            "property": "Nom",
+                            "title": {
+                                "equals": event.client.nom
+                            }
+                        },
+                        {
+                            "property": "Échéance",
+                            "date": {
+                                "equals": event.event_details.date_evenement.isoformat()
+                            }
+                        },
+                        {
+                            "property": "Domaine",
+                            "select": {
+                                "equals": "RESERVATION"
+                            }
+                        }
+                    ]
+                }
+            }
+        )
+    except Exception:
+        return None
+
+    results = response.get("results", [])
+    if results:
+        return results[0]
+
+    return None
+
+
 def create_notion_card(event):
     """
-    Crée une carte dans la base avec Nom (title), Échéance (date), Domaine (select).
-    due_iso: 'YYYY-MM-DD' (ex: '2025-11-08')
+    Crée une carte Notion pour l'event si elle n'existe pas déjà.
+    Rejouable sans risque.
     """
 
-    # 2) Crée la page
-    page = notion.pages.create(
-        parent={"database_id": DATABASE_ID},
-        properties={
-            "Nom": {  # Propriété title
-                "title": [{"type": "text", "text": {"content": event.client.nom}}]
-            },
-            "Échéance": {  # Propriété date
-                "date": {"start": event.event_details.date_evenement.isoformat()}
-            },
-            "Domaine": {  # Propriété select
-                "select": {"name": "RESERVATION"}
-            }
-        }
-    )
-    if page:
+    # 1) Check : existe déjà ?
+    existing_page = get_notion_reservation_page(event)
+    if existing_page is not None:
         return True
-    else:
+
+    # 2) Sinon, on la crée
+    try:
+        page = notion.pages.create(
+            parent={"database_id": DATABASE_ID},
+            properties={
+                "Nom": {
+                    "title": [
+                        {
+                            "type": "text",
+                            "text": {"content": event.client.nom}
+                        }
+                    ]
+                },
+                "Échéance": {
+                    "date": {
+                        "start": event.event_details.date_evenement.isoformat()
+                    }
+                },
+                "Domaine": {
+                    "select": {"name": "RESERVATION"}
+                }
+            }
+        )
+    except Exception:
         return False
+
+    return bool(page)
