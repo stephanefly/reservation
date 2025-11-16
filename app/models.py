@@ -289,17 +289,38 @@ class Event(models.Model):
     ]
     status = models.CharField(max_length=255, default='Initied', choices=STATUS, null=True)
     history_status = models.TextField(default="", blank=True)  # Stocke l'historique des statuts
-    def save(self, *args, **kwargs):
-        if self.pk:
-            previous_event = Event.objects.get(pk=self.pk)
-            if previous_event.status != self.status:
-                self.history_status = f"{self.history_status}, {self.status}".strip(", ") if self.history_status else self.status
-                try:
-                    update_contact_keep_phone(self)
-                except:
-                    pass
 
+    def save(self, *args, **kwargs):
+        previous_event = None
+        status_changed = False
+
+        # 1) Récupérer l'ancien event (avant modif)
+        if self.pk:
+            try:
+                previous_event = Event.objects.get(pk=self.pk)
+            except Event.DoesNotExist:
+                previous_event = None
+
+        # 2) Détecter changement de status + mettre à jour history_status
+        if previous_event is not None and previous_event.status != self.status:
+            status_changed = True
+            if previous_event.history_status:
+                # On empile l'historique précédent + le nouveau status
+                self.history_status = f"{previous_event.history_status}, {self.status}"
+            else:
+                self.history_status = self.status
+
+        # 3) Sauvegarde en base avec le nouvel history_status
         super().save(*args, **kwargs)
+
+        # 4) Après sauvegarde : synchronisation Google éventuelle
+        if status_changed:
+            try:
+                update_contact_keep_phone(self)
+            except Exception as e:
+                # On log, mais on ne bloque pas le save
+                print(f"Erreur update_contact_keep_phone pour event {self.pk}: {e}")
+
 
 
 class NameCost(models.Model):
