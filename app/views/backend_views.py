@@ -162,8 +162,11 @@ def info_event(request, id):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id)
     update_data(event, request)
-    update_trello_date(event)
-    update_option_labels_trello(event)
+    try:
+        update_trello_date(event)
+        update_option_labels_trello(event)
+    except:
+        pass
     return redirect('info_event', id=event.id)
 
 

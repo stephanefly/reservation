@@ -26,6 +26,10 @@ def update_option_labels_trello(event):
       label_ids.append(get_id_label("PanneauBienvenue"))
    if event.event_option.Holo3D:
       label_ids.append(get_id_label("Holo3D"))
+   if event.event_option.PanneauFontaine:
+       label_ids.append(get_id_label("PanneauFontaine"))
+   if event.event_option.VideoLivreOr:
+       label_ids.append(get_id_label("VideoLivreOr"))
    if event.event_option.magnets != "0":
       label_ids.append(get_id_label("Magnets"))
 

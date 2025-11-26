@@ -105,6 +105,8 @@ def prix_ligne_option(event, data_tableau_devis):
         ("Backdrop LightRGB 360", event.event_option.Fond360, event.event_option.prix_base_Fond360(),event.event_option.Fond360_reduc_prix),
         ("Panneau de Bienvenue personnalisé", event.event_option.PanneauBienvenue, event.event_option.prix_base_PanneauBienvenue(),event.event_option.PanneauBienvenue_reduc_prix),
         ("Panneau Holograme 3D", event.event_option.Holo3D,event.event_option.prix_base_Holo3D(), event.event_option.Holo3D_reduc_prix),
+        ("Panneau de Bienvenue Fontaine", event.event_option.PanneauFontaine, event.event_option.prix_base_PanneauFontaine(),event.event_option.PanneauFontaine_reduc_prix),
+        ("Livre d'or Video", event.event_option.VideoLivreOr, event.event_option.prix_base_VideoLivreOr(),event.event_option.VideoLivreOr_reduc_prix),
         ("Photographe pour le VogueBooth", event.event_option.PhotographeVoguebooth, event.event_option.prix_base_PhotographeVoguebooth(),event.event_option.PhotographeVoguebooth_reduc_prix),
         ("Impression pour le VogueBooth", event.event_option.ImpressionVoguebooth, event.event_option.prix_base_ImpressionVoguebooth(),event.event_option.ImpressionVoguebooth_reduc_prix),
         ("Décor personalisé pour le VogueBooth", event.event_option.DecorVoguebooth, event.event_option.prix_base_DecorVoguebooth(),event.event_option.DecorVoguebooth_reduc_prix),

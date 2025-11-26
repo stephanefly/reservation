@@ -99,6 +99,7 @@ class EventOption(models.Model):
             ('rideau_blanc', 'Rideau blanc'),
             ('gatsby', 'Gatsby'),
             ('rose_blanche', 'Rose Blanche'),
+            ('rose_blanche', 'Rose Blanche'),
             ('rose_rouge', 'Roses rouge'),
             ('paillette_rose', 'Paillette rose'),
             ('vegetale', 'Végétale'),
@@ -153,6 +154,16 @@ class EventOption(models.Model):
     def prix_base_Holo3D(self):
         return 50
 
+    PanneauFontaine = models.BooleanField(default=False)
+    PanneauFontaine_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_PanneauFontaine(self):
+        return 150
+
+    VideoLivreOr = models.BooleanField(default=False)
+    VideoLivreOr_reduc_prix = models.IntegerField(null=True, default=False)
+    def prix_base_VideoLivreOr(self):
+        return 150
+
     magnets = models.IntegerField(null=True, blank=True)
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
 
@@ -170,6 +181,8 @@ class EventOption(models.Model):
             self.ImpressionVoguebooth_reduc_prix or 0,
             self.DecorVoguebooth_reduc_prix or 0,
             self.Holo3D_reduc_prix or 0,
+            self.PanneauFontaine_reduc_prix or 0,
+            self.VideoLivreOr_reduc_prix or 0,
             self.magnets_reduc_prix or 0
         ]
         return sum(reduction_fields)

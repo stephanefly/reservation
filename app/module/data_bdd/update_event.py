@@ -26,6 +26,8 @@ def update_event_option(request, event_option):
         {"name": "Fond360", "prix_base_method": event_option.prix_base_Fond360,"prix_brut": "Fond360_reduc_prix"},
         {"name": "PanneauBienvenue", "prix_base_method": event_option.prix_base_PanneauBienvenue,"prix_brut": "PanneauBienvenue_reduc_prix"},
         {"name": "Holo3D", "prix_base_method": event_option.prix_base_Holo3D, "prix_brut": "Holo3D_reduc_prix"},
+        {"name": "PanneauFontaine", "prix_base_method": event_option.prix_base_PanneauFontaine, "prix_brut": "PanneauFontaine_reduc_prix"},
+        {"name": "VideoLivreOr", "prix_base_method": event_option.prix_base_VideoLivreOr, "prix_brut": "VideoLivreOr_reduc_prix"},
         {"name": "PhotographeVoguebooth", "prix_base_method": event_option.prix_base_PhotographeVoguebooth, "prix_brut": "PhotographeVoguebooth_reduc_prix"},
         {"name": "ImpressionVoguebooth", "prix_base_method": event_option.prix_base_ImpressionVoguebooth, "prix_brut": "ImpressionVoguebooth_reduc_prix"},
         {"name": "DecorVoguebooth", "prix_base_method": event_option.prix_base_DecorVoguebooth, "prix_brut": "DecorVoguebooth_reduc_prix"},
@@ -128,6 +130,8 @@ def update_data(event, request):
     event_option.Fond360 = request.POST.get('Fond360') == 'on'
     event_option.PanneauBienvenue = request.POST.get('PanneauBienvenue') == 'on'
     event_option.Holo3D = request.POST.get('Holo3D') == 'on'
+    event_option.PanneauFontaine = request.POST.get('PanneauFontaine') == 'on'
+    event_option.VideoLivreOr = request.POST.get('VideoLivreOr') == 'on'
     event_option.PhotographeVoguebooth = request.POST.get('PhotographeVoguebooth') == 'on'
     event_option.ImpressionVoguebooth = request.POST.get('ImpressionVoguebooth') == 'on'
     event_option.DecorVoguebooth = request.POST.get('DecorVoguebooth') == 'on'

@@ -43,7 +43,10 @@ def confirmation(request):
         event.save()
 
         # Création Google Contact
-        create_google_contact(event)
+        try:
+            create_google_contact(event)
+        except:
+            pass
 
         # Création carte
         id_card = create_card(post_data)

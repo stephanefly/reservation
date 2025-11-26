@@ -218,7 +218,8 @@ def generate_pdf_facture(event):
     # Ajouter un tableau pour les articles
     data_tableau_devis, total_brut_devis, acompte = make_tableau(event)
 
-    data_tableau_devis, total_brut_devis = add_acompte_mention(event, data_tableau_devis, total_brut_devis)
+    if event.event_acompte:
+        data_tableau_devis, total_brut_devis = add_acompte_mention(event, data_tableau_devis, total_brut_devis)
 
     table = Table(data_tableau_devis, colWidths=[210, 80, 70, 80, 95])
     table_style = [

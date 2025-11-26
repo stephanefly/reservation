@@ -102,6 +102,8 @@ def initialize_event(post_data):
             'Fond360': False,
             'PanneauBienvenue': False,
             'Holo3D': False,
+            'PanneauFontaine': False,
+            'VideoLivreOr': False,
             'PhotographeVoguebooth': False,
             'ImpressionVoguebooth': False,
             'DecorVoguebooth': False,
