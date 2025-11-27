@@ -38,6 +38,7 @@ class EventDetails(models.Model):
     def get_adresse(self):
         return f"{self.adresse_evenement}, {self.code_postal_evenement} {self.ville_evenement}"
 
+
 class EventTemplate(models.Model):
     url_modele = models.TextField(null=True)
     text_template = models.TextField(null=True)
@@ -190,6 +191,35 @@ class EventOption(models.Model):
     livraison = models.BooleanField(default=False)
     duree = models.IntegerField(null=True, blank=True)
 
+    def get_selected_options(self):
+        options = []
+
+        if self.MurFloral:
+            options.append("Mur floral")
+        if self.Phonebooth:
+            options.append("Phonebooth")
+        if self.LivreOr:
+            options.append("Livre d'or")
+        if self.Fond360:
+            options.append("Fond 360")
+        if self.PanneauBienvenue:
+            options.append("Panneau de bienvenue")
+        if self.PhotographeVoguebooth:
+            options.append("Photographe Voguebooth")
+        if self.ImpressionVoguebooth:
+            options.append("Impression Voguebooth")
+        if self.DecorVoguebooth:
+            options.append("Décor Voguebooth")
+        if self.Holo3D:
+            options.append("Holo 3D")
+        if self.PanneauFontaine:
+            options.append("Panneau Fontaine")
+        if self.VideoLivreOr:
+            options.append("Vidéo livre d'or")
+        if self.magnets:
+            options.append(f"{self.magnets} magnets")
+
+        return ", ".join(options)
 
 class EventPostPrestation(models.Model):
     feedback_message = models.BooleanField(default=False)
@@ -333,7 +363,6 @@ class Event(models.Model):
             except Exception as e:
                 # On log, mais on ne bloque pas le save
                 print(f"Erreur update_contact_keep_phone pour event {self.pk}: {e}")
-
 
 
 class NameCost(models.Model):

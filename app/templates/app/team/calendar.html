@@ -1,7 +1,6 @@
 {% extends 'app/team/index.html' %}
 {% block content %}
 
-
 <style>
     .acompte-ok {
         background: #28a745 !important;
@@ -119,13 +118,138 @@
             font-size: 20px;
         }
     }
+
+    /* Zone détails sous le calendrier */
     #eventDetails {
         width: 95%;
-        margin: auto;
+        margin: 20px auto;
     }
 
-</style>
+    /* Layout des blocs événements / machines / options */
+    .day-details {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
 
+    /* Deux colonnes sur écran large */
+    @media (min-width: 992px) {
+        .day-details {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        .day-col {
+            flex: 1;
+        }
+    }
+
+    /* Cartes/panneaux */
+    .panel {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 12px 14px;
+        border: 1px solid #ddd;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+
+    .panel h3,
+    .panel h4 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* Code couleur cohérent */
+    .events-panel {
+        border-left: 4px solid #28a645;
+    }
+
+    .machines-panel {
+        border-left: 4px solid #4040ff;
+    }
+
+    .options-panel {
+        border-left: 4px solid #86cdea;
+    }
+
+    /* TABLEAUX GÉNÉRAUX */
+    .events-table,
+    .machines-table,
+    .options-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .events-table thead tr,
+    .machines-table thead tr,
+    .options-table thead tr {
+        background: #f5f5f5;
+    }
+
+    .events-table th,
+    .events-table td,
+    .machines-table th,
+    .machines-table td,
+    .options-table th,
+    .options-table td {
+        border: 1px solid #ddd;
+        padding: 6px 8px;
+        text-align: left;
+    }
+
+    /* Lignes alternées */
+    .events-table tbody tr:nth-child(odd),
+    .machines-table tbody tr:nth-child(odd),
+    .options-table tbody tr:nth-child(odd) {
+        background: #fafafa;
+    }
+
+    /* Hover léger */
+    .events-table tbody tr:hover,
+    .machines-table tbody tr:hover,
+    .options-table tbody tr:hover {
+        background: #eef3ff;
+    }
+
+    /* Couleurs de header spécifiques */
+    .machines-table thead tr {
+        background: #d1d4ff;
+    }
+
+    .options-table thead tr {
+        background: #e5f7ff;
+    }
+
+    /* Colonne client mise en valeur */
+    .events-table td:first-child {
+        font-weight: 600;
+        color: #0056b3;
+    }
+
+    /* Badges de dispo si besoin */
+    .badge-dispo {
+        display: inline-block;
+        min-width: 40px;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+    }
+    .badge-dispo-zero {
+        background: #dcfce7;
+        color: #166534;
+    }
+    .badge-dispo-low {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+    .badge-dispo-ok {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+</style>
 
 <div class="calendar-container">
     <div class="calendar-header">
@@ -145,21 +269,24 @@
     </div>
     <div class="calendar-days" id="calendarDays"></div>
 </div>
-<hr>
-    <!-- Zone d'affichage des détails d'événement -->
-    <div id="eventDetails"></div>
 
+<hr>
+
+<div id="eventDetails"></div>
+
+<!-- 1) Variables globales + données Django -->
 <script>
     let currentDate = new Date();
     let selectedDay = null;
 
-    // ✅ Correction : Utilisation de `|tojson` pour générer du JSON propre
-    let events_ok = {{ events_ok_data|safe }};
-    let events_presta_fini = {{ events_presta_fini_data|safe }};
-    let events_post_presta = {{ events_post_presta_data|safe }};
+    const events_ok = {{ events_ok_data|safe }};
+    const events_presta_fini = {{ events_presta_fini_data|safe }};
+    const events_post_presta = {{ events_post_presta_data|safe }};
+    const calendarData = {{ calendar_data|safe }};
+</script>
 
-    console.log("📅 Événements chargés :", { events_ok, events_presta_fini, events_post_presta });
-
+<!-- 2) Rendu du calendrier + navigation -->
+<script>
     function renderCalendar() {
         const monthYear = document.getElementById("monthYear");
         const daysContainer = document.getElementById("calendarDays");
@@ -184,15 +311,13 @@
             dayDiv.classList.add("day");
             dayDiv.textContent = day;
 
-            let dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
             if (events_ok.some(event => event.date === dateStr)) {
                 dayDiv.classList.add("acompte-ok");
-            }
-            else if (events_presta_fini.some(event => event.date === dateStr)) {
+            } else if (events_presta_fini.some(event => event.date === dateStr)) {
                 dayDiv.classList.add("presta-fini");
-            }
-            else if (events_post_presta.some(event => event.date === dateStr)) {
+            } else if (events_post_presta.some(event => event.date === dateStr)) {
                 dayDiv.classList.add("post-presta");
             }
 
@@ -201,8 +326,25 @@
         }
     }
 
+    function prevMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    }
+
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    }
+
+    document.addEventListener("DOMContentLoaded", renderCalendar);
+</script>
+
+<!-- 3) Sélection d’un jour + affichage des données calculées en Python -->
+<script>
     function selectDay(dayDiv, date) {
-        if (selectedDay) selectedDay.classList.remove("selected");
+        if (selectedDay) {
+            selectedDay.classList.remove("selected");
+        }
         selectedDay = dayDiv;
         selectedDay.classList.add("selected");
         showEvents(date);
@@ -210,22 +352,167 @@
 
     function showEvents(date) {
         const eventDetails = document.getElementById("eventDetails");
-        const eventsOfDay = [...events_ok, ...events_presta_fini, ...events_post_presta].filter(event => event.date === date);
+        const data = calendarData[date];
 
-        if (eventsOfDay.length > 0) {
-            eventDetails.innerHTML = `<h3>📅 Événements du ${date} :</h3><br>` +
-                eventsOfDay.map(e => `<p>📌 <strong>${e.title}</strong> <br> ${e.product} - ${e.ville} (${e.code_postal})</p>`).join('') + '<br>';
-        } else {
-            eventDetails.innerHTML = "<p>📭 Aucun événement ce jour-là.</p>";
+        if (!data) {
+            eventDetails.innerHTML = `
+                <div class="panel">
+                    <h3>${date}</h3>
+                    <p>Aucun événement ce jour-là.</p>
+                </div>
+            `;
+            return;
         }
+
+        // Tableau événements
+        const eventsRows = data.events.map(e => `
+            <tr>
+                <td>${e.title}</td>
+                <td>${e.ville}</td>
+                <td>${e.code_postal}</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="
+                    font-size:0.85rem;
+                    background:#f9fafb;
+                    padding: 6px 8px;
+                    border-bottom: 3px solid #777777;
+                ">
+                    <!-- Produit : toujours affiché -->
+                    <span style="
+                        display:inline-block;
+                        background:#4040ff;
+                        color:white;
+                        padding:3px 10px;
+                        border-radius:6px;
+                        font-weight:600;
+                        margin-right:8px;
+                    ">
+                        ${e.product}
+                    </span>
+
+                    <!-- Options : affichées uniquement si présentes -->
+                    ${e.options ? `
+                        <span style="
+                            display:inline-block;
+                            background:#86cdea;
+                            color:#003049;
+                            padding:3px 10px;
+                            border-radius:6px;
+                            font-weight:600;
+                        ">
+                            ${e.options}
+                        </span>
+                    ` : ""}
+                </td>
+
+            </tr>
+        `).join("");
+
+        const eventsTable = `
+            <h3>Événements du ${date}</h3>
+            <table class="events-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Ville</th>
+                        <th>CP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${eventsRows}
+                </tbody>
+            </table>
+        `;
+
+        // Tableau machines
+        const machinesRows = Object.entries(data.machines_available).map(([machine, dispo]) => {
+            const used = data.machines_used[machine] || 0;
+
+            let badgeClass = "badge-dispo-low";
+            if (dispo <= 0) {
+                badgeClass = "badge-dispo-zero";
+            } else if (dispo === (data.machines_used[machine] + dispo)) {
+                badgeClass = "badge-dispo-ok";
+            }
+
+            return `
+                <tr>
+                    <td>${machine}</td>
+                    <td>${used}</td>
+                    <td><span class="badge-dispo ${badgeClass}">${dispo}</span></td>
+                </tr>
+            `;
+        }).join("");
+
+        const machinesTable = `
+            <h4>Machines disponibles ce jour</h4>
+            <table class="machines-table">
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>Réservées</th>
+                        <th>Disponibles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${machinesRows}
+                </tbody>
+            </table>
+        `;
+
+        // Tableau options
+        const optionsRows = Object.entries(data.options_available).map(([opt, dispo]) => {
+            const used = data.options_used[opt] || 0;
+
+            let badgeClass = "badge-dispo-low";
+            if (dispo <= 0) {
+                badgeClass = "badge-dispo-zero";
+            } else if (dispo === (data.options_used[opt] + dispo)) {
+                badgeClass = "badge-dispo-ok";
+            }
+
+            return `
+                <tr>
+                    <td>${opt}</td>
+                    <td>${used}</td>
+                    <td><span class="badge-dispo ${badgeClass}">${dispo}</span></td>
+                </tr>
+            `;
+        }).join("");
+
+        const optionsTable = `
+            <h4>Options disponibles ce jour</h4>
+            <table class="options-table">
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Réservées</th>
+                        <th>Disponibles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${optionsRows}
+                </tbody>
+            </table>
+        `;
+
+        eventDetails.innerHTML = `
+            <div class="day-details">
+                <div class="day-col panel events-panel">
+                    ${eventsTable}
+                </div>
+                <div class="day-col">
+                    <div class="panel machines-panel">
+                        ${machinesTable}
+                    </div>
+                    <div class="panel options-panel" style="margin-top:12px;">
+                        ${optionsTable}
+                    </div>
+                </div>
+            </div>
+        `;
     }
-
-    function prevMonth() { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
-    function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
-
-    renderCalendar();
 </script>
-
-
 
 {% endblock %}

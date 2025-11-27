@@ -12,6 +12,10 @@ from ..module.cloud.get_pcloud_data import get_pcloud_event_folder_data, upload_
     get_public_image_link_from_path
 from ..module.mail.send_mail_event import send_mail_event
 from django.template.loader import render_to_string
+
+from ..module.team.team_calendar import get_event_statuses, build_event_data, get_stock_machines, get_stock_options, \
+    group_events_by_date
+
 today_date = datetime.now().date()
 from django.utils.timezone import now
 
@@ -50,10 +54,12 @@ def upload_image(request, event_id):
 
     return redirect('template_to_do')
 
+
 def send_template_to_client(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     send_mail_event(event, 'envoi_template')
     return redirect('template_to_do')
+
 
 def view_image(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -101,39 +107,43 @@ def media_collected(request, event_id):
     return redirect('team_post_presta')
 
 
-def transform_event_data(events):
-    """
-    Transforme une liste d'événements en une structure JSON.
-    """
-    return [
-        {
-            "date": e.event_details.date_evenement.strftime('%Y-%m-%d'),
-            "title": e.client.nom,
-            "product": e.event_product.get_selected_booths(),
-            "ville": e.event_details.ville_evenement,
-            "code_postal": str(e.event_details.code_postal_evenement)[:2],
-        }
-        for e in events
-    ]
-
-
 def calendar(request):
-    # Récupération des événements par statut
-    event_statuses = {
-        "events_ok_data": Event.objects.filter(status="Acompte OK"),
-        "events_presta_fini_data": Event.objects.filter(status="Presta FINI"),
-        "events_post_presta_data": Event.objects.filter(status="Post Presta"),
-        "events_devis_en_cours_data": Event.objects.exclude(status__in=[
-            "Acompte OK", "Presta FINI", "Post Presta", "Refused"]),
+    # 1) Récupérer les événements bruts par statut
+    event_statuses = get_event_statuses()
+
+    # 2) Transformer en listes Python prêtes pour le JSON
+    event_data = build_event_data(event_statuses)
+
+    # 3) Récupérer les stocks
+    stock_machines = get_stock_machines()
+    stock_options = get_stock_options()
+
+    # 4) Fusionner tous les événements pour le calcul par jour
+    full_events = (
+        event_data["events_ok_data"]
+        + event_data["events_presta_fini_data"]
+        + event_data["events_post_presta_data"]
+    )
+
+    # 5) Groupement par date + calcul des dispos machines/options
+    grouped_by_date = group_events_by_date(
+        full_events,
+        stock_machines,
+        stock_options
+    )
+
+    # 6) Envoi au template (ici seulement json.dumps pour JS)
+    context = {
+        # Pour colorer les jours dans le calendrier
+        "events_ok_data": json.dumps(event_data["events_ok_data"]),
+        "events_presta_fini_data": json.dumps(event_data["events_presta_fini_data"]),
+        "events_post_presta_data": json.dumps(event_data["events_post_presta_data"]),
+
+        # Pour afficher le détail du jour
+        "calendar_data": json.dumps(grouped_by_date),
     }
 
-    # Transformation des données pour l'affichage
-    event_data = {
-        key: transform_event_data(value)
-        for key, value in event_statuses.items()
-    }
-    print(event_data['events_presta_fini_data'])
-    return render(request, 'app/team/calendar.html', event_data)
+    return render(request, "app/team/calendar.html", context)
 
 
 def relance_client(request):
