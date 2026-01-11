@@ -103,7 +103,24 @@ def tracage_figure_bar_bokeh(df_all_prix, date_now):
                                                  months=["%d %b %Y"],
                                                  years=["%d %b %Y"]
                                                       )
-    layout = column(graph2025, graph2024, graph2023, graph2022, graph2021)
+
+    # GRAPHE 2026
+    graph2026 = figure(title="2026", width=1150, height=300,tools=[hover])
+    graph2026.vbar(x='date4', top ='Prix', fill_alpha=0, width=datetime.timedelta(weeks=1), source=source)
+    graph2026.vbar_stack(produit, x='Date-Event', fill_color=colors, legend_label=produit,
+                         source=source, width=datetime.timedelta(weeks=1))
+    graph2026.legend.background_fill_alpha = 0.2
+    graph2026.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
+    graph2026.x_range = Range1d(pd.to_datetime("2026-01-01"), pd.to_datetime("2026-12-30"))
+
+    graph2026.y_range = Range1d(0, 3300)
+    graph2026.legend.location = "top_left"
+    graph2026.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
+                                                 months=["%d %b %Y"],
+                                                 years=["%d %b %Y"]
+                                                      )
+
+    layout = column(graph2026, graph2025, graph2024, graph2023, graph2022, graph2021)
 
     return components(layout)
 
@@ -179,7 +196,7 @@ def tracage_figure_bar_potentiel(df_brut_net, df_brut_net_before, date_now):
 
 def table_graph(df_brut_net, date_now):
 
-    lst_year = [2025, 2024, 2023, 2022]
+    lst_year = [2026, 2025, 2024, 2023, 2022]
     script = []
     div = []
     for year in lst_year:

@@ -187,7 +187,7 @@ def tracer_figure_pie_chart_month(df_all_ok, df_all_cost, year):
 
 def table_graph_pie(df_all_ok, df_all_cost):
 
-    lst_year = [2025, 2024, 2023, 2022]
+    lst_year = [2026, 2025, 2024, 2023, 2022]
     script = []
     div = []
     for year in lst_year:
