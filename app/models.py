@@ -13,6 +13,7 @@ class Client(models.Model):
 
     HOW_FIND = [
         ('INSTAGRAM', 'INSTAGRAM'),
+        ('LINKEDIN', 'LINKEDIN'),
         ('SITE INTERNET', 'SITE INTERNET'),
         ('LEBONCOIN', 'LEBONCOIN'),
         ('RECOMMENDATION', 'RECOMMENDATION'),

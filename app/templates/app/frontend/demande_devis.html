@@ -57,6 +57,7 @@
       <label for="client_how_find" class="form-label">Comment nous avez-vous trouvé ?</label>
       <select class="form-select" id="client_how_find" name="client_how_find" required>
       <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' %}selected{% endif %}>INSTAGRAM</option>
+      <option value="LINKEDIN" {% if form.client_how_find == 'LINKEDINT' %}selected{% endif %}>LINKEDIN</option>
       <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>SITE INTERNET</option>
       <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>LEBONCOIN</option>
       <option value="RECOMMANDATION" {% if form.client_how_find == 'RECOMMANDATION' %}selected{% endif %}>RECOMMANDATION</option>
