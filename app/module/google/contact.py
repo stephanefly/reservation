@@ -68,8 +68,8 @@ def normalize_fr_phone(phone: str) -> str:
     return phone  # fallback minimal
 
 
-def find_contact_by_event_id(service, event_id: int):
-    query = f"event_id_{event_id}"
+def find_contact_by_event_id(service, event):
+    query = f"event_id_{event.id}"
 
     try:
         res = service.people().searchContacts(
@@ -81,11 +81,16 @@ def find_contact_by_event_id(service, event_id: int):
         return None, None, None
 
     results = res.get("results", [])
+
+    # Aucun contact trouvé → on le crée
     if not results:
+        create_google_contact(event)
         return None, None, None
 
+    # Contact trouvé
     person = results[0]["person"]
     return person, person.get("resourceName"), person.get("etag")
+
 
 
 
@@ -99,7 +104,7 @@ def update_contact_keep_phone(event):
     phone = normalize_fr_phone(raw_phone)
 
     try:
-        person, resource, etag = find_contact_by_event_id(svc, event.id)
+        person, resource, etag = find_contact_by_event_id(svc, event)
     except Exception as e:
         print(f"Erreur dans find_contact_by_event_id pour event {event.id}: {e}")
         return False
