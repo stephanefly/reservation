@@ -6,7 +6,7 @@ from email.utils import formataddr
 from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
 import requests
-
+from datetime import datetime
 from app.module.cloud.get_pcloud_data import get_public_image_link_from_path
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
@@ -81,6 +81,32 @@ def complete_mail_with_file_to_send(event, file_to_send):
 
     return part
 
+
+
+def send_mail_system_token_missing():
+    server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
+    server.login(MAIL_MYSELFIEBOOTH, MP)
+
+    subject = "Token manquant – action requise (generate_token.py)"
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
+    msg['To'] = "contact@myselfiebooth-paris.fr"
+
+    template_path = os.path.join(MAIL_TEMPLATE_REPOSITORY, "system/mail_token_manquant.html")
+    with open(template_path, 'r', encoding='utf-8') as fichier_html:
+        html_message = fichier_html.read()
+
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    html_message = html_message.replace("{{DATE}}", date_str)
+
+    msg.attach(MIMEText(html_message, 'html'))
+
+    server.sendmail(MAIL_MYSELFIEBOOTH, [msg['To']] + [MAIL_BCC], msg.as_string())
+    server.quit()
+
+    return True
 
 def get_mail_template(event, mail_type):
 
@@ -164,6 +190,10 @@ def get_mail_template(event, mail_type):
         template_name = "clients/mail_envoi_template.html"
         file_to_send.append('template_file')
         copy_mail.append("djordan.cartier@myselfiebooth-paris.fr")
+
+    elif mail_type == 'token_manquant':
+        subject = "Token manquant – action requise (generate_token.py)"
+        template_name = "system/mail_token_manquant.html"
 
     else:
         # Lever une erreur si le type de mail fourni n'est pas reconnu

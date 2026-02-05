@@ -1,5 +1,7 @@
 import warnings
 
+from app.module.mail.send_mail_event import send_mail_system_token_missing
+
 # Masquer uniquement le FutureWarning de google.api_core
 warnings.filterwarnings(
     "ignore",
@@ -33,7 +35,7 @@ def _service(token_path):
     token_path = pathlib.Path(token_path)
 
     if not token_path.exists():
-        # Ici tu forces l’admin à lancer generate_token.py une fois
+        send_mail_system_token_missing()
         raise RuntimeError("token.json manquant, lance d'abord generate_token.py")
 
     creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
