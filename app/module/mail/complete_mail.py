@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from app.models import EmailTracking
+from django.apps import apps
 
 
 def complete_mail(event, soup, mail_type):
@@ -127,7 +127,7 @@ def _handle_unsubscribe(event, soup):
 
 
 def _handle_tracer(event, soup):
-
+    EmailTracking = apps.get_model("app", "EmailTracking")
     # Enregistrer le tracking en base de données
     email_traced = EmailTracking.objects.create(
         event_traced=event.id,

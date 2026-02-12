@@ -1,4 +1,4 @@
-from app.models import Client, EventDetails, EventProduct, EventOption, Event
+from django.apps import apps
 from django.db import transaction
 from datetime import datetime
 from app.module.data_bdd.price import PRIX_PRODUITS
@@ -37,6 +37,11 @@ def get_confirmation_data(request):
 
 
 def initialize_event(post_data):
+    Client = apps.get_model("app", "Client")
+    EventDetails = apps.get_model("app", "EventDetails")
+    EventProduct = apps.get_model("app", "EventProduct")
+    EventOption = apps.get_model("app", "EventOption")
+    Event = apps.get_model("app", "Event")
     print("initialize_event : " +str(post_data))
 
     with transaction.atomic():
@@ -140,6 +145,7 @@ def initialize_event(post_data):
         event.save()
 
         return event
+
 
 def prix_brut_calculs(event):
 
