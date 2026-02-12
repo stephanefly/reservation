@@ -82,6 +82,15 @@
         margin-top: 20px;
         color: white;
     }
+    .button-media {
+        background-color: #8a3fa9; /* Violet */
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        color: white;
+    }
 
     .button-relance-avis {
         background-color: #8e5b00; /* Rouge */
@@ -345,6 +354,10 @@
 <form method="POST" action="{% url 'relance_espace_client' event.id %}">
     {% csrf_token %}
     <button type="submit" class="button-relance">Relance espace client</button>
+</form>
+<form method="POST" action="{% url 'send_media' event.id %}">
+    {% csrf_token %}
+    <button type="submit" class="button-media">Envoi Media</button>
 </form>
 <form method="POST" action="{% url 'refused_devis' event.id %}">
     {% csrf_token %}
