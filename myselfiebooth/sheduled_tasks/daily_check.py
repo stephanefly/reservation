@@ -1,6 +1,8 @@
 import os
 import sys
 
+from myselfiebooth.settings import GOOGLE_TOKEN
+
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
@@ -17,7 +19,8 @@ django.setup()
 from app.models import Event, EventPostPrestation
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.notion.notion_service import create_notion_card
-from app.module.google.contact import update_contact_keep_phone
+from app.module.google.contact import update_contact_keep_phone, test_service
+
 
 def daily_event_integrity_check():
     # Exemple : tous les events "OK" mais avec des indices d'incomplet
@@ -29,6 +32,12 @@ def daily_event_integrity_check():
     # events_ok = Event.objects.filter(pk__in=[2766])
 
     event_errors = {}  # event_id → dict des KO
+
+    # test google token
+    try:
+        test_service(GOOGLE_TOKEN)
+    except Exception as e:
+        print(f"[KO] Google Contacts → {e}")
 
     def mark_error(event, key):
         """Marque une fonction comme KO pour un event."""

@@ -30,12 +30,18 @@ SCOPES: List[str] = ["https://www.googleapis.com/auth/contacts"]
 # Services & utilitaires
 # ────────────────────────────────────────────────────────────────────────────────
 
+def test_service(token_path):
+    # Accepte une string (depuis settings) ou un Path
+    token_path = pathlib.Path(token_path)
+    if not token_path.exists():
+        send_mail_system_token_missing()
+        raise RuntimeError("token.json manquant, lance d'abord generate_token.py")
+
 def _service(token_path):
     # Accepte une string (depuis settings) ou un Path
     token_path = pathlib.Path(token_path)
 
     if not token_path.exists():
-        send_mail_system_token_missing()
         raise RuntimeError("token.json manquant, lance d'abord generate_token.py")
 
     creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
