@@ -159,12 +159,12 @@ class EventOption(models.Model):
     PanneauFontaine = models.BooleanField(default=False)
     PanneauFontaine_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_PanneauFontaine(self):
-        return 150
+        return 200
 
     VideoLivreOr = models.BooleanField(default=False)
     VideoLivreOr_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_VideoLivreOr(self):
-        return 150
+        return 200
 
     magnets = models.IntegerField(null=True, blank=True)
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
