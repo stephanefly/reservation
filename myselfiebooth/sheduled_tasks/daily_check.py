@@ -1,7 +1,7 @@
 import os
 import sys
 
-from myselfiebooth.settings import GOOGLE_TOKEN
+
 
 # Chemin absolu du répertoire parent de 'myselfiebooth'
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +15,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myselfiebooth.settings')
 import django
 
 django.setup()
-
+from myselfiebooth.settings import GOOGLE_TOKEN
 from app.models import Event, EventPostPrestation
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.notion.notion_service import create_notion_card
