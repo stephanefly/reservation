@@ -1,4 +1,3 @@
-
 {% extends 'app/frontend/index.html' %}
 {% load static %}
 {% block content %}
@@ -14,7 +13,7 @@
         <p class="hero-kicker">Demande de devis</p>
         <h1>Composez votre animation événementielle</h1>
         <p class="hero-subtitle">
-            Choisissez votre animation, ajoutez vos options, puis recevez votre devis personnalisé.
+            Choisissez vos animations, ajoutez vos options, puis recevez une proposition adaptée à votre événement.
         </p>
     </section>
 
@@ -22,6 +21,7 @@
         <div class="progress-line">
             <div class="progress-line-fill" id="progressFill"></div>
         </div>
+
         <div class="progress-steps">
             <span class="progress-dot active" data-step="1">1</span>
             <span class="progress-dot" data-step="2">2</span>
@@ -38,7 +38,7 @@
                 <div class="step-header">
                     <p class="step-label">Étape 1</p>
                     <h2>Quelle animation souhaitez-vous ?</h2>
-                    <p>Sélectionnez une ou plusieurs animations pour créer une formule adaptée à votre événement.</p>
+                    <p>Sélectionnez une ou plusieurs prestations. Les combinaisons permettent d’obtenir une proposition plus avantageuse.</p>
                 </div>
 
                 <div class="included-starter">
@@ -57,7 +57,7 @@
 
                         <div class="included-pill">
                             <strong>Personnalisation</strong>
-                            <span>Modèle adapté à l’événement</span>
+                            <span>Modèle photo adapté à l’événement</span>
                         </div>
 
                         <div class="included-pill">
@@ -124,10 +124,10 @@
                     <strong>Combinez plusieurs animations</strong>
 
                     <ul>
-                        <li>Des réductions sont appliquées lorsque plusieurs animations sont sélectionnées.</li>
+                        <li>Des réductions peuvent être appliquées lorsque plusieurs animations sont sélectionnées.</li>
                         <li>Le combo Miroirbooth + 360 Booth est très apprécié pour les mariages, soirées privées et événements premium.</li>
-                        <li>Plus vous sélectionnez d’animations, plus les réductions deviennent avantageuses sur votre formule.</li>
-                        <li>Selon le combo choisi, certaines options comme le Phonebooth audio ou le mur floral peuvent être proposées à tarif réduit, voire offertes dans la proposition finale.</li>
+                        <li>Plus la formule est complète, plus la proposition peut être optimisée.</li>
+                        <li>Le Phonebooth audio et/ou le mur floral peuvent aussi être ajoutés selon le combo choisi, parfois à tarif réduit ou offerts dans la proposition finale.</li>
                     </ul>
                 </div>
             </section>
@@ -136,107 +136,157 @@
                 <div class="step-header compact-step-header">
                     <p class="step-label">Étape 2</p>
                     <h2>Options liées</h2>
-                    <p>Uniquement les options compatibles avec vos animations.</p>
+                    <p>Les options ci-dessous s’affichent selon les animations sélectionnées.</p>
                 </div>
 
-                <div class="related-options-stack clean-options-stack">
-                    <div class="linked-option-zone option-group-zone clean-option-group" data-for="Photobooth,Miroirbooth">
-                        <div class="option-group-header clean-group-header">
-                            <strong>Photobooth / Miroirbooth</strong>
-                        </div>
+                <div class="empty-related-options" id="emptyRelatedOptions">
+                    Sélectionnez d’abord une animation à l’étape précédente pour voir les options compatibles.
+                </div>
 
-                        <div class="single-line-options">
-                            <div class="magnet-line-option">
-                                <img src="{% static 'img/magnets.png' %}" alt="Magnets photos">
+   <div class="related-options-stack clean-options-stack">
+                <div class="linked-option-zone option-group-zone clean-option-group" data-for="Photobooth,Miroirbooth">
+                    <div class="option-group-header clean-group-header">
+                        <strong>Photobooth / Miroirbooth</strong>
+                        <span>Souvenirs imprimés et décor</span>
+                    </div>
 
-                                <div class="option-line-main">
-                                    <strong>Magnets photos</strong>
-                                    <span id="MagnetDisplayText">Sans magnets</span>
-                                </div>
+                    <div class="single-line-options">
 
-                                <input
-                                    type="hidden"
-                                    value="0"
-                                    name="magnets_range"
-                                    id="MagnetsRange"
-                                >
+                        <article class="choice-card option-card selectable-option linked-option line-option-card full-line-option"
+                                 data-value="MurFloral"
+                                 data-title="Mur floral"
+                                 data-for="Photobooth,Miroirbooth">
+                            <img src="{% static 'img/allmur.jpg' %}" alt="Mur floral">
 
-                                <div class="magnet-line-actions" aria-label="Choix du nombre de magnets">
-                                    <button type="button" class="magnet-choice selected" data-value="0">Sans</button>
-                                    <button type="button" class="magnet-choice" data-value="50">50</button>
-                                    <button type="button" class="magnet-choice" data-value="100">100</button>
-                                    <button type="button" class="magnet-choice" data-value="150">150</button>
-                                    <button type="button" class="magnet-choice recommended" data-value="200">200</button>
-                                    <button type="button" class="magnet-choice" data-value="250">250</button>
-                                    <button type="button" class="magnet-choice" data-value="300">300</button>
-                                </div>
+                            <div class="choice-content option-line-main">
+                                <strong>Mur floral</strong>
+                                <span>Décor photo premium</span>
+                            </div>
+                        </article>
+
+                        <div class="quantity-line-option" data-option-key="magnets_range">
+                            <img src="{% static 'img/magnets.png' %}" alt="Magnets photos">
+
+                            <div class="option-line-main">
+                                <strong>Magnets photos</strong>
+                                <span id="MagnetDisplayText">Photo imprimée sur magnet rigide, avec rendu premium.</span>
+                                <small>
+                                    Idéal pour offrir un vrai souvenir aimanté aux invités. La photo est directement intégrée sur un support magnet, plus qualitatif et plus durable.
+                                </small>
                             </div>
 
-                            <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="MurFloral" data-title="Mur floral" data-for="Photobooth,Miroirbooth">
-                                <img src="{% static 'img/allmur.jpg' %}" alt="Mur floral">
-                                <div class="choice-content option-line-main">
-                                    <strong>Mur floral</strong>
-                                    <span>Décor photo</span>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
+                            <input type="hidden" value="0" name="magnets_range" id="MagnetsRange">
 
-                    <div class="linked-option-zone option-group-zone clean-option-group" data-for="Voguebooth">
-                        <div class="option-group-header clean-group-header">
-                            <strong>Vogue Booth</strong>
+                            <div class="quantity-line-actions magnet-line-actions" aria-label="Choix du nombre de magnets">
+                                <button type="button" class="quantity-choice magnet-choice selected" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="0">Sans</button>
+                                <button type="button" class="quantity-choice magnet-choice" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="50">50</button>
+                                <button type="button" class="quantity-choice magnet-choice" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="100">100</button>
+                                <button type="button" class="quantity-choice magnet-choice" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="150">150</button>
+                                <button type="button" class="quantity-choice magnet-choice recommended" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="200">200</button>
+                                <button type="button" class="quantity-choice magnet-choice" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="250">250</button>
+                            </div>
                         </div>
 
-                        <div class="single-line-options">
-                            <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="PhotographeVoguebooth" data-title="Photographe Vogue Booth" data-for="Voguebooth">
-                                <img src="{% static 'img/photographe-voguebooth.jpg' %}" alt="Photographe Vogue Booth">
-                                <div class="choice-content option-line-main">
-                                    <strong>Photographe Vogue Booth</strong>
-                                    <span>Rendu premium</span>
-                                </div>
-                            </article>
+                        <div class="quantity-line-option" data-option-key="PorteCles_range">
+                            <img src="{% static 'img/PorteCles.png' %}" alt="Porte-clés photos">
 
-                            <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="ImpressionVoguebooth" data-title="Impression Vogue Booth" data-for="Voguebooth">
-                                <img src="{% static 'img/impression-voguebooth.jpg' %}" alt="Impression Vogue Booth">
-                                <div class="choice-content option-line-main">
-                                    <strong>Impression Vogue Booth</strong>
-                                    <span>Souvenir imprimé</span>
-                                </div>
-                            </article>
+                            <div class="option-line-main">
+                                <strong>Porte-clés photos</strong>
+                                <span id="PorteClesDisplayText">Photo personnalisée intégrée dans un porte-clés souvenir.</span>
+                                <small>
+                                    Format pratique à emporter partout. Parfait pour les mariages, anniversaires et événements où chaque invité repart avec un cadeau personnalisé.
+                                </small>
+                            </div>
 
-<!--                            <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="DecorVoguebooth" data-title="Décor Vogue Booth" data-for="Voguebooth">-->
-<!--                                <img src="{% static 'img/decoration-voguebooth.jpg' %}" alt="Décor Vogue Booth">-->
-<!--                                <div class="choice-content option-line-main">-->
-<!--                                    <strong>Décor Vogue Booth</strong>-->
-<!--                                    <span>Effet magazine</span>-->
-<!--                                </div>-->
-<!--                            </article>-->
-                        </div>
-                    </div>
+                            <input type="hidden" value="0" name="PorteCles_range" id="PorteClesRange">
 
-                    <div class="linked-option-zone option-group-zone clean-option-group" data-for="360Booth,360Airbooth">
-                        <div class="option-group-header clean-group-header">
-                            <strong>360 Booth / 360 AirBooth</strong>
+                            <div class="quantity-line-actions portecles-line-actions" aria-label="Choix du nombre de porte-clés">
+                                <button type="button" class="quantity-choice PorteCles-choice selected" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="0">Sans</button>
+                                <button type="button" class="quantity-choice PorteCles-choice" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="50">50</button>
+                                <button type="button" class="quantity-choice PorteCles-choice" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="100">100</button>
+                                <button type="button" class="quantity-choice PorteCles-choice" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="150">150</button>
+                                <button type="button" class="quantity-choice PorteCles-choice recommended" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="200">200</button>
+                                <button type="button" class="quantity-choice PorteCles-choice" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="250">250</button>
+
+                            </div>
                         </div>
 
-                        <div class="single-line-options">
-                            <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="Fond360" data-title="Fond 360 Booth" data-for="360Booth,360Airbooth">
-                                <img src="{% static 'img/fond360.jpg' %}" alt="Fond 360 Booth">
-                                <div class="choice-content option-line-main">
-                                    <strong>Fond 360</strong>
-                                    <span>Vidéo plus propre</span>
-                                </div>
-                            </article>
+                        <div class="quantity-line-option" data-option-key="MagnetsSimple_range">
+                            <img src="{% static 'img/MagnetsSimple.png' %}" alt="Magnets simples">
+
+                            <div class="option-line-main">
+                                <strong>Magnets simples</strong>
+                                <span id="MagnetsSimpleDisplayText">Tirage photo classique avec magnet collé au dos.</span>
+                                <small>
+                                    Solution simple et efficace : la photo photobooth reste au format tirage classique, avec un dos magnétique ajouté pour pouvoir l’accrocher sur un frigo ou une surface métallique.
+                                </small>
+                            </div>
+
+                            <input type="hidden" value="0" name="MagnetsSimple_range" id="MagnetsSimpleRange">
+
+                            <div class="quantity-line-actions magnetssimple-line-actions" aria-label="Choix du nombre de magnets simples">
+                                <button type="button" class="quantity-choice MagnetsSimple-choice selected" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="0">Sans</button>
+                                <button type="button" class="quantity-choice MagnetsSimple-choice" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="50">50</button>
+                                <button type="button" class="quantity-choice MagnetsSimple-choice" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="100">100</button>
+                                <button type="button" class="quantity-choice MagnetsSimple-choice" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="150">150</button>
+                                <button type="button" class="quantity-choice MagnetsSimple-choice recommended" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="200">200</button>
+                                <button type="button" class="quantity-choice MagnetsSimple-choice" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="250">250</button>
+                            </div>
                         </div>
+
+
                     </div>
                 </div>
+
+                <div class="linked-option-zone option-group-zone clean-option-group" data-for="Voguebooth">
+                    <div class="option-group-header clean-group-header">
+                        <strong>Vogue Booth</strong>
+                        <span>Options premium</span>
+                    </div>
+
+                    <div class="single-line-options">
+                        <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="PhotographeVoguebooth" data-title="Photographe Vogue Booth" data-for="Voguebooth">
+                            <img src="{% static 'img/photographe-voguebooth.jpg' %}" alt="Photographe Vogue Booth">
+                            <div class="choice-content option-line-main">
+                                <strong>Photographe Vogue Booth</strong>
+                                <span>Rendu premium</span>
+                            </div>
+                        </article>
+
+                        <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="ImpressionVoguebooth" data-title="Impression Vogue Booth" data-for="Voguebooth">
+                            <img src="{% static 'img/impression-voguebooth.jpg' %}" alt="Impression Vogue Booth">
+                            <div class="choice-content option-line-main">
+                                <strong>Impression Vogue Booth</strong>
+                                <span>Souvenir imprimé</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="linked-option-zone option-group-zone clean-option-group" data-for="360Booth,360Airbooth">
+                    <div class="option-group-header clean-group-header">
+                        <strong>360 Booth / 360 AirBooth</strong>
+                        <span>Options vidéo</span>
+                    </div>
+
+                    <div class="single-line-options">
+                        <article class="choice-card option-card selectable-option linked-option line-option-card" data-value="Fond360" data-title="Fond 360 Booth" data-for="360Booth,360Airbooth">
+                            <img src="{% static 'img/fond360.jpg' %}" alt="Fond 360 Booth">
+                            <div class="choice-content option-line-main">
+                                <strong>Fond 360</strong>
+                                <span>Vidéo plus propre</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
             </section>
 
             <section class="wizard-step" data-title="Options générales">
                 <div class="step-header compact-step-header">
                     <p class="step-label">Étape 3</p>
                     <h2>Options générales</h2>
-                    <p>À ajouter selon votre événement.</p>
+                    <p>Ajoutez les éléments utiles pour renforcer l’expérience de vos invités.</p>
                 </div>
 
                 <div class="single-line-options general-options-list">
@@ -294,7 +344,7 @@
                 <div class="step-header">
                     <p class="step-label">Étape 4</p>
                     <h2>Durée de présence</h2>
-                    <p>Choisissez la durée souhaitée, de 3h à 9h.</p>
+                    <p>Choisissez la durée souhaitée, de 3h à 7h.</p>
                 </div>
 
                 <div class="included-mini-line">
@@ -323,7 +373,9 @@
                 <div class="multi-offer-banner">
                     <div class="offer-badge">Astuce</div>
                     <p>
-5h est la durée idéale pour profiter pleinement de l’animation. Pour une très grande soirée, 7h être plus adapté.
+                    5h est généralement la durée idéale pour couvrir l’arrivée des invités, le repas et le début de soirée.
+                    Pour une très grande soirée, 7h peut être plus adapté.
+                    Pour une durée différente ou une prestation jusqu’à la fin de l’événement, contactez-nous pour une formule adaptée.
                     </p>
                 </div>
             </section>
@@ -385,31 +437,16 @@
                     </div>
 
                     <div class="field-block">
-    <label for="client_how_find" class="form-label">Comment nous avez-vous trouvé ?</label>
-    <select class="form-select" id="client_how_find" name="client_how_find" required>
-        <option value="" disabled>Sélectionner</option>
-
-        <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' or not form.client_how_find %}selected{% endif %}>
-            Instagram
-        </option>
-
-        <option value="LINKEDIN" {% if form.client_how_find == 'LINKEDIN' %}selected{% endif %}>
-            LinkedIn
-        </option>
-
-        <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>
-            Site internet
-        </option>
-
-        <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>
-            Leboncoin
-        </option>
-
-        <option value="RECOMMANDATION" {% if form.client_how_find == 'RECOMMANDATION' %}selected{% endif %}>
-            Recommandation
-        </option>
-    </select>
-</div>
+                        <label for="client_how_find" class="form-label">Comment nous avez-vous trouvé ?</label>
+                        <select class="form-select" id="client_how_find" name="client_how_find" required>
+                            <option value="" disabled>Sélectionner</option>
+                            <option value="INSTAGRAM" {% if form.client_how_find == 'INSTAGRAM' or not form.client_how_find %}selected{% endif %}>Instagram</option>
+                            <option value="LINKEDIN" {% if form.client_how_find == 'LINKEDIN' %}selected{% endif %}>LinkedIn</option>
+                            <option value="SITE INTERNET" {% if form.client_how_find == 'SITE INTERNET' %}selected{% endif %}>Site internet</option>
+                            <option value="LEBONCOIN" {% if form.client_how_find == 'LEBONCOIN' %}selected{% endif %}>Leboncoin</option>
+                            <option value="RECOMMANDATION" {% if form.client_how_find == 'RECOMMANDATION' %}selected{% endif %}>Recommandation</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-grid single">
@@ -489,8 +526,14 @@
         --danger-text: #7a1111;
     }
 
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
     .quote-wizard {
-        width: min(1180px, 100%);
+        width: min(1220px, 100%);
         margin: 0 auto;
         padding: 16px 12px 100px;
         color: var(--white);
@@ -618,22 +661,6 @@
         transform: translateY(0);
     }
 
-    .wizard-step.is-entering,
-    .wizard-step.is-exiting {
-        display: block;
-        pointer-events: none;
-    }
-
-    .wizard-step.is-entering {
-        opacity: 0;
-        transform: translateY(14px);
-    }
-
-    .wizard-step.is-exiting {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
     .step-header h2 {
         margin: 0;
         font-size: clamp(24px, 6vw, 40px);
@@ -703,29 +730,40 @@
     .choice-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 16px;
+    }
+
+    .single-line-options {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        width: 100%;
     }
 
     .choice-card,
-    .magnet-choice,
+    .quantity-line-option,
     .duration-panel {
         border: 1px solid rgba(244, 220, 127, 0.28);
-        border-radius: 20px;
+        border-radius: 22px;
         background: rgba(255, 255, 255, 0.06);
         color: var(--white);
     }
 
-    .choice-card {
+    .choice-card,
+    .quantity-line-option {
         overflow: hidden;
         cursor: pointer;
         position: relative;
-        min-height: 340px;
-        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
-    .choice-card img {
+    .product-card {
+        min-height: 350px;
+    }
+
+    .product-card img {
         width: 100%;
-        height: 280px;
+        height: 290px;
         object-fit: cover;
         object-position: center;
         display: block;
@@ -737,6 +775,7 @@
         position: absolute;
         top: 12px;
         right: 12px;
+        z-index: 2;
         padding: 7px 11px;
         border-radius: 999px;
         background: rgba(0, 0, 0, 0.72);
@@ -747,8 +786,9 @@
     }
 
     .choice-card.selected,
-    .magnet-choice.selected {
+    .quantity-line-option.has-value {
         border-color: var(--gold);
+        background: linear-gradient(145deg, rgba(244, 220, 127, 0.16), rgba(255, 255, 255, 0.06));
         box-shadow: 0 0 0 3px rgba(244, 220, 127, 0.16), 0 20px 35px rgba(0, 0, 0, 0.3);
         transform: translateY(-2px);
     }
@@ -759,18 +799,21 @@
         color: white;
     }
 
-    .choice-content {
-        padding: 14px;
+    .choice-content,
+    .option-line-main {
+        padding: 15px;
     }
 
-    .choice-content strong {
+    .choice-content strong,
+    .option-line-main strong {
         display: block;
         color: var(--white);
         font-size: 18px;
         font-family: "Arial Black", Arial, sans-serif;
     }
 
-    .choice-content span {
+    .choice-content span,
+    .option-line-main span {
         display: block;
         margin-top: 7px;
         color: #dcdcdc;
@@ -810,25 +853,177 @@
         margin-bottom: 12px;
     }
 
-    .multi-offer-banner p {
-        margin: 0;
-        color: #f7f7f7;
-        font-size: 17px;
-        line-height: 1.55;
-        font-weight: 700;
-    }
-
     .multi-offer-banner ul {
-        margin: 12px 0 0;
-        padding-left: 20px;
-        color: #f7f7f7;
-        font-size: 15px;
-        line-height: 1.55;
-        font-weight: 700;
+        margin: 0;
+        padding-left: 18px;
     }
 
-    .multi-offer-banner li {
-        margin-bottom: 7px;
+    .multi-offer-banner li,
+    .multi-offer-banner p {
+        color: #fff8d8;
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .empty-related-options {
+        display: none;
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px dashed rgba(244, 220, 127, 0.45);
+        color: #fff8d8;
+        font-weight: 800;
+        line-height: 1.4;
+    }
+
+    .clean-options-stack {
+        display: grid;
+        gap: 20px;
+    }
+
+    .clean-option-group {
+        padding: 16px;
+        border-radius: 24px;
+        border: 1px solid rgba(244, 220, 127, 0.26);
+        background: rgba(255, 255, 255, 0.045);
+    }
+
+    .clean-option-group.is-hidden {
+        display: none;
+    }
+
+    .clean-group-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 14px;
+    }
+
+    .clean-group-header strong {
+        color: var(--gold-soft);
+        font-family: "Arial Black", Arial, sans-serif;
+        font-size: 20px;
+    }
+
+    .clean-group-header span {
+        color: #dcdcdc;
+        font-size: 14px;
+    }
+
+    .line-option-card,
+    .quantity-line-option {
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+        overflow: hidden;
+    }
+
+    .line-option-card img,
+    .quantity-line-option img {
+        width: 100%;
+        height: clamp(210px, 30vw, 280px);
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-radius: 0;
+        filter: saturate(1.06) contrast(1.04);
+    }
+
+    .line-option-card .choice-content,
+    .quantity-line-option .option-line-main {
+        min-height: 88px;
+        padding: 15px;
+    }
+
+    .full-line-option {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 160px;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .full-line-option img {
+        width: 42%;
+        min-width: 320px;
+        max-width: 520px;
+        height: 210px;
+        object-fit: cover;
+        object-position: center;
+        flex-shrink: 0;
+    }
+
+    .full-line-option .choice-content {
+        flex: 1;
+        min-height: 210px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .full-line-option .choice-content strong {
+        font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .full-line-option .choice-content span {
+        font-size: 16px;
+    }
+
+    .quantity-line-actions {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+        padding: 0 15px 16px;
+    }
+
+    .quantity-choice {
+        position: relative;
+        min-height: 46px;
+        border: 1px solid rgba(244, 220, 127, 0.32);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--white);
+        font-weight: 900;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1;
+        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .quantity-choice:hover {
+        transform: translateY(-1px);
+        border-color: var(--gold);
+    }
+
+    .quantity-choice.selected {
+        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
+        color: white;
+        border-color: var(--gold);
+        box-shadow: 0 10px 18px rgba(90, 67, 0, 0.2);
+    }
+
+    .quantity-choice.recommended::before {
+        content: "Populaire";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
+        color: white;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
     .included-mini-line {
@@ -842,213 +1037,53 @@
         padding: 8px 10px;
         border-radius: 999px;
         background: rgba(244, 220, 127, 0.14);
-        border: 1px solid rgba(244, 220, 127, 0.25);
-        color: var(--gold-soft);
-        font-size: 12px;
+        border: 1px solid rgba(244, 220, 127, 0.32);
+        color: #fff8d8;
+        font-size: 13px;
         font-weight: 900;
     }
 
     .duration-panel {
         padding: 18px;
-        margin-top: 16px;
     }
 
-    .duration-top,
-    .duration-labels,
-    .summary-row {
+    .duration-top {
         display: flex;
         justify-content: space-between;
-        gap: 12px;
         align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
     }
 
-    .duration-top span,
-    .duration-labels span {
-        color: #dcdcdc;
+    .duration-top span {
+        color: #e7e7e7;
+        font-weight: 900;
     }
 
     .duration-top strong {
-        font-size: 32px;
-        color: var(--gold);
+        color: var(--gold-soft);
+        font-size: 28px;
         font-family: "Arial Black", Arial, sans-serif;
     }
 
     .form-range {
         width: 100%;
-        margin: 22px 0 8px;
-        accent-color: var(--gold-dark);
+        accent-color: #d8b64c;
     }
 
-    .magnet-showcase {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .magnet-photo-wrap,
-    .magnet-selector-panel {
-        border: 1px solid rgba(244, 220, 127, 0.28);
-        border-radius: 22px;
-        background: rgba(255, 255, 255, 0.06);
-        overflow: hidden;
-    }
-
-    .magnet-photo {
-        width: 100%;
-        height: 280px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .magnet-selector-panel {
-        padding: 16px;
-    }
-
-    .magnet-value-card {
-        padding: 14px;
-        border-radius: 18px;
-        background: linear-gradient(145deg, rgba(244, 220, 127, 0.2), rgba(255, 255, 255, 0.05));
-        border: 1px solid rgba(244, 220, 127, 0.28);
-    }
-
-    .magnet-value-card span {
-        display: block;
-        color: #dcdcdc;
-        font-size: 13px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .magnet-value-card strong {
-        display: block;
-        margin-top: 6px;
-        color: var(--gold-soft);
-        font-size: 26px;
-        font-family: "Arial Black", Arial, sans-serif;
-    }
-
-    .magnet-slider {
-        margin-top: 26px;
-    }
-
-    .magnet-slider-labels {
+    .duration-labels {
         display: flex;
         justify-content: space-between;
         color: #dcdcdc;
         font-size: 12px;
-        margin-top: -2px;
-    }
-
-    .magnet-presets {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-top: 18px;
-    }
-
-    .magnet-choice {
-        position: relative;
-        min-height: 48px;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.07);
-        font-weight: 900;
-        cursor: pointer;
-        font-family: Arial, sans-serif;
-    }
-
-    .magnet-choice.selected {
-        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
-        color: white;
-    }
-
-    .magnet-choice.recommended::before {
-        content: "Populaire";
-        position: absolute;
-        top: -9px;
-        right: 8px;
-        padding: 2px 7px;
-        border-radius: 999px;
-        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
-        color: white;
-        font-size: 9px;
-        font-weight: 900;
-        text-transform: uppercase;
-    }
-
-    .current-choice {
-        margin-top: 16px;
-        padding: 14px;
-        border-radius: 16px;
-        background: rgba(244, 220, 127, 0.12);
-        color: #fff8d8;
-        border: 1px solid rgba(244, 220, 127, 0.25);
-        font-size: 14px;
-        line-height: 1.45;
-    }
-
-
-    .related-options-intro,
-    .magnet-zone-title {
-        margin: 0 0 16px;
-        padding: 14px;
-        border-radius: 18px;
-        background: rgba(244, 220, 127, 0.12);
-        border: 1px solid rgba(244, 220, 127, 0.25);
-    }
-
-    .related-options-intro strong,
-    .magnet-zone-title strong {
-        display: block;
-        color: var(--gold-soft);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: 17px;
-    }
-
-    .related-options-intro span,
-    .magnet-zone-title span {
-        display: block;
-        margin-top: 6px;
-        color: #dedede;
-        font-size: 14px;
-        line-height: 1.45;
-    }
-
-    .option-family-label {
-        display: inline-block;
-        margin-bottom: 8px;
-        padding: 5px 9px;
-        border-radius: 999px;
-        background: rgba(244, 220, 127, 0.14);
-        color: var(--gold-soft);
-        border: 1px solid rgba(244, 220, 127, 0.28);
-        font-size: 11px;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .linked-option-zone {
-        margin-top: 18px;
-    }
-
-    .linked-option-zone.is-hidden {
-        display: none;
-    }
-
-    .compact-offer-banner p {
-        font-size: 15px;
-    }
-
-    .option-card.is-hidden {
-        display: none;
+        margin-top: 7px;
     }
 
     .custom-radio-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
 
     .custom-radio-button input[type="radio"] {
@@ -1056,95 +1091,113 @@
     }
 
     .custom-radio-button label {
-        display: block;
-        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
         text-align: center;
-        padding: 14px 12px;
-        border: 1px solid rgba(244, 220, 127, 0.35);
+        padding: 14px;
         border-radius: 16px;
-        color: var(--white);
+        border: 1px solid rgba(244, 220, 127, 0.28);
         background: rgba(255, 255, 255, 0.06);
-        cursor: pointer;
+        color: white;
         font-weight: 900;
+        cursor: pointer;
     }
 
     .custom-radio-button input[type="radio"]:checked + label {
         background: linear-gradient(145deg, var(--gold), var(--gold-dark));
-        color: white;
         border-color: var(--gold);
+        color: white;
     }
 
     .form-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: 14px;
+        margin-bottom: 14px;
     }
 
-    .field-block label,
-    .form-label {
+    .field-block label {
         display: block;
-        margin-bottom: 7px;
         color: var(--gold-soft);
         font-weight: 900;
-        font-size: 14px;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+        margin-bottom: 7px;
     }
 
     .form-control,
     .form-select {
         width: 100%;
-        min-height: 50px;
+        min-height: 48px;
         border-radius: 14px;
-        border: 1px solid rgba(244, 220, 127, 0.35);
-        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(244, 220, 127, 0.28);
+        background: rgba(255, 255, 255, 0.94);
         color: #111111;
-        padding: 12px 13px;
-        font-size: 16px;
-        outline: none;
+        padding: 10px 12px;
+        font-size: 15px;
     }
 
     .form-control:focus,
     .form-select:focus {
+        outline: 3px solid rgba(244, 220, 127, 0.35);
         border-color: var(--gold);
-        box-shadow: 0 0 0 4px rgba(244, 220, 127, 0.22);
+    }
+
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #ff7070;
+        outline: 3px solid rgba(255, 112, 112, 0.22);
     }
 
     .wizard-actions {
-        position: sticky;
-        bottom: 0;
-        z-index: 30;
-        display: grid;
-        grid-template-columns: 1fr 1.4fr;
-        gap: 10px;
-        margin: 22px -18px -18px;
-        padding: 14px 18px;
-        background: rgba(10, 10, 10, 0.92);
-        backdrop-filter: blur(14px);
-        border-top: 1px solid rgba(244, 220, 127, 0.28);
-        border-radius: 0 0 24px 24px;
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 26px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(244, 220, 127, 0.16);
     }
 
     .primary-button,
     .secondary-button {
-        min-height: 52px;
-        border-radius: 14px;
-        border: 1px solid rgba(244, 220, 127, 0.48);
+        min-height: 54px;
+        border-radius: 16px;
+        padding: 0 24px;
         font-weight: 900;
-        font-size: 16px;
         cursor: pointer;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.15;
+        white-space: nowrap;
+        border: 1px solid transparent;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
     .primary-button {
-        background: linear-gradient(145deg, #ffef96, #5a4300);
+        flex: 1;
+        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
         color: white;
-        text-shadow: 0 1px 2px black;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 12px 28px rgba(90, 67, 0, 0.25);
     }
 
     .secondary-button {
-        background: rgba(255, 255, 255, 0.06);
+        flex: 0 0 auto;
+        min-width: 128px;
+        background: rgba(255, 255, 255, 0.12);
         color: white;
+        border-color: rgba(244, 220, 127, 0.32);
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 22px rgba(0, 0, 0, 0.22);
     }
 
     .submit-button {
@@ -1152,68 +1205,78 @@
     }
 
     .form-message {
-        margin: 12px 0 0;
+        min-height: 22px;
+        margin: 16px 0 0;
         color: var(--danger-text);
         background: var(--danger);
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 10px 12px;
         display: none;
-        font-weight: 700;
+        font-weight: 900;
     }
 
     .summary-card {
         padding: 18px;
-        position: sticky;
-        top: 90px;
         align-self: start;
     }
 
     .summary-card h3 {
-        margin: 0 0 14px;
-        font-size: 26px;
+        margin: 0 0 16px;
         color: white;
         font-family: "Arial Black", Arial, sans-serif;
+        font-size: 28px;
     }
 
     .summary-row {
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-        align-items: flex-start;
+        display: grid;
+        gap: 5px;
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(244, 220, 127, 0.17);
     }
 
     .summary-row span {
-        color: #cccccc;
-        min-width: 92px;
+        color: #dcdcdc;
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
     }
 
     .summary-row strong {
-        text-align: right;
         color: var(--gold-soft);
+        font-size: 15px;
         line-height: 1.35;
     }
 
     .summary-footer {
         margin-top: 16px;
-        padding: 12px;
-        border-radius: 14px;
-        background: rgba(244, 220, 127, 0.12);
+        padding: 14px;
+        border-radius: 16px;
+        background: rgba(244, 220, 127, 0.13);
         color: #fff8d8;
-        font-size: 13px;
-        line-height: 1.45;
+        font-weight: 900;
+        line-height: 1.4;
+    }
+    .option-line-main small {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.35;
+        color: rgba(255, 255, 255, 0.72);
+        font-weight: 400;
     }
 
+    .option-line-main span {
+        display: block;
+        margin-top: 4px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.88);
+    }
     .contact-info-v2 {
-        width: min(760px, calc(100% - 24px));
+        width: min(1220px, calc(100% - 24px));
         margin: 18px auto 40px;
-        padding: 18px;
-        text-align: center;
+        padding: 16px;
         color: #eeeeee;
-        font-family: Arial, sans-serif;
-    }
-
-    .contact-info-v2 p {
-        margin: 0;
-        line-height: 1.5;
+        text-align: center;
     }
 
     .contact-info-v2 a {
@@ -1222,991 +1285,534 @@
         text-decoration: none;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .wizard-step,
-        .progress-line-fill,
-        .progress-dot,
-        .choice-card {
-            transition: none;
-        }
-    }
-
     @media (min-width: 720px) {
-        .quote-wizard {
-            padding-inline: 24px;
-        }
-
-        .wizard-card {
-            padding: 28px;
-        }
-
-        .choice-grid,
         .included-pill-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .choice-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .single-line-options {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .magnet-showcase {
-            grid-template-columns: 0.95fr 1.05fr;
+        .full-line-option {
+            grid-column: 1 / -1;
         }
 
         .form-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .form-grid.single {
             grid-template-columns: 1fr;
         }
-
-        .wizard-actions {
-            margin: 26px -28px -28px;
-            padding: 16px 28px;
-        }
     }
 
     @media (min-width: 1020px) {
         .wizard-layout {
-            grid-template-columns: minmax(0, 1fr) 340px;
+            grid-template-columns: minmax(0, 1fr) 330px;
             align-items: start;
         }
 
-        .product-grid,
-        .option-grid {
+        .summary-card {
+            position: sticky;
+            top: 84px;
+        }
+
+        .choice-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .product-card img {
+            height: 310px;
+        }
+
+        .single-line-options {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .full-line-option {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (min-width: 1180px) {
+        .single-line-options {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .full-line-option {
+            grid-column: 1 / -1;
+        }
+
+        .general-options-list {
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 520px) {
-        .quote-wizard {
-            padding-left: 10px;
-            padding-right: 10px;
+    @media (max-width: 760px) {
+        .full-line-option {
+            flex-direction: column;
         }
 
-        .wizard-hero {
-            padding: 24px 14px;
-            border-radius: 22px;
+        .full-line-option img {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+            height: 240px;
+        }
+
+        .full-line-option .choice-content {
+            min-height: auto;
+            padding: 18px;
+        }
+
+        .full-line-option .choice-content strong {
+            font-size: 22px;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .quote-wizard {
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
         .wizard-card,
         .summary-card {
-            border-radius: 22px;
+            border-radius: 20px;
+            padding: 14px;
         }
 
-        .choice-card {
-            min-height: 350px;
+        .wizard-hero {
+            border-radius: 20px;
+            padding: 22px 14px;
         }
 
-        .choice-card img {
-            height: 280px;
+        .product-card img,
+        .line-option-card img,
+        .quantity-line-option img {
+            height: 240px;
         }
 
-        .magnet-photo {
-            height: 260px;
-        }
-
-        .summary-card {
-            position: static;
-        }
-    }
-
-
-    .compact-step-header p:not(.step-label) {
-        max-width: 560px;
-    }
-
-    .related-options-stack {
-        display: grid;
-        gap: 18px;
-    }
-
-    .option-group-zone {
-        padding: 16px;
-        border-radius: 22px;
-        background: rgba(255, 255, 255, 0.055);
-        border: 1px solid rgba(244, 220, 127, 0.28);
-    }
-
-    .option-group-zone.is-hidden {
-        display: none;
-    }
-
-    .option-group-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 12px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(244, 220, 127, 0.18);
-    }
-
-    .option-group-header strong {
-        color: var(--gold-soft);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: clamp(18px, 4vw, 24px);
-        line-height: 1.1;
-    }
-
-    .option-group-header span {
-        color: #d8d8d8;
-        font-size: 13px;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .linked-option-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .linked-option-list.one-column,
-    .linked-option-list.two-columns,
-    .linked-option-list.three-columns {
-        grid-template-columns: 1fr;
-    }
-
-    .compact-option-card {
-        min-height: 245px;
-    }
-
-    .compact-option-card img {
-        height: 170px;
-    }
-
-    .compact-option-card .choice-content {
-        padding: 12px;
-    }
-
-    .compact-option-card .choice-content strong {
-        font-size: 16px;
-    }
-
-    .compact-option-card .choice-content span {
-        font-size: 13px;
-        margin-top: 4px;
-    }
-
-    .magnet-compact-card {
-        min-height: 245px;
-        padding: 14px;
-        border-radius: 20px;
-        border: 1px solid rgba(244, 220, 127, 0.28);
-        background: rgba(255, 255, 255, 0.06);
-    }
-
-    .magnet-compact-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        padding: 13px;
-        border-radius: 16px;
-        background: rgba(244, 220, 127, 0.12);
-        border: 1px solid rgba(244, 220, 127, 0.22);
-    }
-
-    .magnet-compact-top strong {
-        color: var(--white);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: 16px;
-    }
-
-    .magnet-compact-top span {
-        color: var(--gold-soft);
-        font-weight: 900;
-        white-space: nowrap;
-    }
-
-    .compact-magnet-presets {
-        grid-template-columns: repeat(4, 1fr);
-        margin-top: 14px;
-    }
-
-    .compact-magnet-presets .magnet-choice {
-        min-height: 42px;
-    }
-
-    @media (min-width: 720px) {
-        .linked-option-list.two-columns {
+        .quantity-line-actions {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .linked-option-list.three-columns {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .linked-option-list.one-column {
-            grid-template-columns: minmax(0, 1fr);
-            max-width: 360px;
-        }
-    }
-
-    @media (max-width: 520px) {
-        .option-group-header {
-            align-items: flex-start;
+        .wizard-actions {
             flex-direction: column;
         }
 
-        .option-group-header span,
-        .magnet-compact-top span {
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+            min-width: 0;
             white-space: normal;
         }
-
-        .compact-magnet-presets {
-            grid-template-columns: repeat(2, 1fr);
-        }
     }
-
-
-    /* Étape 3 et 4 : options en lignes simples, bien classées */
-    .clean-options-stack {
-        gap: 16px;
-    }
-
-    .clean-option-group {
-        padding: 14px;
-    }
-
-    .clean-group-header {
-        margin-bottom: 10px;
-    }
-
-    .clean-group-header strong {
-        font-size: clamp(17px, 4vw, 22px);
-    }
-
-    .clean-group-header span {
-        display: none;
-    }
-
-    .single-line-options {
-        display: grid;
-        gap: 10px;
-    }
-
-    .line-option-card,
-    .magnet-line-option {
-        display: grid;
-        grid-template-columns: 72px minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 12px;
-        min-height: 0 !important;
-        padding: 10px 12px;
-        border-radius: 18px;
-        border: 1px solid rgba(244, 220, 127, 0.28);
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--white);
-    }
-
-    .line-option-card img,
-    .magnet-line-option img {
-        width: 64px;
-        height: 64px;
-        border-radius: 14px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .line-option-card .choice-content,
-    .option-line-main {
-        padding: 0;
-        min-width: 0;
-    }
-
-    .line-option-card .choice-content strong,
-    .option-line-main strong {
-        display: block;
-        color: var(--white);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: 16px;
-        line-height: 1.15;
-    }
-
-    .line-option-card .choice-content span,
-    .option-line-main span {
-        display: block;
-        margin-top: 3px;
-        color: #dcdcdc;
-        font-size: 13px;
-        line-height: 1.25;
-    }
-
-    .line-option-card::after {
-        content: "Choisir";
-        position: static;
-        justify-self: end;
-        padding: 7px 11px;
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.72);
-        color: var(--gold);
-        font-size: 12px;
-        font-weight: 900;
-        border: 1px solid rgba(244, 220, 127, 0.45);
-        white-space: nowrap;
-    }
-
-    .line-option-card.selected::after {
-        content: "Sélectionné";
-        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
-        color: white;
-    }
-
-    .magnet-line-actions {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 6px;
-        max-width: 330px;
-    }
-
-    .magnet-line-actions .magnet-choice {
-        min-height: 34px;
-        min-width: 48px;
-        padding: 0 9px;
-        border-radius: 999px;
-        font-size: 12px;
-    }
-
-    .magnet-line-actions .magnet-choice.recommended::before {
-        display: none;
-    }
-
-    .general-options-list {
-        margin-top: 4px;
-    }
-
-    @media (max-width: 640px) {
-        .line-option-card,
-        .magnet-line-option {
-            grid-template-columns: 58px minmax(0, 1fr);
-        }
-
-        .line-option-card img,
-        .magnet-line-option img {
-            width: 52px;
-            height: 52px;
-        }
-
-        .line-option-card::after,
-        .magnet-line-actions {
-            grid-column: 1 / -1;
-            justify-self: stretch;
-        }
-
-        .line-option-card::after {
-            text-align: center;
-        }
-
-        .magnet-line-actions {
-            justify-content: flex-start;
-        }
-    }
-
-
-    /* Version claire : options séparées avec grandes images */
-    .clean-options-stack {
-        display: grid;
-        gap: 22px;
-    }
-
-    .clean-option-group {
-        padding: 18px;
-        border-radius: 24px;
-        background: linear-gradient(145deg, rgba(244, 220, 127, 0.12), rgba(255, 255, 255, 0.045));
-        border: 1px solid rgba(244, 220, 127, 0.3);
-    }
-
-    .clean-group-header {
-        margin-bottom: 14px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(244, 220, 127, 0.18);
-    }
-
-    .clean-group-header strong {
-        display: block;
-        color: var(--gold-soft);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: clamp(18px, 4vw, 26px);
-        line-height: 1.1;
-    }
-
-    .single-line-options {
-        display: grid;
-        gap: 16px;
-    }
-
-    .line-option-card,
-    .magnet-line-option {
-        display: grid !important;
-        grid-template-columns: 220px minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 18px;
-        min-height: 170px !important;
-        padding: 14px !important;
-        border-radius: 22px !important;
-        border: 1px solid rgba(244, 220, 127, 0.32) !important;
-        background: rgba(255, 255, 255, 0.07) !important;
-        color: var(--white);
-        overflow: visible;
-    }
-
-    .line-option-card img,
-    .magnet-line-option img {
-        width: 220px !important;
-        height: 150px !important;
-        border-radius: 18px !important;
-        object-fit: cover;
-        display: block;
-        filter: saturate(1.08) contrast(1.04);
-    }
-
-    .line-option-card .choice-content,
-    .option-line-main {
-        padding: 0 !important;
-        min-width: 0;
-    }
-
-    .line-option-card .choice-content strong,
-    .option-line-main strong {
-        display: block;
-        color: var(--white);
-        font-family: "Arial Black", Arial, sans-serif;
-        font-size: clamp(20px, 4vw, 28px);
-        line-height: 1.08;
-    }
-
-    .line-option-card .choice-content span,
-    .option-line-main span {
-        display: block;
-        margin-top: 8px;
-        color: #dcdcdc;
-        font-size: 15px;
-        line-height: 1.3;
-    }
-
-    .line-option-card::after {
-        content: "Choisir";
-        position: static !important;
-        justify-self: end;
-        align-self: center;
-        padding: 10px 15px;
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.74);
-        color: var(--gold);
-        font-size: 13px;
-        font-weight: 900;
-        border: 1px solid rgba(244, 220, 127, 0.48);
-        white-space: nowrap;
-    }
-
-    .line-option-card.selected::after {
-        content: "Sélectionné";
-        background: linear-gradient(145deg, var(--gold), var(--gold-dark));
-        color: white;
-    }
-
-    .magnet-line-option {
-        grid-template-columns: 220px minmax(0, 1fr);
-    }
-
-    .magnet-line-actions {
-        grid-column: 2 / 3;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        gap: 8px;
-        max-width: 100%;
-        margin-top: -4px;
-    }
-
-    .magnet-line-actions .magnet-choice {
-        min-height: 40px;
-        min-width: 58px;
-        padding: 0 12px;
-        border-radius: 999px;
-        font-size: 13px;
-    }
-
-    .magnet-line-actions .magnet-choice.recommended::before {
-        display: none;
-    }
-
-    .general-options-list {
-        margin-top: 4px;
-    }
-
-    @media (max-width: 760px) {
-        .line-option-card,
-        .magnet-line-option {
-            grid-template-columns: 1fr;
-            gap: 12px;
-            min-height: 0 !important;
-        }
-
-        .line-option-card img,
-        .magnet-line-option img {
-            width: 100% !important;
-            height: 220px !important;
-        }
-
-        .line-option-card::after,
-        .magnet-line-actions {
-            grid-column: 1 / -1;
-            justify-self: stretch;
-        }
-
-        .line-option-card::after {
-            text-align: center;
-        }
-
-        .magnet-line-actions {
-            justify-content: flex-start;
-        }
-    }
-
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const steps = Array.from(document.querySelectorAll('.wizard-step'));
-        const dots = Array.from(document.querySelectorAll('.progress-dot'));
-        const progressFill = document.getElementById('progressFill');
-        const prevButton = document.getElementById('prevStep');
-        const nextButton = document.getElementById('nextStep');
-        const submitButton = document.getElementById('submitStep');
-        const formMessage = document.getElementById('formMessage');
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("monFormulaire");
+    const steps = Array.from(document.querySelectorAll(".wizard-step"));
+    const progressFill = document.getElementById("progressFill");
+    const progressDots = Array.from(document.querySelectorAll(".progress-dot"));
 
-        const selectedImagesInput = document.getElementById('selectedImages');
-        const selectedOptionInput = document.getElementById('selectedOption');
-        const heureRange = document.getElementById('heureRange');
-        const heureValue = document.getElementById('heureValue');
-        const magnetsRange = document.getElementById('MagnetsRange');
-        const magnetsNumber = document.getElementById('MagnetsNumber');
-        const magnetDisplayText = document.getElementById('MagnetDisplayText');
+    const prevButton = document.getElementById("prevStep");
+    const nextButton = document.getElementById("nextStep");
+    const submitButton = document.getElementById("submitStep");
+    const formMessage = document.getElementById("formMessage");
 
-        const summaryProducts = document.getElementById('summaryProducts');
-        const summaryDuration = document.getElementById('summaryDuration');
-        const summaryOptions = document.getElementById('summaryOptions');
+    const selectedImagesInput = document.getElementById("selectedImages");
+    const selectedOptionInput = document.getElementById("selectedOption");
 
-        const personneRadio = document.getElementById('id_personne');
-        const entrepriseRadio = document.getElementById('id_entreprise');
-        const nomPrenomRow = document.getElementById('nomPrenomRow');
-        const raisonSocialeRow = document.getElementById('raisonSocialeRow');
-        const nomInput = document.getElementById('id_nom');
-        const prenomInput = document.getElementById('id_prenom');
-        const raisonSocialeInput = document.getElementById('id_raison_sociale');
+    const summaryProducts = document.getElementById("summaryProducts");
+    const summaryDuration = document.getElementById("summaryDuration");
+    const summaryOptions = document.getElementById("summaryOptions");
 
-        const RELATED_OPTIONS_STEP_INDEX = 1;
-        const PRODUCTS_WITH_MAGNETS = ['Photobooth', 'Miroirbooth'];
-        const PRODUCTS_WITH_RELATED_OPTIONS = ['Photobooth', 'Miroirbooth', '360Booth', '360Airbooth', 'Voguebooth'];
-        const STEP_TRANSITION_MS = 280;
+    const heureRange = document.getElementById("heureRange");
+    const heureValue = document.getElementById("heureValue");
 
-        let currentStep = 0;
-        let isStepTransitionRunning = false;
+    const typePersonne = document.getElementById("id_personne");
+    const typeEntreprise = document.getElementById("id_entreprise");
+    const nomPrenomRow = document.getElementById("nomPrenomRow");
+    const raisonSocialeRow = document.getElementById("raisonSocialeRow");
+    const emptyRelatedOptions = document.getElementById("emptyRelatedOptions");
 
-        function getSelectedCards(selector) {
-            return Array.from(document.querySelectorAll(selector + '.selected'));
+    let currentStep = 0;
+
+    function getSelectedProducts() {
+        return Array.from(document.querySelectorAll(".selectable-image.selected"));
+    }
+
+    function getSelectedProductValues() {
+        return getSelectedProducts().map(function (card) {
+            return card.dataset.value;
+        });
+    }
+
+    function getSelectedProductTitles() {
+        return getSelectedProducts().map(function (card) {
+            return card.dataset.title || card.dataset.value;
+        });
+    }
+
+    function getSelectedOptionCards() {
+        return Array.from(document.querySelectorAll(".selectable-option.selected"));
+    }
+
+    function getSelectedOptionValues() {
+        return getSelectedOptionCards().map(function (card) {
+            return card.dataset.value;
+        });
+    }
+
+    function getSelectedOptionTitles() {
+        return getSelectedOptionCards().map(function (card) {
+            return card.dataset.title || card.dataset.value;
+        });
+    }
+
+    function getQuantityValue(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) {
+            return 0;
         }
 
-        function getSelectedValues(selector) {
-            return getSelectedCards(selector).map(function (item) {
-                return item.dataset.value;
-            });
-        }
+        const value = parseInt(input.value, 10);
+        return Number.isNaN(value) ? 0 : value;
+    }
 
-        function getSelectedTitles(selector) {
-            return getSelectedCards(selector).map(function (item) {
-                return item.dataset.title || item.dataset.value;
-            });
-        }
-
-        function hasProductThatAllowsMagnets() {
-            const selectedProducts = getSelectedValues('.selectable-image');
-
-            return PRODUCTS_WITH_MAGNETS.some(function (product) {
-                return selectedProducts.includes(product);
-            });
-        }
-
-        function hasProductWithRelatedOptions() {
-            const selectedProducts = getSelectedValues('.selectable-image');
-
-            return PRODUCTS_WITH_RELATED_OPTIONS.some(function (product) {
-                return selectedProducts.includes(product);
-            });
-        }
-
-        function getNearestMagnetPreset(value) {
-            const numberValue = parseInt(value, 10);
-            const presets = [0, 50, 100, 150, 200, 250, 300];
-            let nearest = presets[0];
-            let smallestDifference = Math.abs(numberValue - nearest);
-
-            presets.forEach(function (preset) {
-                const difference = Math.abs(numberValue - preset);
-
-                if (difference < smallestDifference) {
-                    smallestDifference = difference;
-                    nearest = preset;
-                }
-            });
-
-            return nearest;
-        }
-
-        function updateMagnetPresetSelection() {
-            const nearestValue = getNearestMagnetPreset(magnetsRange.value);
-
-            document.querySelectorAll('.magnet-choice').forEach(function (button) {
-                button.classList.toggle('selected', parseInt(button.dataset.value, 10) === nearestValue);
-            });
-        }
-
-        function getMagnetDisplayText(value) {
-            const magnets = parseInt(value, 10);
-
-            if (magnets <= 0) {
-                return 'Sans magnets';
+    function getQuantityOptionsForSummary() {
+        const quantityOptions = [
+            {
+                inputId: "MagnetsRange",
+                title: "Magnets photos",
+                label: "magnets"
+            },
+            {
+                inputId: "PorteClesRange",
+                title: "Porte-clés photos",
+                label: "porte-clés"
+            },
+            {
+                inputId: "MagnetsSimpleRange",
+                title: "Magnets simples",
+                label: "magnets simples"
             }
+        ];
 
-            return magnets + ' magnets';
-        }
-
-        function resetMagnetsIfNotAllowed() {
-            if (hasProductThatAllowsMagnets()) {
-                return;
-            }
-
-            magnetsRange.value = '0';
-            updateMagnetPresetSelection();
-        }
-
-        function getVisibleStepIndexes() {
-            return steps.map(function (_step, index) {
-                return index;
-            }).filter(function (index) {
-                if (index === RELATED_OPTIONS_STEP_INDEX && !hasProductWithRelatedOptions()) {
-                    return false;
+        return quantityOptions
+            .map(function (option) {
+                const value = getQuantityValue(option.inputId);
+                if (value <= 0) {
+                    return null;
                 }
 
-                return true;
-            });
+                return option.title + " : " + value + " " + option.label;
+            })
+            .filter(Boolean);
+    }
+
+    function setMessage(message) {
+        if (!message) {
+            formMessage.textContent = "";
+            formMessage.style.display = "none";
+            return;
         }
 
-        function normalizeStepIndex(index) {
-            const visibleStepIndexes = getVisibleStepIndexes();
+        formMessage.textContent = message;
+        formMessage.style.display = "block";
+    }
 
-            if (visibleStepIndexes.includes(index)) {
-                return index;
-            }
+    function clearInvalidFields() {
+        form.querySelectorAll(".is-invalid").forEach(function (field) {
+            field.classList.remove("is-invalid");
+        });
+    }
 
-            const nextVisibleStep = visibleStepIndexes.find(function (visibleIndex) {
-                return visibleIndex > index;
-            });
+    function setStep(index) {
+        currentStep = Math.max(0, Math.min(index, steps.length - 1));
 
-            if (nextVisibleStep !== undefined) {
-                return nextVisibleStep;
-            }
+        steps.forEach(function (step, stepIndex) {
+            step.classList.toggle("active", stepIndex === currentStep);
+        });
 
-            return visibleStepIndexes[visibleStepIndexes.length - 1];
+        progressDots.forEach(function (dot, dotIndex) {
+            dot.classList.toggle("active", dotIndex === currentStep);
+            dot.classList.toggle("done", dotIndex < currentStep);
+        });
+
+        const progress = ((currentStep + 1) / steps.length) * 100;
+        progressFill.style.width = progress + "%";
+
+        prevButton.style.display = currentStep === 0 ? "none" : "inline-flex";
+        nextButton.style.display = currentStep === steps.length - 1 ? "none" : "inline-flex";
+        submitButton.style.display = currentStep === steps.length - 1 ? "inline-flex" : "none";
+
+        setMessage("");
+        updateSummary();
+    }
+
+    function validateCurrentStep() {
+        clearInvalidFields();
+
+        if (currentStep === 0 && getSelectedProducts().length === 0) {
+            setMessage("Veuillez sélectionner au moins une prestation.");
+            return false;
         }
 
-        function updateStepLabels(visibleStepIndexes) {
-            visibleStepIndexes.forEach(function (stepIndex, visiblePosition) {
-                const label = steps[stepIndex].querySelector('.step-label');
-                const customLabel = steps[stepIndex].dataset.customLabel;
-
-                if (label) {
-                    label.textContent = customLabel || 'Étape ' + (visiblePosition + 1);
-                }
-            });
-        }
-
-        function updateProgressDisplay() {
-            const visibleStepIndexes = getVisibleStepIndexes();
-            const currentVisiblePosition = visibleStepIndexes.indexOf(currentStep);
-            const safeCurrentVisiblePosition = currentVisiblePosition === -1 ? 0 : currentVisiblePosition;
-
-            updateStepLabels(visibleStepIndexes);
-
-            let visibleDotNumber = 0;
-
-            dots.forEach(function (dot, dotIndex) {
-                const isVisible = visibleStepIndexes.includes(dotIndex);
-                const dotVisiblePosition = visibleStepIndexes.indexOf(dotIndex);
-
-                dot.style.display = isVisible ? 'inline-flex' : 'none';
-
-                if (isVisible) {
-                    visibleDotNumber += 1;
-                    dot.textContent = visibleDotNumber;
-                }
-
-                dot.classList.toggle('active', isVisible && dotIndex === currentStep);
-                dot.classList.toggle('done', isVisible && dotVisiblePosition < safeCurrentVisiblePosition);
-            });
-
-            progressFill.style.width = ((safeCurrentVisiblePosition + 1) / visibleStepIndexes.length) * 100 + '%';
-
-            prevButton.style.visibility = safeCurrentVisiblePosition === 0 ? 'hidden' : 'visible';
-            nextButton.style.display = safeCurrentVisiblePosition === visibleStepIndexes.length - 1 ? 'none' : 'block';
-            submitButton.style.display = safeCurrentVisiblePosition === visibleStepIndexes.length - 1 ? 'block' : 'none';
-        }
-
-        function writeHiddenValues() {
-            selectedImagesInput.value = getSelectedValues('.selectable-image').join(',');
-            selectedOptionInput.value = getSelectedValues('.selectable-option').join(',');
-        }
-
-        function updateSummary() {
-            const products = getSelectedTitles('.selectable-image');
-            const options = getSelectedTitles('.selectable-option');
-
-            resetMagnetsIfNotAllowed();
-
-            const magnets = parseInt(magnetsRange.value, 10);
-            const magnetsAllowed = hasProductThatAllowsMagnets();
-
-            let optionsText = [];
-
-            if (options.length > 0) {
-                optionsText = optionsText.concat(options);
-            }
-
-            if (magnetsAllowed && magnets > 0) {
-                optionsText.push('Magnets photos : ' + magnets + ' magnets');
-            }
-
-            summaryProducts.textContent = products.length ? products.join(', ') : 'À choisir';
-            summaryDuration.textContent = heureRange.value + ' h';
-            summaryOptions.textContent = optionsText.length ? optionsText.join(', ') : 'Aucune';
-
-            heureValue.textContent = heureRange.value;
-
-            if (magnetsNumber) {
-                magnetsNumber.textContent = getMagnetDisplayText(magnets);
-            }
-
-            if (magnetDisplayText) {
-                magnetDisplayText.textContent = getMagnetDisplayText(magnets);
-            }
-
-            updateMagnetPresetSelection();
-            writeHiddenValues();
-        }
-
-        function optionMatchesSelectedProducts(rule, selectedProducts) {
-            if (rule === 'all') {
-                return true;
-            }
-
-            const acceptedProducts = rule.split(',').map(function (value) {
-                return value.trim();
+        if (currentStep === steps.length - 1) {
+            const requiredFields = Array.from(steps[currentStep].querySelectorAll("[required]"));
+            const invalidFields = requiredFields.filter(function (field) {
+                return !field.checkValidity();
             });
 
-            return acceptedProducts.some(function (product) {
-                return selectedProducts.includes(product);
-            });
-        }
-
-        function updateOptionVisibility() {
-            const selectedProducts = getSelectedValues('.selectable-image');
-            const optionCards = Array.from(document.querySelectorAll('.selectable-option'));
-            const linkedOptionZones = Array.from(document.querySelectorAll('.linked-option-zone'));
-
-            optionCards.forEach(function (card) {
-                const rule = card.dataset.for || 'all';
-                const mustShow = optionMatchesSelectedProducts(rule, selectedProducts);
-
-                card.classList.toggle('is-hidden', !mustShow);
-
-                if (!mustShow) {
-                    card.classList.remove('selected');
-                }
-            });
-
-            linkedOptionZones.forEach(function (zone) {
-                const rule = zone.dataset.for || 'all';
-                const mustShow = optionMatchesSelectedProducts(rule, selectedProducts);
-                zone.classList.toggle('is-hidden', !mustShow);
-            });
-
-            resetMagnetsIfNotAllowed();
-            currentStep = normalizeStepIndex(currentStep);
-            updateSummary();
-            updateProgressDisplay();
-        }
-
-        function showMessage(text) {
-            formMessage.textContent = text;
-            formMessage.style.display = 'block';
-        }
-
-        function hideMessage() {
-            formMessage.textContent = '';
-            formMessage.style.display = 'none';
-        }
-
-        function validateStep(index) {
-            if (index === 0 && getSelectedValues('.selectable-image').length === 0) {
-                showMessage('Choisissez au moins une prestation pour continuer.');
+            if (invalidFields.length > 0) {
+                invalidFields.forEach(function (field) {
+                    field.classList.add("is-invalid");
+                });
+                invalidFields[0].focus();
+                setMessage("Veuillez compléter les champs obligatoires.");
                 return false;
             }
+        }
 
-            hideMessage();
+        setMessage("");
+        return true;
+    }
+
+    function optionIsCompatible(optionFor, selectedProducts) {
+        if (!optionFor || optionFor === "all") {
             return true;
         }
 
-        function setNavigationState(disabled) {
-            prevButton.disabled = disabled;
-            nextButton.disabled = disabled;
-            submitButton.disabled = disabled;
+        const allowedProducts = optionFor.split(",").map(function (item) {
+            return item.trim();
+        });
+
+        return allowedProducts.some(function (product) {
+            return selectedProducts.includes(product);
+        });
+    }
+
+    function resetQuantityOption(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) {
+            return;
         }
 
-        function activateStepWithoutFade(index) {
-            currentStep = normalizeStepIndex(index);
+        input.value = "0";
 
-            steps.forEach(function (step, stepIndex) {
-                step.classList.remove('is-entering', 'is-exiting');
-                step.classList.toggle('active', stepIndex === currentStep);
-            });
+        document.querySelectorAll(".quantity-choice[data-target='" + inputId + "']").forEach(function (button) {
+            button.classList.toggle("selected", button.dataset.value === "0");
+        });
 
+        const wrapper = input.closest(".quantity-line-option");
+        if (wrapper) {
+            wrapper.classList.remove("has-value");
+        }
+
+        updateQuantityDisplay(inputId);
+    }
+
+    function updateRelatedOptionsVisibility() {
+        const selectedProducts = getSelectedProductValues();
+        let visibleGroupCount = 0;
+
+        document.querySelectorAll(".linked-option-zone").forEach(function (zone) {
+            const isVisible = optionIsCompatible(zone.dataset.for, selectedProducts);
+            zone.classList.toggle("is-hidden", !isVisible);
+
+            if (isVisible) {
+                visibleGroupCount += 1;
+            }
+
+            if (!isVisible) {
+                zone.querySelectorAll(".selectable-option.selected").forEach(function (option) {
+                    option.classList.remove("selected");
+                });
+
+                zone.querySelectorAll("input[type='hidden']").forEach(function (input) {
+                    if (["MagnetsRange", "PorteClesRange", "MagnetsSimpleRange"].includes(input.id)) {
+                        resetQuantityOption(input.id);
+                    }
+                });
+            }
+        });
+
+        if (emptyRelatedOptions) {
+            emptyRelatedOptions.style.display = visibleGroupCount === 0 ? "block" : "none";
+        }
+
+        updateSelectedInputs();
+        updateSummary();
+    }
+
+    function updateQuantityDisplay(inputId) {
+        const value = getQuantityValue(inputId);
+        const mapping = {
+            MagnetsRange: {
+                displayId: "MagnetDisplayText",
+                selectedText: "magnets",
+                emptyText: "Sans magnets"
+            },
+            PorteClesRange: {
+                displayId: "PorteClesDisplayText",
+                selectedText: "porte-clés",
+                emptyText: "Sans porte-clés"
+            },
+            MagnetsSimpleRange: {
+                displayId: "MagnetsSimpleDisplayText",
+                selectedText: "magnets simples",
+                emptyText: "Sans magnets simples"
+            }
+        };
+
+        const config = mapping[inputId];
+        if (!config) {
+            return;
+        }
+
+        const display = document.getElementById(config.displayId);
+        if (!display) {
+            return;
+        }
+
+        display.textContent = value > 0 ? value + " " + config.selectedText : config.emptyText;
+    }
+
+    function updateSelectedInputs() {
+        selectedImagesInput.value = getSelectedProductValues().join(",");
+        selectedOptionInput.value = getSelectedOptionValues().join(",");
+    }
+
+    function updateSummary() {
+        const productTitles = getSelectedProductTitles();
+        const optionTitles = getSelectedOptionTitles();
+        const quantityOptions = getQuantityOptionsForSummary();
+
+        summaryProducts.textContent = productTitles.length > 0 ? productTitles.join(" + ") : "À choisir";
+        summaryDuration.textContent = heureRange.value + " h";
+
+        const allOptions = quantityOptions.concat(optionTitles);
+        summaryOptions.textContent = allOptions.length > 0 ? allOptions.join(" | ") : "Aucune";
+
+        if (heureValue) {
+            heureValue.textContent = heureRange.value;
+        }
+
+        updateSelectedInputs();
+    }
+
+    document.querySelectorAll(".selectable-image").forEach(function (card) {
+        card.addEventListener("click", function () {
+            card.classList.toggle("selected");
+            updateRelatedOptionsVisibility();
             updateSummary();
-            updateProgressDisplay();
-        }
-
-        function showStep(index) {
-            const targetStep = normalizeStepIndex(index);
-            const currentStepElement = steps[currentStep];
-            const targetStepElement = steps[targetStep];
-
-            if (!targetStepElement) {
-                return;
-            }
-
-            if (isStepTransitionRunning) {
-                return;
-            }
-
-            if (targetStep === currentStep || !currentStepElement || !currentStepElement.classList.contains('active')) {
-                activateStepWithoutFade(targetStep);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
-            }
-
-            isStepTransitionRunning = true;
-            setNavigationState(true);
-
-            currentStepElement.classList.add('is-exiting');
-
-            window.setTimeout(function () {
-                currentStepElement.classList.remove('active', 'is-exiting');
-
-                currentStep = targetStep;
-                targetStepElement.classList.add('is-entering', 'active');
-
-                updateSummary();
-                updateProgressDisplay();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                window.requestAnimationFrame(function () {
-                    targetStepElement.classList.remove('is-entering');
-                });
-
-                window.setTimeout(function () {
-                    isStepTransitionRunning = false;
-                    setNavigationState(false);
-                }, STEP_TRANSITION_MS);
-            }, STEP_TRANSITION_MS);
-        }
-
-        function toggleIdentityFields() {
-            const isEntreprise = entrepriseRadio.checked;
-
-            nomPrenomRow.style.display = isEntreprise ? 'none' : 'grid';
-            raisonSocialeRow.style.display = isEntreprise ? 'grid' : 'none';
-
-            nomInput.required = !isEntreprise;
-            prenomInput.required = !isEntreprise;
-            raisonSocialeInput.required = isEntreprise;
-        }
-
-        document.querySelectorAll('.selectable-image').forEach(function (card) {
-            card.addEventListener('click', function () {
-                card.classList.toggle('selected');
-                updateOptionVisibility();
-                hideMessage();
-            });
         });
-
-        document.querySelectorAll('.selectable-option').forEach(function (card) {
-            card.addEventListener('click', function () {
-                if (!card.classList.contains('is-hidden')) {
-                    card.classList.toggle('selected');
-                    updateSummary();
-                }
-            });
-        });
-
-        document.querySelectorAll('.magnet-choice').forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.querySelectorAll('.magnet-choice').forEach(function (item) {
-                    item.classList.remove('selected');
-                });
-
-                button.classList.add('selected');
-                magnetsRange.value = button.dataset.value;
-                updateSummary();
-            });
-        });
-
-        heureRange.addEventListener('input', updateSummary);
-        magnetsRange.addEventListener('input', updateSummary);
-        personneRadio.addEventListener('change', toggleIdentityFields);
-        entrepriseRadio.addEventListener('change', toggleIdentityFields);
-
-        prevButton.addEventListener('click', function () {
-            const visibleStepIndexes = getVisibleStepIndexes();
-            const currentVisiblePosition = visibleStepIndexes.indexOf(currentStep);
-            const previousStep = visibleStepIndexes[currentVisiblePosition - 1];
-
-            if (previousStep !== undefined) {
-                hideMessage();
-                showStep(previousStep);
-            }
-        });
-
-        nextButton.addEventListener('click', function () {
-            const visibleStepIndexes = getVisibleStepIndexes();
-            const currentVisiblePosition = visibleStepIndexes.indexOf(currentStep);
-            const nextStep = visibleStepIndexes[currentVisiblePosition + 1];
-
-            if (validateStep(currentStep) && nextStep !== undefined) {
-                showStep(nextStep);
-            }
-        });
-
-        document.getElementById('monFormulaire').addEventListener('submit', function (event) {
-            resetMagnetsIfNotAllowed();
-            writeHiddenValues();
-            toggleIdentityFields();
-
-            if (!validateStep(0)) {
-                event.preventDefault();
-                showStep(0);
-                return;
-            }
-
-            if (!this.checkValidity()) {
-                event.preventDefault();
-                showMessage('Complétez les informations obligatoires avant d’envoyer la demande.');
-                this.reportValidity();
-            }
-        });
-
-        toggleIdentityFields();
-        updateOptionVisibility();
-        showStep(0);
     });
+
+    document.querySelectorAll(".selectable-option").forEach(function (card) {
+        card.addEventListener("click", function () {
+            card.classList.toggle("selected");
+            updateSummary();
+        });
+    });
+
+    document.querySelectorAll(".quantity-choice").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const targetId = button.dataset.target;
+            const input = document.getElementById(targetId);
+            const value = parseInt(button.dataset.value, 10);
+
+            if (!input || Number.isNaN(value)) {
+                return;
+            }
+
+            input.value = String(value);
+
+            document.querySelectorAll(".quantity-choice[data-target='" + targetId + "']").forEach(function (choice) {
+                choice.classList.toggle("selected", choice === button);
+            });
+
+            const wrapper = input.closest(".quantity-line-option");
+            if (wrapper) {
+                wrapper.classList.toggle("has-value", value > 0);
+            }
+
+            updateQuantityDisplay(targetId);
+            updateSummary();
+        });
+    });
+
+    if (heureRange) {
+        heureRange.addEventListener("input", updateSummary);
+    }
+
+    function toggleClientType() {
+        const isEntreprise = typeEntreprise.checked;
+
+        nomPrenomRow.style.display = isEntreprise ? "none" : "grid";
+        raisonSocialeRow.style.display = isEntreprise ? "grid" : "none";
+
+        document.getElementById("id_nom").required = !isEntreprise;
+        document.getElementById("id_prenom").required = !isEntreprise;
+        document.getElementById("id_raison_sociale").required = isEntreprise;
+    }
+
+    typePersonne.addEventListener("change", toggleClientType);
+    typeEntreprise.addEventListener("change", toggleClientType);
+
+    function remonterPageFormulaire() {
+        const wizardTop = document.querySelector(".quote-wizard");
+
+        if (!wizardTop) {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+            return;
+        }
+
+        const position = Math.max(wizardTop.offsetTop - 10, 0);
+
+        window.scrollTo({
+            top: position,
+            behavior: "smooth"
+        });
+    }
+
+    prevButton.addEventListener("click", function () {
+        setStep(currentStep - 1);
+        remonterPageFormulaire();
+    });
+
+    nextButton.addEventListener("click", function () {
+        if (validateCurrentStep()) {
+            setStep(currentStep + 1);
+            remonterPageFormulaire();
+        }
+    });
+
+    form.addEventListener("submit", function (event) {
+        if (!validateCurrentStep()) {
+            event.preventDefault();
+            return;
+        }
+
+        updateSelectedInputs();
+    });
+
+    toggleClientType();
+    updateRelatedOptionsVisibility();
+    updateSummary();
+    setStep(0);
+});
 </script>
 
 {% endblock %}

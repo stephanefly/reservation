@@ -141,6 +141,10 @@
                                     <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
                                 {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
                                     , {% endif %}
+                                {% if event.event_option.PorteCles != 0 %} <span class="highlight-option">PorteCles</span>
+                                    , {% endif %}
+                                {% if event.event_option.MagnetsSimple != 0 %} <span class="highlight-option">MagnetsSimple</span>
+                                    , {% endif %}
                             </td>
                             <td>
                     {% for m in event.event_team_members.all %}

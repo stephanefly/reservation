@@ -314,6 +314,14 @@
         <label>magnets Reduc<input type="number" name="magnets_reduc_prix"
                                    value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
 
+        <label>PorteCles: <input type="number" name="PorteCles" value="{{ event.event_option.PorteCles }}"></label><br>
+        <label>PorteCles Reduc<input type="number" name="PorteCles_reduc_prix"
+                                   value="{{ event.event_option.PorteCles_reduc_prix }}"></label><br>
+
+        <label>MagnetsSimple: <input type="number" name="MagnetsSimple" value="{{ event.event_option.MagnetsSimple }}"></label><br>
+        <label>MagnetsSimple Reduc<input type="number" name="MagnetsSimple_reduc_prix"
+                                   value="{{ event.event_option.MagnetsSimple_reduc_prix }}"></label><br>
+
         <label><input type="checkbox" name="livraison" {% if event.event_option.livraison %}checked{% endif %}>
             Livraison</label><br>
         <label>Durée: <input type="number" name="duree" value="{{ event.event_option.duree }}"> heures</label><br>

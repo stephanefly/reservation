@@ -32,6 +32,10 @@ def update_option_labels_trello(event):
        label_ids.append(get_id_label("VideoLivreOr"))
    if event.event_option.magnets != "0":
       label_ids.append(get_id_label("Magnets"))
+   if event.event_option.PorteCles != "0":
+      label_ids.append(get_id_label("Magnets"))
+   if event.event_option.MagnetsSimple != "0":
+      label_ids.append(get_id_label("Magnets"))
 
    # Convertir la liste des ID d'étiquettes en une chaîne séparée par des virgules
    label_ids_str = ','.join(label_ids)

@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     setupClientTypeToggle();
     setupSliders();
     setupMagnetsSlider();
+    setupPorteClesSlider();
+    setupMagnetsSimpleSlider();
     setupSelectableImages();
     setupSelectableOption();
     rangeLivraison();
@@ -59,6 +61,21 @@ function setupMagnetsSlider() {
     });
 }
 
+function setupPorteClesSlider() {
+    const slider = document.getElementById("PorteClesRange");
+    const output = document.getElementById("PorteClesNumber");
+    slider.addEventListener('input', () => {
+        output.textContent = slider.value;
+    });
+}
+
+function setupMagnetsSimpleSlider() {
+    const slider = document.getElementById("MagnetsSimpleRange");
+    const output = document.getElementById("MagnetsSimpleNumber");
+    slider.addEventListener('input', () => {
+        output.textContent = slider.value;
+    });
+}
 function setupSelectableImages() {
     document.querySelectorAll('.selectable-image').forEach(item => {
         item.addEventListener('click', () => {

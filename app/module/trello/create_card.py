@@ -80,7 +80,7 @@ def data_to_post_on_card(post_data):
       if label_id:
          data['idLabels'].append(label_id)
 
-   if post_data['magnets_range'] != 0:
+   if post_data['magnets_range'] != 0 or post_data['PorteCles_range']!= 0 or post_data['MagnetsSimple_range']!= 0:
       data['idLabels'].append(get_id_label("Magnets"))
 
    # ENTREPRISE

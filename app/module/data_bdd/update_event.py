@@ -32,7 +32,6 @@ def update_event_option(request, event_option):
         {"name": "ImpressionVoguebooth", "prix_base_method": event_option.prix_base_ImpressionVoguebooth, "prix_brut": "ImpressionVoguebooth_reduc_prix"},
         {"name": "DecorVoguebooth", "prix_base_method": event_option.prix_base_DecorVoguebooth, "prix_brut": "DecorVoguebooth_reduc_prix"},
 
-        # Magnets retiré de cette liste
         # Ajoutez d'autres options ici si nécessaire
     ]
 
@@ -52,8 +51,17 @@ def update_event_option(request, event_option):
     event_option.magnets = parse_int(request.POST.get('magnets', 0))
     event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
     if event_option.magnets:
-        # Assurez-vous que la méthode prix_base_magnets est bien définie pour accepter un paramètre dans votre modèle.
         total_option += event_option.prix_base_magnets(event_option.magnets) - event_option.magnets_reduc_prix
+
+    event_option.PorteCles = parse_int(request.POST.get('PorteCles', 0))
+    event_option.PorteCles_reduc_prix = parse_int(request.POST.get('PorteCles_reduc_prix'))
+    if event_option.PorteCles:
+        total_option += event_option.prix_base_PorteCles(event_option.PorteCles) - event_option.PorteCles
+
+    event_option.MagnetsSimple = parse_int(request.POST.get('MagnetsSimple', 0))
+    event_option.MagnetsSimple_reduc_prix = parse_int(request.POST.get('MagnetsSimple_reduc_prix'))
+    if event_option.MagnetsSimple:
+        total_option += event_option.prix_base_MagnetsSimple(event_option.MagnetsSimple) - event_option.MagnetsSimple_reduc_prix
 
     event_option.save()
     return total_option
@@ -136,6 +144,8 @@ def update_data(event, request):
     event_option.ImpressionVoguebooth = request.POST.get('ImpressionVoguebooth') == 'on'
     event_option.DecorVoguebooth = request.POST.get('DecorVoguebooth') == 'on'
     event_option.magnets = request.POST.get('magnets', '0')
+    event_option.PorteCles = request.POST.get('PorteCles', '0')
+    event_option.MagnetsSimple = request.POST.get('MagnetsSimple', '0')
     event_option.livraison = request.POST.get('livraison') == 'on'
     event_option.duree = request.POST.get('duree', '0')
     event_option.save()

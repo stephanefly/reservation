@@ -172,6 +172,18 @@ class EventOption(models.Model):
     def prix_base_magnets(self, magnets):
         return magnets * 2
 
+    PorteCles = models.IntegerField(null=True, blank=True)
+    PorteCles_reduc_prix = models.IntegerField(null=True, default=False)
+
+    def prix_base_PorteCles(self, PorteCles):
+        return PorteCles * 2
+
+    MagnetsSimple = models.IntegerField(null=True, blank=True)
+    MagnetsSimple_reduc_prix = models.IntegerField(null=True, default=False)
+
+    def prix_base_MagnetsSimple(self, MagnetsSimple):
+        return MagnetsSimple * 2
+
     def total_reduction(self):
         reduction_fields = [
             self.MurFloral_reduc_prix or 0,
@@ -219,8 +231,13 @@ class EventOption(models.Model):
             options.append("Vidéo livre d'or")
         if self.magnets:
             options.append(f"{self.magnets} magnets")
+        if self.PorteCles:
+            options.append(f"{self.PorteCles} PorteCles")
+        if self.MagnetsSimple:
+            options.append(f"{self.MagnetsSimple} MagnetsSimple")
 
         return ", ".join(options)
+
 
 class EventPostPrestation(models.Model):
     feedback_message = models.BooleanField(default=False)

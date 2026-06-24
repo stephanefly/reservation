@@ -11,8 +11,6 @@ def get_confirmation_data(request):
         nom = request.POST.get('prenom').strip() + " " + request.POST.get('nom').strip()
         raison_sociale = False
 
-    print(int(request.POST.get('magnets_range')))
-
     post_data = {
         "page_client": {
             "nom": nom,
@@ -30,6 +28,8 @@ def get_confirmation_data(request):
         "product": request.POST.get('selectedImages'),
         "options": request.POST.get('selectedOption'),
         "magnets_range": int(request.POST.get('magnets_range')),
+        "PorteCles_range": int(request.POST.get('PorteCles_range')),
+        "MagnetsSimple_range": int(request.POST.get('MagnetsSimple_range')),
         "livraison": True if request.POST.get('livraison') else False,
         "heure_range": int(request.POST.get('heure_range')) if request.POST.get('heure_range') else None
     }
@@ -125,6 +125,8 @@ def initialize_event(post_data):
         # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
         event_option = EventOption(**options_attrs)
         event_option.magnets = post_data['magnets_range']
+        event_option.PorteCles = post_data['PorteCles_range']
+        event_option.MagnetsSimple = post_data['MagnetsSimple_range']
         event_option.livraison = post_data['livraison']
         event_option.duree = post_data['heure_range']
         event_option.save()

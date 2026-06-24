@@ -592,6 +592,14 @@
             , Magnets photos : {{ form_data.magnets_range }}
         {% endif %}
 
+        {% if form_data.PorteCles_range and form_data.PorteCles_range != '0' %}
+            , PorteCles photos : {{ form_data.PorteCles_range }}
+        {% endif %}
+
+        {% if form_data.MagnetsSimple_range and form_data.MagnetsSimple_range != '0' %}
+            , MagnetsSimple photos : {{ form_data.MagnetsSimple_range }}
+        {% endif %}
+
         {% if form_data.selectedOption %}
             , {{ form_data.selectedOption }}
         {% endif %}
@@ -599,6 +607,8 @@
 
     <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
     <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
+    <input type="hidden" name="PorteCles_range" value="{{ form_data.PorteCles_range }}">
+    <input type="hidden" name="MagnetsSimple_range" value="{{ form_data.MagnetsSimple_range }}">
     <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
 </div>
                     </div>
