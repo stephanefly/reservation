@@ -1,217 +1,733 @@
 {% extends 'app/frontend/index.html' %}
 {% block content %}
+
 <style>
-/* Overlay plein écran */
-#overlay-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
+    :root {
+        --confirm-gold: #f4dc7f;
+        --confirm-gold-soft: #fff4bd;
+        --confirm-gold-dark: #5a4300;
+        --confirm-black: #101010;
+        --confirm-white: #ffffff;
+        --confirm-muted: #6f6f6f;
+        --confirm-border: rgba(244, 220, 127, 0.32);
+        --confirm-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+    }
 
-/* Spinner centré dans le bouton */
-.btn-spinner {
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    border-top: 3px solid #5a4300;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    animation: spin 0.7s linear infinite;
-    margin-right: 8px;
-}
+    .confirmation-page {
+        min-height: 100vh;
+        padding: 34px 14px 70px;
+        background:
+            radial-gradient(circle at top left, rgba(244, 220, 127, 0.22), transparent 34%),
+            linear-gradient(rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.92)),
+            url('/static/img/background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        font-family: Arial, sans-serif;
+    }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    .confirmation-container {
+        width: min(1040px, 100%);
+        margin: 0 auto;
+    }
 
-/* Animation "Chargement..." */
-.loading-dots::after {
-    content: '';
-    animation: dots 1.5s infinite steps(4, end);
-}
+    .confirmation-card {
+        overflow: hidden;
+        border-radius: 30px;
+        background: var(--confirm-white);
+        border: 1px solid rgba(90, 67, 0, 0.14);
+        box-shadow: var(--confirm-shadow);
+    }
 
-@keyframes dots {
-    0%   { content: ''; }
-    25%  { content: '.'; }
-    50%  { content: '..'; }
-    75%  { content: '...'; }
-    100% { content: ''; }
-}
+    .confirmation-hero {
+        position: relative;
+        padding: 42px 28px;
+        color: var(--confirm-white);
+        text-align: center;
+        background:
+            radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 36%),
+            linear-gradient(135deg, #090909 0%, #5a4300 48%, #d5a928 100%);
+    }
+
+    .confirmation-hero::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 244, 189, 0.9), transparent);
+    }
+
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        margin-bottom: 16px;
+        border-radius: 999px;
+        color: var(--confirm-gold-soft);
+        background: rgba(0, 0, 0, 0.28);
+        border: 1px solid rgba(255, 244, 189, 0.42);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1.1px;
+    }
+
+    .confirmation-hero h1 {
+        max-width: 760px;
+        margin: 0 auto;
+        font-family: "Arial Black", Arial, sans-serif;
+        font-size: clamp(30px, 6vw, 52px);
+        line-height: 1.04;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.42);
+    }
+
+    .confirmation-hero p {
+        max-width: 740px;
+        margin: 16px auto 0;
+        color: #f7f7f7;
+        font-size: 16px;
+        line-height: 1.55;
+    }
+
+    .confirmation-body {
+        padding: 30px;
+    }
+
+    .status-alert {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 26px;
+        padding: 18px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #fff8df, #ffffff);
+        border: 1px solid #ead38b;
+        color: var(--confirm-gold-dark);
+    }
+
+    .status-alert strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 18px;
+        font-family: "Arial Black", Arial, sans-serif;
+    }
+
+    .status-alert span {
+        display: block;
+        line-height: 1.45;
+        font-weight: 700;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 32px 0 16px;
+        color: var(--confirm-black);
+        font-family: "Arial Black", Arial, sans-serif;
+        font-size: 22px;
+        line-height: 1.1;
+    }
+
+    .section-title::before {
+        content: "";
+        width: 9px;
+        height: 28px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--confirm-gold), var(--confirm-gold-dark));
+        flex: 0 0 auto;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .summary-item {
+        position: relative;
+        padding: 17px 18px;
+        border-radius: 18px;
+        background: #fafafa;
+        border: 1px solid #eeeeee;
+        overflow: hidden;
+    }
+
+    .summary-item.important {
+        background: linear-gradient(145deg, #fff9e5, #ffffff);
+        border-color: #ead38b;
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--confirm-muted);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.55px;
+    }
+
+    .summary-value {
+        margin: 0;
+        color: #202020;
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.42;
+        word-break: break-word;
+    }
+
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 30px;
+    }
+
+    .tag-list.is-empty {
+        color: var(--confirm-muted);
+        font-weight: 700;
+    }
+
+    .tag-list span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #111111;
+        color: var(--confirm-gold-soft);
+        border: 1px solid rgba(244, 220, 127, 0.45);
+        font-size: 13px;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+    .included-panel {
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 22px;
+        background: linear-gradient(145deg, #111111, #050505);
+        border: 1px solid var(--confirm-border);
+        color: var(--confirm-white);
+    }
+
+    .included-panel-title {
+        margin: 0 0 14px;
+        color: var(--confirm-gold-soft);
+        font-family: "Arial Black", Arial, sans-serif;
+        font-size: 20px;
+    }
+
+    .included-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .included-item {
+        padding: 14px 15px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(244, 220, 127, 0.24);
+    }
+
+    .included-item strong {
+        display: block;
+        color: #ffffff;
+        font-size: 15px;
+    }
+
+    .included-item span {
+        display: block;
+        margin-top: 5px;
+        color: #dddddd;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .final-message {
+        margin-top: 24px;
+        padding: 20px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #fff8df, #ffffff);
+        border: 1px solid #ead38b;
+        color: var(--confirm-gold-dark);
+        line-height: 1.58;
+        font-weight: 700;
+    }
+
+    .final-message strong {
+        display: block;
+        margin-bottom: 6px;
+        font-family: "Arial Black", Arial, sans-serif;
+        font-size: 18px;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .btn-confirm-custom,
+    .btn-edit-custom {
+        min-height: 54px;
+        border-radius: 999px;
+        font-size: 16px;
+        font-weight: 900;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+    }
+
+    .btn-confirm-custom {
+        border: 0;
+        background: linear-gradient(135deg, #111111, #5a4300, #f4dc7f);
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        box-shadow: 0 14px 30px rgba(90, 67, 0, 0.28);
+        cursor: pointer;
+    }
+
+    .btn-confirm-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 36px rgba(90, 67, 0, 0.36);
+        color: #ffffff;
+    }
+
+    .btn-confirm-custom:disabled {
+        transform: none;
+        opacity: 0.72;
+        cursor: not-allowed;
+    }
+
+    .btn-edit-custom {
+        border: 1px solid #dddddd;
+        background: #f2f2f2;
+        color: #252525;
+    }
+
+    .btn-edit-custom:hover {
+        background: #e9e9e9;
+        color: #111111;
+        text-decoration: none;
+    }
+
+    #overlay-loading {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(7px);
+        z-index: 9999;
+    }
+
+    .overlay-box {
+        width: min(380px, 100%);
+        padding: 30px 24px;
+        border-radius: 24px;
+        background: #ffffff;
+        text-align: center;
+        border: 1px solid rgba(90, 67, 0, 0.18);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+    }
+
+    .btn-spinner {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.42);
+        border-top-color: var(--confirm-gold-dark);
+        animation: spin 0.75s linear infinite;
+    }
+
+    .overlay-spinner {
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        border: 4px solid #eee4c4;
+        border-top-color: var(--confirm-gold-dark);
+        animation: spin 0.85s linear infinite;
+    }
+
+    .overlay-title {
+        margin: 0;
+        color: var(--confirm-gold-dark);
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+    .overlay-subtitle {
+        margin: 8px 0 0;
+        color: #777777;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 700;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .btn-spinner,
+        .overlay-spinner {
+            animation: none;
+        }
+
+        .btn-confirm-custom,
+        .btn-edit-custom {
+            transition: none;
+        }
+    }
+
+    @media (min-width: 720px) {
+        .confirmation-body {
+            padding: 36px;
+        }
+
+        .status-alert {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .summary-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .included-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .actions {
+            grid-template-columns: minmax(260px, 1.2fr) minmax(210px, 0.8fr);
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .confirmation-page {
+            padding: 18px 10px 45px;
+        }
+
+        .confirmation-card {
+            border-radius: 24px;
+        }
+
+        .confirmation-hero {
+            padding: 32px 18px;
+        }
+
+        .confirmation-body {
+            padding: 22px 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+        }
+    }
 </style>
 
 <div id="overlay-loading">
-    <div>
-        <div class="btn-spinner" style="margin: 0 auto;"></div>
-        <p style="text-align:center; font-size:18px; margin-top:10px;">Traitement en cours…</p>
+    <div class="overlay-box">
+        <div class="overlay-spinner"></div>
+        <p id="overlay-text" class="overlay-title">Envoi de votre demande de devis...</p>
+        <p class="overlay-subtitle">
+            Votre demande est transmise. La proposition personnalisée sera préparée à partir des éléments sélectionnés.
+        </p>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header bg-primary text-white" style="background-image: linear-gradient(to bottom, #ffef96, #5a4300)">
-        <h2 class="text-center">Confirmez vos informations</h2>
-    </div>
-    <div class="card-body">
-        <form method="post" action="{% url 'confirmation' %}">
+<div class="confirmation-page">
+    <div class="confirmation-container">
+        <form method="post" action="{% url 'confirmation' %}" id="confirmationForm">
             {% csrf_token %}
 
+            <input type="hidden" name="type" value="{{ form_data.type }}">
 
-            {% if form_data.type == 'personne' %}
-            <div class="form-group">
-                <strong><label for="nom">Nom:</label></strong>
-                <p>{{ form_data.nom }}</p>
-                <input type="hidden" name="nom" value="{{ form_data.nom }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="prenom">Prénom:</label></strong>
-                <p>{{ form_data.prenom }}</p>
-                <input type="hidden" name="prenom" value="{{ form_data.prenom }}">
-            </div>
-            {% else %}
-            <div class="form-group">
-                <strong><label for="raison_sociale">Raison Sociale:</label></strong>
-                <p>{{ form_data.raison_sociale }}</p>
-                <input type="hidden" name="raison_sociale" value="{{ form_data.raison_sociale }}">
-            </div>
-            {% endif %}
-
-
-            <div class="form-group">
-                <strong><label for="mail">Mail:</label></strong>
-                <p>{{ form_data.mail }}</p>
-                <input type="hidden" name="mail" value="{{ form_data.mail }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="numero_telephone">Numéro de téléphone:</label></strong>
-                <p>{{ form_data.numero_telephone }}</p>
-                <input type="hidden" name="numero_telephone" value="{{ form_data.numero_telephone }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="date_evenement">Date de l'événement:</label></strong>
-                <p>{{ form_data.date_evenement }}</p>
-                <input type="hidden" name="date_evenement" value="{{ form_data.date_evenement }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="adresse_evenement">Adresse de l'événement:</label></strong>
-                <p>{{ form_data.adresse_evenement }}</p>
-                <input type="hidden" name="adresse_evenement" value="{{ form_data.adresse_evenement }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="ville_evenement">Ville de l'événement:</label></strong>
-                <p>{{ form_data.ville_evenement }}</p>
-                <input type="hidden" name="ville_evenement" value="{{ form_data.ville_evenement }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="code_postal_evenement">Code Postal de l'événement:</label></strong>
-                <p>{{ form_data.code_postal_evenement }}</p>
-                <input type="hidden" name="code_postal_evenement" value="{{ form_data.code_postal_evenement }}">
-            </div>
-            <!-- Si le champ client_how_find est censé être visible, retirez style="display:none;" et ajustez en conséquence -->
-            <div class="form-group" style="display:none;">
-                <strong><label for="client_how_find">Comment avez-vous trouvé ? :</label></strong>
-                <p>{{ form_data.client_how_find }}</p>
-                <input type="hidden" name="client_how_find" value="{{ form_data.client_how_find }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="selectedImages">Produit(s) sélectionné(s):</label></strong>
-                <p>{{ form_data.selectedImages }}</p>
-                <input type="hidden" name="selectedImages" value="{{ form_data.selectedImages }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="personnalisation_modele">Personnalisation Modèle:</label></strong>
-                <p>Oui</p>
-            </div>
-            <div class="form-group">
-                <strong><label for="galerie_photos_videos">Galerie Photos/Videos:</label></strong>
-                <p>Oui</p>
-            </div>
-            <div class="form-group">
-                <strong><label for="selectedOption">Option(s) sélectionnée(s):</label></strong>
-                <p>{{ form_data.selectedOption}}</p>
-                <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="magnets_range">Magnets Photos:</label></strong>
-                <p>{{ form_data.magnets_range }}</p>
-                <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="livraison">Livraison - Installation - Animateur:</label></strong>
-                <p>
-                    {% if form_data.heure_range %}
-                        Oui
-                    {% else %}
-                        Non
-                    {% endif %}</p>
-                <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
-            </div>
-            <div class="form-group">
-                <strong><label for="heure_range">Heures:</label></strong>
+            <div class="confirmation-card">
+                <header class="confirmation-hero">
+                    <span class="hero-pill">Vérification finale</span>
+                    <h1>Confirmez votre demande de devis</h1>
                     <p>
-                        {% if form_data.heure_range %}
-                            {{ form_data.heure_range }} h
-                        {% else %}
-                            Toute la soirée !
-                        {% endif %}
+                        Vérifiez les informations ci-dessous. Après confirmation, nous pourrons préparer une proposition adaptée
+                        à votre événement, avec les réductions possibles selon la combinaison choisie.
                     </p>
-                <input type="hidden" name="heure_range" value="{{ form_data.heure_range }}">
-            </div>
-            <div class="text-center">
-<button
-    type="submit"
-    id="btn-confirm"
-    class="btn btn-success"
-    style="background-image: linear-gradient(to bottom, #ffef96, #5a4300); border: 1px solid goldenrod; display:flex; align-items:center; justify-content:center; gap:8px; width:200px;"
->
-    <div id="spinner" class="btn-spinner" style="display:none;"></div>
-    <span id="btn-text">Confirmer</span>
-</button>
+                </header>
 
-                <a href="{% url 'demande_devis' %}" class="btn btn-secondary">Modifier</a>
+                <main class="confirmation-body">
+                    <div class="status-alert">
+                        <div>
+                            <strong>Votre demande n’est pas encore envoyée.</strong>
+                            <span>Cliquez sur “Confirmer ma demande” uniquement si les informations affichées sont correctes.</span>
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">Informations client</h2>
+
+                    <div class="summary-grid">
+                        {% if form_data.type == 'personne' %}
+                            <div class="summary-item">
+                                <span class="summary-label">Nom</span>
+                                <p class="summary-value">{{ form_data.nom }}</p>
+                                <input type="hidden" name="nom" value="{{ form_data.nom }}">
+                            </div>
+
+                            <div class="summary-item">
+                                <span class="summary-label">Prénom</span>
+                                <p class="summary-value">{{ form_data.prenom }}</p>
+                                <input type="hidden" name="prenom" value="{{ form_data.prenom }}">
+                            </div>
+                        {% else %}
+                            <div class="summary-item full">
+                                <span class="summary-label">Raison sociale</span>
+                                <p class="summary-value">{{ form_data.raison_sociale }}</p>
+                                <input type="hidden" name="raison_sociale" value="{{ form_data.raison_sociale }}">
+                            </div>
+                        {% endif %}
+
+                        <div class="summary-item">
+                            <span class="summary-label">Mail</span>
+                            <p class="summary-value">{{ form_data.mail }}</p>
+                            <input type="hidden" name="mail" value="{{ form_data.mail }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Téléphone</span>
+                            <p class="summary-value">{{ form_data.numero_telephone }}</p>
+                            <input type="hidden" name="numero_telephone" value="{{ form_data.numero_telephone }}">
+                        </div>
+
+                        <div class="summary-item full">
+                            <span class="summary-label">Origine de la demande</span>
+                            <p class="summary-value">
+                                {% if form_data.client_how_find %}
+                                    {{ form_data.client_how_find }}
+                                {% else %}
+                                    Non renseigné
+                                {% endif %}
+                            </p>
+                            <input type="hidden" name="client_how_find" value="{{ form_data.client_how_find }}">
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">Événement</h2>
+
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Date de l’événement</span>
+                            <p class="summary-value">{{ form_data.date_evenement }}</p>
+                            <input type="hidden" name="date_evenement" value="{{ form_data.date_evenement }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Durée souhaitée</span>
+                            <p class="summary-value">
+                                {% if form_data.heure_range %}
+                                    {{ form_data.heure_range }} h
+                                {% else %}
+                                    Non renseignée
+                                {% endif %}
+                            </p>
+                            <input type="hidden" name="heure_range" value="{{ form_data.heure_range }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Ville</span>
+                            <p class="summary-value">{{ form_data.ville_evenement }}</p>
+                            <input type="hidden" name="ville_evenement" value="{{ form_data.ville_evenement }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Code postal</span>
+                            <p class="summary-value">{{ form_data.code_postal_evenement }}</p>
+                            <input type="hidden" name="code_postal_evenement" value="{{ form_data.code_postal_evenement }}">
+                        </div>
+
+                        <div class="summary-item full">
+                            <span class="summary-label">Adresse</span>
+                            <p class="summary-value">{{ form_data.adresse_evenement }}</p>
+                            <input type="hidden" name="adresse_evenement" value="{{ form_data.adresse_evenement }}">
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">Prestations sélectionnées</h2>
+
+                    <div class="summary-grid">
+                        <div class="summary-item full important">
+                            <span class="summary-label">Animation(s)</span>
+                            <div class="tag-list" data-format-list>
+                                {% if form_data.selectedImages %}
+                                    {{ form_data.selectedImages }}
+                                {% else %}
+                                    Aucune animation sélectionnée
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="selectedImages" value="{{ form_data.selectedImages }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Livraison, installation et animateur</span>
+                            <p class="summary-value">
+                                {% if form_data.livraison %}
+                                    Inclus
+                                {% else %}
+                                    Non sélectionné
+                                {% endif %}
+                            </p>
+                            <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Magnets photos</span>
+                            <p class="summary-value">
+                                {% if form_data.magnets_range and form_data.magnets_range != '0' %}
+                                    {{ form_data.magnets_range }} magnets
+                                {% else %}
+                                    Non sélectionné
+                                {% endif %}
+                            </p>
+                            <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
+                        </div>
+
+                        <div class="summary-item full">
+                            <span class="summary-label">Option(s) supplémentaire(s)</span>
+                            <div class="tag-list" data-format-list>
+                                {% if form_data.selectedOption %}
+                                    {{ form_data.selectedOption }}
+                                {% else %}
+                                    Aucune option supplémentaire sélectionnée
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">Inclus dans votre demande</h2>
+
+                    <div class="included-panel">
+                        <p class="included-panel-title">La base est déjà comprise dans votre prestation</p>
+
+                        <div class="included-grid">
+                            <div class="included-item">
+                                <strong>Livraison et installation</strong>
+                                <span>Préparation du matériel directement sur le lieu de l’événement.</span>
+                            </div>
+
+                            <div class="included-item">
+                                <strong>Animateur sur place</strong>
+                                <span>Accompagnement des invités pendant l’utilisation de l’animation.</span>
+                            </div>
+
+                            <div class="included-item">
+                                <strong>Personnalisation du modèle</strong>
+                                <span>Création d’un visuel adapté à votre événement.</span>
+                            </div>
+
+                            <div class="included-item">
+                                <strong>Galerie photos / vidéos en ligne</strong>
+                                <span>Accès numérique aux souvenirs après la prestation.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="final-message">
+                        <strong>Plus votre formule est complète, plus la proposition peut être optimisée.</strong>
+                        Les réductions sont étudiées selon les animations sélectionnées, la durée, le lieu et les options choisies.
+                        Certaines options peuvent être proposées à tarif réduit ou offertes selon le combo retenu.
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" id="btn-confirm" class="btn-confirm-custom">
+                            <span id="spinner" class="btn-spinner" style="display: none;"></span>
+                            <span id="btn-text">Envoyer ma demande</span>
+                        </button>
+
+                        <a href="{% url 'demande_devis' %}" class="btn-edit-custom">
+                            Modifier mes informations
+                        </a>
+                    </div>
+                </main>
             </div>
         </form>
     </div>
 </div>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.querySelector("form");
-  const btn  = document.getElementById("btn-confirm");
-  const txt  = document.getElementById("btn-text");
-  const spn  = document.getElementById("spinner");
-  const overlay = document.getElementById("overlay-loading");
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("confirmationForm");
+        const button = document.getElementById("btn-confirm");
+        const buttonText = document.getElementById("btn-text");
+        const spinner = document.getElementById("spinner");
+        const overlay = document.getElementById("overlay-loading");
+        const overlayText = document.getElementById("overlay-text");
+        let alreadySubmitted = false;
 
-  form.addEventListener("submit", function (e) {
-    // Affiche le loader, NE BLOQUE PAS la soumission (pas de preventDefault ici)
-    btn.disabled = true;
-    spn.style.display = "inline-block";
-    txt.textContent = "Envoi de la demande de devis";
-    btn.style.opacity = "0.7";
-    btn.style.cursor = "not-allowed";
-    overlay.style.display = "flex";
-  });
+        function cleanValue(value) {
+            return value.replace(/\s+/g, " ").trim();
+        }
 
-  // Quand on quitte la page (navigation/redirect), on masque l’overlay côté page sortante
-  window.addEventListener("beforeunload", () => {
-    overlay.style.display = "none";
-  });
+        function formatList(element) {
+            const rawText = cleanValue(element.textContent);
+            const emptyTexts = [
+                "Aucune animation sélectionnée",
+                "Aucune option supplémentaire sélectionnée",
+                "Aucune"
+            ];
 
-  // Watchdog : si pas de réponse sous 20s, message d’info
-  setTimeout(() => {
-    if (overlay.style.display === "flex") {
-      const p = overlay.querySelector("p");
-      if (p) p.textContent = "Toujours en cours… (le traitement peut prendre un peu de temps)";
-    }
-  }, 20000);
-});
+            element.textContent = "";
+
+            if (!rawText || emptyTexts.includes(rawText)) {
+                element.classList.add("is-empty");
+                element.textContent = rawText || "Non renseigné";
+                return;
+            }
+
+            rawText.split(",").map(cleanValue).filter(Boolean).forEach(function (item) {
+                const tag = document.createElement("span");
+                tag.textContent = item;
+                element.appendChild(tag);
+            });
+        }
+
+        document.querySelectorAll("[data-format-list]").forEach(formatList);
+
+        form.addEventListener("submit", function (event) {
+            if (alreadySubmitted) {
+                event.preventDefault();
+                return;
+            }
+
+            alreadySubmitted = true;
+            button.disabled = true;
+            spinner.style.display = "inline-block";
+            buttonText.textContent = "Envoi en cours...";
+            overlay.style.display = "flex";
+
+            window.setTimeout(function () {
+                if (overlay.style.display === "flex") {
+                    overlayText.textContent = "Traitement toujours en cours...";
+                }
+            }, 20000);
+        });
+    });
 </script>
-
-
 
 {% endblock %}

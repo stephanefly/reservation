@@ -29,30 +29,111 @@
 
 
 </head>
+<style>
+    html,
+    body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
-<body style="background-position: center;
-background-image: url('static/img/background.jpg');
-background-size: cover;
-background-repeat: no-repeat;
+    .msb-body {
+        min-height: 100vh;
+        background-image:
+            linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.72)),
+            url("{% static 'img/background.jpg' %}");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        font-family: Arial, sans-serif;
+    }
 
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-<a class="navbar-brand" style="font-family: 'Arial Black', Gadget, sans-serif; font-size: 24px; color: #ffffff; text-shadow: 0px 1px 4px black, 2px 1px 2px black, 8px 4px 20px #fffbdb, -3px -1px 11px #fffca6;" href="#">
-                        MySelfieBooth
-        </a>
+    .msb-navbar {
+        background: rgba(8, 8, 8, 0.88);
+        border-bottom: 1px solid rgba(244, 220, 127, 0.45);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(10px);
+    }
+
+    .msb-navbar-container {
+        max-width: 1500px;
+        padding: 14px 22px;
+    }
+
+    .msb-brand {
+        font-family: "Arial Black", Gadget, sans-serif;
+        font-size: 26px;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        text-shadow:
+            0 1px 4px black,
+            2px 1px 2px black,
+            8px 4px 20px #fffbdb,
+            -3px -1px 11px #fffca6;
+    }
+
+    .msb-brand:hover {
+        color: #f4dc7f;
+    }
+
+    .msb-main-container {
+        width: 100%;
+        max-width: 1500px;
+        min-height: calc(100vh - 140px);
+        padding: 24px 18px 40px;
+        margin: 0 auto;
+    }
+
+    .msb-footer {
+        background: rgba(8, 8, 8, 0.88);
+        color: rgba(255, 255, 255, 0.72);
+        border-top: 1px solid rgba(244, 220, 127, 0.35);
+        backdrop-filter: blur(10px);
+    }
+
+    .msb-footer-inner {
+        padding: 18px;
+        font-size: 14px;
+    }
+
+    @media (min-width: 768px) {
+        .msb-main-container {
+            padding: 34px 34px 50px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .msb-main-container {
+            max-width: 1600px;
+        }
+
+        .msb-navbar-container {
+            max-width: 1600px;
+        }
+    }
+</style>
+<body class="msb-body">
+
+    <nav class="navbar navbar-dark msb-navbar">
+        <div class="container-fluid msb-navbar-container">
+            <a class="navbar-brand msb-brand" href="#">
+                MySelfieBooth
+            </a>
         </div>
     </nav>
 
-    <main class="container mt-3">
-    {% block content %}
-    {% endblock content %}
+    <main class="container-fluid msb-main-container">
+        {% block content %}
+        {% endblock content %}
     </main>
 
-    <footer class="text-center bg-light text-muted">
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+
+
+</body>
+    <footer class="msb-footer text-center">
+        <div class="msb-footer-inner">
             © 2024 MySelfieBooth Tous droits réservés.
         </div>
     </footer>
-</body>
-
 </html>
