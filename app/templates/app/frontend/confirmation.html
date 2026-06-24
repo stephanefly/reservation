@@ -583,41 +583,24 @@
                             <input type="hidden" name="selectedImages" value="{{ form_data.selectedImages }}">
                         </div>
 
-                        <div class="summary-item">
-                            <span class="summary-label">Livraison, installation et animateur</span>
-                            <p class="summary-value">
-                                {% if form_data.livraison %}
-                                    Inclus
-                                {% else %}
-                                    Non sélectionné
-                                {% endif %}
-                            </p>
-                            <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
-                        </div>
+                        <div class="summary-item full important">
+    <span class="summary-label">Inclus et options sélectionnées</span>
 
-                        <div class="summary-item">
-                            <span class="summary-label">Magnets photos</span>
-                            <p class="summary-value">
-                                {% if form_data.magnets_range and form_data.magnets_range != '0' %}
-                                    {{ form_data.magnets_range }} magnets
-                                {% else %}
-                                    Non sélectionné
-                                {% endif %}
-                            </p>
-                            <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
-                        </div>
+    <div class="tag-list" data-format-list>
 
-                        <div class="summary-item full">
-                            <span class="summary-label">Option(s) supplémentaire(s)</span>
-                            <div class="tag-list" data-format-list>
-                                {% if form_data.selectedOption %}
-                                    {{ form_data.selectedOption }}
-                                {% else %}
-                                    Aucune option supplémentaire sélectionnée
-                                {% endif %}
-                            </div>
-                            <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
-                        </div>
+        {% if form_data.magnets_range and form_data.magnets_range != '0' %}
+            , Magnets photos : {{ form_data.magnets_range }}
+        {% endif %}
+
+        {% if form_data.selectedOption %}
+            , {{ form_data.selectedOption }}
+        {% endif %}
+    </div>
+
+    <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
+    <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
+    <input type="hidden" name="selectedOption" value="{{ form_data.selectedOption }}">
+</div>
                     </div>
 
                     <h2 class="section-title">Inclus dans votre demande</h2>
