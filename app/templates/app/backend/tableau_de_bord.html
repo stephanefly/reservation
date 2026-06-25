@@ -126,8 +126,8 @@
                   {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
                   {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
                   {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                 {% if event.event_option.PorteCles != 0 %} <span class="highlight-option">PorteCles</span>, {% endif %}
-                 {% if event.event_option.MagnetsSimple != 0 %} <span class="highlight-option">MagnetsSimple</span>, {% endif %}
+                 {% if event.event_option.PorteCles %} <span class="highlight-option">PorteCles</span>, {% endif %}
+                 {% if event.event_option.MagnetsSimple %} <span class="highlight-option">MagnetsSimple</span>, {% endif %}
                </td>
                <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
                <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
