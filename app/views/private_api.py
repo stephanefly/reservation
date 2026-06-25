@@ -1,5 +1,6 @@
 import os
 from datetime import timedelta
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db.models import Sum
@@ -8,6 +9,17 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from app.models import Event
+
+PARIS_TIME_ZONE = ZoneInfo("Europe/Paris")
+CONFIRMED_STATUS_LIST = ["Acompte OK", "Presta FINI", "Post Presta", "Sent Media"]
+
+
+def _now_paris():
+    return timezone.now().astimezone(PARIS_TIME_ZONE)
+
+
+def _today_paris():
+    return _now_paris().date()
 
 
 def _json_error(message, status=400):
@@ -95,6 +107,38 @@ def _team_members(event):
         return []
 
 
+def _base_event_queryset():
+    return Event.objects.select_related(
+        "client",
+        "event_details",
+        "event_product",
+        "event_option",
+        "event_acompte",
+        "event_template",
+        "event_post_presta",
+    )
+
+
+def _event_queryset_with_team():
+    return _base_event_queryset().prefetch_related("event_team_members")
+
+
+def _get_limit_and_days(request):
+    limit = _safe_int(request.GET.get("limit")) or 20
+    days = _safe_int(request.GET.get("days")) or 90
+
+    if limit < 1:
+        limit = 20
+    if limit > 100:
+        limit = 100
+    if days < 1:
+        days = 90
+    if days > 730:
+        days = 730
+
+    return limit, days
+
+
 def _event_to_dict(event):
     client = event.client
     details = event.event_details
@@ -140,11 +184,14 @@ def private_api_ping(request):
     if not is_allowed:
         return error_response
 
+    now_paris = _now_paris()
+
     return JsonResponse(
         {
             "status": "ok",
             "message": "API privée active",
-            "server_date": timezone.now().isoformat(),
+            "server_date": now_paris.isoformat(),
+            "timezone": "Europe/Paris",
         },
         json_dumps_params={"ensure_ascii": False},
     )
@@ -156,31 +203,28 @@ def private_api_crm_summary(request):
     if not is_allowed:
         return error_response
 
-    today = timezone.localdate()
+    today = _today_paris()
     month_start = today.replace(day=1)
 
-    events = Event.objects.select_related(
-        "client",
-        "event_details",
-        "event_product",
-        "event_option",
-        "event_acompte",
-        "event_template",
-        "event_post_presta",
-    )
+    events = _base_event_queryset()
+    confirmed_events = events.filter(status__in=CONFIRMED_STATUS_LIST)
 
     total_events = events.count()
     upcoming_events = events.filter(event_details__date_evenement__gte=today).count()
+    upcoming_confirmed_events = confirmed_events.filter(event_details__date_evenement__gte=today).count()
     month_events = events.filter(event_details__date_evenement__gte=month_start).count()
+    month_confirmed_events = confirmed_events.filter(event_details__date_evenement__gte=month_start).count()
     done_events = events.filter(status__in=["Presta FINI", "Post Presta", "Sent Media"]).count()
     pending_events = events.filter(status__in=["Initied", "Calculed", "Sended", "Pending"]).count()
 
     ca_total_valide = events.aggregate(total=Sum("prix_valided")).get("total") or 0
+    ca_confirme = confirmed_events.aggregate(total=Sum("prix_valided")).get("total") or 0
     ca_mois = events.filter(event_details__date_evenement__gte=month_start).aggregate(total=Sum("prix_valided")).get("total") or 0
-    reste_total = events.aggregate(total=Sum("event_acompte__montant_restant")).get("total") or 0
-    impayes_count = events.filter(event_acompte__montant_restant__gt=0).count()
+    ca_mois_confirme = confirmed_events.filter(event_details__date_evenement__gte=month_start).aggregate(total=Sum("prix_valided")).get("total") or 0
+    reste_total = confirmed_events.aggregate(total=Sum("event_acompte__montant_restant")).get("total") or 0
+    impayes_count = confirmed_events.filter(event_acompte__montant_restant__gt=0).count()
 
-    media_non_envoyes = events.filter(
+    media_non_envoyes = confirmed_events.filter(
         status__in=["Presta FINI", "Post Presta"],
         event_post_presta__sent=False,
     ).count()
@@ -189,15 +233,20 @@ def private_api_crm_summary(request):
         {
             "status": "ok",
             "date_reference": today.isoformat(),
+            "timezone": "Europe/Paris",
             "total_events": total_events,
             "events_a_venir": upcoming_events,
+            "events_confirmes_a_venir": upcoming_confirmed_events,
             "events_ce_mois_et_apres": month_events,
+            "events_confirmes_ce_mois_et_apres": month_confirmed_events,
             "events_termines": done_events,
             "events_en_attente": pending_events,
             "ca_total_valide": ca_total_valide,
+            "ca_total_confirme": ca_confirme,
             "ca_mois_et_apres": ca_mois,
-            "reste_a_payer_total": reste_total,
-            "impayes_count": impayes_count,
+            "ca_mois_confirme_et_apres": ca_mois_confirme,
+            "reste_a_payer_total_confirme": reste_total,
+            "impayes_confirmes_count": impayes_count,
             "media_non_envoyes_count": media_non_envoyes,
         },
         json_dumps_params={"ensure_ascii": False},
@@ -210,32 +259,12 @@ def private_api_upcoming_events(request):
     if not is_allowed:
         return error_response
 
-    today = timezone.localdate()
-    limit = _safe_int(request.GET.get("limit")) or 20
-    days = _safe_int(request.GET.get("days")) or 90
-
-    if limit < 1:
-        limit = 20
-    if limit > 100:
-        limit = 100
-    if days < 1:
-        days = 90
-    if days > 730:
-        days = 730
-
+    today = _today_paris()
+    limit, days = _get_limit_and_days(request)
     date_max = today + timedelta(days=days)
 
     events = (
-        Event.objects.select_related(
-            "client",
-            "event_details",
-            "event_product",
-            "event_option",
-            "event_acompte",
-            "event_template",
-            "event_post_presta",
-        )
-        .prefetch_related("event_team_members")
+        _event_queryset_with_team()
         .filter(
             event_details__date_evenement__gte=today,
             event_details__date_evenement__lte=date_max,
@@ -249,6 +278,44 @@ def private_api_upcoming_events(request):
         {
             "status": "ok",
             "date_reference": today.isoformat(),
+            "timezone": "Europe/Paris",
+            "days": days,
+            "limit": limit,
+            "count": len(event_list),
+            "events": event_list,
+        },
+        json_dumps_params={"ensure_ascii": False},
+    )
+
+
+@require_GET
+def private_api_confirmed_events(request):
+    is_allowed, error_response = _check_private_token(request)
+    if not is_allowed:
+        return error_response
+
+    today = _today_paris()
+    limit, days = _get_limit_and_days(request)
+    date_max = today + timedelta(days=days)
+
+    events = (
+        _event_queryset_with_team()
+        .filter(
+            status__in=CONFIRMED_STATUS_LIST,
+            event_details__date_evenement__gte=today,
+            event_details__date_evenement__lte=date_max,
+        )
+        .order_by("event_details__date_evenement", "event_details__horaire")[:limit]
+    )
+
+    event_list = [_event_to_dict(event) for event in events]
+
+    return JsonResponse(
+        {
+            "status": "ok",
+            "date_reference": today.isoformat(),
+            "timezone": "Europe/Paris",
+            "statuses": CONFIRMED_STATUS_LIST,
             "days": days,
             "limit": limit,
             "count": len(event_list),
@@ -265,19 +332,7 @@ def private_api_event_detail(request, event_id):
         return error_response
 
     try:
-        event = (
-            Event.objects.select_related(
-                "client",
-                "event_details",
-                "event_product",
-                "event_option",
-                "event_acompte",
-                "event_template",
-                "event_post_presta",
-            )
-            .prefetch_related("event_team_members")
-            .get(id=event_id)
-        )
+        event = _event_queryset_with_team().get(id=event_id)
     except Event.DoesNotExist:
         return _json_error("Événement introuvable.", status=404)
 
