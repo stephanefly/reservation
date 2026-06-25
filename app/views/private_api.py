@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 
 from django.conf import settings
@@ -20,8 +21,17 @@ def _json_error(message, status=400):
     )
 
 
+def _get_private_api_token():
+    token = os.environ.get("PRIVATE_API_TOKEN")
+
+    if token:
+        return token
+
+    return getattr(settings, "PRIVATE_API_TOKEN", None)
+
+
 def _check_private_token(request):
-    expected_token = getattr(settings, "PRIVATE_API_TOKEN", None)
+    expected_token = _get_private_api_token()
 
     if not expected_token:
         return False, _json_error(
