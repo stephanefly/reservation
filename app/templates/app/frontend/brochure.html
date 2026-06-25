@@ -1,431 +1,906 @@
 {% extends 'app/frontend/index.html' %}
 {% block content %}
 {% load static %}
+
 <style>
-   /* Reset et styles de base */
-   body {
-      margin: 0;
-      padding: 0;
-      background-color: #000000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-   }
-   header {
-      padding: 20px 0;
-      background: linear-gradient(90deg, #333, #000);
-      color: #ffd700;
-      text-align: center;
-      font-size: 24px;
-      letter-spacing: 1px;
-   }
-   /* Conteneur principal */
-   .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-   }
-   /* Styles des services */
-   .service {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-      background-color: #000;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-      flex: 1 1 calc(25% - 20px);
-      text-align: center;
-      transition: transform 0.3s ease;
-   }
-   .service .button {
-   margin-top: auto; /* ✅ pousse le bouton vers le bas */
-}
+    :root {
+        --brochure-bg: #050505;
+        --brochure-card: #111111;
+        --brochure-card-soft: #181818;
+        --brochure-gold: #d8b45a;
+        --brochure-gold-light: #fff1b8;
+        --brochure-text: #ffffff;
+        --brochure-muted: #cfcfcf;
+        --brochure-border: rgba(216, 180, 90, 0.35);
+        --brochure-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+    }
 
-   .service img {
-      width: 100%;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      transition: transform 0.3s ease;
-   }
-   .service h2 {
-      margin-bottom: 10px;
-      color: #ffd700;
-      font-size: 22px;
-   }
-   .label {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 10;
-      padding: 5px 10px;
-      background: linear-gradient(to left, #836716, #fbfdc2);
-      color: #fff;
-      border: 2px solid #655a12;
-      border-radius: 0 0 15px 0;
-      font-size: 12px;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px #000;
-      transition: transform 0.3s ease;
-   }
-   /* Styles des prix (conteneur conservé pour la mise en page, mais vide) */
-   .price {
-      justify-content: space-around;
-      margin-bottom: 10px;
-      padding: 10px;
-      background-color: #444;
-      border-radius: 10px;
-      border: 3px solid #b3a150;
-      text-shadow: 1px 1px 2px #b9b391;
-      display: none; /* masqué puisqu'il n'y a pas de prix */
-   }
-   .price span {
-      color: #fff;
-      background-color: #555;
-      padding: 4px 10px;
-      border-radius: 2px;
-      display: inline-block;
-      position: relative;
-   }
-   .price span::after {
-      content: attr(data-time);
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(to bottom, #896f20, #ceaf54, #896f20);
-      color: #ffffff;
-      padding: 2px 5px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      margin-left: 5px;
-      white-space: nowrap;
-      text-shadow: 1px 1px 2px #000;
-   }
-   /* Styles des détails */
-   .details {
-      text-align: left;
-      color: #ddd;
-      font-size: 12px; /* Taille par défaut pour les petits écrans */
-      background-color: #000000;
-      border-radius: 8px;
-      margin: 5px 0px;
-   }
-.description {
-   font-size: 15px;
-   color: #e6e6e6;
-   margin-top: 12px;
-   line-height: 1.6;
-   text-align: left;
-   background-color: #111;
-   border-left: 4px solid #d4b253;
-   padding: 12px 14px;
-   border-radius: 6px;
-}
+    body {
+        margin: 0;
+        padding: 0;
+        background: var(--brochure-bg);
+        color: var(--brochure-text);
+        font-family: Arial, sans-serif;
+    }
 
-   .details_option {
-      text-align: left;
-      color: #ddd;
-      font-size: 16px;
-      background-color: #333;
-      border-radius: 8px;
-      padding: 5px;
-      margin-bottom: 20px;
-   }
-   /* Styles des boutons */
-   .button {
-      display: inline-block;
-      padding: 15px 10px;
-      background: linear-gradient(to bottom, #fbfdc2, #917c32, #59450a);
-      color: #fff;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px #000;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-      transition: background 0.3s, transform 0.3s ease;
-      margin: 5px;
-   }
-   .button:hover {
-      background: linear-gradient(90deg, #fded95, #daa520);
-      color: #000000;
-      text-shadow: 1px 1px 2px #ffffff;
-      transform: scale(1.1);
-   }
-   /* Médias queries pour la responsivité */
-   @media (max-width: 1000px) {
-      .service { flex: 1 1 calc(33.33% - 20px); }
-   }
-   @media (max-width: 700px) {
-      .service { flex: 1 1 calc(50% - 20px); }
-   }
-   /* Autres styles textuels */
-   .options-title, .info {
-      text-align: center;
-      background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-      -webkit-background-clip: text;
-      font-size: 36px; /* pour options-title */
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
-   }
-   .info {
-      text-align: center;
-      background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-      -webkit-background-clip: text;
-      font-size: 10px; /* pour options-title */
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
-      padding: 15px;
-      font-size: 15px;
-   }
-   .all {
-      text-align: center;
-      background: linear-gradient(to right, #ffffff, #fff, #ffffff);
-      -webkit-background-clip: text;
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 5px rgb(179 161 80 / 53%);
-   }
-   /* Styles pour les séparateurs */
-   .separator {
-      border: 5px;
-      height: 10px;
-      background: linear-gradient(to right, #ffd700, #fff, #ffd700);
-      margin: 25px 0;
-   }
-   .icone {
-      filter: invert(100%);
-      padding-top: 6px;
-      width: 20px !important;
-   }
+    .brochure-page {
+        background:
+            radial-gradient(circle at top left, rgba(216, 180, 90, 0.18), transparent 32%),
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 28%),
+            #050505;
+        color: var(--brochure-text);
+        padding-bottom: 70px;
+    }
+
+    .brochure-container {
+        width: min(1240px, calc(100% - 28px));
+        margin: 0 auto;
+    }
+
+    .brochure-hero {
+        padding: 52px 0 28px;
+        text-align: center;
+    }
+
+    .brochure-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 14px;
+        margin-bottom: 18px;
+        border: 1px solid var(--brochure-border);
+        border-radius: 999px;
+        background: rgba(216, 180, 90, 0.12);
+        color: var(--brochure-gold-light);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .brochure-hero h1 {
+        max-width: 920px;
+        margin: 0 auto 14px;
+        font-size: clamp(34px, 5vw, 64px);
+        line-height: 1.02;
+        font-weight: 900;
+        letter-spacing: -1.5px;
+    }
+
+    .brochure-hero h1 span {
+        color: var(--brochure-gold);
+    }
+
+    .brochure-hero p {
+        max-width: 760px;
+        margin: 0 auto;
+        color: var(--brochure-muted);
+        font-size: 17px;
+        line-height: 1.55;
+    }
+
+    .brochure-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .brochure-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 13px 20px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 15px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .brochure-button-primary {
+        background: linear-gradient(135deg, #fff0af, #d6aa42, #8a6718);
+        color: #111111;
+        box-shadow: 0 12px 30px rgba(216, 180, 90, 0.22);
+    }
+
+    .brochure-button-secondary {
+        border: 1px solid var(--brochure-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--brochure-text);
+    }
+
+    .brochure-button:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .brochure-button-primary:hover {
+        color: #111111;
+        box-shadow: 0 16px 38px rgba(216, 180, 90, 0.34);
+    }
+
+    .brochure-button-secondary:hover {
+        color: var(--brochure-text);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .brochure-info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin: 22px 0 28px;
+    }
+
+    .brochure-info-card {
+        min-height: 112px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    }
+
+    .brochure-info-card strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--brochure-gold-light);
+        font-size: 16px;
+    }
+
+    .brochure-info-card span {
+        color: var(--brochure-muted);
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .brochure-combo-box {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 18px;
+        align-items: stretch;
+        margin: 30px 0 38px;
+    }
+
+    .brochure-combo-main,
+    .brochure-combo-side {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        border: 1px solid var(--brochure-border);
+        border-radius: 26px;
+        background: linear-gradient(135deg, rgba(216, 180, 90, 0.2), rgba(255, 255, 255, 0.06));
+        box-shadow: var(--brochure-shadow);
+    }
+
+    .brochure-combo-main h2,
+    .brochure-combo-side h3 {
+        margin: 0 0 12px;
+        color: var(--brochure-gold-light);
+        font-weight: 900;
+    }
+
+    .brochure-combo-main h2 {
+        font-size: clamp(26px, 4vw, 44px);
+        line-height: 1.06;
+    }
+
+    .brochure-combo-side h3 {
+        font-size: 24px;
+    }
+
+    .brochure-combo-main p,
+    .brochure-combo-side p {
+        margin: 0;
+        color: #eeeeee;
+        line-height: 1.6;
+    }
+
+    .brochure-combo-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+    .brochure-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.35);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .brochure-section-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin: 48px 0 20px;
+    }
+
+    .brochure-section-head h2 {
+        margin: 0;
+        color: var(--brochure-text);
+        font-size: clamp(28px, 3.5vw, 44px);
+        font-weight: 900;
+        letter-spacing: -0.7px;
+    }
+
+    .brochure-section-head p {
+        max-width: 560px;
+        margin: 0;
+        color: var(--brochure-muted);
+        line-height: 1.55;
+        font-size: 15px;
+    }
+
+    .brochure-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+
+    .brochure-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.36);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .brochure-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(216, 180, 90, 0.55);
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.48);
+    }
+
+    .brochure-card-featured {
+        border-color: rgba(216, 180, 90, 0.75);
+        background: linear-gradient(180deg, rgba(216, 180, 90, 0.18), rgba(255, 255, 255, 0.04));
+    }
+
+    .brochure-label {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 2;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #fff0af, #c89d37);
+        color: #111111;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
+    }
+
+    .brochure-image {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        background: #222222;
+    }
+
+    .brochure-card-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .brochure-card-body h3 {
+        margin: 0 0 8px;
+        color: var(--brochure-text);
+        font-size: 23px;
+        font-weight: 900;
+    }
+
+    .brochure-short {
+        min-height: 44px;
+        margin: 0 0 15px;
+        color: var(--brochure-muted);
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .brochure-included {
+        display: grid;
+        gap: 8px;
+        margin: 0 0 18px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .brochure-included li {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        color: #eeeeee;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .brochure-icon {
+        width: 17px;
+        height: 17px;
+        object-fit: contain;
+        filter: invert(1);
+        opacity: 0.9;
+        flex: 0 0 17px;
+        margin-top: 1px;
+    }
+
+    .brochure-card .brochure-button {
+        width: 100%;
+        margin-top: auto;
+        border-radius: 16px;
+    }
+
+    .brochure-note {
+        margin-top: 18px;
+        padding: 18px 20px;
+        border: 1px solid rgba(216, 180, 90, 0.28);
+        border-radius: 20px;
+        background: rgba(216, 180, 90, 0.08);
+        color: #eeeeee;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .brochure-options-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+
+    .brochure-option-card {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        background: var(--brochure-card);
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32);
+    }
+
+    .brochure-option-card img {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        background: #222222;
+    }
+
+    .brochure-option-body {
+        padding: 16px;
+    }
+
+    .brochure-option-body h3 {
+        margin: 0 0 8px;
+        color: var(--brochure-gold-light);
+        font-size: 19px;
+        font-weight: 900;
+    }
+
+    .brochure-option-body p {
+        min-height: 58px;
+        margin: 0 0 14px;
+        color: var(--brochure-muted);
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .brochure-option-tag {
+        display: inline-flex;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(216, 180, 90, 0.12);
+        color: var(--brochure-gold-light);
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .brochure-contact-box {
+        margin-top: 42px;
+        padding: 28px;
+        border: 1px solid var(--brochure-border);
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(216, 180, 90, 0.18), rgba(255, 255, 255, 0.05));
+        text-align: center;
+    }
+
+    .brochure-contact-box h2 {
+        margin: 0 0 10px;
+        color: var(--brochure-gold-light);
+        font-size: 30px;
+        font-weight: 900;
+    }
+
+    .brochure-contact-box p {
+        max-width: 780px;
+        margin: 0 auto 20px;
+        color: #eeeeee;
+        line-height: 1.6;
+    }
+
+    .brochure-contact-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .brochure-sticky-mobile {
+        display: none;
+    }
+
+    @media (max-width: 1100px) {
+        .brochure-grid,
+        .brochure-options-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .brochure-info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 860px) {
+        .brochure-section-head {
+            display: block;
+        }
+
+        .brochure-section-head p {
+            margin-top: 10px;
+        }
+
+        .brochure-combo-box {
+            grid-template-columns: 1fr;
+        }
+
+        .brochure-grid,
+        .brochure-options-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 620px) {
+        .brochure-container {
+            width: min(100% - 18px, 1240px);
+        }
+
+        .brochure-hero {
+            padding-top: 36px;
+        }
+
+        .brochure-info-grid,
+        .brochure-grid,
+        .brochure-options-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .brochure-image {
+            height: 350px;
+        }
+
+        .brochure-option-card img {
+            height: 230px;
+        }
+
+        .brochure-combo-main,
+        .brochure-combo-side,
+        .brochure-contact-box {
+            padding: 22px;
+            border-radius: 22px;
+        }
+
+        .brochure-actions {
+            flex-direction: column;
+        }
+
+        .brochure-button {
+            width: 100%;
+        }
+
+        .brochure-sticky-mobile {
+            position: fixed;
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            z-index: 999;
+            display: block;
+        }
+
+        .brochure-sticky-mobile .brochure-button {
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+        }
+    }
 </style>
 
-<div class="service">
-   <div class="label">Illimités - Best Seller !</div>
-   <img src="/static/img/photobooth.jpg" alt="Photobooth">
-   <div class="details">
-      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-   </div>
-   <div class="description">
-      Expérience clé en main pour mariages, anniversaires et entreprises. Impressions en continu, animateur dédié et gabarits premium pour maximiser l’engagement et les souvenirs.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Photobooth</a>
-</div>
+<main class="brochure-page">
+    <section class="brochure-hero">
+        <div class="brochure-container">
+            <div class="brochure-badge">Brochure MySelfieBooth</div>
+            <h1>Animations photo et vidéo pour <span>événements privés et professionnels</span></h1>
+            <p>
+                Photobooth, Miroirbooth, 360 Booth, Vogue Booth et options souvenirs.
+            </p>
+            <div class="brochure-actions">
+                <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Demander un devis</a>
+                <a href="#prestations" class="brochure-button brochure-button-secondary">Voir les animations</a>
+            </div>
+        </div>
+    </section>
 
-<div class="service">
-   <div class="label">En Promo !</div>
-   <img src="/static/img/miroirbooth.jpg" alt="Miroirbooth">
-   <div class="details">
-      <img class="icone" src="/static/icone/impression.ico" alt="Impressions"> Impressions illimités<br>
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-   </div>
-   <div class="description">
-      Le miroir tactile plein pied pour un effet visuel haut de gamme. Interface interactive, rendu élégant et souvenirs premium pour mariages et galas.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Miroirbooth</a>
-</div>
+    <section class="brochure-container">
+        <div class="brochure-info-grid">
+            <div class="brochure-info-card">
+                <strong>Service clé en main</strong>
+                <span>Livraison, installation, animateur, personnalisation et galerie selon la formule.</span>
+            </div>
+            <div class="brochure-info-card">
+                <strong>Numérique enregistré</strong>
+                <span>Toutes les photos et vidéos numériques sont conservées après l’événement.</span>
+            </div>
+            <div class="brochure-info-card">
+                <strong>Options souvenirs</strong>
+                <span>Porte-clés, magnets premium, magnets simples, livre d’or et galerie web.</span>
+            </div>
+            <div class="brochure-info-card">
+                <strong>Pack conseillé</strong>
+                <span>Le combo Miroirbooth + 360 Booth est idéal pour maximiser photo et vidéo.</span>
+            </div>
+        </div>
 
-<div class="service">
-   <div class="label">Vidéo 4K</div>
-   <img src="/static/img/360booth.jpg" alt="360booth">
-   <div class="details">
-      <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
-      <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 5 personnes<br>
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-   </div>
-   <div class="description">
-      L’animation la plus spectaculaire : vidéos circulaires en slow/real-time prêtes à partager. Parfait pour soirées, lancements de produits et événements premium.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le 360booth</a>
-</div>
+        <div class="brochure-combo-box">
+            <div class="brochure-combo-main">
+                <h2>Combinez plusieurs animations</h2>
+                <p>
+                    Pour un mariage, une soirée privée, un salon ou un événement d’entreprise, la formule peut être construite avec plusieurs animations et options complémentaires.
+                </p>
+                <div class="brochure-combo-list">
+                    <span class="brochure-pill">Miroirbooth + 360 Booth</span>
+                    <span class="brochure-pill">Photobooth + Phonebooth</span>
+                    <span class="brochure-pill">Vogue Booth + photographe</span>
+                    <span class="brochure-pill">Porte-clés photo</span>
+                    <span class="brochure-pill">Magnets premium</span>
+                    <span class="brochure-pill">Magnets simples</span>
+                    <span class="brochure-pill">Mur floral</span>
+                    <span class="brochure-pill">Formule complète</span>
+                </div>
+            </div>
 
-<div class="service">
-   <div class="label">Formule Eco</div>
-   <img src="/static/img/ipadbooth.jpg" alt="RingBooth">
-   <div class="details">
-      <img class="icone" src="/static/icone/montage.ico" alt="Montage"> Montage en 5 min<br>
-      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Numériques illimités<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Option Livraison + Installation<br>
-   </div>
-   <div class="description">
-      Solution légère, moderne et économique. Idéale pour petits espaces, événements familiaux et soirées privées. Simplicité d’usage et rendu propre.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le RingBooth</a>
-</div>
+            <div class="brochure-combo-side">
+                <h3>Devis personnalisé</h3>
+                <p>
+                    Remplissez le formulaire avec vos animations et options. Le devis est ensuite ajusté selon le lieu, la durée et la configuration.
+                </p>
+                <div class="brochure-actions" style="justify-content: flex-start; margin-top: 18px;">
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Remplir le formulaire</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="service">
-   <div class="label">Nouveau !</div>
-   <img src="/static/img/airbooth.jpg" alt="Air360booth">
-   <div class="details">
-      <img class="icone" src="/static/icone/video.ico" alt="Video"> Vidéo 4K illimités<br>
-      <img class="icone" src="/static/icone/personnes.ico" alt="Nombre"> Jusqu'à 10 personnes<br>
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> Animateur sur Place<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-   </div>
-   <div class="description">
-      La version grand format du 360° pour des groupes et un impact scénique maximal. Idéale pour marques, salons et scènes événementielles.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Air360booth</a>
-</div>
+    <section class="brochure-container" id="prestations">
+        <div class="brochure-section-head">
+            <h2>Animations principales</h2>
+            <p>
+                Sélectionnez une animation seule ou combinez plusieurs prestations pour créer une expérience plus complète.
+            </p>
+        </div>
 
-<div class="service">
-   <div class="label">En Vogue !</div>
-   <img src="/static/img/voguebooth.jpg" alt="VogueBooth">
-   <div class="details">
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-      <img class="icone" src="/static/icone/decor.ico" alt="Décoration"> Décoration<br>
-      <img class="icone" src="/static/icone/photo.ico" alt="Photo"> Photographe + Impressions (option)<br>
-   </div>
-   <div class="description">
-      Set design inspiré studio mode, lumière et mise en scène soignée. Pour des clichés stylés et une esthétique magazine.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le VogueBooth</a>
-</div>
+        <div class="brochure-grid">
+            <article class="brochure-card brochure-card-featured">
+                <div class="brochure-label">Best seller</div>
+                <img class="brochure-image" src="{% static 'img/photobooth.jpg' %}" alt="Photobooth">
+                <div class="brochure-card-body">
+                    <h3>Photobooth</h3>
+                    <p class="brochure-short">La valeur sûre pour offrir des tirages photo personnalisés aux invités.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions selon formule</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/numerique.ico' %}" alt=""> Photos numériques enregistrées</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Modèle photo personnalisé</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Photobooth</a>
+                </div>
+            </article>
 
-<div class="service">
-   <div class="label">Pack VIP</div>
-   <img src="/static/img/pack.jpg" alt="Pack">
-   <div class="details">
-      <img class="icone" src="/static/icone/camion.ico" alt="Livraison"> Livraison et Installation<br>
-      <img class="icone" src="/static/icone/animateur.ico" alt="Animateur"> 2 Animateurs<br>
-      <img class="icone" src="/static/icone/numerique.ico" alt="Numérique"> Vidéo & Impressions illimités<br>
-      <img class="icone" src="/static/icone/web.ico" alt="Web"> Galerie Web<br>
-      <img class="icone" src="/static/icone/personnalisation.ico" alt="Personnalisation"> Personnalisation<br>
-   </div>
-   <div class="description">
-      Combinaison haut rendement pour maximiser l’animation et la visibilité. Deux animateurs pour une gestion fluide des flux invités et un service premium.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Réserver le Pack</a>
-</div>
+            <article class="brochure-card brochure-card-featured">
+                <div class="brochure-label">Premium</div>
+                <img class="brochure-image" src="{% static 'img/miroirbooth.jpg' %}" alt="Miroirbooth">
+                <div class="brochure-card-body">
+                    <h3>Miroirbooth</h3>
+                    <p class="brochure-short">Grand miroir interactif, élégant et très visible dans la salle.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions selon formule</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/numerique.ico' %}" alt=""> Photos numériques enregistrées</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Modèle photo personnalisé</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Miroirbooth</a>
+                </div>
+            </article>
 
-<div class="service">
-   <div class="label">Offre Personnalisée</div>
-   <img src="/static/img/all_presta.jpg" alt="ALL">
-   <div class="details">
-      Combinez plusieurs services pour créer une offre sur mesure.
-      Une réduction spéciale est appliquée selon votre sélection.
-   </div>
-   <div class="description">
-      Dites-nous votre objectif (mariage, lancement, soirée privée). Nous assemblons la meilleure configuration pour l’impact visuel, le flux invités et la mémorisation de marque.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Offre Personnalisée</a>
-</div>
+            <article class="brochure-card">
+                <div class="brochure-label">Vidéo 4K</div>
+                <img class="brochure-image" src="{% static 'img/360booth.jpg' %}" alt="360 Booth">
+                <div class="brochure-card-body">
+                    <h3>360 Booth</h3>
+                    <p class="brochure-short">Animation vidéo dynamique avec rendu moderne et partage facile.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/video.ico' %}" alt=""> Vidéos 4K</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnes.ico' %}" alt=""> Jusqu’à 5 personnes</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation vidéo</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le 360 Booth</a>
+                </div>
+            </article>
 
-<div style="text-align: center; width: 100%;">
-   <hr class="separator">
-   <h2 class="options-title">Options</h2>
-</div>
+            <article class="brochure-card">
+                <div class="brochure-label">Grand format</div>
+                <img class="brochure-image" src="{% static 'img/airbooth.jpg' %}" alt="Air360 Booth">
+                <div class="brochure-card-body">
+                    <h3>Air360 Booth</h3>
+                    <p class="brochure-short">Version grand format du 360 Booth pour un rendu plus spectaculaire.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/video.ico' %}" alt=""> Vidéos 4K</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnes.ico' %}" alt=""> Jusqu’à 10 personnes</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation vidéo</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Air360 Booth</a>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/allmur.jpg" alt="Mur Floral">
-   <div class="details_option">
-      Mur floral chic pour sublimer vos photos.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">+ Infos</a>
-</div>
+            <article class="brochure-card">
+                <div class="brochure-label">Compact</div>
+                <img class="brochure-image" src="{% static 'img/ipadbooth.jpg' %}" alt="Ipad Booth">
+                <div class="brochure-card-body">
+                    <h3>Ipad Booth</h3>
+                    <p class="brochure-short">Borne digitale compacte, idéale pour les petits espaces et événements pro.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/montage.ico' %}" alt=""> Installation rapide</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/numerique.ico' %}" alt=""> Photos numériques enregistrées</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Visuel personnalisé</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison possible selon formule</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Ipad Booth</a>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/phonebooth.jpg" alt="PhoneBooth">
-   <div class="details_option">
-      Livre d'or audio pour messages vocaux.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+            <article class="brochure-card">
+                <div class="brochure-label">Studio magazine</div>
+                <img class="brochure-image" src="{% static 'img/voguebooth.jpg' %}" alt="Vogue Booth">
+                <div class="brochure-card-body">
+                    <h3>Vogue Booth</h3>
+                    <p class="brochure-short">Décor lumineux effet magazine pour des photos très premium.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation du visuel</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/decor.ico' %}" alt=""> Décor lumineux</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/photo.ico' %}" alt=""> Photographe en option</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions en option</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Vogue Booth</a>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/Panneau-fontaine.jpg" alt="Panneau de bienvenue Fontaine">
-   <div class="details_option">
-      Accueillez vos invités avec le Panneau de bienvenue Fontaine, une touche élégante pour votre événement.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le Panneau de Bienvenue</a>
-</div>
+            <article class="brochure-card brochure-card-featured">
+                <div class="brochure-label">Pack conseillé</div>
+                <img class="brochure-image" src="{% static 'img/pack.jpg' %}" alt="Pack VIP Miroirbooth et 360 Booth">
+                <div class="brochure-card-body">
+                    <h3>Pack VIP</h3>
+                    <p class="brochure-short">Miroirbooth + 360 Booth pour combiner photo imprimée et vidéo événementielle.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Deux animations complémentaires</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/numerique.ico' %}" alt=""> Photos et vidéos enregistrées</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation incluse</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Choisir le Pack VIP</a>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/livre-dor-video.jpg" alt="Livre d'or Vidéo">
-   <div class="details_option">
-      Capturez des messages uniques avec le Livre d’or Vidéo, une animation moderne et émotionnelle.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter le Livre d'or Vidéo</a>
-</div>
+            <article class="brochure-card brochure-card-featured">
+                <div class="brochure-label">Sur mesure</div>
+                <img class="brochure-image" src="{% static 'img/all_presta.jpg' %}" alt="Formule complète MySelfieBooth">
+                <div class="brochure-card-body">
+                    <h3>Formule complète</h3>
+                    <p class="brochure-short">Plusieurs machines, options souvenirs, décor et durée adaptée à votre événement.</p>
+                    <ul class="brochure-included">
+                        <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Configuration sur mesure</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Organisation adaptée au lieu</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Équipe ajustée à la formule</li>
+                        <li><img class="brochure-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web centralisée</li>
+                    </ul>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Créer ma formule</a>
+                </div>
+            </article>
+        </div>
 
-<div class="service">
-   <img src="/static/img/3dHolo.jpg" alt="Holobooth">
-   <div class="details_option">
-      Holobooth 3D pour des effets uniques.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+        <div class="brochure-note">
+            Les prestations peuvent être adaptées selon la durée, le lieu, le nombre d’invités et les options sélectionnées.
+        </div>
+    </section>
 
-<div class="service">
-   <img src="/static/img/Livre-dor.jpg" alt="Livre d'or">
-   <div class="details_option">
-      Livre d’Or personnalisé.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+    <section class="brochure-container" id="options">
+        <div class="brochure-section-head">
+            <h2>Options</h2>
+            <p>
+                Ajoutez des options utiles pour renforcer la décoration, l’expérience invité et les souvenirs physiques.
+            </p>
+        </div>
 
-<div class="service">
-   <img src="/static/img/Welcomeboard.jpg" alt="Panneau de Bienvenue">
-   <div class="details_option">
-      Panneau de bienvenue personnalisé.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+        <div class="brochure-options-grid">
+            <article class="brochure-option-card">
+                <img src="{% static 'img/allmur.jpg' %}" alt="Mur floral">
+                <div class="brochure-option-body">
+                    <h3>Mur floral</h3>
+                    <p>Décor photo premium pour obtenir un rendu plus chic sur les photos et vidéos.</p>
+                    <span class="brochure-option-tag">Décor premium</span>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/fond360.jpg" alt="Fond LED 360">
-   <div class="details_option">
-      Fond LED 360° lumineux et immersif.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+            <article class="brochure-option-card">
+                <img src="{% static 'img/phonebooth.jpg' %}" alt="Phonebooth audio">
+                <div class="brochure-option-body">
+                    <h3>Phonebooth audio</h3>
+                    <p>Livre d’or audio rétro pour enregistrer les messages vocaux des invités.</p>
+                    <span class="brochure-option-tag">Messages vocaux</span>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/photographe-voguebooth.jpg" alt="Photographe Voguebooth">
-   <div class="details_option">
-      Photographe VogueBooth.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+            <article class="brochure-option-card">
+                <img src="{% static 'img/PorteCles.png' %}" alt="Porte-clés photo">
+                <div class="brochure-option-body">
+                    <h3>Porte-clés photo</h3>
+                    <p>Photo personnalisée intégrée dans un porte-clés souvenir à offrir aux invités.</p>
+                    <span class="brochure-option-tag">Souvenir invité</span>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/impression-voguebooth.jpg" alt="Impression Voguebooth">
-   <div class="details_option">
-      Impressions style VogueBooth.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+            <article class="brochure-option-card">
+                <img src="{% static 'img/magnets.png' %}" alt="Magnets premium">
+                <div class="brochure-option-body">
+                    <h3>Magnets premium</h3>
+                    <p>Support magnétique rigide 60 x 90 mm avec photo intégrée et protection plastifiée.</p>
+                    <span class="brochure-option-tag">Rendu premium</span>
+                </div>
+            </article>
 
-<div class="service">
-   <img src="/static/img/decoration-voguebooth.jpg" alt="Décoration Voguebooth">
-   <div class="details_option">
-      Décoration VogueBooth.
-   </div>
-   <a href="https://reservation.myselfiebooth-paris.fr/" class="button">Ajouter</a>
-</div>
+            <article class="brochure-option-card">
+                <img src="{% static 'img/MagnetsSimple.png' %}" alt="Magnets simples">
+                <div class="brochure-option-body">
+                    <h3>Magnets simples</h3>
+                    <p>Tirage photo classique avec magnet collé au dos. Simple, efficace et économique.</p>
+                    <span class="brochure-option-tag">Option économique</span>
+                </div>
+            </article>
 
-<div style="text-align:center;width:100%;">
-   <hr class="separator">
-   <h2 class="info">Pour toute demande spécifique, appelez le 0699733998<br>ou écrivez à contact@myselfiebooth-paris.fr</h2>
-</div>
+            <article class="brochure-option-card">
+                <img src="{% static 'img/Panneau-fontaine.jpg' %}" alt="Panneau fontaine">
+                <div class="brochure-option-body">
+                    <h3>Panneau fontaine</h3>
+                    <p>Accueil élégant et visible pour l’entrée de salle, les mariages et les grands événements.</p>
+                    <span class="brochure-option-tag">Accueil premium</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/livre-dor-video.jpg' %}" alt="Livre d’or vidéo">
+                <div class="brochure-option-body">
+                    <h3>Livre d’or vidéo</h3>
+                    <p>Messages vidéo des invités pour garder des souvenirs plus vivants.</p>
+                    <span class="brochure-option-tag">Messages vidéo</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/3dHolo.jpg' %}" alt="Holo 3D">
+                <div class="brochure-option-body">
+                    <h3>Holo 3D</h3>
+                    <p>Animation visuelle originale pour donner un effet moderne à votre événement.</p>
+                    <span class="brochure-option-tag">Effet visuel</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/Livre-dor.jpg' %}" alt="Livre d’or">
+                <div class="brochure-option-body">
+                    <h3>Livre d’or</h3>
+                    <p>Support physique pour coller les tirages et conserver les messages des invités.</p>
+                    <span class="brochure-option-tag">Souvenir papier</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/Welcomeboard.jpg' %}" alt="Panneau de bienvenue">
+                <div class="brochure-option-body">
+                    <h3>Panneau de bienvenue</h3>
+                    <p>Panneau personnalisé pour guider les invités et renforcer la décoration.</p>
+                    <span class="brochure-option-tag">Décoration</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/fond360.jpg' %}" alt="Fond LED 360">
+                <div class="brochure-option-body">
+                    <h3>Fond LED 360</h3>
+                    <p>Fond lumineux pour améliorer le rendu visuel des vidéos 360 Booth.</p>
+                    <span class="brochure-option-tag">Option 360 Booth</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/photographe-voguebooth.jpg' %}" alt="Photographe Vogue Booth">
+                <div class="brochure-option-body">
+                    <h3>Photographe Vogue Booth</h3>
+                    <p>Photographe dédié pour obtenir des clichés plus propres et mieux cadrés.</p>
+                    <span class="brochure-option-tag">Option Vogue Booth</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/impression-voguebooth.jpg' %}" alt="Impression Vogue Booth">
+                <div class="brochure-option-body">
+                    <h3>Impression Vogue Booth</h3>
+                    <p>Ajout d’impressions instantanées pour offrir un souvenir physique aux invités.</p>
+                    <span class="brochure-option-tag">Option impression</span>
+                </div>
+            </article>
+
+            <article class="brochure-option-card">
+                <img src="{% static 'img/decoration-voguebooth.jpg' %}" alt="Décoration Vogue Booth">
+                <div class="brochure-option-body">
+                    <h3>Décoration Vogue Booth</h3>
+                    <p>Décoration spécifique pour améliorer l’effet studio et l’expérience photo.</p>
+                    <span class="brochure-option-tag">Option décor</span>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="brochure-container">
+        <div class="brochure-contact-box">
+            <h2>Créer une formule adaptée</h2>
+            <p>
+                Pour un mariage, une soirée privée, un salon, un lancement de produit ou un événement d’entreprise, remplissez le formulaire. La proposition sera ajustée selon votre besoin.
+            </p>
+            <div class="brochure-contact-links">
+                <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Demander un devis personnalisé</a>
+                <a href="tel:0699733998" class="brochure-button brochure-button-secondary">Appeler le 06 99 73 39 98</a>
+                <a href="mailto:contact@myselfiebooth-paris.fr" class="brochure-button brochure-button-secondary">Envoyer un mail</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="brochure-sticky-mobile">
+        <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Demander un devis</a>
+    </div>
+</main>
 
 {% endblock %}
