@@ -8,6 +8,7 @@ urlpatterns = [
     path('', include('app.urls.frontend_urls')),
 
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
+    path('api/private/', include('app.urls.private_api_urls')),
     path('api/ajouter-membre/<int:event_id>/', api_add_member, name='api_add_member'),
     path('api/remove-membre/<int:event_id>/<int:member_id>/', api_remove_member, name='api_remove_member'),
     path("ajax/update-comment/<int:event_id>/", update_comment, name="update_comment"),
