@@ -46,12 +46,12 @@ def get_event_statuses():
         ),
 
         "events_presta_fini_data": Event.objects.filter(
-            status="Presta FINI",
+            status__in=["Presta FINI", "Sent Media", "Pending"],
             event_details__date_evenement__gte=date_limite
         ),
 
         "events_post_presta_data": Event.objects.filter(
-            status__in=["Post Presta", "Sent Media", "Pending"],
+            status="Post Presta",
             event_details__date_evenement__gte=date_limite
         ),
     }
