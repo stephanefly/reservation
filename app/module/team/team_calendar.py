@@ -1,7 +1,8 @@
 import json
 from django.shortcuts import render
 from app.models import Event  # adapte l'import si besoin
-
+from datetime import timedelta
+from django.utils.timezone import now
 
 def get_stock_machines():
     """Retourne le stock global de machines."""
@@ -35,10 +36,24 @@ def get_stock_options():
 
 def get_event_statuses():
     """Retourne les QuerySets des événements par statut."""
+
+    date_limite = now().date() - timedelta(days=90)
+
     return {
-        "events_ok_data": Event.objects.filter(status="Acompte OK"),
-        "events_presta_fini_data": Event.objects.filter(status="Presta FINI"),
-        "events_post_presta_data": Event.objects.filter(status="Post Presta"),
+        "events_ok_data": Event.objects.filter(
+            status="Acompte OK",
+            event_details__date_evenement__gte=date_limite
+        ),
+
+        "events_presta_fini_data": Event.objects.filter(
+            status="Presta FINI",
+            event_details__date_evenement__gte=date_limite
+        ),
+
+        "events_post_presta_data": Event.objects.filter(
+            status__in=["Post Presta", "Send Media"],
+            event_details__date_evenement__gte=date_limite
+        ),
     }
 
 
