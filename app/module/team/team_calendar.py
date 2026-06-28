@@ -51,7 +51,7 @@ def get_event_statuses():
         ),
 
         "events_post_presta_data": Event.objects.filter(
-            status__in=["Post Presta", "Send Media"],
+            status__in=["Post Presta", "Sent Media", "Pending"],
             event_details__date_evenement__gte=date_limite
         ),
     }
