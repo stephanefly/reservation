@@ -1,57 +1,60 @@
 <!DOCTYPE html>
 {% load static %}
 {% load bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
 <html lang="fr">
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="description" content="Réservation facile et rapide de photobooth pour vos événements. Photobooth classique, miroir et 360 disponibles.">
-      <meta name="keywords" content="photobooth, réservation photobooth, photobooth événements, photobooth mariage, photobooth entreprise">
-      <meta name="author" content="Votre Nom d'Entreprise">
-      <meta name="robots" content="index, follow">
-      <meta property="og:title" content="MySelfieBooth">
-      <meta property="og:description" content="Profitez de nos meilleurs photobooths pour vos événements.">
-      <meta property="og:image" content="URL_de_votre_image">
-      <meta property="og:url" content="URL_de_votre_site_web">
-      <meta name="twitter:card" content="summary_large_image">
-      <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
-      <title>MySelfieBooth - Reservation</title>
-      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-      <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-      <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
-          <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-          <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Gérez simplement les informations de votre événement MySelfieBooth.">
+   <meta name="robots" content="noindex, nofollow">
+   <meta name="theme-color" content="#171412">
+   <title>{% block title %}Espace client{% endblock %} | MySelfieBooth Paris</title>
+   {% bootstrap_css %}
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
+   <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
+</head>
+<body class="client-body">
+   <a class="skip-link" href="#contenu-principal">Aller au contenu</a>
 
-   </head>
-   <body>
-      <nav class="navbar navbar-dark bg-dark">
-         <div class="container-fluid">
-            <a class="navbar-brand" href="#">MySelfieBooth Paris</a>
-         </div>
-      </nav>
-      <main class="container mt-3">
-         {% block content %}
-         {% endblock content %}
-      </main>
-      <div class="d-flex justify-content-center">
-         <div class="contact-info">
-            <p>Pour toutes questions,<br>
-               merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>
-               ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a>
-            </p>
-         </div>
+   <header class="client-header">
+      <div class="client-header__inner">
+         <a class="client-brand" href="https://myselfiebooth-paris.fr/" aria-label="MySelfieBooth Paris - Accueil">
+            <span class="client-brand__mark" aria-hidden="true">M</span>
+            <span class="client-brand__text">
+               <strong>MySelfieBooth</strong>
+               <small>Paris</small>
+            </span>
+         </a>
+         <span class="client-header__label"><i class="bi bi-person-circle" aria-hidden="true"></i> Espace client</span>
       </div>
-      <footer class="bg-light text-muted">
-         <div class="text-center p-4">
-            © 2024 MySelfieBooth Tous droits réservés.
-         </div>
-      </footer>
-   </body>
+   </header>
+
+   <main id="contenu-principal" class="client-main">
+      <div class="client-shell">
+         {% block content %}{% endblock content %}
+      </div>
+   </main>
+
+   <section class="support-card" aria-label="Besoin d'aide ?">
+      <div>
+         <span class="support-card__eyebrow">Une question ?</span>
+         <strong>Notre équipe vous accompagne.</strong>
+      </div>
+      <div class="support-card__actions">
+         <a href="tel:0699733998"><i class="bi bi-telephone" aria-hidden="true"></i> 06 99 73 39 98</a>
+         <a href="mailto:contact@myselfiebooth-paris.fr"><i class="bi bi-envelope" aria-hidden="true"></i> Nous écrire</a>
+      </div>
+   </section>
+
+   <footer class="client-footer">
+      © 2026 MySelfieBooth Paris · Tous droits réservés
+   </footer>
+
+   {% bootstrap_javascript %}
+   {% block extra_js %}{% endblock extra_js %}
+</body>
 </html>
