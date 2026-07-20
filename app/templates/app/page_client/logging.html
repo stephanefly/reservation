@@ -1,33 +1,65 @@
 {% extends 'app/page_client/base_client.html' %}
+
+{% block title %}Connexion à votre événement{% endblock %}
+
 {% block content %}
-    
+<section class="login-layout">
+   <div class="login-intro">
+      <span class="page-eyebrow">Votre événement, à portée de main</span>
+      <h1>Préparons ensemble<br>votre plus beau souvenir.</h1>
+      <p>Retrouvez votre réservation et transmettez-nous les derniers détails de votre prestation en quelques instants.</p>
 
-<div class="row d-flex justify-content-center">
-  <h1>Espace Client MySelfieBooth</h1>
-</div>
-<div class="row">
-</div><br>
-    {% if error_message %}
-  <div class="row d-flex justify-content-center">
-    <div class="alert alert-danger" role="alert">
-      {{ error_message }}
-    </div>  </div>
-{% endif %}
+      <div class="login-benefits" aria-label="Avantages de l'espace client">
+         <span><i class="bi bi-check2-circle" aria-hidden="true"></i> Informations centralisées</span>
+         <span><i class="bi bi-check2-circle" aria-hidden="true"></i> Modifications rapides</span>
+         <span><i class="bi bi-check2-circle" aria-hidden="true"></i> Suivi de votre préparation</span>
+      </div>
+   </div>
 
-<form method="post" id="monFormulaire">
-   {% csrf_token %}
-  <div>
-    <label for="id_mail" class="form-label">Mail (présent sur le devis) :</label>
-    <input type="email" class="form-control" id="id_mail" name="mail" required value="{{ form.mail }}" aria-label="Adresse e-mail">
-    <br>
-    <label for="id_date_evenement" class="form-label">Date de l'événement :</label>
-    <input type="date" class="form-control" id="id_date_evenement" name="date_evenement" required value="{{ form.date_evenement }}" aria-label="Date de l'événement">
-  </div>
-  <div class="d-flex justify-content-center">
-    <button type="submit">
-      Valider
-    </button>
-  </div>
-</form>
+   <div class="login-card">
+      <div class="login-card__heading">
+         <span class="login-card__icon"><i class="bi bi-stars" aria-hidden="true"></i></span>
+         <div>
+            <span class="page-eyebrow">Accès sécurisé</span>
+            <h2>Retrouver mon événement</h2>
+         </div>
+      </div>
 
+      {% if error_message %}
+      <div class="notice notice--error" role="alert">
+         <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+         <div><strong>Impossible de vous identifier</strong><span>{{ error_message }}</span></div>
+      </div>
+      {% endif %}
+
+      <form method="post" id="monFormulaire" class="login-form">
+         {% csrf_token %}
+         <div class="form-field">
+            <label for="id_mail">Adresse e-mail</label>
+            <span class="form-field__hint">Utilisez l'adresse indiquée sur votre devis.</span>
+            <div class="form-control-wrap">
+               <i class="bi bi-envelope" aria-hidden="true"></i>
+               <input type="email" class="form-control" id="id_mail" name="mail" required
+                      value="{{ form.mail }}" autocomplete="email" placeholder="vous@exemple.fr">
+            </div>
+         </div>
+
+         <div class="form-field">
+            <label for="id_date_evenement">Date de l'événement</label>
+            <span class="form-field__hint">Sélectionnez la date prévue sur votre devis.</span>
+            <div class="form-control-wrap">
+               <i class="bi bi-calendar-event" aria-hidden="true"></i>
+               <input type="date" class="form-control" id="id_date_evenement" name="date_evenement" required
+                      value="{{ form.date_evenement }}">
+            </div>
+         </div>
+
+         <button type="submit" class="btn btn-brand btn-brand--wide">
+            Accéder à mon espace <i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+      </form>
+
+      <p class="login-card__help"><i class="bi bi-shield-check" aria-hidden="true"></i> Vos informations sont utilisées uniquement pour retrouver votre réservation.</p>
+   </div>
+</section>
 {% endblock %}
