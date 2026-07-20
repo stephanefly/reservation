@@ -1,13 +1,13 @@
 :root {
     --ink: #f8f3e9;
     --ink-soft: #c5bdb1;
-    --paper: #151515;
-    --cream: #090909;
-    --cream-deep: #211c12;
-    --gold: #d4af37;
+    --paper: #242424;
+    --cream: #171717;
+    --cream-deep: #342c1b;
+    --gold: #d9b84a;
     --gold-dark: #c5962e;
     --gold-light: #f1d479;
-    --line: rgba(212, 175, 55, 0.24);
+    --line: rgba(217, 184, 74, 0.32);
     --success: #62d99b;
     --success-soft: rgba(40, 167, 105, 0.14);
     --warning: #f0c76b;
@@ -36,9 +36,9 @@ body.client-body {
     flex-direction: column;
     color: var(--ink);
     background:
-        radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.18), transparent 28rem),
-        radial-gradient(circle at 95% 30%, rgba(212, 175, 55, 0.1), transparent 24rem),
-        linear-gradient(145deg, #050505 0%, #0c0b09 48%, #050505 100%),
+        radial-gradient(circle at 10% 0%, rgba(217, 184, 74, 0.24), transparent 30rem),
+        radial-gradient(circle at 95% 30%, rgba(217, 184, 74, 0.15), transparent 26rem),
+        linear-gradient(145deg, #141414 0%, #211e17 48%, #151515 100%),
         var(--cream);
     font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -75,7 +75,7 @@ a:hover {
     z-index: 1020;
     border-bottom: 1px solid rgba(212, 175, 55, 0.28);
     color: #fff;
-    background: rgba(5, 5, 5, 0.96);
+    background: rgba(16, 16, 16, 0.94);
     backdrop-filter: blur(18px);
 }
 
@@ -178,7 +178,7 @@ a:hover {
     gap: 24px;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: rgba(18, 18, 18, 0.94);
+    background: rgba(34, 34, 34, 0.94);
     box-shadow: var(--shadow-sm);
 }
 
@@ -207,7 +207,7 @@ a:hover {
     border-radius: 10px;
     border: 1px solid rgba(212, 175, 55, 0.2);
     color: var(--gold-light);
-    background: #0b0b0b;
+    background: #1b1b1b;
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
@@ -290,7 +290,7 @@ a:hover {
     padding: clamp(28px, 4vw, 44px);
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: var(--radius-lg);
-    background: linear-gradient(145deg, rgba(24, 24, 24, 0.98), rgba(12, 12, 12, 0.98));
+    background: linear-gradient(145deg, rgba(43, 43, 43, 0.98), rgba(25, 25, 25, 0.98));
     box-shadow: var(--shadow-lg);
 }
 
@@ -369,7 +369,7 @@ a:hover {
     border: 1px solid rgba(212, 175, 55, 0.28);
     border-radius: 12px;
     color: var(--ink);
-    background-color: #0b0b0b;
+    background-color: #1e1e1e;
     color-scheme: dark;
     font-size: 15px;
     box-shadow: none;
@@ -383,7 +383,7 @@ textarea.form-control {
 .form-control:focus,
 .form-select:focus {
     border-color: var(--gold);
-    background-color: #0b0b0b;
+    background-color: #1e1e1e;
     color: var(--ink);
     box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
 }
@@ -396,7 +396,7 @@ textarea.form-control {
 .form-control:-webkit-autofill:hover,
 .form-control:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--ink);
-    -webkit-box-shadow: 0 0 0 1000px #0b0b0b inset;
+    -webkit-box-shadow: 0 0 0 1000px #1e1e1e inset;
     caret-color: var(--ink);
 }
 
@@ -491,8 +491,8 @@ textarea.form-control {
     border-radius: var(--radius-lg);
     color: #fff;
     background:
-        radial-gradient(circle at 92% 12%, rgba(212, 175, 55, 0.27), transparent 16rem),
-        linear-gradient(135deg, #050505 0%, #1b160c 100%);
+        radial-gradient(circle at 92% 12%, rgba(217, 184, 74, 0.36), transparent 17rem),
+        linear-gradient(135deg, #171717 0%, #332a16 100%);
     box-shadow: var(--shadow-lg);
 }
 
@@ -540,7 +540,7 @@ textarea.form-control {
     border: 1px solid rgba(212, 175, 55, 0.28);
     border-radius: 999px;
     color: #f8edcf;
-    background: rgba(212, 175, 55, 0.08);
+    background: rgba(217, 184, 74, 0.13);
     font-size: 13px;
 }
 
@@ -552,7 +552,7 @@ textarea.form-control {
     padding: clamp(24px, 4vw, 34px);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: linear-gradient(145deg, rgba(23, 23, 23, 0.98), rgba(12, 12, 12, 0.98));
+    background: linear-gradient(145deg, rgba(42, 42, 42, 0.98), rgba(27, 27, 27, 0.98));
     box-shadow: var(--shadow-sm);
 }
 
@@ -636,7 +636,7 @@ textarea.form-control {
     border: 1px solid rgba(212, 175, 55, 0.24);
     border-radius: 12px;
     color: var(--ink);
-    background: #0a0a0a;
+    background: #202020;
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
@@ -651,7 +651,7 @@ button.completion-action {
 .completion-action:hover {
     border-color: var(--gold-light);
     color: var(--ink);
-    background: rgba(212, 175, 55, 0.12);
+    background: rgba(217, 184, 74, 0.18);
 }
 
 .completion-action i {
@@ -669,7 +669,7 @@ button.completion-action {
     padding: 26px;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: linear-gradient(145deg, rgba(22, 22, 22, 0.98), rgba(11, 11, 11, 0.98));
+    background: linear-gradient(145deg, rgba(40, 40, 40, 0.98), rgba(25, 25, 25, 0.98));
     box-shadow: var(--shadow-sm);
 }
 
@@ -761,19 +761,19 @@ button.completion-action {
 .highlight-prestation {
     border-color: rgba(212, 175, 55, 0.42);
     color: var(--gold-light);
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(217, 184, 74, 0.16);
 }
 
 .highlight-option {
     border-color: rgba(212, 175, 55, 0.28);
     color: #f3dfaa;
-    background: rgba(212, 175, 55, 0.07);
+    background: rgba(217, 184, 74, 0.11);
 }
 
 .duration-pill {
     border-color: rgba(241, 212, 121, 0.5);
     color: var(--gold-light);
-    background: rgba(212, 175, 55, 0.12);
+    background: rgba(217, 184, 74, 0.17);
     font-size: 14px;
 }
 
@@ -795,7 +795,7 @@ button.completion-action {
     padding: 16px;
     border: 1px solid var(--line);
     border-radius: 13px;
-    background: #090909;
+    background: #202020;
 }
 
 .price-item span {
@@ -814,7 +814,7 @@ button.completion-action {
 
 .price-item--accent {
     border-color: rgba(241, 212, 121, 0.55);
-    background: linear-gradient(145deg, rgba(212, 175, 55, 0.17), rgba(212, 175, 55, 0.06));
+    background: linear-gradient(145deg, rgba(217, 184, 74, 0.24), rgba(217, 184, 74, 0.1));
 }
 
 .empty-comment {
@@ -830,7 +830,7 @@ button.completion-action {
     border-radius: 20px;
     border: 1px solid rgba(212, 175, 55, 0.32);
     color: var(--ink);
-    background: #111;
+    background: #252525;
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.68);
 }
 
@@ -838,7 +838,7 @@ button.completion-action {
     padding: 20px 22px;
     align-items: center;
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(135deg, #17140e, #090909);
+    background: linear-gradient(135deg, #352d1d, #1c1c1c);
 }
 
 .modal-title {
@@ -850,7 +850,7 @@ button.completion-action {
 .modal-body {
     padding: 24px;
     color: var(--ink-soft);
-    background: #111;
+    background: #252525;
     font-size: 14px;
     line-height: 1.6;
 }
@@ -886,7 +886,7 @@ button.completion-action {
     border: 1px solid var(--line);
     border-radius: 11px;
     color: var(--gold-light);
-    background: #0a0a0a;
+    background: #1c1c1c;
     font-size: 13px;
     font-weight: 700;
 }
