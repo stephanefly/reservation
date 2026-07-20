@@ -1,272 +1,262 @@
 {% extends 'app/page_client/base_client.html' %}
 {% load static %}
+{% block title %}Préparation de votre événement{% endblock %}
 {% block content %}
 
-<div class="container">
-<h4>Bienvenue {{ event.client.nom }} !</h4>
-<div class="info-block alert alert-light">
-    <p style="margin:0;">
-        ✨📸 Nous aurons le plaisir de sublimer votre événement
-        <strong>au {{ event.event_details.get_adresse }}</strong>,
-        le <strong>{{ event.event_details.date_evenement|date:"d F Y" }}</strong>.
-    </p>
-    <p style="margin-top:10px; color:#6a6a6a;">
-        Préparez-vous à vivre une expérience unique et inoubliable.
-    </p>
-</div>
-
-{% if not event.event_details.horaire or not event.event_template.text_template or event.event_option.MurFloral and not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele or event.event_product.need_music and not event.event_template.url_music_360 %}
-    <div class="info-block alert alert-warning">
-        <p>Les informations suivantes sont à compléter :</p>
-        <ul>
-            {% if not event.event_details.horaire %}
-                <li>Horaire de la prestation</li>
-            {% endif %}
-
-            {% if not event.event_template.text_template %}
-                <li>Texte du modèle</li>
-            {% endif %}
-
-            {% if event.event_product.need_design and not event.event_template.url_modele %}
-                <li>Modèle de tirage</li>
-            {% endif %}
-
-            {% if event.event_option.MurFloral and not event.event_option.mur_floral_style %}
-                <li>Mur de Fond / Backdrop</li>
-            {% endif %}
-
-            {% if event.event_product.need_music and not event.event_template.url_music_360 %}
-                <li>Musique pour la vidéo 360</li>
-            {% endif %}
-        </ul>
-    </div>
-
-{% else %}
-    <div class="info-block alert alert-success">
-        <p>Merci ! Toutes les informations nécessaires sont complètes.<br>
-        Une validation et un retour sera faite par notre équipe.</p>
-    </div>
-{% endif %}
-
-
-   <div class="info-block" >
-      <h5>Informations Prestation</h5>
-      {%  if event.num_devis %}
-      <div class="info-row">
-         <div class="info-label">N° Devis:</div>
-         <div class="info-value">{{ event.num_devis }}</div>
+<div class="client-dashboard">
+   <section class="dashboard-hero">
+      <span class="page-eyebrow">Votre espace de préparation</span>
+      <h1>Bonjour {{ event.client.nom }},<br>votre événement prend vie.</h1>
+      <p class="dashboard-hero__intro">Centralisez ici les informations nécessaires à notre équipe pour préparer une expérience parfaitement personnalisée.</p>
+      <div class="dashboard-hero__meta">
+         <span><i class="bi bi-calendar3" aria-hidden="true"></i> {{ event.event_details.date_evenement|date:"d F Y" }}</span>
+         <span><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ event.event_details.get_adresse }}</span>
+         {% if event.num_devis %}
+         <span><i class="bi bi-receipt" aria-hidden="true"></i> Devis n° {{ event.num_devis }}</span>
+         {% endif %}
       </div>
-      {% endif %}
-      <div class="info-label">Prestations:</div>
-        <div class="info-content">
+   </section>
+
+   {% if not event.event_details.horaire or not event.event_template.text_template or event.event_option.MurFloral and not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele or event.event_product.need_music and not event.event_template.url_music_360 %}
+   <section class="completion-card completion-card--pending" aria-labelledby="preparation-pending-title">
+      <div class="completion-card__header">
+         <div class="completion-card__title">
+            <span class="completion-card__icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
+            <div>
+               <h2 id="preparation-pending-title">Votre préparation est presque terminée</h2>
+               <p>Complétez les éléments ci-dessous. Chaque choix est enregistré immédiatement.</p>
+            </div>
+         </div>
+         <span class="completion-badge">Action requise</span>
+      </div>
+      <div class="completion-list">
+         {% if not event.event_details.horaire %}
+         <button type="button" class="completion-action" data-bs-toggle="modal" data-bs-target="#horaireModal">
+            <span>Définir l'horaire</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+         {% endif %}
+
+         {% if not event.event_template.text_template %}
+         <button type="button" class="completion-action" data-bs-toggle="modal" data-bs-target="#textModal">
+            <span>Ajouter le texte du modèle</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+         {% endif %}
+
+         {% if event.event_product.need_design and not event.event_template.url_modele %}
+         <button type="button" class="completion-action" data-bs-toggle="modal" data-bs-target="#templateModal">
+            <span>Choisir le modèle de tirage</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+         {% endif %}
+
+         {% if event.event_option.MurFloral and not event.event_option.mur_floral_style %}
+         <button type="button" class="completion-action" data-bs-toggle="modal" data-bs-target="#MurFloralModal">
+            <span>Choisir le fond photo</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+         {% endif %}
+
+         {% if event.event_product.need_music and not event.event_template.url_music_360 %}
+         <button type="button" class="completion-action" data-bs-toggle="modal" data-bs-target="#MusicModal">
+            <span>Choisir la musique du 360Booth</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+         </button>
+         {% endif %}
+      </div>
+   </section>
+   {% else %}
+   <section class="completion-card completion-card--ready" aria-labelledby="preparation-ready-title">
+      <div class="completion-card__header">
+         <div class="completion-card__title">
+            <span class="completion-card__icon"><i class="bi bi-check2" aria-hidden="true"></i></span>
+            <div>
+               <h2 id="preparation-ready-title">Tout est complété, merci !</h2>
+               <p>Notre équipe va vérifier vos informations et reviendra vers vous si nécessaire.</p>
+            </div>
+         </div>
+         <span class="completion-badge">Informations complètes</span>
+      </div>
+   </section>
+   {% endif %}
+
+   <div class="dashboard-grid">
+      <section class="info-block info-block--wide" aria-labelledby="prestation-title">
+         <h5 id="prestation-title"><i class="bi bi-camera" aria-hidden="true"></i> Votre prestation</h5>
+
+         {% if event.num_devis %}
+         <div class="info-row">
+            <div class="info-label">N° de devis</div>
+            <div class="info-value">{{ event.num_devis }}</div>
+         </div>
+         {% endif %}
+
+         <div class="info-label">Animations réservées</div>
+         <div class="info-content">
             {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
             {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}
             {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}
             {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}
-            {% if event.event_product.ipadbooth %}<span class="highlight-prestation">Ipadbooth</span>{% endif %}
-            {% if event.event_product.airbooth %}<span class="highlight-prestation">Airbooth</span>{% endif %}
+            {% if event.event_product.ipadbooth %}<span class="highlight-prestation">iPadBooth</span>{% endif %}
+            {% if event.event_product.airbooth %}<span class="highlight-prestation">AirBooth</span>{% endif %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
-         Ajouter des Prestations
-         </button>
-        </div>
-      <div class="info-label">Options:</div>
-      <div class="info-content">
-         {% if event.event_option.MurFloral %}<span class="highlight-option">MurFloral</span>{% endif %}
-         {% if event.event_option.Phonebooth %}<span class="highlight-option">Phonebooth</span>{% endif %}
-         {% if event.event_option.LivreOr %}<span class="highlight-option">LivreDor</span>{% endif %}
-         {% if event.event_option.Fond360 %}<span class="highlight-option">Fond360</span>{% endif %}
-         {% if event.event_option.PanneauBienvenue %}<span class="highlight-option">PanneauDeBienvenue</span>{% endif %}
-         {% if event.event_option.Holo3D %}<span class="highlight-option">Holo3D</span>{% endif %}
-          {% if event.event_option.PanneauFontaine %} <span class="highlight-option">PanneauFontaine</span>, {% endif %}
-          {% if event.event_option.VideoLivreOr %} <span class="highlight-option">VideoLivreOr</span>, {% endif %}
-         {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>{% endif %}
-       {% if event.event_option.PorteCles != 0 %}<span class="highlight-option">PorteCles</span>{% endif %}
-       {% if event.event_option.MagnetsSimple != 0 %}<span class="highlight-option">MagnetsSimple</span>{% endif %}
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#optionsModal">
-         Ajouter des options
-         </button>
-      </div>
-         <div class="info-label">Durée:</div>
-         <div class="info-content"><span style="background-color: #966bbf;color: white;padding: 10px 15px;margin: 5px;font-size: 18px;">
-             {{ event.event_option.duree }}h</span>
-       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dureeModal">
-            Changer la durée
-         </button></div>
-   </div>
+               <i class="bi bi-plus-lg" aria-hidden="true"></i> Ajouter une prestation
+            </button>
+         </div>
 
-   {% if event.event_acompte %}
-   <div class="info-block">
-      <h5>Prix Prestation</h5>
-         <table id="table" class="table table-bordered table-striped" style="background-color: rgba(255, 255, 255, 0.9); border-collapse: collapse;">
-    <thead>
-        <tr style="background-color: rgba(220, 220, 220, 0.9);">
-            <th style="padding: 10px;">PRIX</th>
-            <th style="padding: 10px;">Acompte</th>
-            <th style="padding: 10px;">Restant</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td id="prix_valided" style="padding: 10px;">{{ event.prix_valided }}</td>
-            <td id="montant_acompte" style="padding: 10px;">{{ event.event_acompte.montant_acompte }}</td>
-            <td id="difference" style="padding: 10px;">{{ event.event_acompte.montant_restant }}</td>
-        </tr>
-    </tbody>
-</table>
-   </div>
-    {% endif %}
-   <div class="info-block">
-      <h5>Informations évènement</h5>
-       <div class="info-row">
-         <div class="info-label">Date:</div>
-         <div class="info-value">{{ event.event_details.date_evenement }}</div>
-      </div>
-      <div class="info-row">
-         <div class="info-label">Adresse:</div>
-         <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
-      </div>
-      <div class="info-row">
-         <div class="info-label">Horaire début de la prestation:</div>
-          <div class="info-value">
-                {% if event.event_details.horaire %}
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_details.horaire }}</strong>
-                    </span>
-                {% else %}
-                    <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
-                    </span>
-                {% endif %}
-            </div>  
-      </div>
-      <div class="info-row">
+         <div class="info-label">Options réservées</div>
+         <div class="info-content">
+            {% if event.event_option.MurFloral %}<span class="highlight-option">Mur floral</span>{% endif %}
+            {% if event.event_option.Phonebooth %}<span class="highlight-option">Phonebooth</span>{% endif %}
+            {% if event.event_option.LivreOr %}<span class="highlight-option">Livre d'or</span>{% endif %}
+            {% if event.event_option.Fond360 %}<span class="highlight-option">Fond 360</span>{% endif %}
+            {% if event.event_option.PanneauBienvenue %}<span class="highlight-option">Panneau de bienvenue</span>{% endif %}
+            {% if event.event_option.Holo3D %}<span class="highlight-option">Holo 3D</span>{% endif %}
+            {% if event.event_option.PanneauFontaine %}<span class="highlight-option">Panneau fontaine</span>{% endif %}
+            {% if event.event_option.VideoLivreOr %}<span class="highlight-option">Livre d'or vidéo</span>{% endif %}
+            {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>{% endif %}
+            {% if event.event_option.PorteCles != 0 %}<span class="highlight-option">Porte-clés</span>{% endif %}
+            {% if event.event_option.MagnetsSimple != 0 %}<span class="highlight-option">Magnets simples</span>{% endif %}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#optionsModal">
+               <i class="bi bi-plus-lg" aria-hidden="true"></i> Ajouter une option
+            </button>
+         </div>
+
+         <div class="info-label">Durée de la prestation</div>
+         <div class="info-content">
+            <span class="duration-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ event.event_option.duree }} h</span>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dureeModal">
+               Modifier la durée
+            </button>
+         </div>
+      </section>
+
+      {% if event.event_acompte %}
+      <section class="info-block" aria-labelledby="budget-title">
+         <h5 id="budget-title"><i class="bi bi-wallet2" aria-hidden="true"></i> Récapitulatif financier</h5>
+         <div class="price-summary">
+            <div class="price-item">
+               <span>Prix total</span>
+               <strong id="prix_valided">{{ event.prix_valided }} €</strong>
+            </div>
+            <div class="price-item">
+               <span>Acompte</span>
+               <strong id="montant_acompte">{{ event.event_acompte.montant_acompte }} €</strong>
+            </div>
+            <div class="price-item price-item--accent">
+               <span>Solde restant</span>
+               <strong id="difference">{{ event.event_acompte.montant_restant }} €</strong>
+            </div>
+         </div>
+      </section>
+      {% endif %}
+
+      <section class="info-block" aria-labelledby="event-title">
+         <h5 id="event-title"><i class="bi bi-calendar-event" aria-hidden="true"></i> Votre événement</h5>
+         <div class="info-row">
+            <div class="info-label">Date</div>
+            <div class="info-value">{{ event.event_details.date_evenement|date:"d F Y" }}</div>
+         </div>
+         <div class="info-row">
+            <div class="info-label">Adresse</div>
+            <div class="info-value">{{ event.event_details.adresse_evenement }}, {{ event.event_details.code_postal_evenement }} {{ event.event_details.ville_evenement }}</div>
+         </div>
+         <div class="info-row">
+            <div class="info-label">Début de la prestation</div>
+            <div class="info-value">
+               {% if event.event_details.horaire %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ event.event_details.horaire }}</span>
+               {% else %}
+               <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
+               {% endif %}
+            </div>
+         </div>
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">
-         {% if event.event_details.horaire %}
-         Modifier l'horaire
-         {% else %}
-         Définir l'horaire
-         {% endif %}
+            {% if event.event_details.horaire %}Modifier l'horaire{% else %}Définir l'horaire{% endif %}
          </button>
-      </div>
-   </div>
-   <div class="info-block">
-      <h5>Design</h5>
-       {% if event.event_product.need_design %}
-      <div class="info-row">
-         <div class="info-label">Model de Tirage:</div>
-            <div class="info-value">
-                {% if event.event_template.url_modele %}
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <strong><a href="{{ event.event_template.url_modele }}" target="_blank" class="text-success" style="text-decoration: none;"><u>OK (voir modèle)</u></a></strong>
-                    </span>
-                {% else %}
-                    <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
-                    </span>
-                {% endif %}
-            </div>
-      </div>
-       <div class="info-row">
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
-         {% if event.event_template.url_modele %}
-         Modifier le Modèle
-         {% else %}
-         Choisir le Modèle
-         {% endif %}
-         </button>
-      </div>
-      {% endif %}
-      {% if event.event_product.need_music %}
-      <div class="info-row">
-         <div class="info-label">Musique Videobooth :</div>
-            <div class="info-value">
-                {% if event.event_template.url_music_360 %}
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <strong><a href="{{ event.event_template.url_music_360 }}" target="_blank" class="text-success" style="text-decoration: none;"><u>OK (voir musique)</u></a></strong>
-                    </span>
-                {% else %}
-                    <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
-                    </span>
-                {% endif %}
-            </div>
-      </div>
-      <div class="info-row">
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MusicModal">
-         {% if event.event_template.url_music_360 %}
-         Modifier la Musique
-         {% else %}
-         Choisir le la Musique
-         {% endif %}
-         </button>
-      </div>
-       {% endif %}
+      </section>
 
-      <div class="info-row">
-         <div class="info-label">Texte:</div>
-                   <div class="info-value">
-                {% if event.event_template.text_template %}
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_template.text_template }}</strong>
-                    </span>
-                {% else %}
-                    <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
-                    </span>
-                {% endif %}
-            </div>  
-      </div>
-      <div class="info-row">
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#textModal">
-         {% if event.event_template.text_template %}
-         Modifier le texte
-         {% else %}
-         Choisir le texte à mettre
-         {% endif %}
-         </button>
-      </div>
-   </div>
-    {% if event.event_option.MurFloral %}
-    <div class="info-block">
-      <h5>Décoration</h5>
-      <div class="info-row">
-         <div class="info-label">Mur de Fond : </div>
-                   <div class="info-value">
-                {% if event.event_option.mur_floral_style %}
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i> <strong>{{ event.event_option.get_mur_floral_style_display }}</strong>
-                    </span>
-                {% else %}
-                    <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i> <strong>A definir</strong>
-                    </span>
-                {% endif %}
+      <section class="info-block" aria-labelledby="design-title">
+         <h5 id="design-title"><i class="bi bi-palette" aria-hidden="true"></i> Personnalisation</h5>
+
+         {% if event.event_product.need_design %}
+         <div class="info-row">
+            <div class="info-label">Modèle de tirage</div>
+            <div class="info-value">
+               {% if event.event_template.url_modele %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> <a href="{{ event.event_template.url_modele }}" target="_blank" rel="noopener">Voir le modèle</a></span>
+               {% else %}
+               <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
+               {% endif %}
             </div>
-      </div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MurFloralModal">
-      {% if event.event_option.mur_floral_style %}
-      Modifier le Mur de Fond / Backdrop
-      {% else %}
-      Choisir un Mur de Fond / Backdrop
+         </div>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
+            {% if event.event_template.url_modele %}Modifier le modèle{% else %}Choisir le modèle{% endif %}
+         </button>
+         {% endif %}
+
+         {% if event.event_product.need_music %}
+         <div class="info-row">
+            <div class="info-label">Musique du 360Booth</div>
+            <div class="info-value">
+               {% if event.event_template.url_music_360 %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> <a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener">Écouter la musique</a></span>
+               {% else %}
+               <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
+               {% endif %}
+            </div>
+         </div>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MusicModal">
+            {% if event.event_template.url_music_360 %}Modifier la musique{% else %}Choisir la musique{% endif %}
+         </button>
+         {% endif %}
+
+         <div class="info-row">
+            <div class="info-label">Texte du modèle</div>
+            <div class="info-value">
+               {% if event.event_template.text_template %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ event.event_template.text_template }}</span>
+               {% else %}
+               <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
+               {% endif %}
+            </div>
+         </div>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#textModal">
+            {% if event.event_template.text_template %}Modifier le texte{% else %}Ajouter le texte{% endif %}
+         </button>
+      </section>
+
+      {% if event.event_option.MurFloral %}
+      <section class="info-block" aria-labelledby="decor-title">
+         <h5 id="decor-title"><i class="bi bi-flower1" aria-hidden="true"></i> Décoration</h5>
+         <div class="info-row">
+            <div class="info-label">Fond photo</div>
+            <div class="info-value">
+               {% if event.event_option.mur_floral_style %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ event.event_option.get_mur_floral_style_display }}</span>
+               {% else %}
+               <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
+               {% endif %}
+            </div>
+         </div>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#MurFloralModal">
+            {% if event.event_option.mur_floral_style %}Modifier le fond photo{% else %}Choisir le fond photo{% endif %}
+         </button>
+      </section>
       {% endif %}
-      </button>
-   </div>
-    {% endif %}
-   <div class="info-block">
-      <h5>Informations supplémentaires</h5>
-      <div class="info-row">
-         <div class="info-label">Commentaire (Optionel): </div>
-         <div class="info-value">{{ event.event_details.comment_client|default:'' }}</div>
-      </div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentaireModal">
-      {% if event.event_details.comment_client %}
-      Modifier un commentaire
-      {% else %}
-      Ajouter un commentaire
-      {% endif %}
-      </button>
+
+      <section class="info-block" aria-labelledby="comment-title">
+         <h5 id="comment-title"><i class="bi bi-chat-left-text" aria-hidden="true"></i> Informations supplémentaires</h5>
+         <div class="info-row">
+            <div class="info-label">Votre commentaire</div>
+            <div class="info-value">
+               {% if event.event_details.comment_client %}
+               {{ event.event_details.comment_client }}
+               {% else %}
+               <span class="empty-comment">Aucun commentaire ajouté.</span>
+               {% endif %}
+            </div>
+         </div>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentaireModal">
+            {% if event.event_details.comment_client %}Modifier le commentaire{% else %}Ajouter un commentaire{% endif %}
+         </button>
+      </section>
    </div>
 </div>
 
@@ -277,13 +267,11 @@
          <div class="modal-header">
             <h5 class="modal-title" id="productModalLabel">Ajouter d'autres Prestations</h5>
 
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <div class="modal-body">
-                                             {% load static %}
-                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
-        <img src="/static/img/all_presta.jpg" alt="Description de l'image" style="max-width: 100%;"><hr>
-            <p>Pour l'ajout d'autres prestation,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+            <img src="{% static 'img/all_presta.jpg' %}" alt="Les prestations MySelfieBooth"><hr>
+            <p>Pour ajouter une autre prestation, contactez-nous au <a href="tel:0699733998">06 99 73 39 98</a> ou par e-mail à <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a>.</p>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -298,13 +286,11 @@
       <div class="modal-content">
          <div class="modal-header">
             <h5 class="modal-title" id="optionModalLabel">Ajouter des Options</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <div class="modal-body">
-                                                          {% load static %}
-                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
-        <img src="/static/img/all_options.jpg" alt="Description de l'image" style="max-width: 100%;"><hr>
-            <p>Pour l'ajout d'options,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+            <img src="{% static 'img/all_options.jpg' %}" alt="Les options MySelfieBooth"><hr>
+            <p>Pour ajouter une option, contactez-nous au <a href="tel:0699733998">06 99 73 39 98</a> ou par e-mail à <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a>.</p>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -319,15 +305,14 @@
       <div class="modal-content">
          <div class="modal-header">
             <h5 class="modal-title" id="dureeModalLabel">Changer la durée</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <div class="modal-body">
 <ul>
     <li>50€/h par prestation</li>
 </ul>
-    </ul>
-             <hr>
-            <p>Pour l'augmentation de la durée,<br>merci de nous contacter au <a href="tel:0699733998">0699733998</a><br>ou par mail <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a></p>
+            <hr>
+            <p>Pour augmenter la durée, contactez-nous au <a href="tel:0699733998">06 99 73 39 98</a> ou par e-mail à <a href="mailto:contact@myselfiebooth-paris.fr">contact@myselfiebooth-paris.fr</a>.</p>
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -342,14 +327,14 @@
       <div class="modal-content">
          <div class="modal-header">
             <h5 class="modal-title" id="horaireModalLabel">{% if event.event_details.horaire %}Modifier l'horaire{% else %}Ajouter l'horaire{% endif %}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <form method="post" action="{% url 'edit_horaire' event.id %}">
             {% csrf_token %}
             <div class="modal-body">
-                   <div class="info-block alert alert-warning">
-                <p>Pour information, Nous serons présents une heure avant le début pour l'installation.</p>
-                       </div>
+               <div class="alert alert-warning">
+                  <p class="mb-0">Notre équipe arrivera une heure avant le début de la prestation pour l'installation.</p>
+               </div>
                <div class="form-group">
                   <label for="horaire">Horaire début prestation:</label>
                   <input type="time" class="form-control" id="horaire" name="horaire" value="{{ event.event_details.horaire }}" placeholder="Entrez le nouvel horaire">
@@ -371,30 +356,25 @@
       <div class="modal-content">
          <div class="modal-header">
             <h5 class="modal-title" id="templateModalLabel">{% if event.event_template.url_modele %}Modifier le modèle{% else %}Ajouter le modèle{% endif %}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <form method="post" action="{% url 'edit_template' event.id %}">
             {% csrf_token %}
-            <div class="modal-body"><div class="info-block alert alert-warning">
-    <p>
-        <strong>Personnalisez votre tirage :</strong> Choisissez un modèle parmi nos trois sites Etsy ci-dessous. Nous nous occupons de la personnalisation, y compris la taille des photos et l'ajout de portraits si vous le souhaitez. Vous avez juste à copier l'URL du modèle souhaité.
-    </p>
-    <hr>
-    <p>
-        <strong>Sites Etsy :</strong>
-    </p>
-    <ul style="list-style-type: none; padding: 0; text-align: center;">
-        <li><a href="https://www.etsy.com/shop/MyCreativeTemplateCo" target="_blank">MyCreativeTemplateCo</a></li>
-        <li><a href="https://www.etsy.com/shop/YourCreativeTemplate" target="_blank">YourCreativeTemplate</a></li>
-        <li><a href="https://www.etsy.com/shop/TemplateBux" target="_blank">TemplateBux</a></li>
-    </ul>
-</div>
+            <div class="modal-body">
+               <div class="alert alert-warning">
+                  <p><strong>Personnalisez votre tirage :</strong> choisissez un modèle dans l'une des boutiques Etsy ci-dessous, puis copiez l'URL du modèle précis. Nous adapterons sa mise en page à votre prestation.</p>
+                  <ul class="mb-0">
+                     <li><a href="https://www.etsy.com/shop/MyCreativeTemplateCo" target="_blank" rel="noopener">MyCreativeTemplateCo</a></li>
+                     <li><a href="https://www.etsy.com/shop/YourCreativeTemplate" target="_blank" rel="noopener">YourCreativeTemplate</a></li>
+                     <li><a href="https://www.etsy.com/shop/TemplateBux" target="_blank" rel="noopener">TemplateBux</a></li>
+                  </ul>
+               </div>
 
                <div class="form-group">
-                  <label for="url_modele">URL du Modèle de Tirage:</label>
-<input type="url" class="form-control" id="url_modele" name="url_modele"
-       value="{{ event.event_template.url_modele|default:'' }}"
-       placeholder="Collez ici l'URL exacte du modèle choisi sur Etsy">
+                  <label for="url_modele">URL du modèle de tirage</label>
+                  <input type="url" class="form-control" id="url_modele" name="url_modele"
+                         value="{{ event.event_template.url_modele|default:'' }}"
+                         placeholder="Collez l'URL exacte du modèle choisi sur Etsy">
                </div>
             </div>
             <div class="modal-footer">
@@ -416,7 +396,7 @@
             <h5 class="modal-title" id="MusicModalLabel">
                     🎵 Ajouter une musique
             </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
 
          <form method="post" action="{% url 'edit_music' event.id %}">
@@ -438,9 +418,7 @@
                         placeholder="Exemple : https://www.youtube.com/watch?v=xxxxxxx">
                 </div>
             </div>
-                                   {% load static %}
-                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
-        <img src="/static/img/music.gif" alt="Description de l'image" style="max-width: 100%;">
+            <img class="modal-media" src="{% static 'img/music.gif' %}" alt="Exemple de personnalisation musicale du 360Booth">
             <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                <button type="submit" class="btn btn-primary">Enregistrer</button>
@@ -457,16 +435,14 @@
    <div class="modal-dialog" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id="textModalLabel">Ajouter/Modifier le texte</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="textModalLabel">Personnaliser le texte</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <form method="post" action="{% url 'edit_text' event.id %}">
             {% csrf_token %}
             <div class="modal-body">
                <div class="form-group">
-                   {% load static %}
-                         <link rel="stylesheet" href="{% static 'css/espace_client.css' %}">
-        <img src="/static/img/exemple-texte.gif" alt="Description de l'image" style="max-width: 100%;">
+                  <img src="{% static 'img/exemple-texte.gif' %}" alt="Exemple de texte personnalisé sur un tirage">
                    <br><br>
                   <label for="text_template">Texte à mettre :</label>
                   <textarea class="form-control" id="text_template" name="text_template" rows="3" placeholder="Mariage de">{{ event.event_template.text_template|default:'' }}</textarea>
@@ -487,8 +463,8 @@
    <div class="modal-dialog" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id="MurFloralModalLabel">Ajouter/Modifier le Mur de Fond</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="MurFloralModalLabel">Choisir le fond photo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <form method="post" action="{% url 'edit_mur_floral' event.id %}">
             {% csrf_token %}
@@ -527,8 +503,8 @@
    <div class="modal-dialog" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id="commentaireModalLabel">Ajouter/Modifier un commentaire</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="commentaireModalLabel">Votre commentaire</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
          </div>
          <form method="post" action="{% url 'edit_comment' event.id %}">
             {% csrf_token %}
@@ -550,7 +526,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("url_modele");
-    const form = input.closest("form");
+    if (!input) return;
 
     const forbiddenShops = [
         "https://www.etsy.com/shop/MyCreativeTemplateCo",
