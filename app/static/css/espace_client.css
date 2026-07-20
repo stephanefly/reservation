@@ -122,9 +122,12 @@ a:hover {
 }
 
 .client-brand__text strong {
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 21px;
-    letter-spacing: 0.01em;
+    color: var(--gold-light);
+    font-family: "Great Vibes", cursive;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1;
 }
 
 .client-brand__text small {
