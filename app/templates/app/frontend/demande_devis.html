@@ -1892,6 +1892,74 @@ document.addEventListener("DOMContentLoaded", function () {
         updateSelectedInputs();
     });
 
+    function getRequestedValues(parameterName) {
+        const rawValue = new URLSearchParams(window.location.search).get(parameterName);
+
+        if (!rawValue) {
+            return [];
+        }
+
+        return rawValue
+            .split(",")
+            .map(function (value) {
+                return value.trim();
+            })
+            .filter(Boolean);
+    }
+
+    function applySelectionsFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const requestedProducts = getRequestedValues("prestations");
+        const requestedOptions = getRequestedValues("options");
+
+        if (requestedProducts.length > 0) {
+            document.querySelectorAll(".selectable-image").forEach(function (card) {
+                card.classList.toggle("selected", requestedProducts.includes(card.dataset.value));
+            });
+        }
+
+        if (requestedOptions.length > 0) {
+            document.querySelectorAll(".selectable-option").forEach(function (card) {
+                card.classList.toggle("selected", requestedOptions.includes(card.dataset.value));
+            });
+        }
+
+        const requestedQuantities = {
+            MagnetsRange: params.get("magnets"),
+            PorteClesRange: params.get("portecles"),
+            MagnetsSimpleRange: params.get("magnetssimple")
+        };
+
+        Object.keys(requestedQuantities).forEach(function (inputId) {
+            const rawValue = requestedQuantities[inputId];
+
+            if (rawValue === null) {
+                return;
+            }
+
+            const input = document.getElementById(inputId);
+            const value = parseInt(rawValue, 10);
+
+            if (!input || Number.isNaN(value) || value < 0) {
+                return;
+            }
+
+            input.value = String(value);
+
+            document.querySelectorAll(".quantity-choice[data-target='" + inputId + "']").forEach(function (choice) {
+                choice.classList.toggle("selected", parseInt(choice.dataset.value, 10) === value);
+            });
+
+            const wrapper = input.closest(".quantity-line-option");
+            if (wrapper) {
+                wrapper.classList.toggle("has-value", value > 0);
+            }
+
+            updateQuantityDisplay(inputId);
+        });
+    }
+
+    applySelectionsFromUrl();
     toggleClientType();
     updateRelatedOptionsVisibility();
     updateSummary();
