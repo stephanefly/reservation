@@ -777,15 +777,125 @@
         .tarifs-info-grid,
         .tarifs-grid,
         .options-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .tarifs-info-card {
+            min-height: auto;
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .tarifs-info-card strong {
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .tarifs-info-card span {
+            font-size: 11px;
+            line-height: 1.35;
+        }
+
+        .tarif-card,
+        .option-card {
+            border-radius: 16px;
         }
 
         .tarif-image {
-            height: 350px;
+            height: 150px;
+        }
+
+        .tarif-content {
+            padding: 12px;
+        }
+
+        .tarif-content h3 {
+            margin-bottom: 7px;
+            font-size: 18px;
+            line-height: 1.15;
+        }
+
+        .tarif-short {
+            display: none;
+        }
+
+        .tarif-price-row {
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .tarif-price {
+            padding: 8px 4px;
+            border-radius: 10px;
+        }
+
+        .tarif-price small {
+            font-size: 9px;
+        }
+
+        .tarif-price strong {
+            font-size: 13px;
+        }
+
+        .tarif-promo-label {
+            padding: 3px 5px;
+            font-size: 8px;
+        }
+
+        .tarif-included {
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .tarif-included li {
+            gap: 5px;
+            font-size: 10px;
+            line-height: 1.25;
+        }
+
+        .tarif-icon {
+            width: 13px;
+            height: 13px;
+            flex-basis: 13px;
+        }
+
+        .tarif-card .tarifs-button {
+            min-height: 42px;
+            padding: 9px 7px;
+            border-radius: 11px;
+            font-size: 11px;
+            line-height: 1.2;
         }
 
         .option-card img {
-            height: 230px;
+            height: 140px;
+        }
+
+        .option-card-body {
+            padding: 12px;
+        }
+
+        .option-card-body h3 {
+            margin-bottom: 6px;
+            font-size: 16px;
+            line-height: 1.15;
+        }
+
+        .option-card-body p {
+            display: -webkit-box;
+            min-height: 0;
+            margin-bottom: 9px;
+            overflow: hidden;
+            font-size: 11px;
+            line-height: 1.35;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+        }
+
+        .option-price {
+            padding: 5px 7px;
+            font-size: 9px;
         }
 
         .tarifs-combo-main,
