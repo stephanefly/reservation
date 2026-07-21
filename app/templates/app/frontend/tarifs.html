@@ -500,6 +500,173 @@
         gap: 10px;
     }
 
+
+    .tarifs-pack-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .tarifs-pack-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.035));
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
+        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .tarifs-pack-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(216, 180, 90, 0.62);
+        box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .tarifs-pack-card-featured,
+    .tarifs-pack-card-prestige {
+        border-color: rgba(216, 180, 90, 0.72);
+        background: linear-gradient(180deg, rgba(216, 180, 90, 0.18), rgba(255, 255, 255, 0.045));
+    }
+
+    .tarifs-pack-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 2;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #fff0af, #c89d37);
+        color: #111111;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38);
+    }
+
+    .tarifs-pack-image {
+        width: 100%;
+        height: 270px;
+        display: block;
+        object-fit: cover;
+        background: #171717;
+    }
+
+    .tarifs-pack-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .tarifs-pack-body h3 {
+        margin: 0 0 9px;
+        color: var(--tarif-text);
+        font-size: 24px;
+        font-weight: 900;
+    }
+
+    .tarifs-pack-description {
+        min-height: 64px;
+        margin: 0 0 16px;
+        color: var(--tarif-muted);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .tarifs-pack-features {
+        display: grid;
+        gap: 9px;
+        margin: 0 0 20px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .tarifs-pack-features li {
+        position: relative;
+        padding-left: 23px;
+        color: #eeeeee;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .tarifs-pack-features li::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: "✓";
+        color: var(--tarif-gold);
+        font-weight: 900;
+    }
+
+    .tarifs-pack-pricing {
+        display: grid;
+        gap: 4px;
+        margin-top: auto;
+        margin-bottom: 18px;
+        padding-top: 17px;
+        border-top: 1px solid rgba(216, 180, 90, 0.22);
+    }
+
+    .tarifs-pack-old-price {
+        color: #aaaaaa;
+        font-size: 13px;
+        text-decoration: line-through;
+    }
+
+    .tarifs-pack-pricing strong {
+        color: var(--tarif-gold-light);
+        font-size: 34px;
+        line-height: 1;
+    }
+
+    .tarifs-pack-saving {
+        width: fit-content;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: rgba(216, 180, 90, 0.14);
+        color: var(--tarif-gold-light);
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .tarifs-pack-card .tarifs-button {
+        width: 100%;
+        border-radius: 15px;
+    }
+
+    .tarifs-pack-note {
+        margin-top: 18px;
+        padding: 17px 20px;
+        border: 1px solid rgba(216, 180, 90, 0.28);
+        border-radius: 18px;
+        background: rgba(216, 180, 90, 0.07);
+        color: #dddddd;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    @media (max-width: 1050px) {
+        .tarifs-pack-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 620px) {
+        .tarifs-pack-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .tarifs-pack-image {
+            height: 300px;
+        }
+
+        .tarifs-pack-description {
+            min-height: 0;
+        }
+    }
+
     .tarifs-sticky-mobile {
         display: none;
     }
@@ -647,6 +814,144 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Remplir le formulaire</a>
                 </div>
             </div>
+        </div>
+    </section>
+
+
+    <section class="tarifs-container" id="packs">
+        <div class="tarifs-section-head">
+            <h2>Nos packs événementiels</h2>
+            <p>
+                Des combinaisons pensées pour simplifier la logistique, maximiser l’expérience des invités et proposer un meilleur tarif que les prestations séparées.
+            </p>
+        </div>
+
+        <div class="tarifs-pack-grid">
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Souvenirs invités</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-souvenirs.svg' %}" alt="Pack Souvenirs" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Souvenirs</h3>
+                    <p class="tarifs-pack-description">Une animation photo complète avec des souvenirs physiques à emporter.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Photobooth pendant 5h</li>
+                        <li>Phonebooth audio</li>
+                        <li>100 porte-clés photo</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
+                        <strong>600 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Expérience vidéo</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-immersion-360.svg' %}" alt="Pack Immersion 360" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Immersion 360</h3>
+                    <p class="tarifs-pack-description">Une expérience vidéo immersive complétée par les messages de vos invités.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>360 Booth pendant 5h</li>
+                        <li>Livre d’or vidéo</li>
+                        <li>Fond LED 360 offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 800 €</span>
+                        <strong>700 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Élégance</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-signature.svg' %}" alt="Pack Signature" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Signature</h3>
+                    <p class="tarifs-pack-description">Une formule élégante pour accueillir les invités et conserver leurs témoignages.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth pendant 5h</li>
+                        <li>Livre d’or vidéo</li>
+                        <li>Panneau fontaine</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 950 €</span>
+                        <strong>800 €</strong>
+                        <span class="tarifs-pack-saving">150 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card tarifs-pack-card-featured">
+                <div class="tarifs-pack-badge">Le plus demandé</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-duo-vip.svg' %}" alt="Pack Duo VIP" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Duo VIP</h3>
+                    <p class="tarifs-pack-description">Le duo photo et vidéo incontournable, enrichi de souvenirs audio et d’un décor premium.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth + 360 Booth</li>
+                        <li>Phonebooth audio</li>
+                        <li>Mur floral offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 1150 €</span>
+                        <strong>850 €</strong>
+                        <span class="tarifs-pack-saving">300 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Effet magazine</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-vogue-premium.svg' %}" alt="Pack Vogue Premium" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Vogue Premium</h3>
+                    <p class="tarifs-pack-description">Une véritable expérience studio pour des clichés élégants et immédiatement disponibles.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Vogue Booth</li>
+                        <li>Photographe dédié</li>
+                        <li>Impressions instantanées</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
+                        <strong>600 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card tarifs-pack-card-prestige">
+                <div class="tarifs-pack-badge">Expérience totale</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-mariage-prestige.svg' %}" alt="Pack Mariage Prestige" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Mariage Prestige</h3>
+                    <p class="tarifs-pack-description">Trois univers complémentaires pour créer une animation spectaculaire à grande échelle.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth + 360 Booth</li>
+                        <li>Vogue Booth</li>
+                        <li>Fond LED 360 offert</li>
+                        <li>Mur floral offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 1750 €</span>
+                        <strong>1200 €</strong>
+                        <span class="tarifs-pack-saving">550 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+        </div>
+
+        <div class="tarifs-pack-note">
+            Tarifs établis sur la base des durées indiquées et des tarifs standards du catalogue. Livraison, installation, personnalisation, animateur et galerie sont inclus selon la formule et la zone d’intervention.
         </div>
     </section>
 
