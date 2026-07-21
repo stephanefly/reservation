@@ -1393,14 +1393,95 @@
             padding: 22px 14px;
         }
 
+        .included-pill-grid,
+        .choice-grid,
+        .single-line-options,
+        .general-options-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .included-pill {
+            padding: 9px;
+            border-radius: 12px;
+        }
+
+        .included-pill strong {
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        .included-pill span {
+            margin-top: 3px;
+            font-size: 10px;
+            line-height: 1.25;
+        }
+
+        .product-card,
+        .line-option-card,
+        .quantity-line-option {
+            min-height: 0;
+            border-radius: 16px;
+        }
+
+        .full-line-option {
+            grid-column: auto;
+        }
+
         .product-card img,
         .line-option-card img,
-        .quantity-line-option img {
-            height: 400px;
+        .quantity-line-option img,
+        .full-line-option img {
+            height: 145px;
+        }
+
+        .choice-content,
+        .line-option-card .choice-content,
+        .quantity-line-option .option-line-main,
+        .full-line-option .choice-content {
+            min-height: auto;
+            padding: 11px;
+        }
+
+        .choice-content strong,
+        .option-line-main strong,
+        .full-line-option .choice-content strong {
+            font-size: 16px;
+            line-height: 1.15;
+        }
+
+        .choice-content span,
+        .option-line-main span {
+            font-size: 11px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .option-line-main small {
+            display: none;
+        }
+
+        .choice-card::after {
+            top: 7px;
+            right: 7px;
+            padding: 5px 7px;
+            font-size: 8px;
         }
 
         .quantity-line-actions {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            padding: 0 10px 10px;
+        }
+
+        .quantity-choice {
+            min-height: 34px;
+            padding: 6px 4px;
+            border-radius: 10px;
+            font-size: 10px;
         }
 
         .wizard-actions {
