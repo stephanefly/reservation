@@ -963,170 +963,7 @@
             </div>
         </div>
 
-        <div class="tarifs-combo-box">
-            <div class="tarifs-combo-main">
-                <h2>Astuce : combinez plusieurs animations</h2>
-                <p>
-                    Sélectionnez plusieurs animations pour obtenir une proposition plus intéressante. Certaines options peuvent être proposées à tarif réduit ou offertes selon le combo.
-                </p>
-                <div class="tarifs-combo-list">
-                    <span class="tarifs-pill">Miroirbooth + 360 Booth</span>
-                    <span class="tarifs-pill">Photobooth + Phonebooth</span>
-                    <span class="tarifs-pill">Porte-clés photo</span>
-                    <span class="tarifs-pill">Magnets premium ou simples</span>
-                    <span class="tarifs-pill">Pack premium mariage</span>
-                    <span class="tarifs-pill">Formule entreprise</span>
-                    <span class="tarifs-pill">Durée personnalisée</span>
-                </div>
-            </div>
-            <div class="tarifs-combo-side">
-                <h3>Comment réserver ?</h3>
-                <p>
-                    Remplissez le formulaire avec la durée la plus proche. Nous ajustons ensuite le devis si besoin.
-                </p>
-                <div class="tarifs-actions" style="justify-content: flex-start; margin-top: 18px;">
-                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Remplir le formulaire</a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-
-    <section class="tarifs-container" id="packs">
-        <div class="tarifs-section-head">
-            <h2>Nos packs événementiels</h2>
-            <p>
-                Des combinaisons pensées pour simplifier la logistique, maximiser l’expérience des invités et proposer un meilleur tarif que les prestations séparées.
-            </p>
-        </div>
-
-        <div class="tarifs-pack-grid">
-
-            <article class="tarifs-pack-card">
-                <div class="tarifs-pack-badge">Souvenirs invités</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-souvenirs.svg' %}" alt="Pack Souvenirs" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Souvenirs</h3>
-                    <p class="tarifs-pack-description">Une animation photo complète avec des souvenirs physiques à emporter.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>Photobooth pendant 5h</li>
-                        <li>Phonebooth audio</li>
-                        <li>100 porte-clés photo</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
-                        <strong>600 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Photobooth&options=Phonebooth&portecles=100" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-
-            <article class="tarifs-pack-card">
-                <div class="tarifs-pack-badge">Expérience vidéo</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-immersion-360.svg' %}" alt="Pack Immersion 360" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Immersion 360</h3>
-                    <p class="tarifs-pack-description">Une expérience vidéo immersive complétée par les messages de vos invités.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>360 Booth pendant 5h</li>
-                        <li>Livre d’or vidéo</li>
-                        <li>Fond LED 360 offert</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 800 €</span>
-                        <strong>700 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Booth&options=VideoLivreOr,Fond360" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-
-            <article class="tarifs-pack-card">
-                <div class="tarifs-pack-badge">Élégance</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-signature.svg' %}" alt="Pack Signature" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Signature</h3>
-                    <p class="tarifs-pack-description">Une formule élégante pour accueillir les invités et conserver leurs témoignages.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>Miroirbooth pendant 5h</li>
-                        <li>Livre d’or vidéo</li>
-                        <li>Panneau fontaine</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 950 €</span>
-                        <strong>800 €</strong>
-                        <span class="tarifs-pack-saving">150 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth&options=VideoLivreOr,PanneauFontaine" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-
-            <article class="tarifs-pack-card tarifs-pack-card-featured">
-                <div class="tarifs-pack-badge">Le plus demandé</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-duo-vip.svg' %}" alt="Pack Duo VIP" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Duo VIP</h3>
-                    <p class="tarifs-pack-description">Le duo photo et vidéo incontournable, enrichi de souvenirs audio et d’un décor premium.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>Miroirbooth + 360 Booth</li>
-                        <li>Phonebooth audio</li>
-                        <li>Mur floral offert</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 1 150 €</span>
-                        <strong>850 €</strong>
-                        <span class="tarifs-pack-saving">300 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth&options=Phonebooth,MurFloral" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-
-            <article class="tarifs-pack-card">
-                <div class="tarifs-pack-badge">Effet magazine</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-vogue-premium.svg' %}" alt="Pack Vogue Premium" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Vogue Premium</h3>
-                    <p class="tarifs-pack-description">Une véritable expérience studio pour des clichés élégants et immédiatement disponibles.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>Vogue Booth</li>
-                        <li>Photographe dédié</li>
-                        <li>Impressions instantanées</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
-                        <strong>600 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Voguebooth&options=PhotographeVoguebooth,ImpressionVoguebooth" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-
-            <article class="tarifs-pack-card tarifs-pack-card-prestige">
-                <div class="tarifs-pack-badge">Expérience totale</div>
-                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-mariage-prestige.svg' %}" alt="Pack Mariage Prestige" loading="lazy">
-                <div class="tarifs-pack-body">
-                    <h3>Pack Mariage Prestige</h3>
-                    <p class="tarifs-pack-description">Trois univers complémentaires pour créer une animation spectaculaire à grande échelle.</p>
-                    <ul class="tarifs-pack-features">
-                        <li>Miroirbooth + 360 Booth</li>
-                        <li>Vogue Booth</li>
-                        <li>Fond LED 360 offert</li>
-                        <li>Mur floral offert</li>
-                    </ul>
-                    <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 1 750 €</span>
-                        <strong>1 200 €</strong>
-                        <span class="tarifs-pack-saving">550 € économisés</span>
-                    </div>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth,Voguebooth&options=Fond360,MurFloral" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
-                </div>
-            </article>
-        </div>
-
-        <div class="tarifs-pack-note">
-            Tarifs établis sur la base des durées indiquées et des tarifs standards du catalogue. Livraison, installation, personnalisation, animateur et galerie sont inclus selon la formule et la zone d’intervention.
-        </div>
     </section>
 
     <section class="tarifs-container" id="prestations">
@@ -1165,7 +1002,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Modèle photo personnalisé</li>
                         <li><img class="tarif-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Photobooth" class="tarifs-button tarifs-button-primary">Choisir le Photobooth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Photobooth</a>
                 </div>
             </article>
 
@@ -1196,7 +1033,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Modèle photo personnalisé</li>
                         <li><img class="tarif-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth" class="tarifs-button tarifs-button-primary">Choisir le Miroirbooth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Miroirbooth</a>
                 </div>
             </article>
 
@@ -1227,7 +1064,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
                         <li><img class="tarif-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Booth" class="tarifs-button tarifs-button-primary">Choisir le 360 Booth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le 360 Booth</a>
                 </div>
             </article>
 
@@ -1258,7 +1095,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/animateur.ico' %}" alt=""> Animateur sur place</li>
                         <li><img class="tarif-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation vidéo</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Airbooth" class="tarifs-button tarifs-button-primary">Choisir le Air360 Booth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Air360 Booth</a>
                 </div>
             </article>
 
@@ -1281,7 +1118,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
                         <li><img class="tarif-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison possible en option</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Ipadbooth" class="tarifs-button tarifs-button-primary">Choisir le Ipad Booth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Ipad Booth</a>
                 </div>
             </article>
 
@@ -1307,7 +1144,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/decor.ico' %}" alt=""> Décor lumineux</li>
                         <li><img class="tarif-icon" src="{% static 'icone/photo.ico' %}" alt=""> Photographe et impressions en option</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Voguebooth" class="tarifs-button tarifs-button-primary">Choisir le Vogue Booth</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Vogue Booth</a>
                 </div>
             </article>
 
@@ -1334,7 +1171,7 @@
                         <li><img class="tarif-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation incluse</li>
                         <li><img class="tarif-icon" src="{% static 'icone/web.ico' %}" alt=""> Galerie web après événement</li>
                     </ul>
-                    <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth" class="tarifs-button tarifs-button-primary">Choisir le Pack VIP</a>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Choisir le Pack VIP</a>
                 </div>
             </article>
 
@@ -1365,6 +1202,7 @@
             Pour une prestation différente de la durée affichée, indiquez votre besoin dans le formulaire. Vous pouvez aussi mettre 5h par défaut : nous modifierons ensuite le devis selon la durée réelle souhaitée, le lieu et les options.
         </div>
     </section>
+
 
     <section class="tarifs-container" id="options">
         <div class="tarifs-section-head">
@@ -1504,7 +1342,157 @@
         </div>
     </section>
 
+    <section class="tarifs-container" id="packs">
+        <div class="tarifs-section-head">
+            <h2>Nos packs événementiels</h2>
+            <p>
+                Des combinaisons pensées pour simplifier la logistique, maximiser l’expérience des invités et proposer un meilleur tarif que les prestations séparées.
+            </p>
+        </div>
+
+        <div class="tarifs-pack-grid">
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Souvenirs invités</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-souvenirs.svg' %}" alt="Pack Souvenirs" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Souvenirs</h3>
+                    <p class="tarifs-pack-description">Une animation photo complète avec des souvenirs physiques à emporter.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Photobooth pendant 5h</li>
+                        <li>Phonebooth audio</li>
+                        <li>100 porte-clés photo</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
+                        <strong>600 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Expérience vidéo</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-immersion-360.svg' %}" alt="Pack Immersion 360" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Immersion 360</h3>
+                    <p class="tarifs-pack-description">Une expérience vidéo immersive complétée par les messages de vos invités.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>360 Booth pendant 5h</li>
+                        <li>Livre d’or vidéo</li>
+                        <li>Fond LED 360 offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 800 €</span>
+                        <strong>700 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Élégance</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-signature.svg' %}" alt="Pack Signature" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Signature</h3>
+                    <p class="tarifs-pack-description">Une formule élégante pour accueillir les invités et conserver leurs témoignages.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth pendant 5h</li>
+                        <li>Livre d’or vidéo</li>
+                        <li>Panneau fontaine</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 950 €</span>
+                        <strong>800 €</strong>
+                        <span class="tarifs-pack-saving">150 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card tarifs-pack-card-featured">
+                <div class="tarifs-pack-badge">Le plus demandé</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-duo-vip.svg' %}" alt="Pack Duo VIP" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Duo VIP</h3>
+                    <p class="tarifs-pack-description">Le duo photo et vidéo incontournable, enrichi de souvenirs audio et d’un décor premium.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth + 360 Booth</li>
+                        <li>Phonebooth audio</li>
+                        <li>Mur floral offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 1 150 €</span>
+                        <strong>850 €</strong>
+                        <span class="tarifs-pack-saving">300 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card">
+                <div class="tarifs-pack-badge">Effet magazine</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-vogue-premium.svg' %}" alt="Pack Vogue Premium" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Vogue Premium</h3>
+                    <p class="tarifs-pack-description">Une véritable expérience studio pour des clichés élégants et immédiatement disponibles.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Vogue Booth</li>
+                        <li>Photographe dédié</li>
+                        <li>Impressions instantanées</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
+                        <strong>600 €</strong>
+                        <span class="tarifs-pack-saving">100 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+
+            <article class="tarifs-pack-card tarifs-pack-card-prestige">
+                <div class="tarifs-pack-badge">Expérience totale</div>
+                <img class="tarifs-pack-image" src="{% static 'img/packs/pack-mariage-prestige.svg' %}" alt="Pack Mariage Prestige" loading="lazy">
+                <div class="tarifs-pack-body">
+                    <h3>Pack Mariage Prestige</h3>
+                    <p class="tarifs-pack-description">Trois univers complémentaires pour créer une animation spectaculaire à grande échelle.</p>
+                    <ul class="tarifs-pack-features">
+                        <li>Miroirbooth + 360 Booth</li>
+                        <li>Vogue Booth</li>
+                        <li>Fond LED 360 offert</li>
+                        <li>Mur floral offert</li>
+                    </ul>
+                    <div class="tarifs-pack-pricing">
+                        <span class="tarifs-pack-old-price">Pris séparément : 1 750 €</span>
+                        <strong>1 200 €</strong>
+                        <span class="tarifs-pack-saving">550 € économisés</span>
+                    </div>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
+                </div>
+            </article>
+        </div>
+
+        <div class="tarifs-pack-note">
+            Tarifs établis sur la base des durées indiquées et des tarifs standards du catalogue. Livraison, installation, personnalisation, animateur et galerie sont inclus selon la formule et la zone d’intervention.
+        </div>
+    </section>
+
+
+
     <section class="tarifs-container">
+                <div class="tarifs-combo-box">
+            <div class="tarifs-combo-side">
+                <h3>Comment réserver ?</h3>
+                <p>
+                    Remplissez le formulaire avec la durée la plus proche. Nous ajustons ensuite le devis si besoin.
+                </p>
+                <div class="tarifs-actions" style="justify-content: flex-start; margin-top: 18px;">
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="tarifs-button tarifs-button-primary">Remplir le formulaire</a>
+                </div>
+            </div>
+        </div>
         <div class="tarifs-contact-box">
             <h2>Besoin d’une formule différente ?</h2>
             <p>
