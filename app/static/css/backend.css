@@ -510,32 +510,50 @@ html {
     font-weight: 680;
 }
 
+.quote-list-card {
+    background: #f7f8fb;
+}
+
+.quote-list-card .backend-table-heading {
+    background: #fff;
+}
+
 .quote-disclosure-list {
     display: grid;
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+    align-items: start;
+    gap: 15px;
+    padding: 16px;
 }
 
 .quote-row-disclosure {
     overflow: hidden;
     border: 1px solid var(--admin-border);
-    border-radius: 14px;
+    border-top: 3px solid rgba(91, 52, 214, 0.55);
+    border-radius: 16px;
     background: #fff;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
+    box-shadow: 0 8px 22px rgba(27, 33, 51, 0.07);
+    transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.quote-row-disclosure:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(27, 33, 51, 0.11);
 }
 
 .quote-row-disclosure[open] {
     border-color: rgba(91, 52, 214, 0.35);
-    box-shadow: 0 10px 24px rgba(91, 52, 214, 0.08);
+    border-top-color: var(--admin-primary);
+    box-shadow: 0 14px 30px rgba(91, 52, 214, 0.12);
 }
 
 .quote-row-disclosure > summary {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(150px, 0.9fr) minmax(150px, 0.8fr) 24px;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 18px;
-    min-height: 72px;
-    padding: 13px 16px;
+    gap: 14px 16px;
+    min-height: 142px;
+    padding: 18px;
     cursor: pointer;
     list-style: none;
     user-select: none;
@@ -563,6 +581,27 @@ html {
     min-width: 0;
 }
 
+.quote-row-summary__client {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.quote-row-summary__chevron {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.quote-row-summary__item:not(.quote-row-summary__client):not(.quote-row-summary__status) {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.quote-row-summary__status {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: right;
+}
+
 .quote-row-summary__item > small,
 .quote-row-detail > small {
     display: block;
@@ -583,11 +622,13 @@ html {
 
 .quote-row-summary__client > strong {
     color: var(--admin-primary-dark);
-    font-size: 0.94rem;
+    font-size: 1.02rem;
 }
 
 .quote-row-summary__status .backend-status {
+    justify-content: center;
     white-space: normal;
+    text-align: center;
 }
 
 .quote-row-summary__chevron {
@@ -601,16 +642,19 @@ html {
 
 .quote-row-details {
     display: grid;
-    grid-template-columns: repeat(4, minmax(130px, 1fr));
-    align-items: end;
-    gap: 18px;
-    padding: 18px 16px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 16px;
     background: #fff;
 }
 
 .quote-row-detail {
     min-width: 0;
+    padding: 10px 11px;
+    border: 1px solid #eceef2;
+    border-radius: 10px;
     color: #344054;
+    background: #f8f9fc;
     font-size: 0.83rem;
 }
 
@@ -625,70 +669,30 @@ html {
 }
 
 .quote-row-details__action {
-    justify-self: end;
+    width: 100%;
+    justify-content: center;
 }
 
 @media (max-width: 860px) {
     .backend-table-heading__hint {
         display: none;
     }
-
-    .quote-row-disclosure > summary {
-        grid-template-columns: minmax(0, 1.2fr) minmax(125px, 0.8fr) minmax(115px, auto) 20px;
-        gap: 12px;
-    }
-
-    .quote-row-details {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 680px) {
     .quote-disclosure-list {
+        grid-template-columns: 1fr;
         padding: 9px;
     }
 
     .quote-row-disclosure > summary {
-        grid-template-columns: minmax(0, 1fr) auto;
         gap: 11px 14px;
         padding: 13px;
     }
 
-    .quote-row-summary__client {
-        grid-column: 1;
-        grid-row: 1;
-    }
-
-    .quote-row-summary__chevron {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    .quote-row-summary__item:not(.quote-row-summary__client):not(.quote-row-summary__status) {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    .quote-row-summary__status {
-        grid-column: 2;
-        grid-row: 2;
-        text-align: right;
-    }
-
-    .quote-row-summary__status .backend-status {
-        justify-content: center;
-        text-align: center;
-    }
-
     .quote-row-details {
-        grid-template-columns: 1fr;
         gap: 14px;
         padding: 16px 13px;
-    }
-
-    .quote-row-details__action {
-        width: 100%;
-        justify-content: center;
     }
 }
 
