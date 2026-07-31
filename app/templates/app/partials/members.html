@@ -1,13 +1,13 @@
 {% for m in event.event_team_members.all %}
-  <span class="badge bg-info text-dark me-1 d-inline-flex align-items-center">
+  <span class="badge bg-info text-dark me-1 d-inline-flex align-items-center team-tag team-tag--member">
     {{ m.name }}
-    <button class="btn-close btn-sm ms-2 remove-member"
+    <button class="btn-close btn-sm ms-2 remove-member" type="button"
             data-event-id="{{ event.id }}"
             data-member-id="{{ m.id }}"
             style="filter: invert(1);"
-            aria-label="Supprimer">
+            aria-label="Retirer {{ m.name }}">
     </button>
   </span>
 {% empty %}
-  <span class="text-muted">Aucun</span>
+  <span class="team-muted">Aucun membre affecté</span>
 {% endfor %}

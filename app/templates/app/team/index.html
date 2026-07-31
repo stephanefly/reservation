@@ -1,70 +1,88 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta name="csrf-token" content="{{ csrf_token }}">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#211747">
+    <title>{% block title %}Espace équipe{% endblock title %} · MySelfieBooth</title>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>TEAM MySelfieBooth</title>
-<!-- Inclure jQuery en premier -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/backend.css' %}">
+    <link rel="stylesheet" href="{% static 'css/team.css' %}">
+    {% block extra_css %}{% endblock extra_css %}
 </head>
-<body style="background: linear-gradient(135deg, #007bff, #6610f2);">
 
-<main class="container-fluid p-0">
-    <!-- Barre de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">{{ request.user }}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="margin-right: 100px">
-                <ul class="navbar-nav">
-                    {% url 'team_planning' as url %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                           style="padding-right: 25px;padding-left: 25px;">Planning</a>
-                    </li>
-                    {% url 'team_post_presta' as url %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                           style="padding-right: 25px;padding-left: 25px;">Post Presta</a>
-                    </li>
-                    {% url 'template_to_do' as url %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                           style="padding-right: 25px;padding-left: 25px;">Template</a>
-                    </li>
-                    {% url 'calendar' as url %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                           style="padding-right: 25px;padding-left: 25px;">Calendrier</a>
-                    </li>
-                    {% url 'relance_client' as url %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url %}active{% endif %}" href="{{ url }}"
-                           style="padding-right: 25px;padding-left: 25px;">Relance</a>
-                    </li>
-                </ul>
-            </div>
-    </nav>
+<body class="backend-body team-body">
+<nav class="backend-navbar navbar navbar-expand-xl navbar-dark" aria-label="Navigation de l’espace équipe">
+    <div class="container-fluid backend-navbar__inner">
+        <a class="backend-brand" href="{% url 'team_planning' %}" aria-label="Accueil équipe MySelfieBooth">
+            <span class="backend-brand__mark"><i class="fas fa-users" aria-hidden="true"></i></span>
+            <span>
+                <strong>MySelfieBooth</strong>
+                <small>Espace équipe</small>
+            </span>
+        </a>
 
-    <!-- Contenu principal -->
-    <div class="container" style="background-color: white; border-radius: 10px; padding: 20px 0px; margin-top: 10px">
-        {% block content %}
-        {% endblock content %}
+        <button class="navbar-toggler backend-navbar__toggle" type="button" data-bs-toggle="collapse"
+                data-bs-target="#teamNavigation" aria-controls="teamNavigation"
+                aria-expanded="false" aria-label="Ouvrir la navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="teamNavigation">
+            <ul class="backend-nav navbar-nav ms-auto align-items-xl-center">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'team_planning' %}active{% endif %}" href="{% url 'team_planning' %}">
+                        <i class="far fa-calendar-check" aria-hidden="true"></i> Planning
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'team_post_presta' %}active{% endif %}" href="{% url 'team_post_presta' %}">
+                        <i class="fas fa-photo-video" aria-hidden="true"></i> Post-presta
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'template_to_do' %}active{% endif %}" href="{% url 'template_to_do' %}">
+                        <i class="fas fa-palette" aria-hidden="true"></i> Templates
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}" href="{% url 'calendar' %}">
+                        <i class="far fa-calendar-alt" aria-hidden="true"></i> Calendrier
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'relance_client' or request.resolver_match.url_name == 'info_relance_client' %}active{% endif %}" href="{% url 'relance_client' %}">
+                        <i class="fas fa-phone-alt" aria-hidden="true"></i> Relances
+                    </a>
+                </li>
+                <li class="nav-item backend-nav__logout">
+                    <a class="nav-link" href="{% url 'logout' %}" title="Déconnexion">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span class="d-xl-none"> Déconnexion</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
+</nav>
+
+<main class="backend-main team-main" id="main-content">
+    {% block content %}{% endblock content %}
 </main>
 
+<footer class="backend-footer">
+    <span>{{ request.user }}</span>
+    <span aria-hidden="true">·</span>
+    <span>MySelfieBooth Paris</span>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

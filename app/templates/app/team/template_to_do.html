@@ -1,201 +1,90 @@
 {% extends 'app/team/index.html' %}
-{% block content %}
-<style>
-   .highlight-prestation {
-   background-color: blue;
-   color: white; /* Pour que le texte reste lisible sur un fond bleu */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-option {
-   background-color: skyblue;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-membre {
-   background-color: #f1cd9d;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-</style>
-<div class="container">
-   {% with prev_date=None %}
-   {% for event in lst_event_prio %}
-   {% ifchanged event.event_details.date_evenement %}
-   {% if prev_date %}
-   <hr class="my-4 mx-auto" style="color: #1b1b1b;">
-   {% endif %}
-   <br>
-   <div class="date-block"
-      style="background-color:{% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
-      <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
-   </div>
-   {% endifchanged %}
-   <br>
-   <div class="card">
-      <div class="card-header">
-         <h5><a>{{ event.client.nom }}</a></h5>
-      </div>
-      <div class="card-body">
-         <table class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Prestation</th>
-                  <th>Texte</th>
-                  <th>URL MODEL</th>
-                  <th>URL MUSIC</th>
-                  <th>DOSSIER pCLOUD</th>
-                  <th>Statut</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>
-                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
-                     , {% endif %}
-                     {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>
-                     , {% endif %}
-                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
-                     , {% endif %}
-                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
-                     , {% endif %}
-                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadbooth</span>
-                     , {% endif %}
-                  </td>
-                  <td style="{% if not event.event_template.text_template %}background-color: rgba(255,0,0,0.47);{% endif %}">
-                     {{ event.event_template.text_template }}
-                  </td>
+{% block title %}Templates à préparer{% endblock title %}
 
-                  <td style="
-                     {% if not event.event_product.need_design %}
-                     background-color: #e9ecef;
-                     background-image: repeating-linear-gradient(
-                     45deg,
-                     #e9ecef,
-                     #e9ecef 10px,
-                     #d6d8db 10px,
-                     #d6d8db 20px
-                     );
-                     color: #6c757d;
-                     {% elif event.event_template.url_modele %}
-                     background-color: rgb(255,255,255);
-                     {% else %}
-                     background-color: rgba(255,0,0,0.47);
-                     {% endif %}
-                     padding: 5px;
-                     border-radius: 4px;
-                     ">                      {% if event.event_product.need_design %}
-                     {% if event.event_template.url_modele %}
-                     <a href="{{ event.event_template.url_modele }}" target="_blank" rel="noopener noreferrer">
-                     MODELE
-                     </a>
-                     {% endif %}
-                     {% else %}
-                     <span>Non applicable</span>
-                     {% endif %}
-                  </td>
-                  <td style="
-                     {% if not event.event_product.need_music %}
-                     background-color: #e9ecef;
-                     background-image: repeating-linear-gradient(
-                     45deg,
-                     #e9ecef,
-                     #e9ecef 10px,
-                     #d6d8db 10px,
-                     #d6d8db 20px
-                     );
-                     color: #6c757d;
-                     {% elif event.event_template.url_music_360 %}
-                     background-color: rgb(255,255,255);
-                     {% else %}
-                     background-color: rgba(255,0,0,0.47);
-                     {% endif %}
-                     padding: 5px;
-                     border-radius: 4px;
-                     ">
-                     {% if event.event_product.videobooth %}
-                     {% if event.event_template.url_music_360 %}
-                     <a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener noreferrer">
-                     MUSIC
-                     </a>
-                     {% endif %}
-                     {% else %}
-                     <span>Non applicable</span>
-                     {% endif %}
-                  </td>
-                  <td><a href="{{ event.event_template.url_pcloud_template_folder }}">{{ event.event_template.directory_name }}</a></td>
-                  <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                     {% if event.event_template.statut %}
-                     Prêt
-                     {% else %}
-                     Pas OK
-                     {% endif %}
-                  </td>
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Commentaire Client</th>
-                  <th>Commentaire</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>{{ event.event_details.comment_client }}</td>
-                  <td>{{ event.event_details.comment }}</td>
-               </tr>
-            </tbody>
-         </table>
-         <div class="card-header" style="border-radius: 10px;">
-            <h5 class="mb-3">🖼️ Gestion du Modèle de Tirage</h5>
-         </div>
-         <div class="card p-3"
-            style="background-color: white; border: 2px solid {% if event.event_template.image_name %}#28a745{% else %}#dc3545{% endif %}; border-radius: 10px;">
-            <!-- Formulaire d'import -->
-            <form method="post" enctype="multipart/form-data" action="{% url 'upload_image' event.id %}"
-               class="mb-2">
-               {% csrf_token %}
-               <div class="row align-items-center">
-                  <div class="col-md-6">
-                     <label for="myTemplate" class="form-label">🎨 Sélectionnez un fichier PNG :</label>
-                     <input type="file" name="myTemplate" id="myTemplate" accept="image/png" class="form-control"
-                        required>
-                  </div>
-                  <div class="col-md-3 mt-3 mt-md-0">
-                     <button type="submit" class="btn btn-primary w-100">📥 Importer le modèle</button>
-                  </div>
-               </div>
-            </form>
-            <!-- Aperçu -->
-            <div>
-               {% if event.event_template.image_name %}
-               <b> <a href="{% url 'view_image' event.id %}" target="_blank">📎 Dernier Modèle actuellement importé </a></b>
-               <br>
-               {% else %}
-               <p class="text-muted">Aucun modèle importé pour l’instant.</p>
-               {% endif %}
-            </div>
-            <br>
-            <!-- Formulaire d'envoi -->
-            <form method="post" action="{% url 'send_template_to_client' event.id %}" onsubmit="return confirm('Confirmer l’envoi du template au client ?')">
-               {% csrf_token %}
-               <div class="row align-items-center">
-                  <div class="col-md-3">
-                     <button type="submit" class="btn btn-warning w-100"
-                     {% if not event.event_template.image_name %}disabled{% endif %}>
-                     Envoyer au client
-                     </button>
-                  </div>
-               </div>
-            </form>
-            {% if not event.event_template.image_name %}
-            <p class="text-danger mt-2">⚠️ Aucun modèle importé. Vous devez d'abord importer un modèle PNG.</p>
-            {% endif %}
-         </div>
-      </div>
-   </div>
-   {% endfor %}
-   {% endwith %}
+{% block content %}
+<div class="team-page">
+    <header class="team-page-header">
+        <div>
+            <p class="team-page-header__eyebrow">Création</p>
+            <h1>Templates à préparer</h1>
+            <p class="team-page-header__description">Suivez les éléments graphiques, importez le PNG final et envoyez-le au client depuis la même carte.</p>
+        </div>
+        <span class="team-page-header__meta"><i class="fas fa-palette"></i> {{ lst_event_prio|length }} dossier{{ lst_event_prio|length|pluralize }}</span>
+    </header>
+
+    <section class="team-date-group" aria-label="Templates à réaliser">
+        {% for event in lst_event_prio %}
+            {% ifchanged event.event_details.date_evenement %}
+            <div class="team-date-heading"><i class="far fa-calendar-alt"></i> {{ event.event_details.date_evenement|date:"l d F Y" }}</div>
+            {% endifchanged %}
+
+            <article class="team-card team-event-card">
+                <header class="team-card__header">
+                    <div>
+                        <h2>{{ event.client.nom }}</h2>
+                        <p>Devis {{ event.num_devis|default:'—' }} · {{ event.event_details.ville_evenement }}</p>
+                    </div>
+                    {% if event.event_template.statut %}
+                    <span class="team-status team-status--success"><i class="fas fa-check"></i>&nbsp; Prêt</span>
+                    {% else %}
+                    <span class="team-status team-status--warning"><i class="fas fa-hourglass-half"></i>&nbsp; À préparer</span>
+                    {% endif %}
+                </header>
+
+                <div class="team-card__body">
+                    <div class="team-subsection">
+                        <h3>Prestation</h3>
+                        {% include 'app/team/partials/event_products.html' %}
+                    </div>
+
+                    <div class="team-meta-grid">
+                        <div class="team-meta-item"><small>Texte du template</small><span>{{ event.event_template.text_template|default:'Texte manquant' }}</span></div>
+                        <div class="team-meta-item"><small>Modèle</small>{% if not event.event_product.need_design %}<span>Non applicable</span>{% elif event.event_template.url_modele %}<a href="{{ event.event_template.url_modele }}" target="_blank" rel="noopener noreferrer">Voir le modèle</a>{% else %}<span class="team-status team-status--danger">Lien manquant</span>{% endif %}</div>
+                        <div class="team-meta-item"><small>Musique</small>{% if not event.event_product.need_music %}<span>Non applicable</span>{% elif event.event_template.url_music_360 %}<a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener noreferrer">Écouter la musique</a>{% else %}<span class="team-status team-status--danger">Lien manquant</span>{% endif %}</div>
+                        <div class="team-meta-item"><small>Dossier pCloud</small>{% if event.event_template.url_pcloud_template_folder %}<a href="{{ event.event_template.url_pcloud_template_folder }}" target="_blank" rel="noopener noreferrer">{{ event.event_template.directory_name|default:'Ouvrir le dossier' }}</a>{% else %}<span>{{ event.event_template.directory_name|default:'Non renseigné' }}</span>{% endif %}</div>
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Commentaires</h3>
+                        <div class="team-meta-grid">
+                            <div class="team-meta-item"><small>Client</small><span>{{ event.event_details.comment_client|default:'Aucun commentaire' }}</span></div>
+                            <div class="team-meta-item"><small>Interne</small><span>{{ event.event_details.comment|default:'Aucun commentaire' }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Fichier final</h3>
+                        <div class="team-upload-box {% if not event.event_template.image_name %}team-template-state--missing{% endif %}">
+                            <form class="team-form" method="post" enctype="multipart/form-data" action="{% url 'upload_image' event.id %}">
+                                {% csrf_token %}
+                                <div class="team-field">
+                                    <label for="template-file-{{ event.id }}"><i class="fas fa-file-image"></i> Fichier PNG</label>
+                                    <input type="file" name="myTemplate" id="template-file-{{ event.id }}" accept="image/png" required>
+                                </div>
+                                <button type="submit" class="team-button team-button--primary"><i class="fas fa-upload"></i> Importer le modèle</button>
+                            </form>
+
+                            {% if event.event_template.image_name %}
+                            <a href="{% url 'view_image' event.id %}" target="_blank" class="team-button team-button--secondary"><i class="far fa-eye"></i> Voir le dernier modèle</a>
+                            {% else %}
+                            <p class="team-comment">Aucun modèle PNG importé pour le moment.</p>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'send_template_to_client' event.id %}" onsubmit="return confirm('Confirmer l’envoi du template au client ?')">
+                                {% csrf_token %}
+                                <button type="submit" class="team-button team-button--warning" {% if not event.event_template.image_name %}disabled{% endif %}><i class="far fa-paper-plane"></i> Envoyer au client</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="team-actions">
+                        <a class="team-button team-button--secondary" href="{% url 'info_event' event.id %}"><i class="fas fa-arrow-right"></i> Ouvrir la fiche événement</a>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="team-section"><div class="team-empty"><i class="fas fa-check-circle"></i> Aucun template à préparer dans les 30 prochains jours.</div></div>
+        {% endfor %}
+    </section>
 </div>
-{% endblock %}
+{% endblock content %}

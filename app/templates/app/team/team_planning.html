@@ -1,227 +1,126 @@
 {% extends 'app/team/index.html' %}
+{% block title %}Planning équipe{% endblock title %}
+
 {% block content %}
-<style>
-   .highlight-prestation {
-   background-color: blue;
-   color: white; /* Pour que le texte reste lisible sur un fond bleu */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-option {
-   background-color: skyblue;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-membre {
-   background-color: #f1cd9d;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-</style>
-<div class="container">
-   <table id="table" class="table table-bordered table-striped" style="background-color:white">
-      <thead>
-         <tr>
-            <th>NOM</th>
-            <th>J</th>
-            <th>DATE-EVENT</th>
-            <th>CP</th>
-         </tr>
-      </thead>
-      <tbody>
-         {% for event in lst_event_prio %}
-         <tr>
-            <td>{{ event.client.nom }}</td>
-            <td>{{ event.event_details.date_evenement|date:"D" }}</td>
-            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-            <td>{{ event.event_details.code_postal_evenement }}</td>
-         </tr>
-         {% endfor %}
-      </tbody>
-   </table>
-   {% with prev_date=None %}
-   {% for event in lst_event_prio %}
-   {% ifchanged event.event_details.date_evenement %}
-   {% if prev_date %}
-   <hr class="my-4 mx-auto" style="color: #1b1b1b;">
-   {% endif %}
-   <br>
-   <div class="date-block"
-      style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
-      <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
-   </div>
-   {% endifchanged %}
-   <br>
-   <div class="card">
-      <div class="card-header">
-         <h5>{{ event.client.nom }} - <a href="tel:{{ event.client.numero_telephone }}">
-            {{ event.client.numero_telephone }}</a>
-         </h5>
-      </div>
-      <div class="card-body">
-         <table class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Durée</th>
-                  <th>Horaire</th>
-                  <th>Adresse</th>
-                  <th>Equipe</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>{{ event.event_option.duree }}h</td>
-                  <td {% if event.event_details.horaire == "None" %}
-                  style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-                  <td>
-                     {{ event.event_details.get_adresse }}<br>
-                     <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                     🚗 Waze
-                     </a>
-                  </td>
-                  <td>
-                     {% include 'app/partials/members_choix_cell.html' %}
-                  </td>
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Prestation</th>
-                  <th>Option</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>
-                     {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>
-                     , {% endif %}
-                     {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>
-                     , {% endif %}
-                     {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>
-                     , {% endif %}
-                     {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>
-                     , {% endif %}
-                     {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>
-                     , {% endif %}
-                     {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>
-                     , {% endif %}
-                  </td>
-                  <td>
-                     {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral :
-                     {% if event.event_option.mur_floral_style %} {{ event.event_option.get_mur_floral_style_display }}</span>, {% else %} --- {% endif %}{% endif %}
-                     {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
-                     {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
-                     {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
-                     {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                     {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
-                                              {% if event.event_option.PanneauFontaine %} <span class="highlight-option">PanneauFontaine</span>, {% endif %}
-                        {% if event.event_option.VideoLivreOr %} <span class="highlight-option">VideoLivreOr</span>, {% endif %}
-                     {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                     {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                     {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                     {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                   {% if event.event_option.PorteCles %} <span class="highlight-option">PorteCles</span>, {% endif %}
-                   {% if event.event_option.MagnetsSimple %} <span class="highlight-option">MagnetsSimple</span>, {% endif %}
-                  </td>
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_argent" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>PRIX</th>
-                  <th>Acompte</th>
-                  <th>Restant</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td id="prix_valided">{{ event.prix_valided }}</td>
-                  <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                  <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-               </tr>
-            </tbody>
-         </table>
-         <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-            <thead>
-               <tr>
-                  <th>Commentaire Client</th>
-                  <th>Commentaire</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>{{ event.event_details.comment_client }}</td>
-                  <td>{{ event.event_details.comment }}</td>
-               </tr>
-            </tbody>
-         </table>
-      </div>
-   </div>
-   {% endfor %}
-   {% endwith %}
+<div class="team-page">
+    <header class="team-page-header">
+        <div>
+            <p class="team-page-header__eyebrow">Organisation</p>
+            <h1>Planning des prestations</h1>
+            <p class="team-page-header__description">Les événements signés des 30 prochains jours, avec l’équipe, le matériel et les informations utiles sur place.</p>
+        </div>
+        <span class="team-page-header__meta"><i class="far fa-calendar-check"></i> {{ lst_event_prio|length }} événement{{ lst_event_prio|length|pluralize }}</span>
+    </header>
+
+    <section class="team-date-group" aria-label="Événements à venir">
+        {% for event in lst_event_prio %}
+            {% ifchanged event.event_details.date_evenement %}
+            <div class="team-date-heading"><i class="far fa-calendar-alt"></i> {{ event.event_details.date_evenement|date:"l d F Y" }}</div>
+            {% endifchanged %}
+
+            <article class="team-card team-event-card" id="event-{{ event.id }}">
+                <header class="team-card__header">
+                    <div>
+                        <h2>{{ event.client.nom }}</h2>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ event.event_details.ville_evenement }} · {{ event.event_details.code_postal_evenement }}</p>
+                    </div>
+                    <a class="team-button team-button--secondary" href="tel:{{ event.client.numero_telephone }}"><i class="fas fa-phone-alt"></i> {{ event.client.numero_telephone }}</a>
+                </header>
+
+                <div class="team-card__body">
+                    <div class="team-meta-grid">
+                        <div class="team-meta-item"><small>Horaire</small><strong>{% if event.event_details.horaire and event.event_details.horaire != 'None' %}{{ event.event_details.horaire }}{% else %}À confirmer{% endif %}</strong></div>
+                        <div class="team-meta-item"><small>Durée</small><strong>{{ event.event_option.duree|default:'—' }} h</strong></div>
+                        <div class="team-meta-item"><small>Adresse</small><span>{{ event.event_details.get_adresse }}</span></div>
+                        <div class="team-meta-item"><small>Itinéraire</small><a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}" target="_blank" rel="noopener noreferrer"><i class="fas fa-route"></i> Ouvrir dans Waze</a></div>
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Équipe affectée</h3>
+                        {% include 'app/partials/members_choix_cell.html' %}
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Prestations</h3>
+                        {% include 'app/team/partials/event_products.html' %}
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Options</h3>
+                        {% include 'app/team/partials/event_options.html' %}
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Finances</h3>
+                        <div class="team-meta-grid">
+                            <div class="team-meta-item"><small>Prix validé</small><strong>{{ event.prix_valided|default:0 }} €</strong></div>
+                            <div class="team-meta-item"><small>Acompte</small><strong>{% if event.event_acompte %}{{ event.event_acompte.montant_acompte|default:0 }} €{% else %}—{% endif %}</strong></div>
+                            <div class="team-meta-item"><small>Restant</small><strong>{% if event.event_acompte %}{{ event.event_acompte.montant_restant|default:0 }} €{% else %}—{% endif %}</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="team-subsection">
+                        <h3>Commentaires</h3>
+                        <div class="team-meta-grid">
+                            <div class="team-meta-item"><small>Client</small><span>{{ event.event_details.comment_client|default:'Aucun commentaire' }}</span></div>
+                            <div class="team-meta-item"><small>Interne</small><span>{{ event.event_details.comment|default:'Aucun commentaire' }}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="team-section"><div class="team-empty"><i class="far fa-calendar-times"></i> Aucun événement planifié dans les 30 prochains jours.</div></div>
+        {% endfor %}
+    </section>
 </div>
+{% endblock content %}
+
+{% block extra_js %}
 <script>
-   function getCSRFToken() {
-     const meta = document.querySelector('meta[name="csrf-token"]');
-     return meta ? meta.getAttribute('content') : '';
-   }
+function getCSRFToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+}
 
-   function addMember(eventId, memberId, selectElement) {
-     fetch(`/api/ajouter-membre/${eventId}/`, {
-       method: 'POST',
-       headers: {
-         'X-CSRFToken': getCSRFToken(),
-         'Content-Type': 'application/json'
-       },
-       body: JSON.stringify({ member_id: memberId })
-     })
-     .then(response => response.text())
-     .then(html => {
-       document.getElementById(`members-${eventId}`).innerHTML = html;
-       attachRemoveButtons();
-       if (selectElement) selectElement.value = "";
-     });
-   }
+function addMember(eventId, memberId, selectElement) {
+    fetch(`/api/ajouter-membre/${eventId}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCSRFToken(), 'Content-Type': 'application/json'},
+        body: JSON.stringify({member_id: memberId})
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById(`members-${eventId}`).innerHTML = html;
+        attachRemoveButtons();
+        if (selectElement) selectElement.value = '';
+    });
+}
 
-   function removeMember(eventId, memberId) {
-     fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
-       method: 'POST',
-       headers: {
-         'X-CSRFToken': getCSRFToken()
-       }
-     })
-     .then(response => response.text())
-     .then(html => {
-       document.getElementById(`members-${eventId}`).innerHTML = html;
-       attachRemoveButtons();
-     });
-   }
+function removeMember(eventId, memberId) {
+    fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCSRFToken()}
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById(`members-${eventId}`).innerHTML = html;
+        attachRemoveButtons();
+    });
+}
 
-   function attachRemoveButtons() {
-     document.querySelectorAll('.remove-member').forEach(button => {
-       button.onclick = () => {
-         const eventId = button.dataset.eventId;
-         const memberId = button.dataset.memberId;
-         removeMember(eventId, memberId);
-       };
-     });
-   }
+function attachRemoveButtons() {
+    document.querySelectorAll('.remove-member').forEach(button => {
+        button.onclick = () => removeMember(button.dataset.eventId, button.dataset.memberId);
+    });
+}
 
-   document.addEventListener('DOMContentLoaded', () => {
-     attachRemoveButtons();
-     document.querySelectorAll('.member-select').forEach(select => {
-       select.addEventListener('change', () => {
-         const eventId = select.dataset.eventId;
-         const memberId = select.value;
-         if (memberId) {
-           addMember(eventId, memberId, select);
-         }
-       });
-     });
-   });
+document.addEventListener('DOMContentLoaded', () => {
+    attachRemoveButtons();
+    document.querySelectorAll('.member-select').forEach(select => {
+        select.addEventListener('change', () => {
+            if (select.value) addMember(select.dataset.eventId, select.value, select);
+        });
+    });
+});
 </script>
-{% endblock %}
+{% endblock extra_js %}

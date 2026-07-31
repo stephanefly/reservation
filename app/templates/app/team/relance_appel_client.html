@@ -1,70 +1,94 @@
 {% extends 'app/team/index.html' %}
+{% block title %}Relances clients{% endblock title %}
+
 {% block content %}
-<div class="container justify-content-center">
-    <table id="table_relance" class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>NOM</th>
-                <th>Tel</th>
-                <th>Create_at</th>
-                <th>DATE-EVENT</th>
-                <th>CP</th>
-                <th>PRIX</th>
-                <th>Status</th>
-                <th>Assigné</th>
-                <th>Commentaire</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in event_to_relance %}
-                <tr>
-                    <td>
-                        <a href="{% url 'info_relance_client' event.id %}">{{ event.client.nom }}</a>
-                    </td>
-                    <td>{{ event.client.numero_telephone }}</td>
-                    <td>{{ event.created_at|date:"Y-m-d" }}</td>
-                    <td>{{ event.event_details.date_evenement|date:"l j F Y" }}</td>
-                    <td>{{ event.event_details.code_postal_evenement }}</td>
-                    <td>{{ event.prix_proposed|default:"0" }} €</td>
-                    <td>{{ event.status }}</td>
-                    <td>
-                    {% with event.relances.last as last_relance %}
-                        {% if last_relance %}
-                            {{ last_relance.membre }}
-                        {% else %}
-                            <span class="text-muted">---</span>
-                        {% endif %}
-                    {% endwith %}
-                    </td>
-                    <td>
-                    {% with event.relances.last as last_relance %}
-                        {% if last_relance %}
-                            {{ last_relance.commentaire }}
-                        {% else %}
-                            <span class="text-muted">---</span>
-                        {% endif %}
-                    {% endwith %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="team-page">
+    <header class="team-page-header">
+        <div>
+            <p class="team-page-header__eyebrow">Commercial</p>
+            <h1>Relances clients</h1>
+            <p class="team-page-header__description">Retrouvez les devis à rappeler, le dernier échange et la personne qui a pris en charge la relance.</p>
+        </div>
+        <span class="team-page-header__meta"><i class="fas fa-phone-alt"></i> {{ event_to_relance|length }} client{{ event_to_relance|length|pluralize }}</span>
+    </header>
+
+    <section class="team-section">
+        <div class="team-section__header">
+            <h2>Clients à contacter</h2>
+            <label class="team-search" for="relance-search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input id="relance-search" type="search" placeholder="Rechercher un client, une ville…" autocomplete="off">
+            </label>
+        </div>
+
+        <div class="team-section__body">
+            <div class="team-card-grid" id="relance-cards">
+                {% for event in event_to_relance %}
+                <article class="team-card team-relance-card">
+                    <header class="team-card__header">
+                        <div>
+                            <h3>{{ event.client.nom }}</h3>
+                            <p>Créé le {{ event.created_at|date:"d/m/Y" }}</p>
+                        </div>
+                        <span class="team-status team-status--info">{{ event.get_status_display|default:event.status }}</span>
+                    </header>
+
+                    <div class="team-card__body">
+                        <div class="team-meta-grid">
+                            <div class="team-meta-item"><small>Événement</small><strong>{{ event.event_details.date_evenement|date:"d/m/Y" }}</strong></div>
+                            <div class="team-meta-item"><small>Ville</small><span>{{ event.event_details.ville_evenement }} · {{ event.event_details.code_postal_evenement }}</span></div>
+                            <div class="team-meta-item"><small>Prix proposé</small><strong>{{ event.prix_proposed|default:0 }} €</strong></div>
+                            <div class="team-meta-item"><small>Téléphone</small><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></div>
+                        </div>
+
+                        {% with event.ordered_relances.0 as last_relance %}
+                        <div class="team-subsection">
+                            <h4>Dernière relance</h4>
+                            {% if last_relance %}
+                            <div class="team-meta-grid">
+                                <div class="team-meta-item"><small>Assignée à</small><strong>{{ last_relance.membre }}</strong></div>
+                                <div class="team-meta-item"><small>Commentaire</small><span>{{ last_relance.commentaire|default:'Aucun commentaire' }}</span></div>
+                            </div>
+                            {% else %}
+                            <p class="team-comment">Aucune relance enregistrée.</p>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+
+                        <div class="team-actions">
+                            <a class="team-button team-button--secondary" href="tel:{{ event.client.numero_telephone }}"><i class="fas fa-phone-alt"></i> Appeler</a>
+                            <a class="team-button team-button--primary" href="{% url 'info_relance_client' event.id %}"><i class="fas fa-arrow-right"></i> Voir et relancer</a>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="team-empty"><i class="fas fa-check-circle"></i> Aucun client à relancer.</div>
+                {% endfor %}
+            </div>
+            <div class="team-empty d-none" id="relance-empty"><i class="fas fa-search"></i> Aucun résultat pour cette recherche.</div>
+        </div>
+    </section>
 </div>
+{% endblock content %}
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#table_relance').DataTable({
-            responsive: true,
-            lengthChange: false,
-            paging: false,
-            searching: true,
-            info: true,
-            order: [[2, 'desc']], // Tri par la colonne "Create_at"
-            columnDefs: [
-                { type: 'date', targets: [2, 3] } // Définition explicite des colonnes dates
-            ]
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('relance-search');
+    const cards = Array.from(document.querySelectorAll('.team-relance-card'));
+    const empty = document.getElementById('relance-empty');
+    if (!input) return;
+
+    input.addEventListener('input', () => {
+        const query = input.value.trim().toLocaleLowerCase('fr');
+        let visible = 0;
+        cards.forEach(card => {
+            const matches = card.textContent.toLocaleLowerCase('fr').includes(query);
+            card.classList.toggle('d-none', !matches);
+            if (matches) visible += 1;
         });
+        empty.classList.toggle('d-none', visible !== 0 || cards.length === 0);
     });
+});
 </script>
-
-    {% endblock %}
+{% endblock extra_js %}

@@ -1,118 +1,105 @@
 {% extends 'app/team/index.html' %}
+{% block title %}Relance · {{ event.client.nom }}{% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4 text-center">📅 Relance pour l'Événement - {{ event.client.nom }}</h2>
-    <br>
-    <!-- Informations sur le client -->
-    <div class="row">
-        <div class="col">
-    <div class="card shadow-sm p-4 mb-4">
-        <h5 class="card-title">👤 Informations Client</h5>
-        <p><strong>Nom :</strong> {{ event.client.nom }}</p>
-        <p><strong>Email :</strong> <a href="mailto:{{ event.client.mail }}">{{ event.client.mail }}</a></p>
-        <p><strong>Téléphone :</strong> <a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></p>
-        <p><strong>Source :</strong> {{ event.client.how_find }}</p>
-        <p><strong>Date de Creation du devis :</strong> {{ event.created_at }}</p>
-                <p><strong>📩 Autorisation Contact :</strong>
-            {% if event.client.autorisation_mail %}
-                ✅
-            {% else %}
-                ❌
-            {% endif %}
-        </p>
-    </div>
+<div class="team-page">
+    <header class="team-page-header">
+        <div>
+            <p class="team-page-header__eyebrow">Suivi commercial</p>
+            <h1>{{ event.client.nom }}</h1>
+            <p class="team-page-header__description">Ajoutez un compte rendu après l’appel et retrouvez tout l’historique de ce prospect.</p>
         </div>
-        <div class="col">
-    <!-- Informations sur l'événement -->
-    <div class="card shadow-sm p-4 mb-4">
-        <h5 class="card-title">📍 Détails de l'Événement </h5>
-        <p><strong>Date de l'évenement :</strong> {{ event.event_details.date_evenement|date:"l j F Y" }}</p>
-        <p><strong>Adresse :</strong> {{ event.event_details.adresse_evenement }}, {{ event.event_details.ville_evenement }} ({{ event.event_details.code_postal_evenement }})</p>
-        <p><strong>Produits :</strong> {{ event.event_product.get_selected_booths }}</p>
-        <p><strong>Options :</strong>
-            {% if event.event_option.MurFloral %} Mur Floral, {% endif %}
-            {% if event.event_option.Phonebooth %} Phonebooth, {% endif %}
-            {% if event.event_option.LivreOr %} Livre d'Or, {% endif %}
-            {% if event.event_option.Fond360 %} Fond 360, {% endif %}
-            {% if event.event_option.PanneauBienvenue %} Panneau de Bienvenue, {% endif %}
-        </p>
-        <p><strong>Durée :</strong> {{ event.event_option.duree }}</p>
-        <p><strong>Prix :</strong> {{ event.prix_proposed }}€</p>
-<p><strong>Réduction :</strong> {{event_reduc_total }}€</p>
-    </div>
-    </div>
+        <a class="team-button team-button--secondary" href="{% url 'relance_client' %}"><i class="fas fa-arrow-left"></i> Retour aux relances</a>
+    </header>
+
+    <section class="team-card-grid" aria-label="Informations du client et de l'événement">
+        <article class="team-card">
+            <header class="team-card__header"><div><h2>Informations client</h2><p>Coordonnées et origine du contact</p></div><i class="far fa-address-card"></i></header>
+            <div class="team-card__body">
+                <div class="team-meta-grid">
+                    <div class="team-meta-item"><small>Nom</small><strong>{{ event.client.nom }}</strong></div>
+                    <div class="team-meta-item"><small>E-mail</small><a href="mailto:{{ event.client.mail }}">{{ event.client.mail }}</a></div>
+                    <div class="team-meta-item"><small>Téléphone</small><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></div>
+                    <div class="team-meta-item"><small>Source</small><span>{{ event.client.get_how_find_display|default:event.client.how_find|default:'Non renseignée' }}</span></div>
+                    <div class="team-meta-item"><small>Création du devis</small><strong>{{ event.created_at|date:"d/m/Y à H:i" }}</strong></div>
+                    <div class="team-meta-item"><small>Contact autorisé</small>{% if event.client.autorisation_mail %}<span class="team-status team-status--success">Oui</span>{% else %}<span class="team-status team-status--danger">Non</span>{% endif %}</div>
+                </div>
+                <div class="team-actions">
+                    <a class="team-button team-button--secondary" href="tel:{{ event.client.numero_telephone }}"><i class="fas fa-phone-alt"></i> Appeler</a>
+                    <a class="team-button team-button--secondary" href="mailto:{{ event.client.mail }}"><i class="far fa-envelope"></i> Envoyer un e-mail</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="team-card">
+            <header class="team-card__header"><div><h2>Détails de l’événement</h2><p>{{ event.event_details.date_evenement|date:"l d F Y" }}</p></div><i class="fas fa-map-marker-alt"></i></header>
+            <div class="team-card__body">
+                <div class="team-meta-grid">
+                    <div class="team-meta-item"><small>Adresse</small><span>{{ event.event_details.get_adresse }}</span></div>
+                    <div class="team-meta-item"><small>Durée</small><strong>{{ event.event_option.duree|default:'—' }} h</strong></div>
+                    <div class="team-meta-item"><small>Prix proposé</small><strong>{{ event.prix_proposed|default:0 }} €</strong></div>
+                    <div class="team-meta-item"><small>Réduction totale</small><strong>{{ event_reduc_total|default:0 }} €</strong></div>
+                </div>
+                <div class="team-subsection"><h3>Prestations</h3>{% include 'app/team/partials/event_products.html' %}</div>
+                <div class="team-subsection"><h3>Options</h3>{% include 'app/team/partials/event_options.html' %}</div>
+                <div class="team-actions">
+                    <a class="team-button team-button--secondary" href="{% url 'info_event' event.id %}"><i class="fas fa-arrow-right"></i> Fiche événement complète</a>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="team-section" aria-labelledby="new-relance-title">
+        <div class="team-section__header"><h2 id="new-relance-title">Ajouter une relance</h2><span class="team-status team-status--info">{{ request.user.username }}</span></div>
+        <div class="team-section__body">
+            <form method="post" class="team-form">
+                {% csrf_token %}
+                <div class="team-form-grid">
+                    <div class="team-field">
+                        <label for="membre">Membre responsable</label>
+                        <input type="text" name="membre" id="membre" value="{{ request.user.username }}" required readonly>
+                    </div>
+                    <div class="team-field">
+                        <label for="date_relance">Date de relance</label>
+                        <input type="datetime-local" name="date_relance" id="date_relance" value="{{ now|date:'Y-m-d\TH:i' }}" required>
+                    </div>
+                    <div class="team-field">
+                        <label for="qualification">Qualification</label>
+                        <select name="qualification" id="qualification">
+                            <option value="0">0 · Très froid</option>
+                            <option value="1">1 · Froid</option>
+                            <option value="2">2 · Tiède</option>
+                            <option value="3">3 · Intéressé</option>
+                            <option value="4">4 · Chaud</option>
+                            <option value="5">5 · Très chaud</option>
+                        </select>
+                    </div>
+                    <div class="team-field team-field--full">
+                        <label for="commentaire">Commentaire</label>
+                        <textarea name="commentaire" id="commentaire" rows="4" placeholder="Résumé de l’échange, prochaines actions…"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="team-button team-button--primary"><i class="fas fa-save"></i> Enregistrer la relance</button>
+            </form>
         </div>
+    </section>
 
-    <!-- Formulaire de relance -->
-    <div class="card shadow-lg p-4">
-        <h5 class="card-title">✍️ Ajouter une Relance</h5>
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label for="membre" class="form-label">👤 Membre responsable :</label>
-                <input type="text" class="form-control" name="membre" id="membre" value="{{ request.user.username }}" required readonly>
-            </div>
-
-            <div class="mb-3">
-                <label for="date_relance" class="form-label">📆 Date de relance :</label>
-            <input type="datetime-local" class="form-control" name="date_relance" id="date_relance"
-                   value="{{ now|date:'Y-m-d\TH:i' }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="commentaire" class="form-label">📝 Commentaire :</label>
-                <textarea name="commentaire" id="commentaire" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="qualification" class="form-label">⭐ Qualification (0 à 5) :</label>
-                <select class="form-select" name="qualification" id="qualification">
-                    <option value="0">0 - Très Froid ❄️</option>
-                    <option value="1">1 - Froid</option>
-                    <option value="2">2 - Tiède 🌡️</option>
-                    <option value="3">3 - Intéressé</option>
-                    <option value="4">4 - Chaud 🔥</option>
-                    <option value="5">5 - Très Chaud 🚀</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">💾 Enregistrer la Relance</button>
-        </form>
-    </div>
-
-    <hr class="my-5">
-
-    <!-- Affichage des relances existantes -->
-    <h3 class="text-center">📜 Historique des Relances</h3>
-
-    <div class="table-responsive mt-3">
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>👤 Membre</th>
-                    <th>📅 Date Relance</th>
-                    <th>⭐ Qualification</th>
-                    <th>📝 Commentaire</th>
-                </tr>
-            </thead>
-            <tbody>
+    <section class="team-section" aria-labelledby="history-title">
+        <div class="team-section__header"><h2 id="history-title">Historique des relances</h2><span class="team-page-header__meta">{{ lst_relance_event|length }} entrée{{ lst_relance_event|length|pluralize }}</span></div>
+        <div class="team-section__body">
+            <div class="team-history-list">
                 {% for relance in lst_relance_event %}
-                <tr>
-                    <td>{{ relance.membre }}</td>
-                    <td>{{ relance.date_relance|date:"d/m/Y H:i" }}</td>
-                    <td>{{ relance.qualification }}</td>
-                    <td>{{ relance.commentaire }}</td>
-                </tr>
+                <article class="team-history-item">
+                    <div><small>Membre</small><strong>{{ relance.membre }}</strong></div>
+                    <div><small>Date</small><span>{{ relance.date_relance|date:"d/m/Y H:i" }}</span></div>
+                    <div><small>Qualification</small><span class="team-status {% if relance.qualification >= 4 %}team-status--success{% elif relance.qualification >= 2 %}team-status--warning{% else %}team-status--info{% endif %}">{{ relance.qualification }} / 5</span></div>
+                    <div><small>Commentaire</small><span>{{ relance.commentaire|default:'Aucun commentaire' }}</span></div>
+                </article>
                 {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted">Aucune relance enregistrée pour cet événement.</td>
-                </tr>
+                <div class="team-empty"><i class="far fa-comment-dots"></i> Aucune relance enregistrée pour cet événement.</div>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </div>
+        </div>
+    </section>
 </div>
-
-{% endblock %}
+{% endblock content %}

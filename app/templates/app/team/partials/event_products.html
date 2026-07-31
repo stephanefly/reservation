@@ -1,0 +1,12 @@
+<div class="team-tags">
+    {% if event.event_product and event.event_product.get_selected_booths %}
+        {% if event.event_product.photobooth %}<span class="team-tag team-tag--product">Photobooth</span>{% endif %}
+        {% if event.event_product.miroirbooth %}<span class="team-tag team-tag--product">Miroirbooth</span>{% endif %}
+        {% if event.event_product.videobooth %}<span class="team-tag team-tag--product">360Booth</span>{% endif %}
+        {% if event.event_product.voguebooth %}<span class="team-tag team-tag--product">VogueBooth</span>{% endif %}
+        {% if event.event_product.ipadbooth %}<span class="team-tag team-tag--product">iPadBooth</span>{% endif %}
+        {% if event.event_product.airbooth %}<span class="team-tag team-tag--product">AirBooth</span>{% endif %}
+    {% else %}
+        <span class="team-muted">Aucune prestation renseignée</span>
+    {% endif %}
+</div>

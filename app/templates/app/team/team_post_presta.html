@@ -1,206 +1,84 @@
 {% extends 'app/team/index.html' %}
+{% block title %}Suivi post-prestation{% endblock title %}
+
 {% block content %}
-        <style>
-        .highlight-prestation {
-            background-color: blue;
-            color: white; /* Pour que le texte reste lisible sur un fond bleu */
-            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-        }
+<div class="team-page">
+    <header class="team-page-header">
+        <div>
+            <p class="team-page-header__eyebrow">Livraison</p>
+            <h1>Suivi post-prestation</h1>
+            <p class="team-page-header__description">Centralisez la collecte des médias, des rushs et les liens de dépôt avant la livraison au client.</p>
+        </div>
+        <span class="team-page-header__meta"><i class="fas fa-photo-video"></i> {{ lst_post_event|length }} événement{{ lst_post_event|length|pluralize }}</span>
+    </header>
 
-        .highlight-option {
-            background-color: skyblue;
-            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-        }
-
-        .highlight-membre {
-            background-color: #f1cd9d;
-            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-        }
-                .highlight-pc {
-            background-color: #f19d9d;
-            color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-            padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-        }
-    </style>
-    <table id="table" class="table table-bordered table-striped" style="background-color:white">
-        <thead>
-        <tr>
-            <th>NOM</th>
-            <th>DATE-EVENT</th>
-            <th>MEMBRE</th>
-            <th>Media Collecté</th>
-            <th>Rush Collecté</th>
-        </tr>
-        </thead>
-        <tbody>
+    <section class="team-card-grid" aria-label="Événements en post-prestation">
         {% for event in lst_post_event %}
-        <tr>
-            <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
-            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-                            <td>
-                    {% for m in event.event_team_members.all %}
-                  <span class="highlight-membre">{{ m.name }}</span>
-                {% empty %}
-                  <span class="text-muted">Aucun membre</span>
-                {% endfor %}
-                </td>
-            <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.event_post_presta.collected  %}Pas OK{% else %}Fait{% endif %}
-            </td>
-                        <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-danger{% endif %}">
-                {% if not event.event_post_presta.rush_collected  %}Pas OK{% else %}Fait{% endif %}
-            </td>
-        </tr>
-
-        {% endfor %}
-        </tbody>
-    </table>
-            {% for event in lst_post_event %}
-        <div id="event-{{ event.id }}" class="card" style="border: #1b1b1b 2px solid">
-                <div class="card-header">
-                    <h5>
-                        <a href="{% url 'info_event' event.id %}" class="btn btn-link">{{ event.client.nom }}</a>
-                    </h5>
+        <article class="team-card team-event-card" id="event-{{ event.id }}">
+            <header class="team-card__header">
+                <div>
+                    <h2>{{ event.client.nom }}</h2>
+                    <p><i class="far fa-calendar-alt"></i> {{ event.event_details.date_evenement|date:"l d F Y" }}</p>
                 </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped" style="background-color:white">
-                        <thead>
-                        <tr>
-                            <th>Mail</th>
-                            <th>Date-Event</th>
-                            <th>PRIX</th>
-                            <th>Acompte</th>
-                            <th>Restant</th>
-                            <th>Mode</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>{{ event.client.mail }}</td>
-                            <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-                            <td id="prix_valided">{{ event.prix_valided }}</td>
-                            <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-                            <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-                            <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-                        <thead>
-                        <tr>
-                            <th>Prestation</th>
-                            <th>Option</th>
-                            <th>Membre</th>
-                            <th>Num PC</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                {% if event.event_product.photobooth %}
-                                    <span class="highlight-prestation">Photobooth</span>
-                                    , {% endif %}
-                                {% if event.event_product.miroirbooth %}
-                                    <span class="highlight-prestation">Miroirbooth</span>
-                                    , {% endif %}
-                                {% if event.event_product.videobooth %}
-                                    <span class="highlight-prestation">360Booth</span>
-                                    , {% endif %}
-                                {% if event.event_product.voguebooth %}
-                                    <span class="highlight-prestation">VogueBooth</span>
-                                    , {% endif %}
-                                {% if event.event_product.ipadbooth %}
-                                    <span class="highlight-prestation">Ipadebooth</span>
-                                    , {% endif %}
-                                {% if event.event_product.airbooth %}
-                                    <span class="highlight-prestation">Ipadebooth</span>
-                                    , {% endif %}
-                            </td>
-                            <td>
-                                {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral</span>
-                                    , {% endif %}
-                                {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>
-                                    , {% endif %}
-                                {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>
-                                    , {% endif %}
-                                {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>
-                                    , {% endif %}
-                                {% if event.event_option.PanneauBienvenue %}
-                                    <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                                {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>
-                                    , {% endif %}
-                                                        {% if event.event_option.PanneauFontaine %} <span class="highlight-option">PanneauFontaine</span>, {% endif %}
-                        {% if event.event_option.VideoLivreOr %} <span class="highlight-option">VideoLivreOr</span>, {% endif %}
-                                {% if event.event_option.PhotographeVoguebooth %}
-                                    <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                                {% if event.event_option.ImpressionVoguebooth %}
-                                    <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                                {% if event.event_option.DecorVoguebooth %}
-                                    <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                                {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>
-                                    , {% endif %}
-                                {% if event.event_option.PorteCles != 0 %} <span class="highlight-option">PorteCles</span>
-                                    , {% endif %}
-                                {% if event.event_option.MagnetsSimple != 0 %} <span class="highlight-option">MagnetsSimple</span>
-                                    , {% endif %}
-                            </td>
-                            <td>
-                    {% for m in event.event_team_members.all %}
-                  <span class="highlight-membre">{{ m.name }}</span>
-                {% empty %}
-                  <span class="text-muted">Aucun membre</span>
-                {% endfor %}
-                </td>
-                            <td> <span class="highlight-pc">PCX</span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table id="table_lien" class="table table-bordered table-striped" style="background-color:white">
-                <thead>
-                <tr>
-                    <th>Nom Dossier</th>
-                    <th>Lien Depot Fichier</th>
-                    <th>Action</th>
-                    <th>Collecté</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {{ event.event_template.directory_name }}
-                    </td>
-                    <td>
-                        <a href="{{ event.event_template.link_media_shared }}">Lien</a>
-                    </td>
-                    <td>
-                        <form method="POST" action="{% url 'media_collected' event.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success">Valider Dépot Fichiers</button>
-                            </form>
-                    </td>
-                <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-danger{% endif %}">
-                    {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
-                </td>
-                </tr>
-                </tbody>
-            </table>
+                <div class="team-tags">
+                    {% if event.event_post_presta and event.event_post_presta.collected %}<span class="team-status team-status--success">Médias OK</span>{% else %}<span class="team-status team-status--danger">Médias à collecter</span>{% endif %}
+                    {% if event.event_post_presta and event.event_post_presta.rush_collected %}<span class="team-status team-status--success">Rushs OK</span>{% else %}<span class="team-status team-status--warning">Rushs en attente</span>{% endif %}
+                </div>
+            </header>
+
+            <div class="team-card__body">
+                <div class="team-meta-grid">
+                    <div class="team-meta-item"><small>E-mail</small><a href="mailto:{{ event.client.mail }}">{{ event.client.mail }}</a></div>
+                    <div class="team-meta-item"><small>Prix</small><strong>{{ event.prix_valided|default:0 }} €</strong></div>
+                    <div class="team-meta-item"><small>Acompte</small><strong>{% if event.event_acompte %}{{ event.event_acompte.montant_acompte|default:0 }} €{% else %}—{% endif %}</strong></div>
+                    <div class="team-meta-item"><small>Restant</small><strong>{% if event.event_acompte %}{{ event.event_acompte.montant_restant|default:0 }} €{% else %}—{% endif %}</strong></div>
+                    <div class="team-meta-item"><small>Paiement</small><strong>{% if event.event_acompte %}{{ event.event_acompte.mode_payement|default:'Non renseigné' }}{% else %}—{% endif %}</strong></div>
+                </div>
+
+                <div class="team-subsection">
+                    <h3>Prestations</h3>
+                    {% include 'app/team/partials/event_products.html' %}
+                </div>
+
+                <div class="team-subsection">
+                    <h3>Options</h3>
+                    {% include 'app/team/partials/event_options.html' %}
+                </div>
+
+                <div class="team-subsection">
+                    <h3>Équipe</h3>
+                    <div class="team-tags">
+                        {% for member in event.event_team_members.all %}<span class="team-tag team-tag--member">{{ member.name }}</span>{% empty %}<span class="team-muted">Aucun membre affecté</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="team-subsection">
+                    <h3>Dépôt des fichiers</h3>
+                    <div class="team-meta-grid">
+                        <div class="team-meta-item"><small>Nom du dossier</small><strong>{{ event.event_template.directory_name|default:'Non renseigné' }}</strong></div>
+                        <div class="team-meta-item"><small>Lien partagé</small>{% if event.event_post_presta and event.event_post_presta.link_media_shared %}<a href="{{ event.event_post_presta.link_media_shared }}" target="_blank" rel="noopener noreferrer">Ouvrir le dépôt</a>{% else %}<span>Non disponible</span>{% endif %}</div>
+                    </div>
+
+                    {% if not event.event_post_presta %}
+                    <p class="team-comment"><i class="fas fa-exclamation-triangle"></i> Le suivi post-prestation n’est pas encore initialisé.</p>
+                    {% elif not event.event_post_presta.collected %}
+                    <form method="post" action="{% url 'media_collected' event.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="team-button team-button--success"><i class="fas fa-check"></i> Valider la collecte des médias</button>
+                    </form>
+                    {% else %}
+                    <p class="team-comment"><i class="fas fa-check-circle"></i> Les médias ont été collectés.</p>
+                    {% endif %}
+                </div>
+
+                <div class="team-actions">
+                    <a class="team-button team-button--primary" href="{% url 'info_event' event.id %}"><i class="fas fa-arrow-right"></i> Ouvrir la fiche événement</a>
                 </div>
             </div>
-            <br>
+        </article>
+        {% empty %}
+        <div class="team-section"><div class="team-empty"><i class="fas fa-check-circle"></i> Aucun événement en attente de traitement post-prestation.</div></div>
         {% endfor %}
-
-<script>
-document.querySelectorAll('a[href^="#event-"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
-</script>
-
-{% endblock %}
+    </section>
+</div>
+{% endblock content %}

@@ -1,0 +1,20 @@
+<div class="team-tags">
+    {% if event.event_option %}
+        {% if event.event_option.MurFloral %}<span class="team-tag team-tag--option">Mur floral{% if event.event_option.mur_floral_style %} · {{ event.event_option.get_mur_floral_style_display }}{% endif %}</span>{% endif %}
+        {% if event.event_option.Phonebooth %}<span class="team-tag team-tag--option">Phonebooth</span>{% endif %}
+        {% if event.event_option.LivreOr %}<span class="team-tag team-tag--option">Livre d’or</span>{% endif %}
+        {% if event.event_option.Fond360 %}<span class="team-tag team-tag--option">Fond 360</span>{% endif %}
+        {% if event.event_option.PanneauBienvenue %}<span class="team-tag team-tag--option">Panneau de bienvenue</span>{% endif %}
+        {% if event.event_option.Holo3D %}<span class="team-tag team-tag--option">Holo 3D</span>{% endif %}
+        {% if event.event_option.PanneauFontaine %}<span class="team-tag team-tag--option">Panneau fontaine</span>{% endif %}
+        {% if event.event_option.VideoLivreOr %}<span class="team-tag team-tag--option">Livre d’or vidéo</span>{% endif %}
+        {% if event.event_option.PhotographeVoguebooth %}<span class="team-tag team-tag--option">Photographe VogueBooth</span>{% endif %}
+        {% if event.event_option.ImpressionVoguebooth %}<span class="team-tag team-tag--option">Impression VogueBooth</span>{% endif %}
+        {% if event.event_option.DecorVoguebooth %}<span class="team-tag team-tag--option">Décor VogueBooth</span>{% endif %}
+        {% if event.event_option.magnets %}<span class="team-tag team-tag--option">Magnets · {{ event.event_option.magnets }}</span>{% endif %}
+        {% if event.event_option.PorteCles %}<span class="team-tag team-tag--option">Porte-clés · {{ event.event_option.PorteCles }}</span>{% endif %}
+        {% if event.event_option.MagnetsSimple %}<span class="team-tag team-tag--option">Magnets simples · {{ event.event_option.MagnetsSimple }}</span>{% endif %}
+    {% else %}
+        <span class="team-muted">Aucune option renseignée</span>
+    {% endif %}
+</div>
