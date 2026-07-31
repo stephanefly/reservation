@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_http_methods
-from ..models import Event
-from ..module.espace_client.logging import process_client_request
-from app.module.mail.send_mail_event import send_mail_event
-from ..module.espace_client.completer import update_event_and_redirect
 from datetime import datetime
 
-today_date = datetime.now().date()
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_http_methods
+
+from ..models import Event
+from ..module.espace_client.dashboard import build_dashboard_context
+from ..module.espace_client.completer import update_event_and_redirect
+from ..module.espace_client.logging import process_client_request
+from app.module.mail.send_mail_event import send_mail_event
 
 
 def logging_client(request):
@@ -26,9 +27,23 @@ def logging_client(request):
 
 
 def choix_client(request, id, token):
-    if 'client_token' in request.session and request.session['client_token'] == token:
-        event = Event.objects.get(pk=id)
-        return render(request, 'app/page_client/info_client_event.html', {'event': event})
+    if request.session.get('client_token') == token:
+        event = get_object_or_404(
+            Event.objects.select_related(
+                'client',
+                'event_details',
+                'event_product',
+                'event_option',
+                'event_acompte',
+                'event_template',
+            ),
+            pk=id,
+        )
+        return render(
+            request,
+            'app/page_client/info_client_event.html',
+            build_dashboard_context(event),
+        )
     else:
         return render(request, 'app/page_client/logging.html')
 

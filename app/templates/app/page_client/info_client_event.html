@@ -7,9 +7,9 @@
    <section class="dashboard-hero">
       <span class="page-eyebrow">Votre espace de préparation</span>
       <h1>Bonjour {{ event.client.nom }},<br>votre événement prend vie.</h1>
-      <p class="dashboard-hero__intro">Centralisez ici les informations nécessaires à notre équipe pour préparer une expérience parfaitement personnalisée.</p>
+      <p class="dashboard-hero__intro">Retrouvez votre réservation, vérifiez les informations pratiques et complétez les derniers choix nécessaires à notre équipe.</p>
       <div class="dashboard-hero__meta">
-         <span><i class="bi bi-calendar3" aria-hidden="true"></i> {{ event.event_details.date_evenement|date:"d F Y" }}</span>
+         <span><i class="bi bi-calendar3" aria-hidden="true"></i> {{ event_date_display }}</span>
          <span><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ event.event_details.get_adresse }}</span>
          {% if event.num_devis %}
          <span><i class="bi bi-receipt" aria-hidden="true"></i> Devis n° {{ event.num_devis }}</span>
@@ -17,17 +17,72 @@
       </div>
    </section>
 
-   {% if not event.event_details.horaire or not event.event_template.text_template or event.event_option.MurFloral and not event.event_option.mur_floral_style or event.event_product.need_design and not event.event_template.url_modele or event.event_product.need_music and not event.event_template.url_music_360 %}
+   <section class="dashboard-summary" aria-label="Votre réservation en un coup d'œil">
+      <article class="summary-card">
+         <span class="summary-card__icon"><i class="bi bi-calendar-check" aria-hidden="true"></i></span>
+         <div>
+            <span class="summary-card__label">Échéance</span>
+            <strong>{{ event_countdown }}</strong>
+            <small>{{ event_date_display }}</small>
+         </div>
+      </article>
+      <article class="summary-card">
+         <span class="summary-card__icon"><i class="bi bi-list-check" aria-hidden="true"></i></span>
+         <div>
+            <span class="summary-card__label">Préparation</span>
+            <strong>{{ completion_percentage }} % complété</strong>
+            <small>{{ completed_steps }} étape{{ completed_steps|pluralize }} sur {{ total_steps }}</small>
+         </div>
+      </article>
+      <article class="summary-card">
+         <span class="summary-card__icon"><i class="bi bi-clock" aria-hidden="true"></i></span>
+         <div>
+            <span class="summary-card__label">Prestation</span>
+            {% if start_time %}
+            <strong>{{ start_time }}{% if end_time %} – {{ end_time }}{% endif %}</strong>
+            <small>Installation prévue à {{ installation_time }}</small>
+            {% else %}
+            <strong>Horaire à définir</strong>
+            <small>Une information est attendue</small>
+            {% endif %}
+         </div>
+      </article>
+      <article class="summary-card">
+         <span class="summary-card__icon"><i class="bi bi-wallet2" aria-hidden="true"></i></span>
+         <div>
+            <span class="summary-card__label">Budget</span>
+            {% if event.event_acompte %}
+            <strong>{{ event.event_acompte.montant_restant|default_if_none:"—" }} € restant</strong>
+            <small>sur un total de {{ event.prix_valided|default_if_none:"—" }} €</small>
+            {% else %}
+            <strong>{{ event.prix_valided|default_if_none:"—" }} €</strong>
+            <small>Montant de la réservation</small>
+            {% endif %}
+         </div>
+      </article>
+   </section>
+
+   <nav class="dashboard-nav" aria-label="Accès rapide aux informations">
+      <a href="#prestation-title"><i class="bi bi-camera" aria-hidden="true"></i> Prestation</a>
+      <a href="#event-title"><i class="bi bi-calendar-event" aria-hidden="true"></i> Événement</a>
+      <a href="#contact-title"><i class="bi bi-person-vcard" aria-hidden="true"></i> Coordonnées</a>
+      <a href="#design-title"><i class="bi bi-palette" aria-hidden="true"></i> Personnalisation</a>
+   </nav>
+
+   {% if missing_steps %}
    <section class="completion-card completion-card--pending" aria-labelledby="preparation-pending-title">
       <div class="completion-card__header">
          <div class="completion-card__title">
             <span class="completion-card__icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
             <div>
                <h2 id="preparation-pending-title">Votre préparation est presque terminée</h2>
-               <p>Complétez les éléments ci-dessous. Chaque choix est enregistré immédiatement.</p>
+               <p>{{ missing_steps }} information{{ missing_steps|pluralize }} encore attendue{{ missing_steps|pluralize }}. Chaque choix est enregistré immédiatement.</p>
             </div>
          </div>
-         <span class="completion-badge">Action requise</span>
+         <span class="completion-badge">{{ completion_percentage }} %</span>
+      </div>
+      <div class="completion-progress" role="progressbar" aria-label="Progression de la préparation" aria-valuenow="{{ completion_percentage }}" aria-valuemin="0" aria-valuemax="100">
+         <span style="width: {{ completion_percentage }}%"></span>
       </div>
       <div class="completion-list">
          {% if not event.event_details.horaire %}
@@ -73,6 +128,9 @@
          </div>
          <span class="completion-badge">Informations complètes</span>
       </div>
+      <div class="completion-progress" role="progressbar" aria-label="Progression de la préparation" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+         <span style="width: 100%"></span>
+      </div>
    </section>
    {% endif %}
 
@@ -89,12 +147,13 @@
 
          <div class="info-label">Animations réservées</div>
          <div class="info-content">
-            {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
-            {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}
-            {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}
-            {% if event.event_product.voguebooth %}<span class="highlight-prestation">VogueBooth</span>{% endif %}
-            {% if event.event_product.ipadbooth %}<span class="highlight-prestation">iPadBooth</span>{% endif %}
-            {% if event.event_product.airbooth %}<span class="highlight-prestation">AirBooth</span>{% endif %}
+            {% if not event.event_product.get_selected_booths %}<span class="empty-selection">Aucune animation renseignée</span>{% endif %}
+            {% if event.event_product.photobooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> Photobooth</span>{% endif %}
+            {% if event.event_product.miroirbooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> Miroirbooth</span>{% endif %}
+            {% if event.event_product.videobooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> 360Booth</span>{% endif %}
+            {% if event.event_product.voguebooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> VogueBooth</span>{% endif %}
+            {% if event.event_product.ipadbooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> iPadBooth</span>{% endif %}
+            {% if event.event_product.airbooth %}<span class="highlight-prestation"><i class="bi bi-check2" aria-hidden="true"></i> AirBooth</span>{% endif %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
                <i class="bi bi-plus-lg" aria-hidden="true"></i> Ajouter une prestation
             </button>
@@ -102,17 +161,22 @@
 
          <div class="info-label">Options réservées</div>
          <div class="info-content">
+            {% if not event.event_option.get_selected_options %}<span class="empty-selection">Aucune option réservée</span>{% endif %}
             {% if event.event_option.MurFloral %}<span class="highlight-option">Mur floral</span>{% endif %}
             {% if event.event_option.Phonebooth %}<span class="highlight-option">Phonebooth</span>{% endif %}
             {% if event.event_option.LivreOr %}<span class="highlight-option">Livre d'or</span>{% endif %}
             {% if event.event_option.Fond360 %}<span class="highlight-option">Fond 360</span>{% endif %}
             {% if event.event_option.PanneauBienvenue %}<span class="highlight-option">Panneau de bienvenue</span>{% endif %}
+            {% if event.event_option.PhotographeVoguebooth %}<span class="highlight-option">Photographe VogueBooth</span>{% endif %}
+            {% if event.event_option.ImpressionVoguebooth %}<span class="highlight-option">Impressions VogueBooth</span>{% endif %}
+            {% if event.event_option.DecorVoguebooth %}<span class="highlight-option">Décor VogueBooth</span>{% endif %}
             {% if event.event_option.Holo3D %}<span class="highlight-option">Holo 3D</span>{% endif %}
             {% if event.event_option.PanneauFontaine %}<span class="highlight-option">Panneau fontaine</span>{% endif %}
             {% if event.event_option.VideoLivreOr %}<span class="highlight-option">Livre d'or vidéo</span>{% endif %}
-            {% if event.event_option.magnets != 0 %}<span class="highlight-option">Magnets</span>{% endif %}
-            {% if event.event_option.PorteCles != 0 %}<span class="highlight-option">Porte-clés</span>{% endif %}
-            {% if event.event_option.MagnetsSimple != 0 %}<span class="highlight-option">Magnets simples</span>{% endif %}
+            {% if event.event_option.magnets %}<span class="highlight-option">{{ event.event_option.magnets }} magnets photo</span>{% endif %}
+            {% if event.event_option.PorteCles %}<span class="highlight-option">{{ event.event_option.PorteCles }} porte-clés</span>{% endif %}
+            {% if event.event_option.MagnetsSimple %}<span class="highlight-option">{{ event.event_option.MagnetsSimple }} magnets simples</span>{% endif %}
+            {% if event.event_option.livraison %}<span class="highlight-option">Livraison incluse</span>{% endif %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#optionsModal">
                <i class="bi bi-plus-lg" aria-hidden="true"></i> Ajouter une option
             </button>
@@ -120,7 +184,11 @@
 
          <div class="info-label">Durée de la prestation</div>
          <div class="info-content">
+            {% if event.event_option.duree %}
             <span class="duration-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ event.event_option.duree }} h</span>
+            {% else %}
+            <span class="empty-selection">Durée à confirmer</span>
+            {% endif %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dureeModal">
                Modifier la durée
             </button>
@@ -128,21 +196,31 @@
       </section>
 
       {% if event.event_acompte %}
-      <section class="info-block" aria-labelledby="budget-title">
+      <section class="info-block info-block--wide" aria-labelledby="budget-title">
          <h5 id="budget-title"><i class="bi bi-wallet2" aria-hidden="true"></i> Récapitulatif financier</h5>
          <div class="price-summary">
             <div class="price-item">
                <span>Prix total</span>
-               <strong id="prix_valided">{{ event.prix_valided }} €</strong>
+               <strong id="prix_valided">{{ event.prix_valided|default_if_none:"—" }} €</strong>
             </div>
             <div class="price-item">
                <span>Acompte</span>
-               <strong id="montant_acompte">{{ event.event_acompte.montant_acompte }} €</strong>
+               <strong id="montant_acompte">{{ event.event_acompte.montant_acompte|default_if_none:"—" }} €</strong>
             </div>
             <div class="price-item price-item--accent">
                <span>Solde restant</span>
-               <strong id="difference">{{ event.event_acompte.montant_restant }} €</strong>
+               <strong id="difference">{{ event.event_acompte.montant_restant|default_if_none:"—" }} €</strong>
             </div>
+         </div>
+         <div class="payment-details">
+            {% if event.event_acompte.date_payement %}
+            <span><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Acompte reçu le {{ event.event_acompte.date_payement|date:"d/m/Y" }}</span>
+            {% else %}
+            <span><i class="bi bi-info-circle" aria-hidden="true"></i> Date de l'acompte non renseignée</span>
+            {% endif %}
+            {% if event.event_acompte.mode_payement %}
+            <span><i class="bi bi-credit-card" aria-hidden="true"></i> {{ event.event_acompte.mode_payement }}</span>
+            {% endif %}
          </div>
       </section>
       {% endif %}
@@ -151,7 +229,7 @@
          <h5 id="event-title"><i class="bi bi-calendar-event" aria-hidden="true"></i> Votre événement</h5>
          <div class="info-row">
             <div class="info-label">Date</div>
-            <div class="info-value">{{ event.event_details.date_evenement|date:"d F Y" }}</div>
+            <div class="info-value">{{ event_date_display }} <span class="value-note">({{ event_countdown|lower }})</span></div>
          </div>
          <div class="info-row">
             <div class="info-label">Adresse</div>
@@ -160,16 +238,74 @@
          <div class="info-row">
             <div class="info-label">Début de la prestation</div>
             <div class="info-value">
-               {% if event.event_details.horaire %}
-               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ event.event_details.horaire }}</span>
+               {% if start_time %}
+               <span class="text-success"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ start_time }}</span>
                {% else %}
                <span class="text-danger"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> À définir</span>
                {% endif %}
             </div>
          </div>
+         {% if installation_time %}
+         <div class="info-row">
+            <div class="info-label">Arrivée de l'équipe</div>
+            <div class="info-value">{{ installation_time }} <span class="value-note">(installation)</span></div>
+         </div>
+         {% endif %}
+         {% if end_time %}
+         <div class="info-row">
+            <div class="info-label">Fin estimée</div>
+            <div class="info-value">{{ end_time }}</div>
+         </div>
+         {% endif %}
          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">
             {% if event.event_details.horaire %}Modifier l'horaire{% else %}Définir l'horaire{% endif %}
          </button>
+      </section>
+
+      <section class="info-block" aria-labelledby="contact-title">
+         <h5 id="contact-title"><i class="bi bi-person-vcard" aria-hidden="true"></i> Vos coordonnées</h5>
+         <p class="section-intro">Ce sont les coordonnées utilisées par notre équipe pour vous joindre.</p>
+         <div class="info-row">
+            <div class="info-label">{% if event.client.raison_sociale %}Société{% else %}Nom{% endif %}</div>
+            <div class="info-value">{{ event.client.nom }}</div>
+         </div>
+         <div class="info-row">
+            <div class="info-label">E-mail</div>
+            <div class="info-value"><a href="mailto:{{ event.client.mail }}">{{ event.client.mail }}</a></div>
+         </div>
+         <div class="info-row">
+            <div class="info-label">Téléphone</div>
+            <div class="info-value"><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a></div>
+         </div>
+         <p class="contact-help"><i class="bi bi-info-circle" aria-hidden="true"></i> Une correction ? Écrivez-nous afin que nous mettions votre dossier à jour.</p>
+      </section>
+
+      <section class="info-block info-block--wide" aria-labelledby="timeline-title">
+         <h5 id="timeline-title"><i class="bi bi-signpost-split" aria-hidden="true"></i> Déroulé prévu le jour J</h5>
+         {% if start_time %}
+         <ol class="event-timeline">
+            <li>
+               <span class="event-timeline__time">{{ installation_time }}</span>
+               <div><strong>Arrivée et installation</strong><small>Notre équipe prépare et teste le matériel avant l'accueil de vos invités.</small></div>
+            </li>
+            <li class="event-timeline__item--accent">
+               <span class="event-timeline__time">{{ start_time }}</span>
+               <div><strong>Début de votre animation</strong><small>La prestation démarre à l'horaire choisi.</small></div>
+            </li>
+            {% if end_time %}
+            <li>
+               <span class="event-timeline__time">{{ end_time }}</span>
+               <div><strong>Fin estimée</strong><small>Fin de l'animation après {{ event.event_option.duree }} heure{{ event.event_option.duree|pluralize }} de prestation.</small></div>
+            </li>
+            {% endif %}
+         </ol>
+         {% else %}
+         <div class="timeline-empty">
+            <i class="bi bi-clock-history" aria-hidden="true"></i>
+            <div><strong>Le déroulé apparaîtra dès que l'horaire sera défini.</strong><span>Prévoyez simplement une heure d'installation avant le début de l'animation.</span></div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#horaireModal">Définir l'horaire</button>
+         </div>
+         {% endif %}
       </section>
 
       <section class="info-block" aria-labelledby="design-title">
