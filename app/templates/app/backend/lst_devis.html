@@ -61,48 +61,47 @@
     <section class="backend-table-card quote-list-card" aria-labelledby="results-title">
         <div class="backend-table-heading">
             <div><h2 id="results-title">Devis affichés</h2><p>{{ all_event|length }} résultat{{ all_event|length|pluralize }}</p></div>
-            <span class="backend-table-heading__hint"><i class="fas fa-info-circle"></i> Toutes les informations sont visibles dans chaque ligne</span>
+            <span class="backend-table-heading__hint"><i class="fas fa-hand-pointer"></i> Cliquez sur un devis pour afficher les autres informations</span>
         </div>
-        <div class="backend-table-scroll">
-            <table class="table quote-list-table">
-                <thead>
-                <tr>
-                    <th>Client</th>
-                    <th>Téléphone</th>
-                    <th>Création</th>
-                    <th>Date événement</th>
-                    <th>Prix</th>
-                    <th>Acompte</th>
-                    <th>Statut</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for event in all_event %}
-                <tr>
-                    <td data-label="Client">
-                        <div class="quote-cell-value"><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a><small>Devis {{ event.num_devis|default:'—' }} · {{ event.client.mail|default:'E-mail non renseigné' }}</small></div>
-                    </td>
-                    <td data-label="Téléphone"><div class="quote-cell-value"><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone|default:'—' }}</a></div></td>
-                    <td data-label="Création" data-order="{{ event.created_at|date:'Y-m-d' }}"><div class="quote-cell-value">{{ event.created_at|date:'d/m/Y' }}</div></td>
-                    <td data-label="Événement" data-order="{{ event.event_details.date_evenement|date:'Y-m-d' }}"><div class="quote-cell-value"><strong>{{ event.event_details.date_evenement|date:'D d/m/Y' }}</strong><small>{{ event.event_details.ville_evenement|default:'Ville non renseignée' }}</small></div></td>
-                    <td data-label="Prix"><div class="quote-cell-value">{% if event.prix_valided %}<strong>{{ event.prix_valided }} €</strong><small>Validé</small>{% else %}<strong>{{ event.prix_proposed|default:0 }} €</strong><small>Proposé</small>{% endif %}</div></td>
-                    <td data-label="Acompte"><div class="quote-cell-value">{% if event.event_acompte %}<strong>{{ event.event_acompte.montant_acompte|default:0 }} €</strong>{% else %}—{% endif %}</div></td>
-                    <td data-label="Statut">
-                        <div class="quote-cell-value"><span class="backend-status
-                                {% if event.status == 'Acompte OK' or event.status == 'Presta FINI' %}backend-status--success
-                                {% elif event.status == 'Calculed' %}backend-status--warning
-                                {% elif event.status == 'Sended' or event.status == 'Resended' %}backend-status--info
-                                {% elif event.status == 'Post Presta' %}backend-status--purple
-                                {% elif event.status == 'Refused' or event.status == 'ANNULER' %}backend-status--danger{% endif %}">
-                                {{ event.get_status_display|default:event.status }}
-                            </span></div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr class="quote-list-table__empty"><td colspan="7" class="backend-empty"><i class="far fa-folder-open"></i> Aucun devis ne correspond à ces filtres.</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="quote-disclosure-list">
+            {% for event in all_event %}
+            <details class="quote-row-disclosure">
+                <summary>
+                    <span class="quote-row-summary__item quote-row-summary__client">
+                        <small>Client</small>
+                        <strong>{{ event.client.nom }}</strong>
+                    </span>
+                    <span class="quote-row-summary__item">
+                        <small>Date</small>
+                        <strong>{{ event.event_details.date_evenement|date:'D d/m/Y' }}</strong>
+                    </span>
+                    <span class="quote-row-summary__item quote-row-summary__status">
+                        <small>Statut</small>
+                        <span class="backend-status
+                            {% if event.status == 'Acompte OK' or event.status == 'Presta FINI' %}backend-status--success
+                            {% elif event.status == 'Calculed' %}backend-status--warning
+                            {% elif event.status == 'Sended' or event.status == 'Resended' %}backend-status--info
+                            {% elif event.status == 'Post Presta' %}backend-status--purple
+                            {% elif event.status == 'Refused' or event.status == 'ANNULER' %}backend-status--danger{% endif %}">
+                            {{ event.get_status_display|default:event.status }}
+                        </span>
+                    </span>
+                    <i class="fas fa-chevron-down quote-row-summary__chevron" aria-hidden="true"></i>
+                </summary>
+                <div class="quote-row-details">
+                    <div class="quote-row-detail"><small>N° de devis</small><strong>{{ event.num_devis|default:'—' }}</strong></div>
+                    <div class="quote-row-detail"><small>Téléphone</small><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone|default:'—' }}</a></div>
+                    <div class="quote-row-detail"><small>E-mail</small><a href="mailto:{{ event.client.mail }}">{{ event.client.mail|default:'Non renseigné' }}</a></div>
+                    <div class="quote-row-detail"><small>Création</small><strong>{{ event.created_at|date:'d/m/Y' }}</strong></div>
+                    <div class="quote-row-detail"><small>Lieu</small><strong>{{ event.event_details.ville_evenement|default:'Non renseigné' }}</strong></div>
+                    <div class="quote-row-detail"><small>Prix</small>{% if event.prix_valided %}<strong>{{ event.prix_valided }} € · Validé</strong>{% else %}<strong>{{ event.prix_proposed|default:0 }} € · Proposé</strong>{% endif %}</div>
+                    <div class="quote-row-detail"><small>Acompte</small><strong>{% if event.event_acompte %}{{ event.event_acompte.montant_acompte|default:0 }} €{% else %}—{% endif %}</strong></div>
+                    <a class="backend-button backend-button--primary quote-row-details__action" href="{% url 'info_event' event.id %}"><i class="fas fa-arrow-right"></i> Ouvrir la fiche</a>
+                </div>
+            </details>
+            {% empty %}
+            <div class="backend-empty"><i class="far fa-folder-open"></i> Aucun devis ne correspond à ces filtres.</div>
+            {% endfor %}
         </div>
     </section>
 </div>

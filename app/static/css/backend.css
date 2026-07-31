@@ -510,142 +510,185 @@ html {
     font-weight: 680;
 }
 
-.quote-list-card .backend-table-scroll {
-    overflow: visible;
+.quote-disclosure-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
 }
 
-.backend-main table.quote-list-table {
-    min-width: 0 !important;
-    table-layout: fixed;
+.quote-row-disclosure {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 14px;
+    background: #fff;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.quote-list-table th:nth-child(1) { width: 23%; }
-.quote-list-table th:nth-child(2) { width: 13%; }
-.quote-list-table th:nth-child(3) { width: 10%; }
-.quote-list-table th:nth-child(4) { width: 16%; }
-.quote-list-table th:nth-child(5) { width: 10%; }
-.quote-list-table th:nth-child(6) { width: 10%; }
-.quote-list-table th:nth-child(7) { width: 18%; }
-
-.quote-list-table td {
-    overflow-wrap: anywhere;
+.quote-row-disclosure[open] {
+    border-color: rgba(91, 52, 214, 0.35);
+    box-shadow: 0 10px 24px rgba(91, 52, 214, 0.08);
 }
 
-.quote-cell-value {
+.quote-row-disclosure > summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(150px, 0.9fr) minmax(150px, 0.8fr) 24px;
+    align-items: center;
+    gap: 18px;
+    min-height: 72px;
+    padding: 13px 16px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.quote-row-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+
+.quote-row-disclosure > summary:hover {
+    background: #faf9ff;
+}
+
+.quote-row-disclosure > summary:focus-visible {
+    outline: 3px solid rgba(91, 52, 214, 0.2);
+    outline-offset: -3px;
+}
+
+.quote-row-disclosure[open] > summary {
+    border-bottom: 1px solid var(--admin-border);
+    background: #faf9ff;
+}
+
+.quote-row-summary__item {
     min-width: 0;
 }
 
-.quote-cell-value > a,
-.quote-cell-value > strong,
-.quote-cell-value > small {
+.quote-row-summary__item > small,
+.quote-row-detail > small {
     display: block;
+    margin-bottom: 4px;
+    color: var(--admin-muted);
+    font-size: 0.66rem;
+    font-weight: 820;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
 }
 
-.quote-cell-value > small {
-    margin-top: 3px;
-    color: var(--admin-muted);
-    font-size: 0.7rem;
-    line-height: 1.25;
+.quote-row-summary__item > strong,
+.quote-row-detail > strong,
+.quote-row-detail > a {
+    display: block;
     overflow-wrap: anywhere;
 }
 
-@media (max-width: 1050px) {
-    .backend-main table.quote-list-table {
-        font-size: 0.79rem;
-    }
+.quote-row-summary__client > strong {
+    color: var(--admin-primary-dark);
+    font-size: 0.94rem;
+}
 
-    .quote-list-card .backend-table-scroll {
-        padding: 8px;
-    }
+.quote-row-summary__status .backend-status {
+    white-space: normal;
+}
 
-    .quote-list-table .backend-status {
-        white-space: normal;
-    }
+.quote-row-summary__chevron {
+    color: var(--admin-muted);
+    transition: transform 160ms ease;
+}
+
+.quote-row-disclosure[open] .quote-row-summary__chevron {
+    transform: rotate(180deg);
+}
+
+.quote-row-details {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(130px, 1fr));
+    align-items: end;
+    gap: 18px;
+    padding: 18px 16px;
+    background: #fff;
+}
+
+.quote-row-detail {
+    min-width: 0;
+    color: #344054;
+    font-size: 0.83rem;
+}
+
+.quote-row-detail > a {
+    color: var(--admin-primary-dark);
+    font-weight: 760;
+    text-decoration: none;
+}
+
+.quote-row-detail > a:hover {
+    text-decoration: underline;
+}
+
+.quote-row-details__action {
+    justify-self: end;
 }
 
 @media (max-width: 860px) {
-    .quote-list-card {
-        overflow: visible;
-        border: 0;
-        background: transparent;
-        box-shadow: none;
-    }
-
-    .quote-list-card .backend-table-heading {
-        margin-bottom: 10px;
-        border: 1px solid var(--admin-border);
-        border-radius: 14px;
-        background: #fff;
-    }
-
     .backend-table-heading__hint {
         display: none;
     }
 
-    .quote-list-card .backend-table-scroll {
-        padding: 0;
-    }
-
-    .backend-main table.quote-list-table,
-    .quote-list-table tbody,
-    .quote-list-table tr,
-    .quote-list-table td {
-        display: block;
-        width: 100% !important;
-    }
-
-    .quote-list-table thead {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-    }
-
-    .backend-main .quote-list-table tbody tr {
-        overflow: hidden;
-        margin-bottom: 11px;
-        border: 1px solid var(--admin-border);
-        border-radius: 15px;
-        background: #fff;
-        box-shadow: 0 8px 22px rgba(27, 33, 51, 0.06);
-    }
-
-    .backend-main .quote-list-table tbody td {
-        display: grid;
-        grid-template-columns: 105px minmax(0, 1fr);
-        align-items: start;
+    .quote-row-disclosure > summary {
+        grid-template-columns: minmax(0, 1.2fr) minmax(125px, 0.8fr) minmax(115px, auto) 20px;
         gap: 12px;
-        min-height: 44px;
-        padding: 10px 13px;
-        border: 0;
-        border-bottom: 1px solid #eceef2;
     }
 
-    .backend-main .quote-list-table tbody td:last-child {
-        border-bottom: 0;
+    .quote-row-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .quote-disclosure-list {
+        padding: 9px;
     }
 
-    .quote-list-table td::before {
-        content: attr(data-label);
-        padding-top: 2px;
-        color: var(--admin-muted);
-        font-size: 0.68rem;
-        font-weight: 840;
-        letter-spacing: 0.035em;
-        text-transform: uppercase;
+    .quote-row-disclosure > summary {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 11px 14px;
+        padding: 13px;
     }
 
-    .quote-list-table .quote-cell-value {
+    .quote-row-summary__client {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .quote-row-summary__chevron {
         grid-column: 2;
+        grid-row: 1;
     }
 
-    .backend-main .quote-list-table .quote-list-table__empty td {
-        display: block;
+    .quote-row-summary__item:not(.quote-row-summary__client):not(.quote-row-summary__status) {
+        grid-column: 1;
+        grid-row: 2;
     }
 
-    .quote-list-table__empty td::before {
-        display: none;
+    .quote-row-summary__status {
+        grid-column: 2;
+        grid-row: 2;
+        text-align: right;
+    }
+
+    .quote-row-summary__status .backend-status {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .quote-row-details {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 16px 13px;
+    }
+
+    .quote-row-details__action {
+        width: 100%;
+        justify-content: center;
     }
 }
 
