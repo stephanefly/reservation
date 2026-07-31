@@ -1,56 +1,53 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Coûts{% endblock title %}
+
 {% block content %}
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Finance</p>
+            <h1>Liste des coûts</h1>
+            <p class="backend-page-header__description">Suivez les dépenses enregistrées et ouvrez une ligne pour la modifier.</p>
+        </div>
+        <div class="backend-page-header__actions">
+            <a href="{% url 'create_cost' %}" class="backend-button backend-button--primary"><i class="fas fa-plus"></i> Ajouter un coût</a>
+        </div>
+    </header>
 
-<style>
-body {
-    background-image: None;
-}
-</style>
-<h3>Liste des devis</h3>
-<br>
-    <a href="{% url 'create_cost' %}" class="btn btn-primary">Ajouter un Cost</a>
-<br>
-<table id="table" class="table table-bordered table-striped" style="background-color:white">
-    <thead>
-        <th style="display: none">ID</th>
-        <th>NOM</th>
-        <th>Create_at</th>
-        <th>Type</th>
-        <th>Coût</th>
-    </thead>
-    <tbody>
-    {% for cost in all_cost %}
-        <tr onclick="location.href='{% url 'info_cost' cost.id %}';" style="cursor:pointer;">
-            <td style="display: none">{{cost.id}}</td>
-            <td>{{cost.name_cost}}</td>
-            <td>{{cost.created_at|date:"Y-m-d" }}</td>
-            <td>{{cost.type_cost }}</td>
-            <td>{{cost.price_cost }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <section class="backend-table-card">
+        <div class="backend-table-scroll">
+            <table id="table" class="table">
+                <thead><tr><th class="d-none">ID</th><th>Nom</th><th>Date</th><th>Type</th><th>Montant</th></tr></thead>
+                <tbody>
+                {% for cost in all_cost %}
+                <tr data-href="{% url 'info_cost' cost.id %}" tabindex="0" role="link">
+                    <td class="d-none">{{ cost.id }}</td>
+                    <td><a href="{% url 'info_cost' cost.id %}">{{ cost.name_cost }}</a></td>
+                    <td data-order="{{ cost.created_at|date:'Y-m-d' }}">{{ cost.created_at|date:'d/m/Y' }}</td>
+                    <td><span class="backend-status">{{ cost.type_cost }}</span></td>
+                    <td><strong>{{ cost.price_cost }} €</strong></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="backend-empty">Aucun coût enregistré.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
 
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
     $('#table').DataTable({
-        responsive: true,
-        lengthChange: false,
-        paging: false,
-        searching: true,
-        info: false,
-        order: [[2, 'desc']], // Tri par la colonne des dates par ordre décroissant
-        columnDefs: [
-            {
-                targets: 2,
-                type: 'date'
-            }
-        ],
-        language: {
-            url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
-        }
+        responsive: true, lengthChange: false, paging: false, searching: true, info: false,
+        order: [[2, 'desc']],
+        columnDefs: [{ targets: 2, type: 'date' }],
+        language: { url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json" }
+    });
+    document.querySelectorAll('tr[data-href]').forEach((row) => {
+        row.addEventListener('click', (event) => { if (!event.target.closest('a')) window.location.href = row.dataset.href; });
+        row.addEventListener('keydown', (event) => { if (event.key === 'Enter') window.location.href = row.dataset.href; });
     });
 });
 </script>
-
-{% endblock %}
+{% endblock content %}

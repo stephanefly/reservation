@@ -1,7 +1,9 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Potentiel{% endblock title %}
 {% block content %}
-
-     {{ div | safe }}
-    {{ script | safe }}
-
-{% endblock %}
+<div class="backend-page">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses</p><h1>Potentiel</h1><p class="backend-page-header__description">Visualisez les opportunités et leur évolution.</p></div></header>
+    <section class="backend-chart-card">{{ div|safe }}</section>
+    {{ script|safe }}
+</div>
+{% endblock content %}

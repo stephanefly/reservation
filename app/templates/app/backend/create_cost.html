@@ -1,32 +1,35 @@
-{% extends 'app/backend/base.html' %} <!-- Adaptez ceci à votre structure de templates -->
-{% block content %}
+{% extends 'app/backend/base.html' %}
+{% block title %}Ajouter un coût{% endblock title %}
 
-<div class="container justify-content-center">
-    <div class="col-md-6 col-lg-5"> <!-- Largeur ajustée pour le formulaire -->
-        <h2 class="text-center">Ajouter un nouveau Cost</h2>
-        <br>
+{% block content %}
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Finance</p>
+            <h1>Ajouter un coût</h1>
+            <p class="backend-page-header__description">Enregistrez une dépense dans une catégorie existante ou créez-en une nouvelle.</p>
+        </div>
+    </header>
+    <section class="backend-card backend-card--narrow">
         <form method="post">
             {% csrf_token %}
-            <div class="form-group mb-3">
-                <label for="name_cost">Nom du cost :</label>
-                <select id="name_cost" name="name_cost" class="form-control">
-                    <option value="" selected>-- Sélectionner --</option>
-                    {% for name_cost in name_costs %}
-                        <option value="{{ name_cost.id }}">{{ name_cost.name }}</option>
-                    {% endfor %}
+            <div class="backend-field">
+                <label for="name_cost">Catégorie existante</label>
+                <select id="name_cost" name="name_cost">
+                    <option value="" selected>Choisir une catégorie</option>
+                    {% for name_cost in name_costs %}<option value="{{ name_cost.id }}">{{ name_cost.name }}</option>{% endfor %}
                 </select>
             </div>
-            <div class="form-group mb-3">
-                <label for="new_name_cost">Ou ajouter un nouveau name cost :</label>
-                <input type="text" id="new_name_cost" name="new_name_cost" class="form-control" placeholder="Nouveau nom de catégorie">
+            <div class="backend-field">
+                <label for="new_name_cost">Ou nouvelle catégorie</label>
+                <input type="text" id="new_name_cost" name="new_name_cost" placeholder="Nom de la nouvelle catégorie">
             </div>
             {{ form.as_p }}
-            <div class="d-flex justify-content-between mt-3">
-                <button type="submit" class="btn btn-success">Soumettre</button>
-                <a href="{% url 'lst_cost' %}" class="btn btn-secondary">Retour</a>
+            <div class="backend-actions">
+                <button type="submit" class="backend-button backend-button--success"><i class="fas fa-check"></i> Enregistrer</button>
+                <a href="{% url 'lst_cost' %}" class="backend-button backend-button--secondary">Annuler</a>
             </div>
         </form>
-    </div>
+    </section>
 </div>
-
-{% endblock %}
+{% endblock content %}

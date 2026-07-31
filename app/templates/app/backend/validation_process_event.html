@@ -1,49 +1,42 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Résultat de la validation{% endblock title %}
+
 {% block content %}
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Compte rendu</p>
+            <h1>Validation de {{ event.client.nom }}</h1>
+        </div>
+    </header>
 
-{% if all_success %}
-  <div class="alert alert-success" role="alert">
-    <h2>Succès</h2>
-    <p>Toutes les étapes de validation ont été complétées pour <strong>{{ event.client.nom }}</strong>.</p>
-  </div>
-{% else %}
-  <div class="alert alert-danger" role="alert">
-    <h2>Erreurs détectées</h2>
-    <p>{{ failing_steps|length }} étape(s) ont échoué pour <strong>{{ event.client.nom }}</strong>.</p>
-  </div>
+    {% if all_success %}
+    <div class="backend-alert backend-alert--success" role="alert">
+        <span class="backend-icon-box"><i class="fas fa-check"></i></span>
+        <div><h2>Validation terminée</h2><p>Toutes les étapes ont été exécutées avec succès.</p></div>
+    </div>
+    {% else %}
+    <div class="backend-alert backend-alert--danger" role="alert">
+        <span class="backend-icon-box"><i class="fas fa-exclamation-triangle"></i></span>
+        <div><h2>{{ failing_steps|length }} étape{{ failing_steps|length|pluralize }} en erreur</h2><p>Consultez les détails ci-dessous avant de relancer le traitement.</p></div>
+    </div>
+    <section class="backend-table-card">
+        <div class="backend-table-scroll">
+            <table class="table">
+                <thead><tr><th style="width:35%">Étape</th><th>Message d'erreur</th></tr></thead>
+                <tbody>
+                {% for step_name, error_msg in failing_steps %}
+                <tr><td><strong>{{ step_name }}</strong></td><td>{% if error_msg %}<pre class="mb-0" style="white-space:pre-wrap">{{ error_msg }}</pre>{% else %}Aucun détail{% endif %}</td></tr>
+                {% empty %}<tr><td colspan="2" class="backend-empty">Aucune erreur détaillée.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
 
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th style="width:35%">Étape</th>
-        <th>Message d’erreur</th>
-      </tr>
-    </thead>
-    <tbody>
-      {# failing_steps est une liste de tuples: (step_name, error_message) #}
-      {% for step_name, error_msg in failing_steps %}
-        <tr>
-          <td>{{ step_name }}</td>
-          <td>
-            {% if error_msg %}
-              <pre class="mb-0" style="white-space:pre-wrap">{{ error_msg }}</pre>
-            {% else %}
-              (aucun détail)
-            {% endif %}
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="2">Aucune erreur listée.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endif %}
-
-<div class="d-flex gap-2 mt-3">
-  <a href="{% url 'lst_devis' %}" class="btn btn-primary">Retour liste Devis</a>
-  <a href="{% url 'info_event' event.id %}" class="btn btn-secondary">Retour info Event</a>
+    <div class="backend-actions">
+        <a href="{% url 'info_event' event.id %}" class="backend-button backend-button--primary"><i class="fas fa-arrow-left"></i> Retour à l'événement</a>
+        <a href="{% url 'lst_devis' %}" class="backend-button backend-button--secondary">Liste des devis</a>
+    </div>
 </div>
-
-{% endblock %}
+{% endblock content %}

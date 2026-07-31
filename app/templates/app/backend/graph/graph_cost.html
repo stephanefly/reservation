@@ -1,12 +1,9 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Rentabilité{% endblock title %}
 {% block content %}
-
-{% for divgraph in div %}
-     {{ divgraph | safe }}
-{% endfor %}
-
-{% for scriptgraph in script %}
-    {{ scriptgraph | safe }}
-{% endfor %}
-
-{% endblock %}
+<div class="backend-page">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses</p><h1>Rentabilité</h1><p class="backend-page-header__description">Comparez les revenus et les coûts de l'activité.</p></div></header>
+    <div class="backend-chart-grid">{% for divgraph in div %}<section class="backend-chart-card">{{ divgraph|safe }}</section>{% endfor %}</div>
+    {% for scriptgraph in script %}{{ scriptgraph|safe }}{% endfor %}
+</div>
+{% endblock content %}

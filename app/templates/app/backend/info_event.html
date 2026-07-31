@@ -1,5 +1,6 @@
 {% extends 'app/backend/base.html' %}
 {% load static %}
+{% block title %}{{ event.client.nom }} · Événement{% endblock title %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/info_event.css' %}">

@@ -1,381 +1,125 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Planning{% endblock title %}
+
 {% block content %}
-<style>
-   .highlight-prestation {
-   background-color: blue;
-   color: white; /* Pour que le texte reste lisible sur un fond bleu */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-option {
-   background-color: skyblue;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .highlight-membre {
-   background-color: #f1cd9d;
-   color: black; /* Pour que le texte reste lisible sur un fond skyblue */
-   padding: 0 3px; /* Optionnel, pour ajouter un peu de rembourrage */
-   }
-   .card {
-   border: solid 5px;
-   }
-</style>
-<table id="table" class="table table-bordered table-striped" style="background-color:white">
-   <thead>
-      <tr>
-         <th>NOM</th>
-         <th>J</th>
-         <th>DATE-EVENT</th>
-         <th>CP</th>
-         <th>PRIX</th>
-         <th>Acompte</th>
-         <th>Restant</th>
-         <th>Mode</th>
-      </tr>
-   </thead>
-   <tbody>
-      {% for event in lst_event_prio %}
-      <tr style="background-color: {% if event.event_template.statut %}#13be0061{% else %}#ff000061{% endif %}; ">
-         <td><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></td>
-         <td>{{ event.event_details.date_evenement|date:"D" }}</td>
-         <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-         <td>{{ event.event_details.code_postal_evenement }}</td>
-         <td id="prix_valided">{{ event.prix_valided }}</td>
-         <td id="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-         <td id="difference">{{ event.event_acompte.montant_restant }}</td>
-         <td id="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-      </tr>
-      {% endfor %}
-   </tbody>
-</table>
-{% with prev_date=None %}
-{% for event in lst_event_prio %}
-{% ifchanged event.event_details.date_evenement %}
-{% if prev_date %}
-<hr class="my-4 mx-auto" style="color: #1b1b1b;">
-{% endif %}
-<br>
-<div class="date-block" style="background-color: {% cycle '#f0ad4e' '#5bc0de' '#d9534f' '#5cb85c' %}; padding: 10px;">
-   <h3 class="text-center">{{ event.event_details.date_evenement }}</h3>
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Préparation</p>
+            <h1>Planning des prestations</h1>
+            <p class="backend-page-header__description">Contrôlez les équipes, créations et derniers éléments avant chaque événement.</p>
+        </div>
+    </header>
+
+    <section class="backend-table-card" aria-label="Résumé des événements prioritaires">
+        <div class="backend-table-scroll">
+            <table id="table" class="table">
+                <thead><tr><th>Client</th><th>Jour</th><th>Date</th><th>CP</th><th>Prix</th><th>Acompte</th><th>Restant</th><th>Paiement</th><th>Préparation</th></tr></thead>
+                <tbody>
+                {% for event in lst_event_prio %}
+                <tr>
+                    <td><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a></td>
+                    <td>{{ event.event_details.date_evenement|date:'D' }}</td>
+                    <td>{{ event.event_details.date_evenement|date:'d/m/Y' }}</td>
+                    <td>{{ event.event_details.code_postal_evenement }}</td>
+                    <td><strong>{{ event.prix_valided|default:0 }} €</strong></td>
+                    <td>{{ event.event_acompte.montant_acompte|default:0 }} €</td>
+                    <td>{{ event.event_acompte.montant_restant|default:0 }} €</td>
+                    <td>{{ event.event_acompte.mode_payement|default:'—' }}</td>
+                    <td>{% if event.event_template.statut %}<span class="backend-status backend-status--success">Prêt</span>{% else %}<span class="backend-status backend-status--danger">À vérifier</span>{% endif %}</td>
+                </tr>
+                {% empty %}<tr><td colspan="9" class="backend-empty">Aucun événement prioritaire.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="backend-event-stack">
+    {% for event in lst_event_prio %}
+        {% ifchanged event.event_details.date_evenement %}<div class="backend-date-divider"><i class="far fa-calendar"></i> {{ event.event_details.date_evenement|date:'l d F Y' }}</div>{% endifchanged %}
+        <article class="backend-card backend-event-card {% if event.event_template.statut %}backend-event-card--ready{% else %}backend-event-card--pending{% endif %}">
+            <div class="backend-card__header">
+                <div>
+                    <h2><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a></h2>
+                    <p>Événement #{{ event.id }} · {{ event.event_details.ville_evenement }}</p>
+                </div>
+                {% if event.event_template.statut %}<span class="backend-status backend-status--success"><i class="fas fa-check"></i> Préparation prête</span>{% else %}<span class="backend-status backend-status--danger"><i class="fas fa-exclamation-circle"></i> Préparation à vérifier</span>{% endif %}
+            </div>
+
+            <div class="backend-event-summary">
+                <div><span>Durée & horaire</span><strong>{{ event.event_option.duree|default:'—' }} h · {{ event.event_details.horaire|default:'À définir' }}</strong></div>
+                <div><span>Adresse</span><strong>{{ event.event_details.get_adresse }}</strong><br><a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}" target="_blank" rel="noopener noreferrer"><i class="fas fa-route"></i> Ouvrir dans Waze</a></div>
+                <div><span>Équipe</span><div>{% include 'app/partials/members_choix_cell.html' %}</div></div>
+            </div>
+
+            <div class="backend-service-grid">
+                <div><h3>Prestations</h3>
+                    {% if event.event_product.photobooth %}<span class="highlight-prestation">Photobooth</span>{% endif %}
+                    {% if event.event_product.miroirbooth %}<span class="highlight-prestation">Miroirbooth</span>{% endif %}
+                    {% if event.event_product.videobooth %}<span class="highlight-prestation">360Booth</span>{% endif %}
+                    {% if event.event_product.voguebooth %}<span class="highlight-prestation">Voguebooth</span>{% endif %}
+                    {% if event.event_product.ipadbooth %}<span class="highlight-prestation">iPadbooth</span>{% endif %}
+                    {% if event.event_product.airbooth %}<span class="highlight-prestation">Airbooth</span>{% endif %}
+                </div>
+                <div><h3>Options</h3>
+                    {% if event.event_option.MurFloral %}<span class="highlight-option">Mur floral{% if event.event_option.mur_floral_style %} · {{ event.event_option.get_mur_floral_style_display }}{% endif %}</span>{% endif %}
+                    {% if event.event_option.Phonebooth %}<span class="highlight-option">Phonebooth</span>{% endif %}
+                    {% if event.event_option.LivreOr %}<span class="highlight-option">Livre d'or</span>{% endif %}
+                    {% if event.event_option.Fond360 %}<span class="highlight-option">Fond 360</span>{% endif %}
+                    {% if event.event_option.PanneauBienvenue %}<span class="highlight-option">Panneau bienvenue</span>{% endif %}
+                    {% if event.event_option.Holo3D %}<span class="highlight-option">Holo 3D</span>{% endif %}
+                    {% if event.event_option.PanneauFontaine %}<span class="highlight-option">Panneau fontaine</span>{% endif %}
+                    {% if event.event_option.VideoLivreOr %}<span class="highlight-option">Vidéo livre d'or</span>{% endif %}
+                    {% if event.event_option.PhotographeVoguebooth %}<span class="highlight-option">Photographe Voguebooth</span>{% endif %}
+                    {% if event.event_option.ImpressionVoguebooth %}<span class="highlight-option">Impression Voguebooth</span>{% endif %}
+                    {% if event.event_option.DecorVoguebooth %}<span class="highlight-option">Décor Voguebooth</span>{% endif %}
+                    {% if event.event_option.magnets %}<span class="highlight-option">{{ event.event_option.magnets }} magnets</span>{% endif %}
+                    {% if event.event_option.PorteCles %}<span class="highlight-option">{{ event.event_option.PorteCles }} porte-clés</span>{% endif %}
+                    {% if event.event_option.MagnetsSimple %}<span class="highlight-option">{{ event.event_option.MagnetsSimple }} magnets simples</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="backend-resource-grid">
+                <div class="backend-resource {% if event.event_template.url_modele %}is-ready{% else %}is-missing{% endif %}"><span>Modèle</span>{% if event.event_template.url_modele %}<a href="{{ event.event_template.url_modele }}" target="_blank" rel="noopener">Ouvrir <i class="fas fa-external-link-alt"></i></a>{% else %}<strong>Manquant</strong>{% endif %}</div>
+                <div class="backend-resource {% if event.event_template.text_template %}is-ready{% else %}is-missing{% endif %}"><span>Texte</span><strong>{{ event.event_template.text_template|default:'Manquant' }}</strong></div>
+                <div class="backend-resource {% if not event.event_product.need_design %}is-na{% elif event.event_template.image_name %}is-ready{% else %}is-missing{% endif %}"><span>Template</span>{% if event.event_product.need_design %}{% if event.event_template.image_name %}<a href="{% url 'view_image' event.id %}" target="_blank" rel="noopener">Voir l'image</a>{% else %}<strong>Manquant</strong>{% endif %}{% else %}<strong>Non applicable</strong>{% endif %}</div>
+                <div class="backend-resource {% if not event.event_product.need_music %}is-na{% elif event.event_template.url_music_360 %}is-ready{% else %}is-missing{% endif %}"><span>Musique</span>{% if event.event_product.need_music %}{% if event.event_template.url_music_360 %}<a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener">Écouter</a>{% else %}<strong>Manquante</strong>{% endif %}{% else %}<strong>Non applicable</strong>{% endif %}</div>
+                <div class="backend-resource"><span>Dossier de préparation</span><code>P:\PREPA-EVENT\{{ event.event_template.directory_name }}</code></div>
+            </div>
+
+            <div class="backend-note-grid">
+                <div><span>Commentaire client</span><p>{{ event.event_details.comment_client|default:'Aucun' }}</p></div>
+                <div><span>Commentaire interne · sauvegarde à la sortie</span><p class="backend-editable" contenteditable="true" data-url="{% url 'update_comment' event.id %}" onblur="saveComment(this)">{{ event.event_details.comment|default_if_none:''|default:'' }}</p></div>
+            </div>
+
+            <div class="backend-event-actions">
+                <form action="{% url 'change_status' event.event_template.id %}" method="post">{% csrf_token %}<button type="submit" class="backend-button {% if event.event_template.statut %}backend-button--danger{% else %}backend-button--success{% endif %}">{% if event.event_template.statut %}<i class="fas fa-times"></i> Marquer à vérifier{% else %}<i class="fas fa-check"></i> Marquer prêt{% endif %}</button></form>
+                <form method="POST" action="{% url 'relance_espace_client' event.id %}">{% csrf_token %}<button type="submit" class="backend-button backend-button--ghost"><i class="fas fa-redo-alt"></i> Relancer l'espace client</button></form>
+                <a class="backend-button backend-button--secondary" href="{% url 'info_event' event.id %}"><i class="fas fa-pen"></i> Modifier l'événement</a>
+            </div>
+        </article>
+    {% empty %}<div class="backend-card backend-empty">Aucune prestation à préparer.</div>{% endfor %}
+    </div>
 </div>
-{% endifchanged %}
-<br>
-<div class="card" style="border-color: {% if event.event_template.statut %}#00bc2d{% else %}#ff0505{% endif %}; ">
-   <div class="card-header">
-      <h5><a href="info-event/{{ event.id }}">{{ event.client.nom }}</a></h5>
-   </div>
-   <div class="card-body" style="background-color: rgba(184,184,184,0.49)">
-      <table class="table table-bordered table-striped" style="background-color:white">
-         <thead>
-            <tr>
-               <th>Durée</th>
-               <th>Horaire</th>
-               <th>Adresse</th>
-               <th>Equipe</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <td>{{ event.event_option.duree }}h</td>
-               <td {% if event.event_details.horaire == "None" %} style="background-color: rgba(213,24,24,0.48);" {% endif %}>{{ event.event_details.horaire }}</td>
-               <td>
-                   {{ event.event_details.get_adresse }}<br>
-                   <a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}"
-                      target="_blank"
-                      rel="noopener noreferrer">
-                       🚗 Waze
-                   </a>
-               </td>
-
-               <td>
-                  {% include 'app/partials/members_choix_cell.html' %}
-               </td>
-
-            </tr>
-         </tbody>
-      </table>
-      <table id="table_produit" class="table table-bordered table-striped" style="background-color:white">
-         <thead>
-            <tr>
-               <th>Prestation</th>
-               <th>Option</th>
-               <th>Statut</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <td>
-                  {% if event.event_product.photobooth %} <span class="highlight-prestation">Photobooth</span>, {% endif %}
-                  {% if event.event_product.miroirbooth %} <span class="highlight-prestation">Miroirbooth</span>, {% endif %}
-                  {% if event.event_product.videobooth %} <span class="highlight-prestation">360Booth</span>, {% endif %}
-                  {% if event.event_product.voguebooth %} <span class="highlight-prestation">VogueBooth</span>, {% endif %}
-                  {% if event.event_product.ipadbooth %} <span class="highlight-prestation">Ipadebooth</span>, {% endif %}
-                  {% if event.event_product.airbooth %} <span class="highlight-prestation">Airbooth</span>, {% endif %}
-               </td>
-               <td>
-                  {% if event.event_option.MurFloral %} <span class="highlight-option">MurFloral :
-                  {% if event.event_option.mur_floral_style %} {{ event.event_option.get_mur_floral_style_display }}</span>, {% else %} --- {% endif %}{% endif %}
-                  {% if event.event_option.Phonebooth %} <span class="highlight-option">Phonebooth</span>, {% endif %}
-                  {% if event.event_option.LivreOr %} <span class="highlight-option">LivreDor</span>, {% endif %}
-                  {% if event.event_option.Fond360 %} <span class="highlight-option">Fond360</span>, {% endif %}
-                  {% if event.event_option.PanneauBienvenue %} <span class="highlight-option">PanneauDeBienvenue</span>, {% endif %}
-                  {% if event.event_option.Holo3D %} <span class="highlight-option">Holo3d</span>, {% endif %}
-                                           {% if event.event_option.PanneauFontaine %} <span class="highlight-option">PanneauFontaine</span>, {% endif %}
-                        {% if event.event_option.VideoLivreOr %} <span class="highlight-option">VideoLivreOr</span>, {% endif %}
-                  {% if event.event_option.PhotographeVoguebooth %} <span class="highlight-option">PhotographeVoguebooth</span>, {% endif %}
-                  {% if event.event_option.ImpressionVoguebooth %} <span class="highlight-option">ImpressionVoguebooth</span>, {% endif %}
-                  {% if event.event_option.DecorVoguebooth %} <span class="highlight-option">DecorVoguebooth</span>, {% endif %}
-                  {% if event.event_option.magnets != 0 %} <span class="highlight-option">Magnets</span>, {% endif %}
-                 {% if event.event_option.PorteCles %} <span class="highlight-option">PorteCles</span>, {% endif %}
-                 {% if event.event_option.MagnetsSimple %} <span class="highlight-option">MagnetsSimple</span>, {% endif %}
-               </td>
-               <!-- Colonne pour l'état de statut avec couleur de fond et texte conditionnels -->
-               <td style="background-color: {% if event.event_template.statut %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.statut %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                  {% if event.event_template.statut %}
-                  Prêt
-                  {% else %}
-                  Pas OK
-                  {% endif %}
-               </td>
-            </tr>
-         </tbody>
-      </table>
-      <table id="table_template" class="table table-bordered table-striped" style="background-color:white">
-         <thead>
-            <tr>
-               <th>URL ESTY</th>
-               <th>Texte</th>
-               <th>TEMPLATE</th>
-               <th>MUSIC</th>
-               <th>Path Depot Template</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <!-- Colonne pour le lien vers le modèle avec un fond conditionnel -->
-               <td style="background-color: {% if event.event_template.url_modele %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.url_modele %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                  {% if event.event_template.url_modele %}
-                  <a href="{{ event.event_template.url_modele }}">MODEL</a>
-                  {% else %}
-                  Pas de modèle
-                  {% endif %}
-               </td>
-               <!-- Colonne pour le texte du template -->
-               <td style="background-color: {% if event.event_template.text_template %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if event.event_template.text_template %}#155724{% else %}#721c24{% endif %}; padding: 5px; border-radius: 4px;">
-                  {{ event.event_template.text_template }}
-               </td>
-               <!-- Colonne pour le lien d'image (ouvre dans un nouvel onglet) -->
-               <td style="
-                   {% if not event.event_product.need_design %}
-                       background-color: #e9ecef;
-                       background-image: repeating-linear-gradient(
-                           45deg,
-                           #e9ecef,
-                           #e9ecef 10px,
-                           #d6d8db 10px,
-                           #d6d8db 20px
-                       );
-                       color: #6c757d;
-                   {% elif event.event_template.image_name %}
-                       background-color: #d4edda;
-                       color: #155724;
-                   {% else %}
-                       background-color: #f8d7da;
-                       color: #721c24;
-                   {% endif %}
-                   padding: 5px;
-                   border-radius: 4px;
-               ">
-                   {% if event.event_product.need_design %}
-                       {% if event.event_template.image_name %}
-                           <a href="{% url 'view_image' event.id %}" target="_blank" rel="noopener noreferrer">
-                               TEMPLATE
-                           </a>
-                       {% endif %}
-                   {% else %}
-                       <span>Non applicable</span>
-                   {% endif %}
-               </td>
-               <!-- Colonne pour le lien de la video (ouvre dans un nouvel onglet) -->
-               <td style="
-                   {% if not event.event_product.need_music %}
-                       background-color: #e9ecef;
-                       background-image: repeating-linear-gradient(
-                           45deg,
-                           #e9ecef,
-                           #e9ecef 10px,
-                           #d6d8db 10px,
-                           #d6d8db 20px
-                       );
-                       color: #6c757d;
-                   {% elif event.event_template.url_music_360 %}
-                       background-color: #d4edda;
-                       color: #155724;
-                   {% else %}
-                       background-color: #f8d7da;
-                       color: #721c24;
-                   {% endif %}
-                   padding: 5px;
-                   border-radius: 4px;
-               ">
-                   {% if event.event_product.need_music %}
-                       {% if event.event_template.url_music_360 %}
-                           <a href="{{ event.event_template.url_music_360 }}" target="_blank" rel="noopener noreferrer">
-                               MUSIC
-                           </a>
-                       {% endif %}
-                   {% else %}
-                       <span>Non applicable</span>
-                   {% endif %}
-               </td>
-
-               <!-- Colonne pour les prepa-template -->
-               <td style="width: 30%">
-                  <a href="P:\PREPA-EVENT\{{ event.event_template.directory_name }}">
-                  {{ event.event_template.directory_name }}
-                  </a>
-               </td>
-            </tr>
-         </tbody>
-      </table>
-      <table id="table_commentaire" class="table table-bordered table-striped" style="background-color:white">
-         <thead>
-            <tr>
-               <th>Commentaire Client</th>
-               <th>Commentaire</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <td>{{ event.event_details.comment_client }}</td>
-               <td contenteditable="true" style="background:#fff8dc; outline:1px dashed #ccc;"
-                    data-url="{% url 'update_comment' event.id %}"
-                    onblur="saveComment(this)">
-                  {{ event.event_details.comment|default_if_none:''|default:'' }}
-                </td>
-            </tr>
-         </tbody>
-      </table>
-      <table id="table_action" class="table table-bordered table-striped" style="background-color:white">
-         <thead>
-            <tr>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <!-- Colonne pour les actions -->
-               <td>
-                  <!-- Formulaire pour changer le statut -->
-                  <form action="{% url 'change_status' event.event_template.id %}" method="post">
-                     {% csrf_token %}
-                     <button type="submit" class="btn {% if event.event_template.statut %}btn-danger{% else %}btn-success{% endif %}">
-                     {% if event.event_template.statut %}
-                     Marquer comme Pas OK
-                     {% else %}
-                     Valider
-                     {% endif %}
-                     </button>
-                  </form>
-               </td>
-               <td>
-                  <!-- Formulaire pour relancer l'espace client -->
-                  <form method="POST" action="{% url 'relance_espace_client' event.id %}">
-                     {% csrf_token %}
-                     <button type="submit" class="btn btn-warning">Relancer espace</button>
-                  </form>
-               </td>
-            </tr>
-         </tbody>
-      </table>
-   </div>
-</div>
-{% endfor %}
-{% endwith %}
-<script>
-                  function getCSRFToken() {
-                    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                  }
-
-                  // Ajouter un membre
-                  function addMember(eventId, memberId, selectElement) {
-                    fetch(`/api/ajouter-membre/${eventId}/`, {
-                      method: 'POST',
-                      headers: {
-                        'X-CSRFToken': getCSRFToken(),
-                        'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify({ member_id: memberId })
-                    })
-                    .then(response => response.text())
-                    .then(html => {
-                      document.getElementById(`members-${eventId}`).innerHTML = html;
-                      attachRemoveButtons(); // Reconnecter les boutons ✖
-                      selectElement.value = ""; // Reset du select
-                    });
-                  }
-
-                  // Supprimer un membre
-                  function removeMember(eventId, memberId) {
-                    fetch(`/api/remove-membre/${eventId}/${memberId}/`, {
-                      method: 'POST',
-                      headers: {
-                        'X-CSRFToken': getCSRFToken()
-                      }
-                    })
-                    .then(response => response.text())
-                    .then(html => {
-                      document.getElementById(`members-${eventId}`).innerHTML = html;
-                      attachRemoveButtons(); // Reconnecter après suppression
-                    });
-                  }
-
-                  // Connecter les boutons ✖
-                  function attachRemoveButtons() {
-                    document.querySelectorAll('.remove-member').forEach(button => {
-                      button.onclick = () => {
-                        const eventId = button.dataset.eventId;
-                        const memberId = button.dataset.memberId;
-                        removeMember(eventId, memberId);
-                      };
-                    });
-                  }
-
-                  // Connecter les selecteurs
-                  document.querySelectorAll('.member-select').forEach(select => {
-                    select.addEventListener('change', () => {
-                      const eventId = select.dataset.eventId;
-                      const memberId = select.value;
-                      if (memberId) {
-                        addMember(eventId, memberId, select);
-                      }
-                    });
-                  });
-
-                  // Initialisation au chargement
-                  document.addEventListener('DOMContentLoaded', () => {
-                    attachRemoveButtons();
-                  });
-            </script>
 
 <script>
-  function getCookie(name){
-    const m = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');
-    return m ? decodeURIComponent(m.pop()) : '';
-  }
-
-  function saveComment(el){
-    fetch(el.dataset.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken'),
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify({
-        event_id: el.dataset.id,
-        value: el.innerText.trim()
-      })
-    }).catch(console.error);
-  }
+function getCSRFToken() { return document.querySelector('meta[name="csrf-token"]').getAttribute('content'); }
+function addMember(eventId, memberId, selectElement) {
+    fetch(`/api/ajouter-membre/${eventId}/`, { method:'POST', headers:{'X-CSRFToken':getCSRFToken(),'Content-Type':'application/json'}, body:JSON.stringify({member_id:memberId}) })
+    .then(response => response.text()).then(html => { document.getElementById(`members-${eventId}`).innerHTML = html; attachRemoveButtons(); selectElement.value = ''; });
+}
+function removeMember(eventId, memberId) {
+    fetch(`/api/remove-membre/${eventId}/${memberId}/`, { method:'POST', headers:{'X-CSRFToken':getCSRFToken()} })
+    .then(response => response.text()).then(html => { document.getElementById(`members-${eventId}`).innerHTML = html; attachRemoveButtons(); });
+}
+function attachRemoveButtons() {
+    document.querySelectorAll('.remove-member').forEach(button => { button.onclick = () => removeMember(button.dataset.eventId, button.dataset.memberId); });
+}
+document.querySelectorAll('.member-select').forEach(select => { select.addEventListener('change', () => { if (select.value) addMember(select.dataset.eventId, select.value, select); }); });
+document.addEventListener('DOMContentLoaded', attachRemoveButtons);
+function getCookie(name) { const match = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return match ? decodeURIComponent(match.pop()) : ''; }
+function saveComment(element) {
+    fetch(element.dataset.url, { method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken'),'X-Requested-With':'XMLHttpRequest'}, body:JSON.stringify({value:element.innerText.trim()}) }).catch(console.error);
+}
 </script>
-{% endblock %}
+{% endblock content %}

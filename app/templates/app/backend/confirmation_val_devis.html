@@ -1,15 +1,24 @@
 {% extends 'app/backend/base.html' %}
-{% block content %}
+{% block title %}Valider le devis{% endblock title %}
 
-    <div class="container justify-content-center">
-    <h2>Validation devis : <span>{{ event.client.nom }}</span></h2>
-    <br>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Soumettre</button>
-        <a href="{% url 'lst_devis' %}" class="btn btn-secondary">Retour</a>
-    </form>
-    </div>
-    
-{% endblock %}
+{% block content %}
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Validation</p>
+            <h1>Valider le devis</h1>
+            <p class="backend-page-header__description">Finalisez l'acompte et la validation pour <strong>{{ event.client.nom }}</strong>.</p>
+        </div>
+    </header>
+    <section class="backend-card backend-card--narrow">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="backend-actions">
+                <button type="submit" class="backend-button backend-button--success"><i class="fas fa-check"></i> Valider le devis</button>
+                <a href="{% url 'info_event' event.id %}" class="backend-button backend-button--secondary">Annuler</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock content %}

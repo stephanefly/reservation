@@ -1,18 +1,29 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Modifier un coût{% endblock title %}
 
 {% block content %}
-<div class="container">
-    <h2>Modifier Cost</h2>
-    <form action="{% url 'edit_cost' cost.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-    </form>
-
-    <!-- Bouton de suppression -->
-    <form action="{% url 'delete_cost' cost.id %}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce cost ?');">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Supprimer</button>
-    </form>
+<div class="backend-page">
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Finance</p>
+            <h1>Modifier le coût</h1>
+            <p class="backend-page-header__description">Mettez à jour cette dépense ou supprimez-la définitivement.</p>
+        </div>
+    </header>
+    <section class="backend-card backend-card--narrow">
+        <form action="{% url 'edit_cost' cost.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="backend-actions">
+                <button type="submit" class="backend-button backend-button--primary"><i class="fas fa-save"></i> Mettre à jour</button>
+                <a href="{% url 'lst_cost' %}" class="backend-button backend-button--secondary">Retour</a>
+            </div>
+        </form>
+        <hr>
+        <form action="{% url 'delete_cost' cost.id %}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce coût ?');">
+            {% csrf_token %}
+            <button type="submit" class="backend-button backend-button--danger"><i class="fas fa-trash-alt"></i> Supprimer ce coût</button>
+        </form>
+    </section>
 </div>
-{% endblock %}
+{% endblock content %}

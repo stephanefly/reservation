@@ -1,13 +1,13 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Envoyer le devis{% endblock title %}
 {% block content %}
-<style>
-body {
-    background-color: #f5f5f5; /* Couleur de fond plus douce */
-}
-</style>
-<form action="{% url 'envoi_mail_devis' event.id %}" method="post">
-  {% csrf_token %}
-  <p>Êtes-vous sûr de vouloir envoyer le devis pour l'événement <span>"{{ event.client.nom }}"</span> ?</p>
-  <input type="submit" value="Confirmer l'envoi">
-</form>
-{% endblock %}
+<section class="backend-card backend-confirmation">
+    <span class="backend-confirmation__icon"><i class="fas fa-paper-plane"></i></span>
+    <h1>Envoyer le devis ?</h1>
+    <p>Le devis de <strong>{{ event.client.nom }}</strong> sera envoyé à l'adresse enregistrée.</p>
+    <div class="backend-actions">
+        <form action="{% url 'envoi_mail_devis' event.id %}" method="post">{% csrf_token %}<button class="backend-button backend-button--primary" type="submit">Confirmer l'envoi</button></form>
+        <a class="backend-button backend-button--secondary" href="{% url 'info_event' event.id %}">Annuler</a>
+    </div>
+</section>
+{% endblock content %}

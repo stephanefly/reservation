@@ -1,38 +1,14 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Post-prestation{% endblock title %}
 {% block content %}
+<div class="backend-page">
+<header class="backend-page-header">
+  <div><p class="backend-page-header__eyebrow">Suivi client</p><h1>Post-prestation</h1><p class="backend-page-header__description">Pilotez les médias, paiements, montages, publications et retours clients.</p></div>
+</header>
 
-<style>
-  .highlight-prestation{background-color:blue;color:#fff;padding:0 3px}
-  .highlight-option{background-color:skyblue;color:#000;padding:0 3px}
-  .highlight-membre{background-color:#f1cd9d;color:#000;padding:0 3px}
-  .highlight-pc{background-color:#f19d9d;color:#000;padding:0 3px}
-  .ajax-btn{background:#007bff;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:600;font-size:14px;cursor:pointer;transition:background-color .2s}
-  .ajax-btn:hover{background:#0056b3}
-  .ajax-btn:disabled{background:#ccc;cursor:not-allowed}
-  .backToTopFixed{
-    background:#1976d2;color:white;padding:8px 14px;border:none;border-radius:6px;
-    cursor:pointer;font-size:14px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.2);
-  }
-  .backToTopFixed:hover{background:#0f4fa8}
-  .flag-cell .status-text{font-weight:600}
-  .save-status{margin-left:.5rem;font-size:.9rem;opacity:.9}
-  #backToTopFixed {
-    background: #1976d2;
-    color: white;
-    padding: 5px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: bold;
-}
-#backToTopFixed:hover {
-    background: #0f4fa8;
-}
-
-</style>
-
-<table id="table-haut" class="table table-bordered table-sticky table-hover bg-white">
+<section class="backend-table-card" aria-label="Vue synthétique post-prestation">
+<div class="backend-table-scroll">
+<table id="table-haut" class="table table-hover">
   <thead>
     <tr>
       <th>NOM</th>
@@ -57,19 +33,7 @@
       <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
 
       {# Status cell: style + contenu valides #}
-      <td
-        {% if event.status == "Pending" %}
-          style="background:#a5d6a7;color:black;font-weight:bold;"
-        {% elif event.status == "Sent Media" %}
-          style="background:#43a047;color:white;font-weight:bold;"
-        {% elif event.status == "Post Presta" %}
-          style="background:#8e24aa;color:white;font-weight:bold;"
-        {% elif event.status == "Media KO" %}
-          style="background:#e53935;color:white;font-weight:bold;"
-        {% endif %}
-      >
-        {{ event.status }}
-      </td>
+      <td><span class="backend-status {% if event.status == 'Pending' %}backend-status--warning{% elif event.status == 'Sent Media' %}backend-status--success{% elif event.status == 'Post Presta' %}backend-status--purple{% elif event.status == 'Media KO' %}backend-status--danger{% endif %}">{{ event.status }}</span></td>
 
       <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
         {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
@@ -124,21 +88,22 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
+</section>
 
-<br>
-
+<div class="backend-event-stack">
 {% for event in lst_post_event %}
-<div id="event-{{ event.id }}" class="card" style="border:#1b1b1b 2px solid">
+<article id="event-{{ event.id }}" class="backend-card backend-post-card">
   <div class="card-header d-flex align-items-center justify-content-between">
-    <h5 style="display:inline-block;">
-      <a href="{% url 'info_event' event.id %}" class="btn btn-link">
+    <h2>
+      <a href="{% url 'info_event' event.id %}">
         {{ event.client.nom }}
       </a>
-    </h5>
+    </h2>
 
-    <button id="backToTopFixed"
+    <button class="backToTopFixed"
             onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
-        ↑ Haut de page
+        <i class="fas fa-arrow-up"></i> Haut
     </button>
 
   </div>
@@ -146,6 +111,7 @@
   <div class="card-body">
 
     {# --- Informations client / event --- #}
+    <div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
@@ -168,9 +134,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Produits / options --- #}
-    <table id="table_produit" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead><tr><th>Prestation</th><th>Option</th><th>Num PC</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
@@ -203,9 +171,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Liens / envoi --- #}
-    <table id="table_lien" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>Nom Dossier</th>
@@ -221,18 +191,18 @@
           <td>{{ event.event_template.directory_name }}</td>
           <td>
             {% if not event.event_post_presta.collected %}
-              <span style="background-color:#f44336;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Non</span>
+              <span class="backend-status backend-status--danger">Non</span>
             {% else %}
-              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Fait</span>
+              <span class="backend-status backend-status--success">Fait</span>
             {% endif %}
           </td>
           <td><a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a></td>
           <td><a href="{{ event.event_post_presta.link_media_shared }}">Lien</a></td>
           <td>
             {% if not event.event_post_presta.sent %}
-              <span style="background-color:#f44336;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">Non</span>
+              <span class="backend-status backend-status--danger">Non</span>
             {% else %}
-              <span style="background-color:#4caf50;color:white;padding:4px 8px;border-radius:12px;font-weight:bold;">
+              <span class="backend-status backend-status--success">
                 Fait - {{ event.event_post_presta.date_media_sent|date:"d/m/y" }}
               </span>
             {% endif %}
@@ -245,9 +215,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Paiements / flags --- #}
-    <table id="table_payement" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           {% for m in event.event_team_members.all|dictsort:"name" %}
@@ -321,9 +293,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Montage / go_post_photo (select modifiable en continu) --- #}
-    <table id="table_montage" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>A poster ?</th>
@@ -388,9 +362,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Feedback + actions --- #}
-    <table id="table_feedback" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
           <th>Feedback Message</th>
@@ -436,9 +412,11 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     {# --- Commentaire --- #}
-    <table id="table_commentaire" class="table table-bordered table-striped bg-white">
+    <div class="backend-table-scroll backend-post-section">
+    <table class="table table-bordered table-striped bg-white">
       <thead><tr><th>Commentaire Feedback</th></tr></thead>
       <tbody>
         <tr>
@@ -456,11 +434,13 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
   </div>
-</div>
-<br>
+</article>
 {% endfor %}
+</div>
+</div>
 
 <!-- =============================== -->
 <!--  SCRIPT 1 : UTILS (CSRF + Debounce) -->
@@ -502,16 +482,10 @@ document.querySelectorAll('a[href^="#event-"]').forEach(a=>{
 <!--  SCRIPT 3 : Bouton retour en haut -->
 <!-- =============================== -->
 <script>
-const backBtn = document.getElementById("backToTopFixed");
-
-window.addEventListener("scroll", () => {
-  if (!backBtn) return;
-  backBtn.style.display = window.scrollY > 300 ? "inline-block" : "none";
-});
-
-backBtn?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+const backButtons = document.querySelectorAll(".backToTopFixed");
+window.addEventListener("scroll", () => backButtons.forEach(button => {
+  button.style.visibility = window.scrollY > 300 ? "visible" : "hidden";
+}));
 </script>
 
 

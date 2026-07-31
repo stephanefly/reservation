@@ -1,47 +1,44 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Connexion</title>
-    <style>
-        body {
-            background-color: rgba(222, 222, 222, 0.55);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#211747">
+    <title>Connexion · MySelfieBooth</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/logo.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/backend.css' %}">
 </head>
-<body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card">
-                    <div class="card-body login-card-body text-center">
-                        <p class="login-box-msg">Connectez-vous pour accéder à l'application</p>
-
-                        <form action="{% url 'login' %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ next }}">
-
-                            <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Identifiant..." name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" placeholder="Mot de passe..." name="password" required>
-                            </div>
-                            <input type="hidden" name="next" value="/team/template/" />
-                            <button type="submit" class="btn btn-primary w-100">Connexion</button>
-                        </form>
-                    </div>
-                </div>
+<body class="backend-login">
+    <main class="backend-login__layout">
+        <section class="backend-login__intro">
+            <span class="backend-login__logo"><i class="fas fa-camera-retro"></i></span>
+            <p class="backend-login__eyebrow">MySelfieBooth Paris</p>
+            <h1>Pilotez chaque événement depuis un seul espace.</h1>
+            <p>Devis, planning, préparation et suivi post-prestation.</p>
+        </section>
+        <section class="backend-login__card">
+            <div class="backend-login__card-header">
+                <h2>Connexion</h2>
+                <p>Accédez à l'administration.</p>
             </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            {% if form.errors %}<div class="backend-alert backend-alert--danger" role="alert"><i class="fas fa-exclamation-circle"></i><span>Identifiant ou mot de passe incorrect.</span></div>{% endif %}
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="backend-field">
+                    <label for="id_username">Identifiant</label>
+                    <input id="id_username" type="text" name="username" autocomplete="username" autofocus required>
+                </div>
+                <div class="backend-field">
+                    <label for="id_password">Mot de passe</label>
+                    <input id="id_password" type="password" name="password" autocomplete="current-password" required>
+                </div>
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                <button class="backend-login__button" type="submit">Se connecter <i class="fas fa-arrow-right"></i></button>
+            </form>
+        </section>
+    </main>
 </body>
 </html>

@@ -1,19 +1,16 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Résultat de l'envoi{% endblock title %}
 {% block content %}
-
+<section class="backend-card backend-confirmation">
     {% if mail %}
-        <h1 class="row d-flex">
-            Email envoyé avec succès. 
-        </h1>
+    <span class="backend-confirmation__icon backend-confirmation__icon--success"><i class="fas fa-check"></i></span>
+    <h1>E-mail envoyé</h1>
+    <p>Le message a bien été transmis au client.</p>
     {% else %}
-        <h1 class="row d-flex">
-            Échec de l'envoi de l'email. 
-        </h1>
+    <span class="backend-confirmation__icon backend-confirmation__icon--danger"><i class="fas fa-exclamation-triangle"></i></span>
+    <h1>Échec de l'envoi</h1>
+    <p>Le message n'a pas pu être envoyé. Vérifiez la configuration puis réessayez.</p>
     {% endif %}
-        <br><br>
-    <form method="POST" action="{% url 'lst_devis' %}">
-    {% csrf_token %}
-    <button type="submit">
-        Retour à la liste des devis</button>
-    </form>
-{% endblock %}
+    <div class="backend-actions"><a class="backend-button backend-button--primary" href="{% url 'lst_devis' %}">Retour à la liste des devis</a></div>
+</section>
+{% endblock content %}

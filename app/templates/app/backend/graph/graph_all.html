@@ -1,6 +1,9 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Vue globale{% endblock title %}
 {% block content %}
-
-     {{ div | safe }}
-    {{ script | safe }}
-{% endblock %}
+<div class="backend-page">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses</p><h1>Vue globale</h1><p class="backend-page-header__description">Les principaux indicateurs de l'activité MySelfieBooth.</p></div></header>
+    <section class="backend-chart-card">{{ div|safe }}</section>
+    {{ script|safe }}
+</div>
+{% endblock content %}

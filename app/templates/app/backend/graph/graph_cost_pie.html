@@ -1,13 +1,9 @@
 {% extends 'app/backend/base.html' %}
+{% block title %}Vue annuelle{% endblock title %}
 {% block content %}
-
-{% for divgraph in div %}
-     {{ divgraph | safe }}
-    <br>
-{% endfor %}
-
-{% for scriptgraph in script %}
-    {{ scriptgraph | safe }}
-{% endfor %}
-
-{% endblock %}
+<div class="backend-page">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses</p><h1>Vue annuelle</h1><p class="backend-page-header__description">Répartition annuelle des coûts et des résultats.</p></div></header>
+    <div class="backend-chart-grid">{% for divgraph in div %}<section class="backend-chart-card">{{ divgraph|safe }}</section>{% endfor %}</div>
+    {% for scriptgraph in script %}{{ scriptgraph|safe }}{% endfor %}
+</div>
+{% endblock content %}
