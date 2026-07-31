@@ -1,20 +1,63 @@
 :root {
-    --team-primary: #5b34d6;
-    --team-primary-dark: #4122aa;
-    --team-primary-soft: #f0ecff;
-    --team-ink: #192033;
-    --team-muted: #667085;
-    --team-border: #e4e7ec;
-    --team-soft: #f6f7fb;
+    --team-primary: #1565d8;
+    --team-primary-dark: #0b3b82;
+    --team-primary-soft: #eaf3ff;
+    --team-ink: #102a4c;
+    --team-muted: #607089;
+    --team-border: #d8e5f3;
+    --team-soft: #f5f9ff;
     --team-success: #087443;
     --team-success-soft: #eaf8f1;
     --team-warning: #9a6700;
     --team-warning-soft: #fff7df;
     --team-danger: #b42318;
     --team-danger-soft: #fff1f0;
-    --team-info: #175cd3;
-    --team-info-soft: #eff6ff;
-    --team-shadow: 0 14px 38px rgba(27, 33, 51, 0.08);
+    --team-info: #0b63ce;
+    --team-info-soft: #eaf3ff;
+    --team-shadow: 0 14px 38px rgba(17, 72, 126, 0.10);
+}
+
+.team-body {
+    color: var(--team-ink);
+    background:
+        radial-gradient(circle at 7% 2%, rgba(21, 101, 216, 0.13), transparent 28rem),
+        linear-gradient(145deg, #fbfdff 0%, #edf5ff 100%);
+}
+
+.team-body .backend-navbar {
+    background: linear-gradient(135deg, #0a397d 0%, #1565d8 100%);
+    border-bottom-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 9px 30px rgba(8, 54, 117, 0.25);
+}
+
+.team-body .backend-brand__mark {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 20px rgba(4, 38, 85, 0.22);
+}
+
+.team-body .backend-brand small {
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.team-body .backend-nav .nav-link {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.team-body .backend-nav .nav-link:hover,
+.team-body .backend-nav .nav-link:focus-visible,
+.team-body .backend-nav .nav-link.active {
+    color: var(--team-primary-dark);
+    background: #fff;
+}
+
+.team-body .backend-navbar .dropdown-item:hover {
+    color: var(--team-primary-dark);
+    background: var(--team-primary-soft);
+}
+
+.team-body .backend-footer {
+    color: #5f7591;
 }
 
 .team-main {
@@ -125,7 +168,7 @@
     gap: 14px;
     padding: 16px;
     border-bottom: 1px solid var(--team-border);
-    background: linear-gradient(145deg, #fbfaff, #f5f2ff);
+    background: linear-gradient(145deg, #fbfdff, #edf5ff);
 }
 
 .team-card__header h2,
@@ -160,7 +203,7 @@
     gap: 10px;
     margin: 4px 0 0;
     padding: 11px 14px;
-    border: 1px solid rgba(91, 52, 214, 0.16);
+    border: 1px solid rgba(21, 101, 216, 0.18);
     border-radius: 13px;
     color: var(--team-primary-dark);
     background: var(--team-primary-soft);
@@ -346,8 +389,8 @@
 
 .team-button--primary {
     color: #fff;
-    background: linear-gradient(145deg, #6848dc, #5130bf);
-    box-shadow: 0 8px 18px rgba(81, 48, 191, 0.18);
+    background: linear-gradient(145deg, #1976e9, #0f58bd);
+    box-shadow: 0 8px 18px rgba(15, 88, 189, 0.22);
 }
 
 .team-button--primary:hover {
@@ -431,9 +474,9 @@
 .team-field select:focus,
 .team-field textarea:focus,
 .team-member-picker select:focus {
-    border-color: #8768df;
+    border-color: #4c93eb;
     outline: 0;
-    box-shadow: 0 0 0 4px rgba(91, 52, 214, 0.1);
+    box-shadow: 0 0 0 4px rgba(21, 101, 216, 0.12);
 }
 
 .team-comment {
@@ -518,9 +561,9 @@
     display: grid;
     gap: 13px;
     padding: 14px;
-    border: 1px dashed #b7a9ea;
+    border: 1px dashed #91bdf2;
     border-radius: 12px;
-    background: #faf9ff;
+    background: #f6faff;
 }
 
 .team-template-state--missing {
@@ -545,7 +588,7 @@
     padding: 12px;
     border-radius: 13px;
     color: #fff;
-    background: linear-gradient(145deg, #6848dc, #5130bf);
+    background: linear-gradient(145deg, #1976e9, #0f58bd);
     text-align: center;
 }
 
@@ -601,8 +644,8 @@
 }
 
 .team-calendar-page .day:hover {
-    border-color: #b7a9ea;
-    background: #faf9ff;
+    border-color: #91bdf2;
+    background: #f4f9ff;
     transform: translateY(-1px);
 }
 
@@ -625,7 +668,7 @@
 }
 
 .team-calendar-page .post-presta {
-    border-color: #b8a4ef;
+    border-color: #9ec5f3;
     color: var(--team-primary-dark);
     background: var(--team-primary-soft);
 }
@@ -637,7 +680,7 @@
 }
 
 .team-calendar-page .selected {
-    outline: 3px solid rgba(91, 52, 214, 0.2);
+    outline: 3px solid rgba(21, 101, 216, 0.22);
     outline-offset: 2px;
 }
 
