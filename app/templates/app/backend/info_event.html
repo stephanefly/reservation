@@ -1,389 +1,440 @@
 {% extends 'app/backend/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/info_event.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
-<style>
-    body {
-        background-color: #f5f5f5; /* Couleur de fond plus douce */
-    }
+<div class="event-admin">
+    <header class="event-hero">
+        <div class="event-hero__content">
+            <a class="event-breadcrumb" href="{% url 'lst_devis' %}">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                Liste des devis
+            </a>
+            <p class="event-eyebrow">Événement #{{ event.id }}</p>
+            <h1 class="event-title">{{ event.client.nom|default:'Client sans nom' }}</h1>
+            <div class="event-hero__meta">
+                <span class="event-chip">
+                    <i class="fas fa-circle" aria-hidden="true"></i>
+                    {{ event.get_status_display|default:event.status }}
+                </span>
+                <span class="event-chip">
+                    <i class="fas fa-file-alt" aria-hidden="true"></i>
+                    Devis {{ event.num_devis|default:'non numéroté' }}
+                </span>
+                <span class="event-chip">
+                    <i class="far fa-calendar" aria-hidden="true"></i>
+                    {{ event.event_details.date_evenement|date:'d/m/Y'|default:'Date à définir' }}
+                </span>
+            </div>
+        </div>
+        <div class="event-hero__actions">
+            <a class="hero-button" href="tel:{{ event.client.numero_telephone }}">
+                <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                Appeler
+            </a>
+            <button class="hero-button hero-button--primary" type="submit" form="event-update-form">
+                <i class="fas fa-save" aria-hidden="true"></i>
+                Enregistrer
+            </button>
+        </div>
+    </header>
 
-    form {
-        max-width: 800px; /* Conserve la largeur mais peut être ajusté selon les besoins */
-        margin: auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+    <section class="event-kpis" aria-label="Résumé de l'événement">
+        <article class="event-kpi">
+            <span class="event-kpi__label"><i class="fas fa-calculator"></i> Prix proposé</span>
+            <p class="event-kpi__value">{{ event.prix_proposed|default:0 }} €</p>
+        </article>
+        <article class="event-kpi">
+            <span class="event-kpi__label"><i class="fas fa-check-circle"></i> Prix validé</span>
+            <p class="event-kpi__value">{% if event.prix_valided %}{{ event.prix_valided }} €{% else %}—{% endif %}</p>
+        </article>
+        <article class="event-kpi">
+            <span class="event-kpi__label"><i class="fas fa-redo-alt"></i> Relances devis</span>
+            <p class="event-kpi__value">{{ event.client.nb_relance_devis|default:0 }}</p>
+        </article>
+        <article class="event-kpi">
+            <span class="event-kpi__label"><i class="fas fa-folder-open"></i> Dossier client</span>
+            <p class="event-kpi__value event-kpi__value--small" title="{{ event.event_template.directory_name }}">
+                {{ event.event_template.directory_name|default:'Non créé' }}
+            </p>
+        </article>
+    </section>
 
-    h2, h3 {
-        color: #333; /* Couleur de texte plus sombre pour une meilleure lecture */
-        margin-bottom: 15px;
-    }
+    <div class="event-workspace">
+        <nav class="event-section-nav" aria-label="Sections de l'événement">
+            <a href="#client"><i class="fas fa-user"></i> Client</a>
+            <a href="#event"><i class="far fa-calendar-alt"></i> Événement</a>
+            <a href="#resources"><i class="fas fa-link"></i> Liens</a>
+            <a href="#products"><i class="fas fa-camera-retro"></i> Produits</a>
+            <a href="#options"><i class="fas fa-plus-circle"></i> Options</a>
+            <a href="#finance"><i class="fas fa-euro-sign"></i> Tarification</a>
+            <a href="#actions"><i class="fas fa-bolt"></i> Actions</a>
+        </nav>
 
-    label {
-        /* display: block; */ /* Rend chaque label + champ sur sa propre ligne */
-        color: #666;
-    }
+        <div class="event-main-column">
+            <form id="event-update-form" class="event-update-form" method="POST" action="{% url 'update_event' event.id %}">
+                {% csrf_token %}
 
-    input[type="text"], input[type="email"], input[type="date"], input[type="number"], select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 4px;
-        border-radius: 4px;
-        /* border: 1px solid #ddd; */
-        /* box-sizing: border-box; */ /* Assure que le padding et la bordure sont inclus dans la largeur totale */
-    }
+                <section class="event-panel" id="client">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="fas fa-user"></i></span>
+                            <div>
+                                <h2>Informations client</h2>
+                                <p class="event-panel__subtitle">Coordonnées, provenance et repères administratifs.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    .button-save {
-        background-color: #5621b4; /* Vert */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                    <div class="event-facts">
+                        <div class="event-fact">
+                            <span class="event-fact__label">Créé le</span>
+                            <span class="event-fact__value">{{ event.created_at|date:'d/m/Y à H:i'|default:'—' }}</span>
+                        </div>
+                        <div class="event-fact">
+                            <span class="event-fact__label">Signé le</span>
+                            <span class="event-fact__value">{{ event.signer_at|date:'d/m/Y à H:i'|default:'Non signé' }}</span>
+                        </div>
+                        <div class="event-fact">
+                            <span class="event-fact__label">Carte Trello</span>
+                            <span class="event-fact__value" title="{{ event.id_card }}">{{ event.id_card|default:'Non liée' }}</span>
+                        </div>
+                        <div class="event-fact">
+                            <span class="event-fact__label">Code espace client</span>
+                            <span class="event-fact__value">{{ event.client.code_espace_client|default:'Non généré' }}</span>
+                        </div>
+                        <div class="event-fact">
+                            <span class="event-fact__label">Historique statut</span>
+                            <span class="event-fact__value" title="{{ event.history_status }}">{{ event.history_status|default:'Aucun changement' }}</span>
+                        </div>
+                        <div class="event-fact">
+                            <span class="event-fact__label">N° devis</span>
+                            <span class="event-fact__value">{{ event.num_devis|default:'—' }}</span>
+                        </div>
+                    </div>
 
-    .button-valid {
-        background-color: #01690a; /* Vert */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                    <div class="event-form-grid">
+                        <div class="event-field event-field--wide">
+                            <label class="event-check" for="raison_sociale">
+                                <input id="raison_sociale" type="checkbox" name="raison_sociale" {% if event.client.raison_sociale %}checked{% endif %}>
+                                Ce client est une entreprise
+                            </label>
+                        </div>
+                        <div class="event-field">
+                            <label for="client_nom">Nom du client</label>
+                            <input id="client_nom" type="text" name="client_nom" value="{{ event.client.nom }}" autocomplete="name">
+                        </div>
+                        <div class="event-field">
+                            <label for="client_mail">Adresse e-mail</label>
+                            <input id="client_mail" type="email" name="client_mail" value="{{ event.client.mail }}" autocomplete="email" inputmode="email">
+                        </div>
+                        <div class="event-field">
+                            <label for="client_numero_telephone">Téléphone</label>
+                            <input id="client_numero_telephone" type="tel" name="client_numero_telephone" value="{{ event.client.numero_telephone }}" autocomplete="tel" inputmode="tel">
+                        </div>
+                        <div class="event-field">
+                            <label for="client_how_find">Origine du contact</label>
+                            <select id="client_how_find" name="client_how_find">
+                                {% for choice, display in event.client.HOW_FIND %}
+                                <option value="{{ choice }}" {% if choice == event.client.how_find %}selected{% endif %}>{{ display }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </section>
 
-    .button-generate {
-        background-color: #005491; /* Bleu */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                <section class="event-panel" id="event">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="far fa-calendar-alt"></i></span>
+                            <div>
+                                <h2>Détails de l'événement</h2>
+                                <p class="event-panel__subtitle">Date, horaire, lieu et informations utiles à l'équipe.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    .button-send {
-        background-color: #9f9319; /* Rouge */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                    <div class="event-form-grid event-form-grid--three">
+                        <div class="event-field">
+                            <label for="date_evenement">Date</label>
+                            <input id="date_evenement" type="date" name="date_evenement" value="{{ event.event_details.date_evenement|date:'Y-m-d' }}">
+                        </div>
+                        <div class="event-field">
+                            <label for="horaire">Horaire</label>
+                            <input id="horaire" type="time" name="horaire" value="{{ event.event_details.horaire|time:'H:i' }}">
+                        </div>
+                        <div class="event-field">
+                            <label for="duree">Durée de prestation</label>
+                            <input id="duree" type="number" min="0" step="1" name="duree" value="{{ event.event_option.duree|default_if_none:0 }}" inputmode="numeric">
+                            <p class="event-field__help">En heures.</p>
+                        </div>
+                        <div class="event-field event-field--wide">
+                            <label for="adresse_evenement">Adresse</label>
+                            <input id="adresse_evenement" type="text" name="adresse_evenement" value="{{ event.event_details.adresse_evenement }}" autocomplete="street-address">
+                        </div>
+                        <div class="event-field">
+                            <label for="code_postal_evenement">Code postal</label>
+                            <input id="code_postal_evenement" type="text" name="code_postal_evenement" value="{{ event.event_details.code_postal_evenement }}" autocomplete="postal-code" inputmode="numeric">
+                        </div>
+                        <div class="event-field">
+                            <label for="ville_evenement">Ville</label>
+                            <input id="ville_evenement" type="text" name="ville_evenement" value="{{ event.event_details.ville_evenement }}" autocomplete="address-level2">
+                        </div>
+                        <div class="event-field event-field--wide">
+                            <label class="event-check" for="livraison">
+                                <input id="livraison" type="checkbox" name="livraison" {% if event.event_option.livraison %}checked{% endif %}>
+                                Livraison à prévoir pour cet événement
+                            </label>
+                        </div>
+                        <div class="event-field">
+                            <label for="comment_client">Commentaire du client</label>
+                            <textarea id="comment_client" name="comment_client">{{ event.event_details.comment_client }}</textarea>
+                        </div>
+                        <div class="event-field">
+                            <label for="comment">Note interne</label>
+                            <textarea id="comment" name="comment">{{ event.event_details.comment }}</textarea>
+                        </div>
+                    </div>
+                </section>
 
-    .button-relance {
-        background-color: #ffad35; /* Rouge */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
-    .button-media {
-        background-color: #8a3fa9; /* Violet */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                <section class="event-panel" id="resources">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="fas fa-link"></i></span>
+                            <div>
+                                <h2>Modèle et ressources</h2>
+                                <p class="event-panel__subtitle">Liens de création, médias et accès au dossier client.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    .button-relance-avis {
-        background-color: #8e5b00; /* Rouge */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                    <div class="event-form-grid">
+                        <div class="event-field">
+                            <label for="url_modele">URL du modèle</label>
+                            <input id="url_modele" type="url" name="url_modele" value="{{ event.event_template.url_modele|default_if_none:'' }}" inputmode="url">
+                        </div>
+                        <div class="event-field">
+                            <label for="url_music_360">URL musique 360</label>
+                            <input id="url_music_360" type="url" name="url_music_360" value="{{ event.event_template.url_music_360|default_if_none:'' }}" inputmode="url">
+                        </div>
+                        <div class="event-field event-field--wide">
+                            <label for="text_template">Texte du modèle</label>
+                            <textarea id="text_template" name="text_template">{{ event.event_template.text_template }}</textarea>
+                        </div>
+                        <div class="event-field">
+                            <label for="directoryPath">Dossier de préparation</label>
+                            <div class="event-copy-field">
+                                <input id="directoryPath" type="text" value="\\192.168.1.47\{{ event.event_template.directory_name|default:'' }}" readonly>
+                                <button class="event-copy-button" type="button" data-copy-target="directoryPath">
+                                    <i class="far fa-copy"></i> Copier
+                                </button>
+                            </div>
+                        </div>
+                        <div class="event-field">
+                            <label for="directoryPath2">Lien des médias</label>
+                            <div class="event-copy-field">
+                                <input id="directoryPath2" type="url" name="link_media_shared" value="{% if event.event_post_presta %}{{ event.event_post_presta.link_media_shared|default_if_none:'' }}{% endif %}" inputmode="url">
+                                <button class="event-copy-button" type="button" data-copy-target="directoryPath2">
+                                    <i class="far fa-copy"></i> Copier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-    .button-refused {
-        background-color: #e06d6d; /* Rouge */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: #fffdfd;
-    }
+                <section class="event-panel" id="products">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="fas fa-camera-retro"></i></span>
+                            <div>
+                                <h2>Produits</h2>
+                                <p class="event-panel__subtitle">Sélectionnez les bornes incluses dans la prestation.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    .button-del {
-        background-color: #9f0000; /* Rouge */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: white;
-    }
+                    <div class="event-products">
+                        <label class="event-product-card"><input type="checkbox" name="photobooth" {% if event.event_product.photobooth %}checked{% endif %}> Photobooth</label>
+                        <label class="event-product-card"><input type="checkbox" name="miroirbooth" {% if event.event_product.miroirbooth %}checked{% endif %}> Miroirbooth</label>
+                        <label class="event-product-card"><input type="checkbox" name="videobooth" {% if event.event_product.videobooth %}checked{% endif %}> Vidéobooth 360</label>
+                        <label class="event-product-card"><input type="checkbox" name="voguebooth" {% if event.event_product.voguebooth %}checked{% endif %}> Voguebooth</label>
+                        <label class="event-product-card"><input type="checkbox" name="ipadbooth" {% if event.event_product.ipadbooth %}checked{% endif %}> iPadbooth</label>
+                        <label class="event-product-card"><input type="checkbox" name="airbooth" {% if event.event_product.airbooth %}checked{% endif %}> Airbooth</label>
+                    </div>
+                </section>
 
-    .button-back {
-        background-color: #e7e7e7; /* Gris */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-        color: black;
-    }
+                <section class="event-panel" id="options">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="fas fa-plus-circle"></i></span>
+                            <div>
+                                <h2>Options et remises</h2>
+                                <p class="event-panel__subtitle">Activez une option et indiquez uniquement sa remise éventuelle.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    button:hover {
-        opacity: 0.8;
-    }
+                    <div class="event-options">
+                        <div class="event-option-row event-option-row--floral">
+                            <label class="event-option-toggle" for="mur_floral_checkbox">
+                                <input id="mur_floral_checkbox" type="checkbox" name="MurFloral" {% if event.event_option.MurFloral %}checked{% endif %}>
+                                Mur floral
+                            </label>
+                            <div class="event-option-control">
+                                <label for="MurFloral_reduc_prix">Remise (€)</label>
+                                <input id="MurFloral_reduc_prix" type="number" min="0" name="MurFloral_reduc_prix" value="{{ event.event_option.MurFloral_reduc_prix|default_if_none:0 }}" inputmode="numeric">
+                            </div>
+                            <div class="event-option-control">
+                                <label for="mur_floral_style">Style</label>
+                                <select id="mur_floral_style" name="mur_floral_style" {% if not event.event_option.MurFloral %}disabled{% endif %}>
+                                    <option value="">Sélectionner</option>
+                                    <option value="rideau_blanc" {% if event.event_option.mur_floral_style == 'rideau_blanc' %}selected{% endif %}>Rideau blanc</option>
+                                    <option value="gatsby" {% if event.event_option.mur_floral_style == 'gatsby' %}selected{% endif %}>Gatsby</option>
+                                    <option value="rose_blanche" {% if event.event_option.mur_floral_style == 'rose_blanche' %}selected{% endif %}>Rose blanche</option>
+                                    <option value="rose_rouge" {% if event.event_option.mur_floral_style == 'rose_rouge' %}selected{% endif %}>Roses rouges</option>
+                                    <option value="paillette_rose" {% if event.event_option.mur_floral_style == 'paillette_rose' %}selected{% endif %}>Paillette rose</option>
+                                    <option value="vegetale" {% if event.event_option.mur_floral_style == 'vegetale' %}selected{% endif %}>Végétale</option>
+                                    <option value="blanc_rose" {% if event.event_option.mur_floral_style == 'blanc_rose' %}selected{% endif %}>Blanc &amp; rose</option>
+                                    <option value="fond_lumineux" {% if event.event_option.mur_floral_style == 'fond_lumineux' %}selected{% endif %}>Fond lumineux</option>
+                                    <option value="rose_rose" {% if event.event_option.mur_floral_style == 'rose_rose' %}selected{% endif %}>Roses roses</option>
+                                    <option value="paillette_doree" {% if event.event_option.mur_floral_style == 'paillette_doree' %}selected{% endif %}>Paillette dorée</option>
+                                    <option value="fleurs_rouge_blanc" {% if event.event_option.mur_floral_style == 'fleurs_rouge_blanc' %}selected{% endif %}>Fleurs rouge &amp; blanc</option>
+                                </select>
+                            </div>
+                        </div>
 
-</style>
-<form method="POST" action="{% url 'update_event' event.id %}">
-    {% csrf_token %}
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="Phonebooth" {% if event.event_option.Phonebooth %}checked{% endif %}> Phonebooth</label>
+                            <div class="event-option-control"><label for="Phonebooth_reduc_prix">Remise (€)</label><input id="Phonebooth_reduc_prix" type="number" min="0" name="Phonebooth_reduc_prix" value="{{ event.event_option.Phonebooth_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="LivreOr" {% if event.event_option.LivreOr %}checked{% endif %}> Livre d'or</label>
+                            <div class="event-option-control"><label for="LivreOr_reduc_prix">Remise (€)</label><input id="LivreOr_reduc_prix" type="number" min="0" name="LivreOr_reduc_prix" value="{{ event.event_option.LivreOr_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="Fond360" {% if event.event_option.Fond360 %}checked{% endif %}> Fond 360</label>
+                            <div class="event-option-control"><label for="Fond360_reduc_prix">Remise (€)</label><input id="Fond360_reduc_prix" type="number" min="0" name="Fond360_reduc_prix" value="{{ event.event_option.Fond360_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="PanneauBienvenue" {% if event.event_option.PanneauBienvenue %}checked{% endif %}> Panneau de bienvenue</label>
+                            <div class="event-option-control"><label for="PanneauBienvenue_reduc_prix">Remise (€)</label><input id="PanneauBienvenue_reduc_prix" type="number" min="0" name="PanneauBienvenue_reduc_prix" value="{{ event.event_option.PanneauBienvenue_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="Holo3D" {% if event.event_option.Holo3D %}checked{% endif %}> Holo 3D</label>
+                            <div class="event-option-control"><label for="Holo3D_reduc_prix">Remise (€)</label><input id="Holo3D_reduc_prix" type="number" min="0" name="Holo3D_reduc_prix" value="{{ event.event_option.Holo3D_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="PanneauFontaine" {% if event.event_option.PanneauFontaine %}checked{% endif %}> Panneau fontaine</label>
+                            <div class="event-option-control"><label for="PanneauFontaine_reduc_prix">Remise (€)</label><input id="PanneauFontaine_reduc_prix" type="number" min="0" name="PanneauFontaine_reduc_prix" value="{{ event.event_option.PanneauFontaine_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="VideoLivreOr" {% if event.event_option.VideoLivreOr %}checked{% endif %}> Vidéo livre d'or</label>
+                            <div class="event-option-control"><label for="VideoLivreOr_reduc_prix">Remise (€)</label><input id="VideoLivreOr_reduc_prix" type="number" min="0" name="VideoLivreOr_reduc_prix" value="{{ event.event_option.VideoLivreOr_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="PhotographeVoguebooth" {% if event.event_option.PhotographeVoguebooth %}checked{% endif %}> Photographe Voguebooth</label>
+                            <div class="event-option-control"><label for="PhotographeVoguebooth_reduc_prix">Remise (€)</label><input id="PhotographeVoguebooth_reduc_prix" type="number" min="0" name="PhotographeVoguebooth_reduc_prix" value="{{ event.event_option.PhotographeVoguebooth_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="ImpressionVoguebooth" {% if event.event_option.ImpressionVoguebooth %}checked{% endif %}> Impression Voguebooth</label>
+                            <div class="event-option-control"><label for="ImpressionVoguebooth_reduc_prix">Remise (€)</label><input id="ImpressionVoguebooth_reduc_prix" type="number" min="0" name="ImpressionVoguebooth_reduc_prix" value="{{ event.event_option.ImpressionVoguebooth_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <label class="event-option-toggle"><input type="checkbox" name="DecorVoguebooth" {% if event.event_option.DecorVoguebooth %}checked{% endif %}> Décor Voguebooth</label>
+                            <div class="event-option-control"><label for="DecorVoguebooth_reduc_prix">Remise (€)</label><input id="DecorVoguebooth_reduc_prix" type="number" min="0" name="DecorVoguebooth_reduc_prix" value="{{ event.event_option.DecorVoguebooth_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <div class="event-option-control"><label for="magnets">Quantité de magnets</label><input id="magnets" type="number" min="0" name="magnets" value="{{ event.event_option.magnets|default_if_none:0 }}" inputmode="numeric"></div>
+                            <div class="event-option-control"><label for="magnets_reduc_prix">Remise (€)</label><input id="magnets_reduc_prix" type="number" min="0" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <div class="event-option-control"><label for="PorteCles">Quantité de porte-clés</label><input id="PorteCles" type="number" min="0" name="PorteCles" value="{{ event.event_option.PorteCles|default_if_none:0 }}" inputmode="numeric"></div>
+                            <div class="event-option-control"><label for="PorteCles_reduc_prix">Remise (€)</label><input id="PorteCles_reduc_prix" type="number" min="0" name="PorteCles_reduc_prix" value="{{ event.event_option.PorteCles_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                        <div class="event-option-row">
+                            <div class="event-option-control"><label for="MagnetsSimple">Quantité de magnets simples</label><input id="MagnetsSimple" type="number" min="0" name="MagnetsSimple" value="{{ event.event_option.MagnetsSimple|default_if_none:0 }}" inputmode="numeric"></div>
+                            <div class="event-option-control"><label for="MagnetsSimple_reduc_prix">Remise (€)</label><input id="MagnetsSimple_reduc_prix" type="number" min="0" name="MagnetsSimple_reduc_prix" value="{{ event.event_option.MagnetsSimple_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
+                        </div>
+                    </div>
+                </section>
 
-    <h2>Informations sur l'Événement</h2>
-    <div>
-        <h3>Client</h3>
-        <label><b>CARD TRELLO:</b> {{ event.id_card }}</label><br>
-        <label><b>N°DEVIS:</b> {{ event.num_devis }}</label><br>
-        <label><b>Created at :</b> {{ event.created_at|date:'d-m-Y' }}</label><br>
-        <label><b>Signed at: </b> {{ event.signer_at|date:'d-m-Y' }}</label><br>
-        <label><b>Nb Relance Devis: </b> {{ event.client.nb_relance_devis }}</label><br>
-        <label><b>Code Espace: </b> {{ event.client.code_espace_client }}</label><br>
-        <label><b>Dossier Client: </b> {{ event.event_template.directory_name }}</label><br>
-        <br>
-        <label><input type="checkbox" name="raison_sociale" {% if event.client.raison_sociale %}checked{% endif %}>Entreprise</label><br>
-        <label>Nom: <input type="text" name="client_nom" value="{{ event.client.nom }}"></label><br>
-        <label>Email: <input type="email" name="client_mail" value="{{ event.client.mail }}"></label><br>
-        <label>Téléphone: <input type="text" name="client_numero_telephone"
-                                 value="{{ event.client.numero_telephone }}"></label><br>
-        <label>Comment avez-vous trouvé ?:
-            <select name="client_how_find">
-                {% for choice, display in event.client.HOW_FIND %}
-                <option value="{{ choice }}"
-                        {% if choice == event.client.how_find %}selected{% endif %}>{{ display }}
-                </option>
-                {% endfor %}
-            </select>
-        </label><br>
+                <section class="event-panel" id="finance">
+                    <div class="event-panel__header">
+                        <div class="event-panel__heading">
+                            <span class="event-panel__icon"><i class="fas fa-euro-sign"></i></span>
+                            <div>
+                                <h2>Tarification</h2>
+                                <p class="event-panel__subtitle">Le prix proposé est recalculé à la sauvegarde avec les options et la livraison.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-form-grid event-form-grid--three">
+                        <div class="event-field">
+                            <label for="prix_brut">Prix brut (€)</label>
+                            <input id="prix_brut" type="number" min="0" name="prix_brut" value="{{ event.prix_brut|default:0 }}" inputmode="numeric">
+                        </div>
+                        <div class="event-field">
+                            <label for="reduc_product">Remise produit (€)</label>
+                            <input id="reduc_product" type="number" min="0" name="reduc_product" value="{{ event.reduc_product|default:0 }}" inputmode="numeric">
+                        </div>
+                        <div class="event-field">
+                            <label for="reduc_all">Remise globale (€)</label>
+                            <input id="reduc_all" type="number" min="0" name="reduc_all" value="{{ event.reduc_all|default:0 }}" inputmode="numeric">
+                        </div>
+                        <div class="event-field">
+                            <label for="prix_proposed">Prix proposé (€)</label>
+                            <input id="prix_proposed" type="number" name="prix_proposed" value="{{ event.prix_proposed|default:0 }}" readonly>
+                            <p class="event-field__help">Calculé automatiquement à l'enregistrement.</p>
+                        </div>
+                        <div class="event-field">
+                            <span class="event-field__label">Prix validé</span>
+                            <input type="text" value="{% if event.prix_valided %}{{ event.prix_valided }} €{% else %}Non validé{% endif %}" readonly>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="event-save-bar">
+                    <p class="event-save-state" id="event-save-state">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        <span>Les informations affichées sont enregistrées.</span>
+                    </p>
+                    <button class="event-save-button" id="event-save-button" type="submit">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        <span>Enregistrer les modifications</span>
+                    </button>
+                </div>
+            </form>
+
+            <section class="event-actions" id="actions">
+                <h2>Actions sur l'événement</h2>
+                <p class="event-actions__intro">Documents, envois et changement de parcours commercial.</p>
+
+                {% if event.prix_proposed %}
+                <div class="event-action-grid">
+                    <form method="POST" action="{% url 'generate_devis_pdf' event.id %}">{% csrf_token %}<button class="event-action-button" type="submit"><i class="fas fa-file-pdf"></i> Générer le devis</button></form>
+                    <form method="POST" action="{% url 'generate_facture_pdf' event.id %}">{% csrf_token %}<button class="event-action-button" type="submit"><i class="fas fa-receipt"></i> Générer la facture</button></form>
+                    <form method="POST" action="{% url 'confirmation_envoi_mail' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--warning" type="submit"><i class="fas fa-paper-plane"></i> Envoyer le devis</button></form>
+                    <form method="POST" action="{% url 'confirmation_val_devis' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--success" type="submit"><i class="fas fa-check"></i> Valider le devis</button></form>
+                    <form method="POST" action="{% url 'relance_espace_client' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--warning" type="submit"><i class="fas fa-redo-alt"></i> Relancer l'espace client</button></form>
+                    <form method="POST" action="{% url 'send_media' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--purple" type="submit"><i class="fas fa-photo-video"></i> Envoyer les médias</button></form>
+                    <form method="POST" action="{% url 'refused_devis' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--danger" type="submit"><i class="fas fa-times"></i> Refuser le devis</button></form>
+                </div>
+                {% endif %}
+
+                <div class="event-actions__footer">
+                    <a class="event-back-link" href="{% url 'lst_devis' %}"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+                    <form method="POST" action="{% url 'confirmation_del_devis' event.id %}">{% csrf_token %}<button class="event-action-button event-action-button--danger" type="submit"><i class="fas fa-trash-alt"></i> Supprimer l'événement</button></form>
+                </div>
+            </section>
+        </div>
     </div>
+</div>
+{% endblock content %}
 
-    <div>
-        <h3>Détails de l'Événement</h3>
-        <label>Date: <input type="date" name="date_evenement"
-                            value="{{ event.event_details.date_evenement|date:'Y-m-d' }}"></label><br>
-        <label>Adresse: <input type="text" name="adresse_evenement"
-                               value="{{ event.event_details.adresse_evenement }}"></label><br>
-        <label>Ville: <input type="text" name="ville_evenement"
-                             value="{{ event.event_details.ville_evenement }}"></label><br>
-        <label>Code Postal: <input type="text" name="code_postal_evenement"
-                                   value="{{ event.event_details.code_postal_evenement }}"></label><br>
-        <label>Commentaire Client: <br><textarea name="comment_client"
-                                                 value="{{ event.event_details.comment_client }}">{{ event.event_details.comment_client }}</textarea></label><br>
-        <label>Commentaire: <br><textarea name="comment"
-                                          value="{{ event.event_details.comment }}">{{ event.event_details.comment }}</textarea></label><br>
-        <label>Horaire: <input type="time" name="horaire" value="{{ event.event_details.horaire }}"></label><br>
-        <label>Url modèle: <input type="text" name="url_modele"
-                                  value="{{ event.event_template.url_modele }}"></label><br>
-        <label>Texte modèle: <br><textarea name="text_template"
-                                           value="{{ event.event_template.text_template }}">{{ event.event_template.text_template }}</textarea></label><br>
-        <label>Url Music 360: <input type="text" name="url_music_360"
-                                  value="{{ event.event_template.url_music_360 }}"></label><br>
-
-
-        <label>Template Directory:
-            <input type="text" id="directoryPath" name="template_directory" value="\\192.168.1.47\">
-            <button type="button" onclick="copyToClipboard('directoryPath')">Copier le lien</button>
-        </label><br>
-        <label>Fichier Directory:
-            <input type="text" id="directoryPath2" name="link_media_shared"
-                   value="{{ event.event_template.link_media_shared }}">
-            <button type="button" onclick="copyToClipboard('directoryPath2')">Copier le lien</button>
-        </label><br>
-
-        <script>
-    function copyToClipboard(elementId) {
-        const copyText = document.getElementById(elementId);
-        copyText.select();
-        navigator.clipboard.writeText(copyText.value).catch(() => {
-            console.error("Une erreur est survenue lors de la copie.");
-        });
-    }
-        </script>
-
-
-    </div>
-
-    <div>
-        <h3>Produits de l'Événement</h3>
-        <label><input type="checkbox" name="photobooth" {% if event.event_product.photobooth %}checked{% endif %}>
-            Photobooth</label><br>
-        <label><input type="checkbox" name="miroirbooth" {% if event.event_product.miroirbooth %}checked{% endif %}>
-            Miroirbooth</label><br>
-        <label><input type="checkbox" name="videobooth" {% if event.event_product.videobooth %}checked{% endif %}>
-            Videobooth</label><br>
-        <label><input type="checkbox" name="voguebooth" {% if event.event_product.voguebooth %}checked{% endif %}>
-            VogueBooth</label><br>
-        <label><input type="checkbox" name="ipadbooth" {% if event.event_product.ipadbooth %}checked{% endif %}>
-            Ipadbooth</label><br>
-        <label><input type="checkbox" name="airbooth" {% if event.event_product.airbooth %}checked{% endif %}>
-            Airbooth</label><br>
-    </div>
-
-    <div>
-        <h3>Options de l'Événement</h3>
-
-        <label><input type="checkbox" name="MurFloral" id="mur_floral_checkbox" {% if event.event_option.MurFloral %}checked{% endif %}> Mur
-            Floral</label><br>
-                <script>
-        document.getElementById('mur_floral_checkbox').addEventListener('change', function() {
-            document.getElementById('mur_floral_style').disabled = !this.checked;
-        });
-        </script>
-        <label>Mur Floral Reduc<input type="number" name="MurFloral_reduc_prix"
-                                      value="{{ event.event_option.MurFloral_reduc_prix }}"></label><br>
-<label>Mur Floral Style</label>
-
-        <select name="mur_floral_style" id="mur_floral_style"
-                {% if not event.event_option.MurFloral %}disabled{% endif %}>
-            <option value="">-- Sélectionnez --</option>
-            <option value="rideau_blanc" {% if event.event_option.mur_floral_style == "rideau_blanc" %}selected{% endif %}>Rideau blanc</option>
-            <option value="gatsby" {% if event.event_option.mur_floral_style == "gatsby" %}selected{% endif %}>Gatsby</option>
-            <option value="blanc" {% if event.event_option.mur_floral_style == "blanc" %}selected{% endif %}>Blanc</option>
-            <option value="rose_rouge" {% if event.event_option.mur_floral_style == "rose_rouge" %}selected{% endif %}>Rose rouge</option>
-            <option value="paillette_rose" {% if event.event_option.mur_floral_style == "paillette_rose" %}selected{% endif %}>Paillette rose</option>
-            <option value="vegetale" {% if event.event_option.mur_floral_style == "vegetale" %}selected{% endif %}>Végétale</option>
-            <option value="blanc_rose" {% if event.event_option.mur_floral_style == "blanc_rose" %}selected{% endif %}>Blanc & Rose</option>
-            <option value="fond_lumineux" {% if event.event_option.mur_floral_style == "fond_lumineux" %}selected{% endif %}>Fond lumineux</option>
-            <option value="paillette_doree" {% if event.event_option.mur_floral_style == "paillette_doree" %}selected{% endif %}>Paillette dorée</option>
-            <option value="fleurs_rouge_blanc" {% if event.event_option.mur_floral_style == "fleurs_rouge_blanc" %}selected{% endif %}>Fleurs rouge & blanc</option>
-        </select>
-
-        <label><input type="checkbox" name="Phonebooth" {% if event.event_option.Phonebooth %}checked{% endif %}>
-            Phonebooth</label><br>
-        <label>Phonebooth Reduc<input type="number" name="Phonebooth_reduc_prix"
-                                      value="{{ event.event_option.Phonebooth_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="LivreOr" {% if event.event_option.LivreOr %}checked{% endif %}> Livre
-            d'or</label><br>
-        <label>Livre D'or Reduc<input type="number" name="LivreOr_reduc_prix"
-                                      value="{{ event.event_option.LivreOr_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="Fond360" {% if event.event_option.Fond360 %}checked{% endif %}>
-            Fond360</label><br>
-        <label>Fond360 Reduc<input type="number" name="Fond360_reduc_prix"
-                                   value="{{ event.event_option.Fond360_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="PanneauBienvenue"
-                      {% if event.event_option.PanneauBienvenue %}checked{% endif %}> PanneauBienvenue</label><br>
-        <label>PanneauBienvenue Reduc<input type="number" name="PanneauBienvenue_reduc_prix"
-                                            value="{{ event.event_option.PanneauBienvenue_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="Holo3D" {% if event.event_option.Holo3D %}checked{% endif %}>
-            Holo3D</label><br>
-        <label>Holo3D Reduc<input type="number" name="Holo3D_reduc_prix"
-                                  value="{{ event.event_option.Holo3D_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="PanneauFontaine" {% if event.event_option.PanneauFontaine %}checked{% endif %}>
-            PanneauFontaine</label><br>
-        <label>PanneauFontaine Reduc<input type="number" name="PanneauFontaine_reduc_prix"
-                                  value="{{ event.event_option.PanneauFontaine_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="VideoLivreOr" {% if event.event_option.VideoLivreOr %}checked{% endif %}>
-            VideoLivreOr</label><br>
-        <label>VideoLivreOr Reduc<input type="number" name="VideoLivreOr_reduc_prix"
-                                  value="{{ event.event_option.VideoLivreOr_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="PhotographeVoguebooth"
-                      {% if event.event_option.PhotographeVoguebooth %}checked{% endif %}>
-            PhotographeVoguebooth</label><br>
-        <label>PhotographeVoguebooth Reduc<input type="number" name="PhotographeVoguebooth_reduc_prix"
-                                                 value="{{ event.event_option.PhotographeVoguebooth_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="ImpressionVoguebooth"
-                      {% if event.event_option.ImpressionVoguebooth %}checked{% endif %}>
-            ImpressionVoguebooth</label><br>
-        <label>ImpressionVoguebooth Reduc<input type="number" name="ImpressionVoguebooth_reduc_prix"
-                                                value="{{ event.event_option.ImpressionVoguebooth_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="DecorVoguebooth"
-                      {% if event.event_option.DecorVoguebooth %}checked{% endif %}> DecorVoguebooth</label><br>
-        <label>DecorVoguebooth Reduc<input type="number" name="DecorVoguebooth_reduc_prix"
-                                           value="{{ event.event_option.DecorVoguebooth_reduc_prix }}"></label><br>
-
-        <label>Magnets: <input type="number" name="magnets" value="{{ event.event_option.magnets }}"></label><br>
-        <label>magnets Reduc<input type="number" name="magnets_reduc_prix"
-                                   value="{{ event.event_option.magnets_reduc_prix }}"></label><br>
-
-        <label>PorteCles: <input type="number" name="PorteCles" value="{{ event.event_option.PorteCles }}"></label><br>
-        <label>PorteCles Reduc<input type="number" name="PorteCles_reduc_prix"
-                                   value="{{ event.event_option.PorteCles_reduc_prix }}"></label><br>
-
-        <label>MagnetsSimple: <input type="number" name="MagnetsSimple" value="{{ event.event_option.MagnetsSimple }}"></label><br>
-        <label>MagnetsSimple Reduc<input type="number" name="MagnetsSimple_reduc_prix"
-                                   value="{{ event.event_option.MagnetsSimple_reduc_prix }}"></label><br>
-
-        <label><input type="checkbox" name="livraison" {% if event.event_option.livraison %}checked{% endif %}>
-            Livraison</label><br>
-        <label>Durée: <input type="number" name="duree" value="{{ event.event_option.duree }}"> heures</label><br>
-    </div>
-
-    <div>
-        <h3>Autres Informations</h3>
-        <label>Prix Brut: <input type="number" name="prix_brut" value="{{ event.prix_brut }}"></label><br>
-        <label>Reduc Product: <input type="number" name="reduc_product"
-                                     value="{{ event.reduc_product }}"></label><br>
-        <label>Reduc All: <input type="number" name="reduc_all" value="{{ event.reduc_all }}"></label><br>
-        <label>Prix Proposé: <input type="number" name="prix_proposed"
-                                    value="{{ event.prix_proposed }}"></label><br>
-        <label>Prix Validé: {{ event.prix_valided }}</label><br>
-        <br>
-        <!-- Notez que vous ne pouvez pas modifier created_at et signer_at ici car ils sont gérés automatiquement -->
-    </div>
-
-    <button type="submit" class="button-save">Sauvegarder les modifications</button>
-</form>
-{% if event.prix_proposed %}
-<form method="POST" action="{% url 'generate_devis_pdf' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-generate">Générer DEVIS</button>
-</form>
-<form method="POST" action="{% url 'generate_facture_pdf' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-generate">Générer FACTURE</button>
-</form>
-<form method="POST" action="{% url 'confirmation_envoi_mail' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-send">Envoi DEVIS</button>
-</form>
-<form method="POST" action="{% url 'confirmation_val_devis' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-valid">Valider DEVIS</button>
-</form>
-<form method="POST" action="{% url 'relance_espace_client' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-relance">Relance espace client</button>
-</form>
-<form method="POST" action="{% url 'send_media' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-media">Envoi Media</button>
-</form>
-<form method="POST" action="{% url 'refused_devis' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-refused">Refuser DEVIS</button>
-</form>
-{% endif %}
-
-<form method="POST" action="{% url 'confirmation_del_devis' event.id %}">
-    {% csrf_token %}
-    <button type="submit" class="button-del">
-        Suprimer l'Event
-    </button>
-</form>
-
-<form method="POST" action="{% url 'lst_devis' %}">
-    {% csrf_token %}
-    <button type="submit" class="button-back">
-        Retour à la liste des devis
-    </button>
-</form>
-{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/info_event.js' %}"></script>
+{% endblock extra_js %}

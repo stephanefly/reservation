@@ -56,6 +56,7 @@
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.1.0.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-3.1.0.min.js"></script>
+    {% block extra_css %}{% endblock extra_css %}
 </head>
 
 <body>
@@ -115,6 +116,7 @@
     </div>
 </footer>
 
+{% block extra_js %}{% endblock extra_js %}
 
 </body>
 

@@ -1,12 +1,10 @@
 import unicodedata
 import re
 import requests
-import unicodedata
-import re
 from datetime import datetime
 
 from app.module.cloud.get_pcloud_data import get_pcloud_event_folder_data
-from myselfiebooth.settings import API_PCLOUD_URL, ROOT_FOLDER_ID, ACCESS_TOKEN
+from myselfiebooth.settings import API_PCLOUD_URL, ACCESS_TOKEN
 
 
 def normalize_name(event):
@@ -23,27 +21,30 @@ def normalize_name(event):
 
     return normalized_name
 
-def rennaming_pcloud_event_folder(event, new_directory_name, prepa: bool = False):
+def rename_pcloud_event_folder(old_directory_name, new_directory_name, prepa: bool = False):
     """
-    Renname a folder on the pCloud server.
+    Renomme un dossier pCloud à partir de son ancien nom.
     """
-    folder_data = get_pcloud_event_folder_data(event.event_template.directory_name, prepa)
+    folder_data = get_pcloud_event_folder_data(old_directory_name, prepa)
+    if not folder_data:
+        return False
 
     url = f"{API_PCLOUD_URL}/renamefolder"
-    folder_client_name = event.event_template.directory_name
     params = {
         'access_token': ACCESS_TOKEN,
         'folderid': folder_data["folderid"],
         'toname': new_directory_name
     }
 
-    response = requests.get(url, params=params)
-    data = response.json()  # Parse the JSON response
-    if data["result"] == 2004:
-        return True
+    response = requests.get(url, params=params, timeout=(3.05, 12))
+    response.raise_for_status()
+    return response.json().get("result") in (0, 2004)
 
-    # Ensure the 'metadata' key exists and contains 'contents'
-    elif 'metadata' in data and 'contents' in data['metadata']:
-        for item in data['metadata']['contents']:
-            if item.get('name') == folder_client_name and item.get('isfolder'):
-                return True
+
+def rennaming_pcloud_event_folder(event, new_directory_name, prepa: bool = False):
+    """Compatibilité avec les appels existants qui transmettent un Event."""
+    return rename_pcloud_event_folder(
+        event.event_template.directory_name,
+        new_directory_name,
+        prepa=prepa,
+    )

@@ -1,10 +1,7 @@
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from datetime import datetime
-
-from app.module.google.contact import update_contact_keep_phone
-
 
 class Client(models.Model):
     nom = models.CharField(max_length=100)
@@ -376,11 +373,10 @@ class Event(models.Model):
 
         # 4) Après sauvegarde : synchronisation Google éventuelle
         if status_changed:
-            try:
-                update_contact_keep_phone(self)
-            except Exception as e:
-                # On log, mais on ne bloque pas le save
-                print(f"Erreur update_contact_keep_phone pour event {self.pk}: {e}")
+            from app.module.external_sync import queue_google_contact_sync
+
+            event_id = self.pk
+            transaction.on_commit(lambda: queue_google_contact_sync(event_id))
 
 
 class NameCost(models.Model):

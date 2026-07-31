@@ -1,71 +1,15 @@
 from app.module.cloud.get_pcloud_data import create_pcloud_event_folder
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from app.module.espace_client.data_client import generate_code_espace_client
-from app.module.cloud.rennaming import normalize_name, rennaming_pcloud_event_folder
+from app.module.cloud.rennaming import normalize_name
+from app.module.external_sync import queue_pcloud_rename
+from app.module.data_bdd.event_pricing import parse_int, update_event_option
 from app.models import EventTemplate, EventAcompte
 from app.module.mail.send_mail_event import send_mail_event
 from app.module.trello.move_card import to_acompte_ok
 from django.db import transaction
 from django.utils.timezone import now
 from app.module.notion.notion_service import create_notion_card
-
-
-def parse_int(value, default=0):
-    try:
-        return int(value) if value is not None and value.strip() != '' else default
-    except (ValueError, TypeError):
-        return default
-
-
-def update_event_option(request, event_option):
-    # Définition des options avec leurs méthodes de prix de base et clés POST
-    options = [
-        {"name": "MurFloral", "prix_base_method": event_option.prix_base_MurFloral, "prix_brut": "MurFloral_reduc_prix"},
-        {"name": "Phonebooth", "prix_base_method": event_option.prix_base_Phonebooth, "prix_brut": "Phonebooth_reduc_prix"},
-        {"name": "LivreOr", "prix_base_method": event_option.prix_base_LivreOr, "prix_brut": "LivreOr_reduc_prix"},
-        {"name": "Fond360", "prix_base_method": event_option.prix_base_Fond360,"prix_brut": "Fond360_reduc_prix"},
-        {"name": "PanneauBienvenue", "prix_base_method": event_option.prix_base_PanneauBienvenue,"prix_brut": "PanneauBienvenue_reduc_prix"},
-        {"name": "Holo3D", "prix_base_method": event_option.prix_base_Holo3D, "prix_brut": "Holo3D_reduc_prix"},
-        {"name": "PanneauFontaine", "prix_base_method": event_option.prix_base_PanneauFontaine, "prix_brut": "PanneauFontaine_reduc_prix"},
-        {"name": "VideoLivreOr", "prix_base_method": event_option.prix_base_VideoLivreOr, "prix_brut": "VideoLivreOr_reduc_prix"},
-        {"name": "PhotographeVoguebooth", "prix_base_method": event_option.prix_base_PhotographeVoguebooth, "prix_brut": "PhotographeVoguebooth_reduc_prix"},
-        {"name": "ImpressionVoguebooth", "prix_base_method": event_option.prix_base_ImpressionVoguebooth, "prix_brut": "ImpressionVoguebooth_reduc_prix"},
-        {"name": "DecorVoguebooth", "prix_base_method": event_option.prix_base_DecorVoguebooth, "prix_brut": "DecorVoguebooth_reduc_prix"},
-
-        # Ajoutez d'autres options ici si nécessaire
-    ]
-
-    total_option = 0
-    for option in options:
-        option_active = request.POST.get(option["name"]) == 'on'
-        reduc_prix = parse_int(request.POST.get(option["prix_brut"], 0))
-
-        if option_active:
-            setattr(event_option, option["name"], option_active)
-            setattr(event_option, f"{option['name']}_reduc_prix", reduc_prix)
-
-            prix_base = option["prix_base_method"]()
-            total_option += prix_base - reduc_prix
-
-    # Traitement spécifique pour les magnets après la boucle des autres options
-    event_option.magnets = parse_int(request.POST.get('magnets', 0))
-    event_option.magnets_reduc_prix = parse_int(request.POST.get('magnets_reduc_prix'))
-    if event_option.magnets:
-        total_option += event_option.prix_base_magnets(event_option.magnets) - event_option.magnets_reduc_prix
-
-    event_option.PorteCles = parse_int(request.POST.get('PorteCles', 0))
-    event_option.PorteCles_reduc_prix = parse_int(request.POST.get('PorteCles_reduc_prix'))
-    if event_option.PorteCles:
-        total_option += event_option.prix_base_PorteCles(event_option.PorteCles) - event_option.PorteCles
-
-    event_option.MagnetsSimple = parse_int(request.POST.get('MagnetsSimple', 0))
-    event_option.MagnetsSimple_reduc_prix = parse_int(request.POST.get('MagnetsSimple_reduc_prix'))
-    if event_option.MagnetsSimple:
-        total_option += event_option.prix_base_MagnetsSimple(event_option.MagnetsSimple) - event_option.MagnetsSimple_reduc_prix
-
-    event_option.save()
-    return total_option
-
 
 def update_data(event, request):
 
@@ -97,10 +41,13 @@ def update_data(event, request):
         event_template = event.event_template or EventTemplate(statut=False)
         event_template.url_modele = request.POST.get('url_modele')
         event_template.text_template = request.POST.get('text_template')
-        event_template.link_media_shared = request.POST.get('link_media_shared')
         if event_product.videobooth and event.prix_valided:
             event_template.url_music_360 = request.POST.get('url_music_360')
         event_template.save()
+
+        if event.event_post_presta:
+            event.event_post_presta.link_media_shared = request.POST.get('link_media_shared') or None
+            event.event_post_presta.save(update_fields=['link_media_shared'])
 
         if not event.event_template:
             event.event_template = event_template
@@ -109,8 +56,7 @@ def update_data(event, request):
         else:
             new_directory_name = normalize_name(event)
             if new_directory_name != event.event_template.directory_name:
-                rennaming_pcloud_event_folder(event, new_directory_name, prepa=True)
-                rennaming_pcloud_event_folder(event, new_directory_name)
+                queue_pcloud_rename(event.event_template.directory_name, new_directory_name)
                 event.event_template.directory_name = new_directory_name
                 event.event_template.save()
                 event.save()
@@ -129,34 +75,13 @@ def update_data(event, request):
     # Mise à jour des options de l'événement et calcul du total
     total_option = update_event_option(request, event_option)
 
-    # LIVRAISON
-    event_option.MurFloral = request.POST.get('MurFloral') == 'on'
-    if event_option.MurFloral :
-        event_option.mur_floral_style = request.POST.get('mur_floral_style')
-    event_option.Phonebooth = request.POST.get('Phonebooth') == 'on'
-    event_option.LivreOr = request.POST.get('LivreOr') == 'on'
-    event_option.Fond360 = request.POST.get('Fond360') == 'on'
-    event_option.PanneauBienvenue = request.POST.get('PanneauBienvenue') == 'on'
-    event_option.Holo3D = request.POST.get('Holo3D') == 'on'
-    event_option.PanneauFontaine = request.POST.get('PanneauFontaine') == 'on'
-    event_option.VideoLivreOr = request.POST.get('VideoLivreOr') == 'on'
-    event_option.PhotographeVoguebooth = request.POST.get('PhotographeVoguebooth') == 'on'
-    event_option.ImpressionVoguebooth = request.POST.get('ImpressionVoguebooth') == 'on'
-    event_option.DecorVoguebooth = request.POST.get('DecorVoguebooth') == 'on'
-    event_option.magnets = request.POST.get('magnets', '0')
-    event_option.PorteCles = request.POST.get('PorteCles', '0')
-    event_option.MagnetsSimple = request.POST.get('MagnetsSimple', '0')
-    event_option.livraison = request.POST.get('livraison') == 'on'
-    event_option.duree = request.POST.get('duree', '0')
-    event_option.save()
-
+    # Mise à jour de la tarification
     event.prix_brut = parse_int(request.POST.get('prix_brut'))
     event.reduc_product = parse_int(request.POST.get('reduc_product', '0'))
     event.reduc_all = parse_int(request.POST.get('reduc_all', '0'))
 
     int_prix_livraison, str_prix_livraison = calcul_prix_distance(event)
 
-    event.prix_proposed = parse_int(request.POST.get('prix_proposed'))
     event.prix_proposed = event.prix_brut - event.reduc_product - event.reduc_all + total_option + int_prix_livraison
 
     if event.status == 'Initied':

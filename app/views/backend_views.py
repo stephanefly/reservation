@@ -7,7 +7,7 @@ from app.module.mail.send_mail_event import send_mail_event
 from django.utils.timezone import now
 
 from ..module.mail.test_mail_devis import test_mail_devis
-from ..module.trello.update_data_card import update_option_labels_trello, update_trello_date
+from ..module.external_sync import queue_trello_sync
 from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_fait
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.views.decorators.http import require_http_methods
@@ -154,19 +154,35 @@ def lst_devis(request):
 
 
 def info_event(request, id):
-    event = get_object_or_404(Event, id=id)
+    event = get_object_or_404(
+        Event.objects.select_related(
+            'client',
+            'event_details',
+            'event_product',
+            'event_option',
+            'event_template',
+            'event_post_presta',
+        ),
+        id=id,
+    )
     return render(request, 'app/backend/info_event.html', {'event': event})
 
 
 @require_http_methods(["POST"])
 def update_event(request, id):
-    event = get_object_or_404(Event, id=id)
+    event = get_object_or_404(
+        Event.objects.select_related(
+            'client',
+            'event_details',
+            'event_product',
+            'event_option',
+            'event_template',
+            'event_post_presta',
+        ),
+        id=id,
+    )
     update_data(event, request)
-    try:
-        update_trello_date(event)
-        update_option_labels_trello(event)
-    except:
-        pass
+    queue_trello_sync(event.id)
     return redirect('info_event', id=event.id)
 
 

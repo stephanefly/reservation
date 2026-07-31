@@ -1,117 +1,61 @@
 import requests
-import json
+
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
 
-# https://api.trello.com/1/boards/bm6IDBqY/cards?key=29e7594c82a72b2ee23f23926ad2308a&token=c9df6b2f0b980a240ef4d936489446f0af8da51e99c2672fed693a97359be972
-# https://api.trello.com/1/boards/bm6IDBqY/lists?key=29e7594c82a72b2ee23f23926ad2308a&token=c9df6b2f0b980a240ef4d936489446f0af8da51e99c2672fed693a97359be972
-# https://api.trello.com/1/boards/bm6IDBqY/labels?key=29e7594c82a72b2ee23f23926ad2308a&token=c9df6b2f0b980a240ef4d936489446f0af8da51e99c2672fed693a97359be972
+BOARD_ID = "bm6IDBqY"
+TRELLO_TIMEOUT = (3.05, 10)
+SPECIAL_LABEL_IDS = {
+    "360Airbooth": "669591d56535a9bb2e8a60bd",
+    "Voguebooth": "669591939c9d96fbe5d218c2",
+    "Ipadbooth": "669591e13475d95a06c61737",
+}
+
+
+def _get_json(url):
+    response = requests.get(
+        url,
+        params={"key": KEY_TRELLO, "token": TOKEN_TRELLO},
+        timeout=TRELLO_TIMEOUT,
+    )
+    response.raise_for_status()
+    return response.json()
+
 
 def get_lst_labels():
-   url = "http://api.trello.com/1/board/bm6IDBqY/labels"
-
-   query = {
-      'key': KEY_TRELLO,
-      'token': TOKEN_TRELLO,
-   }
-
-   response = requests.request(
-      "GET",
-      url,
-      params=query
-   )
-
-   lst_labels = json.loads(response.text)
-   return lst_labels
+    return _get_json(f"https://api.trello.com/1/boards/{BOARD_ID}/labels")
 
 
 def get_lst_listes():
-   url = "http://api.trello.com/1/board/bm6IDBqY/lists"
-
-   query = {
-      'key': KEY_TRELLO,
-      'token': TOKEN_TRELLO,
-   }
-
-   response = requests.request(
-      "GET",
-      url,
-      params=query
-   )
-
-   lst_listes = json.loads(response.text)
-
-   return lst_listes
+    return _get_json(f"https://api.trello.com/1/boards/{BOARD_ID}/lists")
 
 
 def get_lst_cards():
-
-   url = "https://api.trello.com/1/board/bm6IDBqY/cards"
-
-   query = {
-      'key': KEY_TRELLO,
-      'token': TOKEN_TRELLO,
-   }
-
-   response = requests.request(
-      "GET",
-      url,
-      params=query,
-   )
+    return _get_json(f"https://api.trello.com/1/boards/{BOARD_ID}/cards")
 
 
-   lst_cards = json.loads(response.text)
-   return lst_cards
+def get_id_label(post_label, labels=None):
+    if post_label in SPECIAL_LABEL_IDS:
+        return SPECIAL_LABEL_IDS[post_label]
 
-def get_id_label(post_label):
-   # Supposons que get_lst_labels() renvoie une liste de labels sous forme de dictionnaires
-   for label in get_lst_labels():
-      if label['name'] == post_label:
-         return label['id']  # Retourner l'ID dès qu'une correspondence est trouvée
-      elif "360Airbooth" == post_label:
-         return "669591d56535a9bb2e8a60bd"
-      elif "Voguebooth" == post_label:
-         return "669591939c9d96fbe5d218c2"
-      elif "Ipadbooth" == post_label:
-         return "669591e13475d95a06c61737"
+    labels = labels if labels is not None else get_lst_labels()
+    for label in labels:
+        if label["name"] == post_label:
+            return label["id"]
+    return None
 
-def get_data_card_by_name(name):
-   for card_json in get_lst_cards():
-      if card_json['name'] == name:
-         return card_json
+
+def get_data_card_by_name(name, cards=None):
+    cards = cards if cards is not None else get_lst_cards()
+    for card_json in cards:
+        if card_json["name"] == name:
+            return card_json
+    return None
+
 
 def get_prio_card_name():
+    return _get_json("https://api.trello.com/1/lists/617aa17f82103360510559e2/cards")
 
-   # PRIO : "idList": "617aa17f82103360510559e2",
-   url = "https://api.trello.com/1/lists/617aa17f82103360510559e2/cards"
-
-   query = {
-      'key': KEY_TRELLO,
-      'token': TOKEN_TRELLO,
-   }
-
-   response = requests.request(
-      "GET",
-      url,
-      params=query
-   )
-
-   lst_cards = json.loads(response.text)
-   return lst_cards
 
 def get_all_card():
-   url = "https://api.trello.com/1/boards/bm6IDBqY/cards"
-
-   query = {
-      'key': KEY_TRELLO,
-      'token': TOKEN_TRELLO,
-   }
-
-   response = requests.request(
-      "GET",
-      url,
-      params=query
-   )
-
-   all_trello_cards = json.loads(response.text)
-   return all_trello_cards
+    return get_lst_cards()
