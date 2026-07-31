@@ -11,54 +11,65 @@
         </div>
     </header>
 
-    <form class="backend-filter-card" method="get" action="{% url 'lst_devis' %}">
-        <div class="backend-filter-grid">
-            <div class="backend-field">
-                <label for="filter-nom">Client</label>
-                <input id="filter-nom" type="search" name="nom" placeholder="Nom du client" value="{{ filters.nom }}">
+    <details class="backend-filter-disclosure" {% if filters.nom or filters.tel or filters.date_event or filters.prix_min or filters.prix_max or filters.status %}open{% endif %}>
+        <summary>
+            <span class="backend-filter-disclosure__title"><i class="fas fa-sliders-h"></i> Filtres de recherche</span>
+            <span class="backend-filter-disclosure__meta">
+                {% if filters.nom or filters.tel or filters.date_event or filters.prix_min or filters.prix_max or filters.status %}<span class="backend-status backend-status--purple">Filtres actifs</span>{% endif %}
+                <i class="fas fa-chevron-down backend-filter-disclosure__chevron"></i>
+            </span>
+        </summary>
+        <form class="backend-filter-card" method="get" action="{% url 'lst_devis' %}">
+            <div class="backend-filter-grid">
+                <div class="backend-field">
+                    <label for="filter-nom">Client</label>
+                    <input id="filter-nom" type="search" name="nom" placeholder="Nom du client" value="{{ filters.nom }}">
+                </div>
+                <div class="backend-field">
+                    <label for="filter-tel">Téléphone</label>
+                    <input id="filter-tel" type="search" name="tel" placeholder="06…" value="{{ filters.tel }}" inputmode="tel">
+                </div>
+                <div class="backend-field">
+                    <label for="filter-date">Date</label>
+                    <input id="filter-date" type="search" name="date_event" placeholder="AAAA-MM-JJ" value="{{ filters.date_event }}">
+                </div>
+                <div class="backend-field">
+                    <label for="filter-prix-min">Prix minimum</label>
+                    <input id="filter-prix-min" type="number" min="0" name="prix_min" placeholder="0 €" value="{{ filters.prix_min }}" inputmode="numeric">
+                </div>
+                <div class="backend-field">
+                    <label for="filter-prix-max">Prix maximum</label>
+                    <input id="filter-prix-max" type="number" min="0" name="prix_max" placeholder="2 000 €" value="{{ filters.prix_max }}" inputmode="numeric">
+                </div>
+                <div class="backend-field">
+                    <label for="filter-status">Statut</label>
+                    <select id="filter-status" name="status">
+                        <option value="">Tous les statuts</option>
+                        {% for status_value, status_label in status_choices %}
+                        <option value="{{ status_value }}" {% if filters.status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="backend-actions">
+                    <button class="backend-button backend-button--primary" type="submit"><i class="fas fa-search"></i> Rechercher</button>
+                    <a class="backend-button backend-button--secondary" href="{% url 'lst_devis' %}" aria-label="Réinitialiser les filtres"><i class="fas fa-undo"></i></a>
+                </div>
             </div>
-            <div class="backend-field">
-                <label for="filter-tel">Téléphone</label>
-                <input id="filter-tel" type="search" name="tel" placeholder="06…" value="{{ filters.tel }}" inputmode="tel">
-            </div>
-            <div class="backend-field">
-                <label for="filter-date">Date</label>
-                <input id="filter-date" type="search" name="date_event" placeholder="AAAA-MM-JJ" value="{{ filters.date_event }}">
-            </div>
-            <div class="backend-field">
-                <label for="filter-prix-min">Prix minimum</label>
-                <input id="filter-prix-min" type="number" min="0" name="prix_min" placeholder="0 €" value="{{ filters.prix_min }}" inputmode="numeric">
-            </div>
-            <div class="backend-field">
-                <label for="filter-prix-max">Prix maximum</label>
-                <input id="filter-prix-max" type="number" min="0" name="prix_max" placeholder="2 000 €" value="{{ filters.prix_max }}" inputmode="numeric">
-            </div>
-            <div class="backend-field">
-                <label for="filter-status">Statut</label>
-                <select id="filter-status" name="status">
-                    <option value="">Tous les statuts</option>
-                    {% for status_value, status_label in status_choices %}
-                    <option value="{{ status_value }}" {% if filters.status == status_value %}selected{% endif %}>{{ status_label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="backend-actions">
-                <button class="backend-button backend-button--primary" type="submit"><i class="fas fa-search"></i> Rechercher</button>
-                <a class="backend-button backend-button--secondary" href="{% url 'lst_devis' %}" aria-label="Réinitialiser les filtres"><i class="fas fa-undo"></i></a>
-            </div>
-        </div>
-    </form>
+        </form>
+    </details>
 
-    <section class="backend-table-card" aria-labelledby="results-title">
-        <h2 class="backend-sr-only" id="results-title">Résultats</h2>
+    <section class="backend-table-card quote-list-card" aria-labelledby="results-title">
+        <div class="backend-table-heading">
+            <div><h2 id="results-title">Devis affichés</h2><p>{{ all_event|length }} résultat{{ all_event|length|pluralize }}</p></div>
+            <span class="backend-table-heading__hint"><i class="fas fa-info-circle"></i> Toutes les informations sont visibles dans chaque ligne</span>
+        </div>
         <div class="backend-table-scroll">
-            <table id="table" class="table">
+            <table class="table quote-list-table">
                 <thead>
                 <tr>
                     <th>Client</th>
                     <th>Téléphone</th>
                     <th>Création</th>
-                    <th>Jour</th>
                     <th>Date événement</th>
                     <th>Prix</th>
                     <th>Acompte</th>
@@ -68,44 +79,31 @@
                 <tbody>
                 {% for event in all_event %}
                 <tr>
-                    <td><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a></td>
-                    <td><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone|default:'—' }}</a></td>
-                    <td data-order="{{ event.created_at|date:'Y-m-d' }}">{{ event.created_at|date:'d/m/Y' }}</td>
-                    <td>{{ event.event_details.date_evenement|date:'D' }}</td>
-                    <td data-order="{{ event.event_details.date_evenement|date:'Y-m-d' }}">{{ event.event_details.date_evenement|date:'d/m/Y' }}</td>
-                    <td>{% if event.prix_valided %}<strong>{{ event.prix_valided }} €</strong>{% else %}{{ event.prix_proposed|default:0 }} €{% endif %}</td>
-                    <td>{% if event.event_acompte %}{{ event.event_acompte.montant_acompte|default:0 }} €{% else %}—{% endif %}</td>
-                    <td>
-                        <span class="backend-status
-                            {% if event.status == 'Acompte OK' or event.status == 'Presta FINI' %}backend-status--success
-                            {% elif event.status == 'Calculed' %}backend-status--warning
-                            {% elif event.status == 'Sended' or event.status == 'Resended' %}backend-status--info
-                            {% elif event.status == 'Post Presta' %}backend-status--purple
-                            {% elif event.status == 'Refused' or event.status == 'ANNULER' %}backend-status--danger{% endif %}">
-                            {{ event.get_status_display|default:event.status }}
-                        </span>
+                    <td data-label="Client">
+                        <div class="quote-cell-value"><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a><small>Devis {{ event.num_devis|default:'—' }} · {{ event.client.mail|default:'E-mail non renseigné' }}</small></div>
+                    </td>
+                    <td data-label="Téléphone"><div class="quote-cell-value"><a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone|default:'—' }}</a></div></td>
+                    <td data-label="Création" data-order="{{ event.created_at|date:'Y-m-d' }}"><div class="quote-cell-value">{{ event.created_at|date:'d/m/Y' }}</div></td>
+                    <td data-label="Événement" data-order="{{ event.event_details.date_evenement|date:'Y-m-d' }}"><div class="quote-cell-value"><strong>{{ event.event_details.date_evenement|date:'D d/m/Y' }}</strong><small>{{ event.event_details.ville_evenement|default:'Ville non renseignée' }}</small></div></td>
+                    <td data-label="Prix"><div class="quote-cell-value">{% if event.prix_valided %}<strong>{{ event.prix_valided }} €</strong><small>Validé</small>{% else %}<strong>{{ event.prix_proposed|default:0 }} €</strong><small>Proposé</small>{% endif %}</div></td>
+                    <td data-label="Acompte"><div class="quote-cell-value">{% if event.event_acompte %}<strong>{{ event.event_acompte.montant_acompte|default:0 }} €</strong>{% else %}—{% endif %}</div></td>
+                    <td data-label="Statut">
+                        <div class="quote-cell-value"><span class="backend-status
+                                {% if event.status == 'Acompte OK' or event.status == 'Presta FINI' %}backend-status--success
+                                {% elif event.status == 'Calculed' %}backend-status--warning
+                                {% elif event.status == 'Sended' or event.status == 'Resended' %}backend-status--info
+                                {% elif event.status == 'Post Presta' %}backend-status--purple
+                                {% elif event.status == 'Refused' or event.status == 'ANNULER' %}backend-status--danger{% endif %}">
+                                {{ event.get_status_display|default:event.status }}
+                            </span></div>
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="backend-empty"><i class="far fa-folder-open"></i> Aucun devis ne correspond à ces filtres.</td></tr>
+                <tr class="quote-list-table__empty"><td colspan="7" class="backend-empty"><i class="far fa-folder-open"></i> Aucun devis ne correspond à ces filtres.</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </section>
 </div>
-
-<script>
-$(document).ready(function () {
-    $('#table').DataTable({
-        responsive: true,
-        lengthChange: false,
-        paging: false,
-        searching: true,
-        info: false,
-        order: [[2, 'desc']],
-        language: { url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json" }
-    });
-});
-</script>
 {% endblock content %}

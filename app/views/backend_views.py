@@ -116,7 +116,12 @@ def lst_devis(request):
     status = request.GET.get('status', '').strip()
 
     # Initialisation de la requête avec les 15 derniers événements
-    all_event = Event.objects.all().order_by('-created_at')[:15]
+    event_queryset = Event.objects.select_related(
+        'client',
+        'event_details',
+        'event_acompte',
+    ).order_by('-created_at')
+    all_event = event_queryset[:15]
 
     # Appliquer les filtres dynamiquement
     filters = Q()  # Initialisez une requête vide
@@ -136,7 +141,7 @@ def lst_devis(request):
 
     # Appliquer les filtres si spécifiés
     if filters:
-        all_event = Event.objects.filter(filters).order_by('-created_at')
+        all_event = event_queryset.filter(filters)
 
     # Renvoyer les résultats au template
     return render(request, 'app/backend/lst_devis.html', {

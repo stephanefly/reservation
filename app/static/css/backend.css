@@ -345,6 +345,70 @@ html {
     box-shadow: 0 8px 25px rgba(27, 33, 51, 0.05);
 }
 
+.backend-filter-disclosure {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 25px rgba(27, 33, 51, 0.05);
+}
+
+.backend-filter-disclosure > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 58px;
+    padding: 12px 17px;
+    color: #344054;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.backend-filter-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+
+.backend-filter-disclosure > summary:hover {
+    color: var(--admin-primary-dark);
+    background: #faf9ff;
+}
+
+.backend-filter-disclosure > summary:focus-visible {
+    outline: 3px solid rgba(91, 52, 214, 0.2);
+    outline-offset: -3px;
+}
+
+.backend-filter-disclosure__title,
+.backend-filter-disclosure__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.backend-filter-disclosure__title > i {
+    color: var(--admin-primary);
+}
+
+.backend-filter-disclosure__chevron {
+    color: #7c8494;
+    transition: transform 160ms ease;
+}
+
+.backend-filter-disclosure[open] .backend-filter-disclosure__chevron {
+    transform: rotate(180deg);
+}
+
+.backend-filter-disclosure .backend-filter-card {
+    border: 0;
+    border-top: 1px solid var(--admin-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+
 .backend-filter-grid {
     display: grid;
     grid-template-columns: repeat(6, minmax(120px, 1fr)) auto;
@@ -417,6 +481,172 @@ html {
 .backend-table-card .dataTables_wrapper,
 .backend-table-card > .backend-table-scroll {
     padding: 14px;
+}
+
+.backend-table-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.backend-table-heading h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 820;
+}
+
+.backend-table-heading p {
+    margin: 3px 0 0;
+    color: var(--admin-muted);
+    font-size: 0.78rem;
+}
+
+.backend-table-heading__hint {
+    color: var(--admin-muted);
+    font-size: 0.78rem;
+    font-weight: 680;
+}
+
+.quote-list-card .backend-table-scroll {
+    overflow: visible;
+}
+
+.backend-main table.quote-list-table {
+    min-width: 0 !important;
+    table-layout: fixed;
+}
+
+.quote-list-table th:nth-child(1) { width: 23%; }
+.quote-list-table th:nth-child(2) { width: 13%; }
+.quote-list-table th:nth-child(3) { width: 10%; }
+.quote-list-table th:nth-child(4) { width: 16%; }
+.quote-list-table th:nth-child(5) { width: 10%; }
+.quote-list-table th:nth-child(6) { width: 10%; }
+.quote-list-table th:nth-child(7) { width: 18%; }
+
+.quote-list-table td {
+    overflow-wrap: anywhere;
+}
+
+.quote-cell-value {
+    min-width: 0;
+}
+
+.quote-cell-value > a,
+.quote-cell-value > strong,
+.quote-cell-value > small {
+    display: block;
+}
+
+.quote-cell-value > small {
+    margin-top: 3px;
+    color: var(--admin-muted);
+    font-size: 0.7rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1050px) {
+    .backend-main table.quote-list-table {
+        font-size: 0.79rem;
+    }
+
+    .quote-list-card .backend-table-scroll {
+        padding: 8px;
+    }
+
+    .quote-list-table .backend-status {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 860px) {
+    .quote-list-card {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .quote-list-card .backend-table-heading {
+        margin-bottom: 10px;
+        border: 1px solid var(--admin-border);
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .backend-table-heading__hint {
+        display: none;
+    }
+
+    .quote-list-card .backend-table-scroll {
+        padding: 0;
+    }
+
+    .backend-main table.quote-list-table,
+    .quote-list-table tbody,
+    .quote-list-table tr,
+    .quote-list-table td {
+        display: block;
+        width: 100% !important;
+    }
+
+    .quote-list-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .backend-main .quote-list-table tbody tr {
+        overflow: hidden;
+        margin-bottom: 11px;
+        border: 1px solid var(--admin-border);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(27, 33, 51, 0.06);
+    }
+
+    .backend-main .quote-list-table tbody td {
+        display: grid;
+        grid-template-columns: 105px minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+        min-height: 44px;
+        padding: 10px 13px;
+        border: 0;
+        border-bottom: 1px solid #eceef2;
+    }
+
+    .backend-main .quote-list-table tbody td:last-child {
+        border-bottom: 0;
+    }
+
+    .quote-list-table td::before {
+        content: attr(data-label);
+        padding-top: 2px;
+        color: var(--admin-muted);
+        font-size: 0.68rem;
+        font-weight: 840;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+    }
+
+    .quote-list-table .quote-cell-value {
+        grid-column: 2;
+    }
+
+    .backend-main .quote-list-table .quote-list-table__empty td {
+        display: block;
+    }
+
+    .quote-list-table__empty td::before {
+        display: none;
+    }
 }
 
 .backend-main table.table {
