@@ -92,7 +92,7 @@ MIDDLEWARE = [
 
 ]
 
-LOGIN_REDIRECT_URL = 'backend/lst_devis/'
+LOGIN_REDIRECT_URL = 'login_redirect'
 
 ROOT_URLCONF = 'myselfiebooth.urls'
 
