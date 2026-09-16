@@ -70,7 +70,7 @@ def desabonner(request, token):
     return render(request, 'app/frontend/desabonnement.html')
 
 def remerciement(request):
-    return redirect('https://myselfiebooth-paris.fr/merci/')
+    return render(request, 'app/frontend/remerciement.html')
 
 def tarifs(request):
     return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS})
