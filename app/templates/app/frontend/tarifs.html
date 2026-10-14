@@ -983,18 +983,11 @@
                     <p class="tarif-short">La valeur sûre pour offrir des tirages photo personnalisés à tous les invités.</p>
                     <div class="tarif-price-row">
                         <div class="tarif-price">
-                            <small>3h</small>
-                            <strong>{{ data_price.photobooth3h|default:"350" }}€</strong>
-                        </div>
-                        <div class="tarif-price">
-                            <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.photobooth|default:"600" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.photobooth|default:"600"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <small>Formule 5 heures</small>
+                            <strong>{{ data_price.photobooth|default:"450"|add:"-50" }}€</strong>
                         </div>
                     </div>
+                    <p>Déplacement et options confirmés dans votre devis.</p>
                     <ul class="tarif-included">
                         <li><img class="tarif-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions illimitées selon formule</li>
                         <li><img class="tarif-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>

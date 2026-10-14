@@ -345,7 +345,7 @@
                 <div class="step-header">
                     <p class="step-label">Étape 4</p>
                     <h2>Durée de présence</h2>
-                    <p>Choisissez la durée souhaitée, de 3h à 7h.</p>
+                    <p id="durationHelp">Choisissez la durée souhaitée, de 3h à 7h.</p>
                 </div>
 
                 <div class="included-mini-line">
@@ -1776,6 +1776,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateSummary() {
+        const photoboothSelected = getSelectedProductValues().includes("Photobooth");
+        heureRange.min = photoboothSelected ? "5" : "3";
+        heureRange.max = photoboothSelected ? "5" : "7";
+        if (photoboothSelected) heureRange.value = "5";
+        const durationHelp = document.getElementById("durationHelp");
+        if (durationHelp) durationHelp.textContent = photoboothSelected
+            ? "La formule Photobooth est prévue pour 5 heures à 400 €. Options et déplacement confirmés sur devis."
+            : "Choisissez la durée souhaitée, de 3h à 7h.";
+        const durationLabels = document.querySelector(".duration-labels");
+        if (durationLabels) durationLabels.hidden = photoboothSelected;
+
         const productTitles = getSelectedProductTitles();
         const optionTitles = getSelectedOptionTitles();
         const quantityOptions = getQuantityOptionsForSummary();
