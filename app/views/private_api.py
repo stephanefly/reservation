@@ -1,14 +1,13 @@
-import os
 from datetime import timedelta
 from zoneinfo import ZoneInfo
 
-from django.conf import settings
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from app.models import Event
+from myselfiebooth.settings import PRIVATE_API_TOKEN
 
 PARIS_TIME_ZONE = ZoneInfo("Europe/Paris")
 CONFIRMED_STATUS_LIST = ["Acompte OK", "Presta FINI", "Post Presta", "Sent Media"]
@@ -34,12 +33,7 @@ def _json_error(message, status=400):
 
 
 def _get_private_api_token():
-    token = os.environ.get("PRIVATE_API_TOKEN")
-
-    if token:
-        return token
-
-    return getattr(settings, "PRIVATE_API_TOKEN", None)
+    return PRIVATE_API_TOKEN
 
 
 def _check_private_token(request):
