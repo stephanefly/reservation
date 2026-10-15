@@ -58,7 +58,7 @@ GOOGLE_TOKEN = config.get("GOOGLE_TOKEN")
 
 NOTION_TOKEN = config.get("NOTION_TOKEN")
 DATABASE_NOTION_ID   = config.get("DATABASE_NOTION_ID")
-PRIVATE_API_TOKEN = config["PRIVATE_API_TOKEN"]
+PRIVATE_API_TOKEN = config.get("PRIVATE_API_TOKEN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')
