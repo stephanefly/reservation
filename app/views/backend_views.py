@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import ValidationForm
 from ..models import Event, EventAcompte, EventTemplate, EmailTracking, TeamMember
@@ -16,6 +18,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Q
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
+logger = logging.getLogger(__name__)
 today_date = datetime.now().date()
 
 from datetime import datetime
@@ -267,8 +270,12 @@ def envoi_mail_devis(request, event_id):
                 event.status = 'Sended'
                 event.save()
 
-            # MAJ TRELLO
-            to_list_devis_fait(event)
+            # Le mail a déjà été envoyé : une erreur Trello ne doit pas produire une erreur 500.
+            try:
+                if not to_list_devis_fait(event):
+                    logger.warning("Devis envoyé pour l'événement %s, mais carte Trello non déplacée", event.id)
+            except Exception:
+                logger.exception("Devis envoyé pour l'événement %s, échec du déplacement Trello", event.id)
 
             return render(request, 'app/backend/retour_lst_devis.html', {'mail': True})
         else:
