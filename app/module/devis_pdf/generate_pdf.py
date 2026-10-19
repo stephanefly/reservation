@@ -143,7 +143,7 @@ def generate_pdf_devis(event):
     pdf.setFillColor(colors.darkslategrey)
 
     # Logique pour déterminer quel RIB utiliser, ici on utilise un flag pour l'exemple
-    utiliser_rib_a = not event.client.raison_sociale  # Particulier : RIB A / Entreprise : RIB B
+    utiliser_rib_a = True  # ou une condition/fonction qui détermine quel RIB utiliser
     if utiliser_rib_a:
         titulaire = TITULAIRE_DU_COMPTE_A
         iban = IBAN_A
@@ -295,7 +295,7 @@ def generate_pdf_facture(event):
     pdf.setFillColor(colors.darkslategrey)
 
     # Logique pour déterminer quel RIB utiliser, ici on utilise un flag pour l'exemple
-    utiliser_rib_a = not event.client.raison_sociale  # Particulier : RIB A / Entreprise : RIB B
+    utiliser_rib_a = True  # ou une condition/fonction qui détermine quel RIB utiliser
     if utiliser_rib_a:
         titulaire = TITULAIRE_DU_COMPTE_A
         iban = IBAN_A
