@@ -29,7 +29,7 @@ USE_TZ = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.get('SECRET_KEY')
-KEY_TRELLO = config.get('key'),
+KEY_TRELLO = config.get('key')
 TOKEN_TRELLO = config.get('token')
 PDF_REPERTORY = config.get('PDF_REPERTORY')
 MAIL_TEMPLATE_REPOSITORY = config.get('MAIL_TEMPLATE_REPOSITORY')
