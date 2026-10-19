@@ -1,8 +1,11 @@
 
-from app.module.trello.get_trello_data import get_data_card_by_name
+from app.module.trello.get_trello_data import get_data_card_by_name, TRELLO_TIMEOUT
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
+import logging
 import requests
+
+logger = logging.getLogger(__name__)
 
 # Assurez-vous que KEY_TRELLO et TOKEN_TRELLO sont définis quelque part dans votre code
 
@@ -13,9 +16,14 @@ def move_card_to_list(event, list_id):
     :param event: Un objet événement contenant au moins un attribut 'nom' pour identifier la carte.
     :param list_id: L'ID de la liste cible où la carte doit être déplacée.
     """
-    # Fonction pour obtenir l'ID de la carte basée sur le nom de l'événement
-
-    card_id = get_data_card_by_name(event.client.nom)["id"]
+    # Priorité à l'identifiant Trello enregistré pour cet événement.
+    card_id = event.id_card
+    if not card_id:
+        card = get_data_card_by_name(event.client.nom)
+        if not card:
+            logger.warning("Carte Trello introuvable pour l'événement %s (%s)", event.id, event.client.nom)
+            return False
+        card_id = card["id"]
 
     # URL de l'API pour déplacer une carte
     url = f"https://api.trello.com/1/cards/{card_id}"
@@ -28,7 +36,7 @@ def move_card_to_list(event, list_id):
     }
 
     # Effectuer la requête pour déplacer la carte
-    response = requests.put(url, params=params)
+    response = requests.put(url, params=params, timeout=TRELLO_TIMEOUT)
 
     # Vérifier si la requête a réussi
     if response.status_code == 200:
