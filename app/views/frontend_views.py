@@ -1,4 +1,5 @@
 
+import logging
 import secrets
 
 from django.http import QueryDict
@@ -10,6 +11,8 @@ from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
 from ..module.data_bdd.price import PRIX_PRODUITS
 from ..module.google.contact import create_google_contact
 from ..module.trello.create_card import create_card
+
+logger = logging.getLogger(__name__)
 
 today_date = datetime.now().date()
 
@@ -48,12 +51,13 @@ def confirmation(request):
         except:
             pass
 
-        # Création carte
-        id_card = create_card(post_data)
-        event.id_card = id_card
+        # Trello est optionnel : une panne ne doit pas bloquer la demande enregistrée.
+        try:
+            event.id_card = create_card(post_data)
+            event.save(update_fields=['id_card'])
+        except Exception:
+            logger.exception("Création Trello échouée pour l'événement %s", event.id)
 
-        # Mise à jour finale
-        event.save()
         return redirect('remerciement')
 
     return render(request, 'app/frontend/confirmation.html')
