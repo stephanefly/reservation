@@ -1,8 +1,7 @@
 import requests
-import json
 from datetime import datetime
 
-from app.module.trello.get_trello_data import get_id_label
+from app.module.trello.get_trello_data import get_id_label, get_lst_labels, TRELLO_TIMEOUT
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 
 
@@ -21,14 +20,13 @@ def create_card(post_data):
 
    query.update(data)
 
-   response = requests.request(
-      "POST",
+   response = requests.post(
       url,
-      params=query
+      params=query,
+      timeout=TRELLO_TIMEOUT,
    )
-
-   print(response.text)
-   return json.loads(response.text)["id"]
+   response.raise_for_status()
+   return response.json()["id"]
 
 def data_to_post_on_card(post_data):
 
@@ -50,43 +48,42 @@ def data_to_post_on_card(post_data):
 
    # Label : PRODUIT, DUREE, HOW_FIND, CODE POSTAL, option, ENTREPIRSE
    data['idLabels'] = []
+   labels = get_lst_labels()  # Un seul appel Trello pour les étiquettes
+
+   def add_label(name):
+      label_id = get_id_label(name, labels=labels)
+      if label_id and label_id not in data['idLabels']:
+         data['idLabels'].append(label_id)
 
    # PRODUIT
    products = product_data.split(",")
    for product in products:
-      label_id = get_id_label(product.strip())
-      if label_id:
-         data['idLabels'].append(label_id)
+      add_label(product.strip())
 
    # DUREE
    if post_data['heure_range']:
       duree = str(post_data['heure_range']) +'h'
-      data['idLabels'].append(get_id_label(duree))
+      add_label(duree)
    else:
-      data['idLabels'].append(get_id_label("LOCATION"))
-      pass
+      add_label("LOCATION")
 
    # CODE POSTAL
    departement = event_data['code_postal'].strip()[:2]
-   data['idLabels'].append(get_id_label(departement))
+   add_label(departement)
 
    # HOW_FIND
-   data['idLabels'].append(get_id_label(client_data['how_find']))
+   add_label(client_data['how_find'])
 
    # OPTION
    options = options_data.split(",")
    for option in options:
-      label_id = get_id_label(option.strip())
-      if label_id:
-         data['idLabels'].append(label_id)
+      add_label(option.strip())
 
    if post_data['magnets_range'] != 0 or post_data['PorteCles_range']!= 0 or post_data['MagnetsSimple_range']!= 0:
-      data['idLabels'].append(get_id_label("Magnets"))
+      add_label("Magnets")
 
    # ENTREPRISE
    if client_data['raison_sociale']:
-      data['idLabels'].append(get_id_label('ENTREPRISE'))
-
-   print(data)
+      add_label('ENTREPRISE')
 
    return data
