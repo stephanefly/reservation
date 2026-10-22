@@ -59,6 +59,39 @@
     .msb-navbar-container {
         max-width: 1500px;
         padding: 14px 22px;
+        gap: 12px;
+    }
+
+    .msb-contact-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 1px solid #f4dc7f;
+        border-radius: 12px;
+        color: #f4dc7f;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .msb-contact-link:hover,
+    .msb-contact-link:focus-visible {
+        background: #f4dc7f;
+        color: #080808;
+    }
+
+    .msb-contact-link:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 3px;
+    }
+
+    .msb-contact-help {
+        margin: 0 0 10px;
+        color: #ffffff;
     }
 
     .msb-brand {
@@ -120,6 +153,10 @@
             <a class="navbar-brand msb-brand" href="#">
                 MySelfieBooth
             </a>
+            <a class="msb-contact-link" href="https://myselfiebooth-paris.fr/contact/" target="_blank" rel="noopener noreferrer" aria-label="Nous envoyer un message (nouvel onglet)">
+                <i class="far fa-envelope" aria-hidden="true"></i>
+                Nous envoyer un message
+            </a>
         </div>
     </nav>
 
@@ -133,6 +170,13 @@
 </body>
     <footer class="msb-footer text-center">
         <div class="msb-footer-inner">
+            <p class="msb-contact-help">Besoin d'aide pour votre demande de devis ?</p>
+            <p>
+                <a class="msb-contact-link" href="https://myselfiebooth-paris.fr/contact/" target="_blank" rel="noopener noreferrer" aria-label="Nous envoyer un message (nouvel onglet)">
+                    <i class="far fa-envelope" aria-hidden="true"></i>
+                    Nous envoyer un message
+                </a>
+            </p>
             © 2024 MySelfieBooth Tous droits réservés.
         </div>
     </footer>
