@@ -134,6 +134,28 @@ def generate_pdf_devis(event):
         pdf.drawString(65, height - 665, "Le reste est à payer au moment de la livraison ou au moins 2 jours avant l'évènement")
         pdf.drawString(65, height - 680, "Vous pouvez payer par virement (RIB ci-dessous), Paylib (+33699733998), Paypal (paypal.me/3dmouvstudio)")
 
+    if event.client.raison_sociale:
+        # Garder le cadre à distance des totaux et du RIB, même avec des options.
+        signature_top = height - 585
+        totals_bottom = y_position - (55 if event.reduc_all else 25)
+        if totals_bottom < signature_top + 15:
+            pdf.showPage()
+            pdf.setFont("Helvetica-Bold", 14)
+            pdf.drawString(65, height - 125, "DEVIS n°D" + str(event.num_devis) + " - Bon pour accord")
+
+        pdf.saveState()
+        pdf.setStrokeColor(colors.black)
+        pdf.setFillColor(colors.black)
+        pdf.setLineWidth(0.8)
+        pdf.rect(65, signature_top - 110, width - 130, 110, stroke=1, fill=0)
+        pdf.setFont("Helvetica-Bold", 11)
+        pdf.drawString(77, signature_top - 18, "Bon pour accord")
+        pdf.setFont("Helvetica", 9)
+        pdf.drawString(77, signature_top - 36, "Nom : ........................................................................................")
+        pdf.drawString(77, signature_top - 52, "Date : ........................................")
+        pdf.drawString(77, signature_top - 68, "Signature du représentant de l'entreprise :")
+        pdf.restoreState()
+
     # ----------------------------------------------------------------------------------------
 
     pdf.setFont("Helvetica-Bold", 12)
