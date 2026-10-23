@@ -8,9 +8,9 @@
 
 {% block content %}
 <div class="event-admin">
-    <form id="client-auto-mail-form" method="post" action="{% url 'set_client_auto_emails' event.id %}">
+    <form id="client-quote-reminders-form" method="post" action="{% url 'set_client_quote_reminders' event.id %}">
         {% csrf_token %}
-        <input type="hidden" name="autorisation_mail" value="{% if event.client.autorisation_mail %}0{% else %}1{% endif %}">
+        <input type="hidden" name="relance_devis_auto" value="{% if event.client.relance_devis_auto %}0{% else %}1{% endif %}">
     </form>
     <header class="event-hero">
         <div class="event-hero__content">
@@ -94,21 +94,22 @@
                         </div>
                     </div>
 
-                    <div class="event-auto-mail-control" aria-label="Gestion des e-mails automatiques du client">
+                    <div class="event-auto-mail-control" aria-label="Gestion des relances commerciales du client">
                         <div>
-                            <strong>E-mails automatiques : {% if event.client.autorisation_mail %}activés{% else %}suspendus{% endif %}</strong>
+                            <strong>Relances automatiques du devis : {% if event.client.relance_devis_auto %}activées{% else %}suspendues{% endif %}</strong>
                             <p>
-                                {% if event.client.autorisation_mail %}
-                                    Les relances planifiées sont autorisées pour ce client.
+                                {% if event.client.relance_devis_auto %}
+                                    Les relances commerciales et offres de réduction planifiées sont actives.
                                 {% else %}
-                                    Les relances planifiées sont arrêtées pour ce client. Les envois manuels restent possibles.
+                                    Les relances commerciales sont arrêtées. Les devis manuels, confirmations et rappels de préparation continuent.
                                 {% endif %}
                             </p>
                         </div>
-                        <button type="submit" form="client-auto-mail-form" class="event-auto-mail-button{% if event.client.autorisation_mail %} event-auto-mail-button--stop{% endif %}">
-                            <i class="fas {% if event.client.autorisation_mail %}fa-pause-circle{% else %}fa-play-circle{% endif %}" aria-hidden="true"></i>
-                            {% if event.client.autorisation_mail %}Suspendre les e-mails auto{% else %}Réactiver les e-mails auto{% endif %}
+                        <button type="submit" form="client-quote-reminders-form" class="event-auto-mail-button{% if event.client.relance_devis_auto %} event-auto-mail-button--stop{% endif %}">
+                            <i class="fas {% if event.client.relance_devis_auto %}fa-pause-circle{% else %}fa-play-circle{% endif %}" aria-hidden="true"></i>
+                            {% if event.client.relance_devis_auto %}Arrêter les relances devis{% else %}Réactiver les relances devis{% endif %}
                         </button>
+                        <p class="event-auto-mail-consent">Désabonnement : {% if event.client.autorisation_mail %}non{% else %}oui{% endif %} (réglage indépendant).</p>
                     </div>
 
                     <div class="event-facts">
