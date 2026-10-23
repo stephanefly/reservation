@@ -167,14 +167,14 @@ def lst_devis(request):
 
 @staff_member_required
 @require_POST
-def set_client_auto_emails(request, id):
-    """Active ou suspend les e-mails automatiques pour un client, sans modifier le devis."""
+def set_client_quote_reminders(request, id):
+    """Active ou suspend les relances automatiques du devis, sans modifier l'autorisation e-mail."""
     event = get_object_or_404(Event.objects.only('id', 'client_id'), pk=id)
-    enabled = request.POST.get('autorisation_mail')
+    enabled = request.POST.get('relance_devis_auto')
     if enabled not in ('0', '1'):
-        return HttpResponseBadRequest("Valeur d'autorisation invalide.")
+        return HttpResponseBadRequest("Valeur de relance invalide.")
 
-    Client.objects.filter(pk=event.client_id).update(autorisation_mail=(enabled == '1'))
+    Client.objects.filter(pk=event.client_id).update(relance_devis_auto=(enabled == '1'))
     return redirect(reverse('info_event', kwargs={'id': event.id}) + '#client')
 
 
