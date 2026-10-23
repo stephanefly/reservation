@@ -95,24 +95,24 @@
                             <strong>{{ event.event_details.date_evenement|date:'d/m/Y'|default:'À définir' }}</strong>
                         </div>
                         <div class="quote-essential-field">
-                            <small><i class="far fa-clock" aria-hidden="true"></i> Horaire & durée</small>
-                            <strong>{{ event.event_details.horaire|default:'À définir' }}</strong>
-                            <span class="quote-essential-field__hint">Durée : {% if event.event_option.duree %}{{ event.event_option.duree }} h{% else %}non précisée{% endif %}</span>
+                            <small><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ville</small>
+                            <strong>{{ event.event_details.ville_evenement|default:'Non renseignée' }}</strong>
                         </div>
-                        <div class="quote-essential-field">
+                        <div class="quote-essential-field quote-essential-field--contact">
                             <small><i class="fas fa-phone-alt" aria-hidden="true"></i> Téléphone</small>
                             {% if event.client.numero_telephone %}
                             <a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a>
                             {% else %}<strong>Non renseigné</strong>{% endif %}
                         </div>
-                        <div class="quote-essential-field">
-                            <small><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ville</small>
-                            <strong>{{ event.event_details.ville_evenement|default:'Non renseignée' }}</strong>
-                        </div>
                     </div>
 
                     <section class="quote-essential-section" aria-label="Produits de l'événement">
-                        <h3><i class="fas fa-camera-retro" aria-hidden="true"></i> Produits</h3>
+                        <h3>
+                            <i class="fas fa-camera-retro" aria-hidden="true"></i> Produits
+                            {% if event.event_option.duree %}
+                                <span class="quote-essential-duration"><i class="far fa-clock" aria-hidden="true"></i> {{ event.event_option.duree }} h</span>
+                            {% endif %}
+                        </h3>
                         <div class="quote-essential-tags">
                             {% if event.event_product and event.event_product.get_selected_booths %}
                                 {% if event.event_product.photobooth %}<span class="quote-essential-tag quote-essential-tag--product">Photobooth</span>{% endif %}
