@@ -1,6 +1,194 @@
 {% extends 'app/backend/base.html' %}
 {% block title %}Liste des devis{% endblock title %}
 
+{% block extra_css %}
+{# Styles locaux à cette page : disponibles même lorsque le CSS statique est mis en cache. #}
+<style>
+.quote-list-card .quote-row-disclosure > summary {
+    min-height: 116px;
+    padding: 14px 16px;
+}
+.quote-list-card .quote-row-details {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    padding: 14px;
+    background: #fff;
+}
+.quote-list-card .quote-essentials {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+.quote-list-card .quote-essentials__box {
+    min-width: 0;
+    min-height: 71px;
+    padding: 10px 11px;
+    border: 1px solid #e9eaf3;
+    border-radius: 11px;
+    background: #f8f8fc;
+}
+.quote-list-card .quote-essentials__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    color: #747b8c;
+    font-size: 0.64rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+}
+.quote-list-card .quote-essentials__label i {
+    color: #7561c7;
+    font-size: 0.73rem;
+}
+.quote-list-card .quote-essentials__value {
+    display: block;
+    color: #282c3c;
+    font-size: 0.86rem;
+    font-weight: 780;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.quote-list-card .quote-essentials__value--price {
+    color: #5535c2;
+    font-size: 1.05rem;
+    font-weight: 850;
+}
+.quote-list-card .quote-essentials__sub {
+    display: block;
+    margin-top: 3px;
+    color: #737b8c;
+    font-size: 0.66rem;
+}
+.quote-list-card .quote-call {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 2px 1px;
+    min-width: 0;
+}
+.quote-list-card .quote-call__label {
+    flex-shrink: 0;
+    color: #727a8b;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+.quote-list-card .quote-call__label i {
+    margin-right: 4px;
+    color: #7561c7;
+}
+.quote-list-card .quote-call__link {
+    color: #5235ba;
+    font-size: 0.83rem;
+    font-weight: 800;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+.quote-list-card .quote-call__link:hover {
+    text-decoration: underline;
+}
+.quote-list-card .quote-call__link i {
+    margin-left: 4px;
+    font-size: 0.56rem;
+    opacity: .6;
+}
+.quote-list-card .quote-call__missing {
+    color: #8690a0;
+    font-size: 0.73rem;
+}
+.quote-list-card .quote-compact-section {
+    min-width: 0;
+    padding: 11px 0 0;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid #edf0f6;
+    border-radius: 0;
+    background: transparent;
+}
+.quote-list-card .quote-compact-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 9px;
+    color: #687386;
+    font-size: 0.71rem;
+    line-height: 1.4;
+    letter-spacing: .045em;
+    font-weight: 830;
+    text-transform: uppercase;
+}
+.quote-list-card .quote-compact-section h3 > i {
+    color: #6b52c6;
+    font-size: 0.77rem;
+}
+.quote-list-card .quote-essential-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 7px;
+    color: #5535c2;
+    background: #f1edff;
+    font-size: 0.7rem;
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+}
+.quote-list-card .quote-essential-duration i {
+    color: #5535c2;
+}
+.quote-list-card .quote-essential-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.quote-list-card .quote-essential-tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 7px;
+    font-size: 0.73rem;
+    font-weight: 730;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.quote-list-card .quote-essential-tag--product {
+    color: #5138a2;
+    border: 1px solid #e5dcff;
+    background: #f4f0ff;
+}
+.quote-list-card .quote-essential-tag--option {
+    color: #77521d;
+    border: 1px solid #f0e3c8;
+    background: #fffaed;
+}
+.quote-list-card .quote-essential-empty {
+    color: #8992a1;
+    font-size: 0.75rem;
+}
+.quote-list-card .quote-row-details__action {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 2px;
+    padding: 8px 12px;
+    font-size: 0.79rem;
+}
+@media (max-width: 400px) {
+    .quote-list-card .quote-essentials { gap: 7px; }
+    .quote-list-card .quote-essentials__box { padding: 9px; }
+}
+</style>
+{% endblock extra_css %}
+
 {% block content %}
 <div class="backend-page">
     <header class="backend-page-header">
@@ -73,7 +261,7 @@
                     </span>
                     <span class="quote-row-summary__item">
                         <small>Date</small>
-                        <strong>{{ event.event_details.date_evenement|date:'D d/m/Y' }}</strong>
+                        <strong>{{ event.event_details.date_evenement|date:'d/m/Y' }}</strong>
                     </span>
                     <span class="quote-row-summary__item quote-row-summary__status">
                         <small>Statut</small>
@@ -89,24 +277,35 @@
                     <i class="fas fa-chevron-down quote-row-summary__chevron" aria-hidden="true"></i>
                 </summary>
                 <div class="quote-row-details">
-                    <div class="quote-essential-grid">
-                        <div class="quote-essential-field">
-                            <small><i class="far fa-calendar-alt" aria-hidden="true"></i> Date de l'événement</small>
-                            <strong>{{ event.event_details.date_evenement|date:'d/m/Y'|default:'À définir' }}</strong>
+                    <div class="quote-essentials">
+                        <div class="quote-essentials__box">
+                            <span class="quote-essentials__label"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ville</span>
+                            <strong class="quote-essentials__value">{{ event.event_details.ville_evenement|default:'Non renseignée' }}</strong>
                         </div>
-                        <div class="quote-essential-field">
-                            <small><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ville</small>
-                            <strong>{{ event.event_details.ville_evenement|default:'Non renseignée' }}</strong>
-                        </div>
-                        <div class="quote-essential-field quote-essential-field--contact">
-                            <small><i class="fas fa-phone-alt" aria-hidden="true"></i> Téléphone</small>
-                            {% if event.client.numero_telephone %}
-                            <a href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }}</a>
-                            {% else %}<strong>Non renseigné</strong>{% endif %}
+                        <div class="quote-essentials__box">
+                            <span class="quote-essentials__label"><i class="fas fa-euro-sign" aria-hidden="true"></i> Prix</span>
+                            {% if event.prix_valided is not None %}
+                                <strong class="quote-essentials__value quote-essentials__value--price">{{ event.prix_valided }} €</strong>
+                                <span class="quote-essentials__sub">Validé</span>
+                            {% elif event.prix_proposed is not None %}
+                                <strong class="quote-essentials__value quote-essentials__value--price">{{ event.prix_proposed }} €</strong>
+                                <span class="quote-essentials__sub">Proposé</span>
+                            {% else %}
+                                <strong class="quote-essentials__value">À définir</strong>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <section class="quote-essential-section" aria-label="Produits de l'événement">
+                    <div class="quote-call">
+                        <span class="quote-call__label"><i class="fas fa-phone-alt" aria-hidden="true"></i> Téléphone</span>
+                        {% if event.client.numero_telephone %}
+                            <a class="quote-call__link" href="tel:{{ event.client.numero_telephone }}">{{ event.client.numero_telephone }} <i class="fas fa-external-link-alt" aria-hidden="true"></i></a>
+                        {% else %}
+                            <span class="quote-call__missing">Non renseigné</span>
+                        {% endif %}
+                    </div>
+
+                    <section class="quote-essential-section quote-compact-section" aria-label="Produits de l'événement">
                         <h3>
                             <i class="fas fa-camera-retro" aria-hidden="true"></i> Produits
                             {% if event.event_option.duree %}
@@ -127,7 +326,7 @@
                         </div>
                     </section>
 
-                    <section class="quote-essential-section" aria-label="Options de l'événement">
+                    <section class="quote-essential-section quote-compact-section" aria-label="Options de l'événement">
                         <h3><i class="fas fa-plus-circle" aria-hidden="true"></i> Options</h3>
                         <div class="quote-essential-tags">
                             {% if event.event_option and event.event_option.get_selected_options or event.event_option.livraison %}
