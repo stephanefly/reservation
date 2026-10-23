@@ -3,7 +3,7 @@ from ..module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_gra
     tracage_figure_bar_potentiel
 from ..module.lib_graph.lib_pie_chart import table_graph_pie
 from ..module.lib_graph.mise_en_week import new_mise_en_week, mise_en_week_avoir
-from ..module.lib_graph.get_data import get_ok_data, get_cost_data, get_ok_data_before
+from ..module.lib_graph.get_data import get_ok_data, get_cost_data
 from datetime import datetime, timedelta, timezone
 from ..models import Event
 
@@ -30,14 +30,9 @@ def graph_cost_pie(request):
 
 
 def graph_potentiel(request):
-
-    df_all_week_before = new_mise_en_week(get_ok_data_before(days_delta=365))
-    df_brut_net_before = mise_en_week_avoir(df_all_week_before, get_cost_data())
-
-    df_all_week_now = new_mise_en_week(get_ok_data())
-    df_brut_net_now = mise_en_week_avoir(df_all_week_now, get_cost_data())
-
-    script, div = tracage_figure_bar_potentiel(df_brut_net_now, df_brut_net_before, date_now)
+    # Même jeu de données signé pour les trois comparaisons annuelles.
+    # On ne filtre pas sur la date de signature : 2027 inclut les réservations déjà signées.
+    script, div = tracage_figure_bar_potentiel(get_ok_data(), date_now)
     return render(request, 'app/backend/graph/graph_potentiel.html', {'script': script, 'div': div})
 
 def cycle_strategique_view(request):
