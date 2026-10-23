@@ -1,51 +1,322 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
-    <title>Suivi de votre devis | MySelfieBooth</title>
-</head>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;color:#242424;">
-    <img class="traceur_devis" src="" width="1" height="1" alt="" style="display:none;">
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f5f5f5;">
-        <tr><td align="center" style="padding:32px 16px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;background:#fff;border:1px solid #e7e4df;">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>MySelfieBooth</title>
+      <style>
+         /* Global Styles */
+         body {
+         margin: 0;
+         padding: 0;
+         background-color: #ffd5d5;
+         font-family: Arial, sans-serif;
+         }
+         .container {
+         max-width: 700px;
+         margin: auto;
+         padding: 0px 20px;
+         text-align: center;
+         }
+         /* Header */
+         .header {
+         background-color: #000000;
+         padding: 10px 0;
+         text-align: center;
+         }
+         .header img {
+         width: 150px;
+         height: auto;
+         }
+         /* Footer */
+         .footer {
+         padding: 10px 0;
+         font-size: 12px;
+         color: #acacac;
+         background-color: #000000;
+         text-align: center;
+         }
+         /* Separator */
+         hr {
+         border: 0;
+         border-top: 1px solid #8d8d8d;
+         }
+         .contact_block {
+         background: #ffffff;
+         padding: 15px;
+         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+         text-align: center;
+         font-family: 'Poppins', sans-serif;
+         color: #333;
+         }
+         .contact_title {
+         font-size: 22px;
+         font-weight: bold;
+         color: #310033;
+         margin: 12px 10px;
+         }
+         .contact_info {
+         font-size: 18px;
+         line-height: 1.6;
+         margin: 10px 10px;
+         }
+         .contact_link {
+         color: #ff6600;
+         font-weight: bold;
+         text-decoration: none;
+         }
+         .contact_link:hover {
+         text-decoration: underline;
+         }
+         /* Table globale */
+         .image-table {
+         margin-top: 20px;
+         padding-bottom: 20px;
+         border-collapse: collapse;
+         }
+         /* Cellule contenant l'image */
+         .image-cell {
+         padding: 0 10px;
+         }
+         /* Style des images */
+         .image {
+         border: 0;
+         width: 140px;
+         height: auto;
+         max-width: 100%;
+         border-radius: 4px;
+         display: block;
+         }
+      </style>
+   </head>
+   <body>
+      <img class="traceur_devis" src="https://reservation.myselfiebooth-paris.fr/track_devis/{{ uuid }}" width="1" height="1" style="display:none;">
+      <!-- Section Head -->
+      <div class="header">
+         <a href="https://myselfiebooth-paris.fr/" target="_blank">
+         <img class="logo" src="https://mcusercontent.com/2c82a9e7bffebfab5cb181400/images/2f88c980-8d24-76b1-0cd5-18977d464211.png" alt="Logo MySelfieBooth">
+         </a>
+      </div>
+                <!-- Section 4 photo -->
+          <table role="presentation" align="center" valign="top" class="image-table">
+             <tbody>
                 <tr>
-                    <td align="center" style="padding:28px;background:#151515;">
-                        <a href="https://myselfiebooth-paris.fr/" style="text-decoration:none;">
-                            <img src="https://mcusercontent.com/2c82a9e7bffebfab5cb181400/images/2f88c980-8d24-76b1-0cd5-18977d464211.png" width="170" alt="MySelfieBooth" style="border:0;max-width:100%;height:auto;">
-                        </a>
-                    </td>
+                   <!-- Première image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CwnVM8pKD93/" target="_blank">
+                      <img class="image" alt="369707255_631259045777531_8171012913048138835_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/18013115560722157/thumb/369707255_631259045777531_8171012913048138835_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Deuxième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CwiNkrDKG7l/" target="_blank">
+                      <img class="image" alt="369710619_630251709211598_5962374642370042347_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17999398502038031/thumb/369710619_630251709211598_5962374642370042347_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Troisième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CursfYCqnV0/" target="_blank">
+                      <img class="image" alt="348583334_607893248114111_7071134150613489965_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17884910831887425/thumb/348583334_607893248114111_7071134150613489965_n.jpg">
+                      </a>
+                   </td>
+                   <!-- Quatrième image -->
+                   <td class="image-cell">
+                      <a href="https://www.instagram.com/p/CtZsKfjo3Rv/" target="_blank">
+                      <img class="image" alt="347444663_588581093378660_7778159767232458402_n"
+                         src="https://storage.googleapis.com/mc-instagram-extension-assets-prod/186031486/17989978136066555/thumb/347444663_588581093378660_7778159767232458402_n.jpg">
+                      </a>
+                   </td>
                 </tr>
-                <tr>
-                    <td style="padding:34px 35px 18px;">
-                        <p style="font-size:12px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;color:#97743f;margin:0 0 12px;">Votre événement avec MySelfieBooth</p>
-                        <h1 style="font-size:25px;line-height:1.3;margin:0 0 28px;font-weight:600;color:#1a1a1a;">Dernier suivi concernant votre devis</h1>
-                        <p style="font-size:16px;line-height:1.65;margin:0 0 18px;">Bonjour <b class="client_nom">[Nom du client]</b>,</p>
-                        <p style="font-size:16px;line-height:1.65;margin:0 0 18px;">Nous revenons vers vous au sujet de notre proposition pour votre événement du <strong><a class="date_event" style="color:inherit;text-decoration:none;">[Date de l'événement]</a></strong>.</p>
-                        <p style="font-size:16px;line-height:1.65;margin:0 0 18px;">Vous retrouverez votre devis en pièce jointe. <strong>Le tarif et les conditions commerciales de notre proposition restent inchangés.</strong></p>
-                        <p style="font-size:16px;line-height:1.65;margin:0 0 25px;">Si vous souhaitez confirmer la prestation, il vous suffit de répondre à cet e-mail. Notre équipe reste à votre disposition pour toute précision ou adaptation à vos contraintes d'organisation.</p>
-                        <p style="font-size:16px;line-height:1.65;margin:0;">Bien cordialement,<br><strong>L'équipe MySelfieBooth</strong></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:10px 35px 30px;">
-                        <div class="acompte_entreprise" style="padding:20px;background:#f8f7f4;border-left:3px solid #97743f;">
-                            <h2 style="font-size:17px;margin:0 0 10px;">Modalités de règlement</h2>
-                            <p style="font-size:14px;line-height:1.6;margin:0;">Le règlement peut s'effectuer par virement bancaire (coordonnées présentes sur le devis) ou selon les modalités convenues.</p>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:22px 35px;background:#f0efed;border-top:1px solid #e7e4df;text-align:center;">
-                        <p style="font-size:14px;line-height:1.7;margin:0;">Une question ? <a href="mailto:contact@myselfiebooth-paris.fr" style="color:#4e3920;">contact@myselfiebooth-paris.fr</a></p>
-                        <p style="font-size:12px;color:#666;margin:13px 0 0;">MySelfieBooth Paris · <a href="https://myselfiebooth-paris.fr/" style="color:#666;">Notre site</a></p>
-                        <p style="font-size:11px;color:#888;margin:12px 0 0;">Envoyé à : <a class="mail_client" style="color:#888;">[E-mail client]</a> · <a class="mail_desabonnement" href="#" style="color:#888;">Se désabonner</a></p>
-                    </td>
-                </tr>
-            </table>
-        </td></tr>
-    </table>
-</body>
+             </tbody>
+          </table>
+          <!-- Section Banierre -->
+          <style>
+             /* Banner */
+             .banierre {
+             background-color: #ff7777;
+             color: #000000;
+             padding: 10px;
+             margin-top: 20px;
+             font-weight: bold;
+             font-family: 'Poppins', sans-serif;
+             font-size: 18px;
+             text-align: center;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+             letter-spacing: 1.2px;
+             }
+          </style>
+<div class="banierre">
+   <p> Votre événement avec MySelfieBooth ✨</p>
+</div>
+      <div class="container">
+            <!-- Section Content -->
+          <style>
+             /* Titre principal */
+             .title {
+             color: #000000;
+             font-size: 31px;
+             font-weight: normal;
+             font-family: serif;
+             }
+             /* Texte général */
+             .text {
+             color: #000000;
+             font-size: 15px;
+             line-height: 1.5;
+             }
+             /* Séparateur */
+             .separator {
+             margin: 10px 20px 20px 20px;
+             }
+             /* Nom du client */
+             .client_nom {
+             font-weight: bold;
+             }
+             /* Date de l'évènement */
+             .date_event {
+             font-weight: bold;
+             text-decoration: none;
+             color: inherit;
+             }
+             /* Content Section */
+             .content {
+             background: #ffe8e8;
+             color: #252525;
+             padding: 20px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             overflow: hidden;
+             text-align: center;
+                                  margin-top: 10px;
+             }
+          </style>
+<div class="content">
+<h1 style="color: #ff0000; font-size: 31px; font-weight: bold;">Dernier suivi concernant votre devis</h1>
+
+            <p>Bonjour <b class="client_nom">[Nom du Client]</b>,</p>
+            <p>Nous revenons vers vous au sujet de notre proposition pour votre événement.</p>
+            <p>Le devis joint reprend les conditions commerciales déjà convenues, sans modification du tarif.</p>
+            <p>Nous serions ravis de contribuer à rendre votre événement du <b><a class="date_event"> [date de l'évènement]</a></b> inoubliable.</p>
+            <p style="color: #ff0000; font-weight: bold;">Un retour de votre part nous permettra de finaliser l'organisation de votre prestation.</p>
+             </div>
+          <!-- Section Acompte Particulier -->
+          <style>
+             /* Payment Sections */
+             .acompte_particulier, .acompte_entreprise {
+             padding: 20px;
+             box-shadow: 0 4px 10px rgb(0 0 0 / 32%);
+             font-family: 'Poppins', sans-serif;
+             }
+             .acompte_particulier , .acompte_entreprise{
+             background: #4c0000;
+             color: #ffffff;
+             }
+             .acompte_particulier h2, .acompte_entreprise h2 {
+             font-size: 24px;
+             font-weight: bold;
+             text-align: center;
+             color: #ffffff;
+             }
+             .acompte_particulier p, .acompte_entreprise p {
+             font-size: 16px;
+             line-height: 1.6;
+             text-align: center;
+             }
+             .acompte_particulier a, .acompte_entreprise a {
+             color: #ff6600;
+             font-weight: bold;
+             text-decoration: none;
+             }
+          </style>
+          <div class="acompte_entreprise">
+             <h2>🏢 Modalités de Paiement </h2>
+             <p>Effectuez votre paiement par <strong>virement bancaire</strong> (RIB dans le devis) ou via un autre mode de paiement.</p>
+    </div>
+          <!-- Section Text Fin -->
+          <style>
+             .text_fin {
+             background: #ffffff;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             text-align: center;
+             }
+             .message {
+             font-size: 18px;
+             line-height: 1.5;
+             margin-bottom: 15px;
+             }
+             .highlight {
+             color: #ff0000;
+             font-weight: bold;
+             }
+             /* Content Section */
+          </style>
+          <div class="text_fin">
+             <p class="message">
+                Nous restons disponibles pour répondre à vos questions et vous accompagner dans la préparation de votre événement.
+             </p>
+             <p class="message">
+                Souvenirs instantanés et animations personnalisées pour votre événement.
+             </p>
+             <p class="message highlight">
+                Pour confirmer votre réservation, répondez simplement à cet e-mail.
+             </p>
+          </div>
+          <!-- Section Avis Client -->
+          <style>
+             /* Styles pour la section Avis Clients */
+             .avis_clients {
+             background: #f1fff2;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             font-family: 'Poppins', sans-serif;
+             text-align: center;
+             border: solid 10px #9cdf9c;
+             }
+             .avis_clients h2 {
+             color: #310033;
+             font-size: 24px;
+             font-weight: bold;
+             }
+             .avis_clients p {
+             font-size: 18px;
+             font-style: italic;
+             color: #333;
+             }
+             .avis_clients p:last-child {
+             font-size: 16px;
+             font-weight: bold;
+             color: #ff6600;
+             }
+          </style>
+<div class="avis_clients">
+   <h2> Avis de nos clients<br>⭐⭐⭐⭐⭐</h2>
+   <p>
+      "Franchement, le Voguebooth, c'était la meilleure idée pour notre mariage ! Les photos sont incroyables, et tout le monde a kiffé poser. Une super ambiance grâce à cette animation. Merci à l'équipe de MySelfieBooth, vous avez assuré du début à la fin !"
+   </p>
+   <p>Yasmine & Zak - 10/09/2024</p>
+</div>
+
+      </div>
+      <!-- Section Contact -->
+      <div class="contact_block">
+         <p class="contact_title">📞 Une question ? Contactez-nous!</p>
+         <p class="contact_info">
+            📱 <strong>Téléphone :</strong> <a href="tel:0699733998" class="contact_link">0699733998</a><br>
+            ✉️ <strong>Email :</strong> <a href="mailto:contact@myselfiebooth-paris.fr" class="contact_link">contact@myselfiebooth-paris.fr</a>
+         </p>
+      </div>
+      <!-- Section footer -->
+      <div class="footer">
+         <p>© 2025 MySelfieBooth - Tous droits réservés</p>
+         <p>Envoyé à : <a class="mail_client">{{ client_email }}</a></p>
+         <a class="mail_desabonnement" href="#">Se désabonner</a>
+      </div>
+   </body>
 </html>
