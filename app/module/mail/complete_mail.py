@@ -32,7 +32,8 @@ def _handle_acompte(event, soup):
 
     if event.client.raison_sociale:
         balise_acompte = soup.find('div', class_='acompte_particulier')
-        balise_acompte.extract()
+        if balise_acompte:
+            balise_acompte.extract()
     else:
         balise_acompte = soup.find('div', class_='acompte_entreprise')
         balise_acompte.extract()
@@ -57,7 +58,9 @@ def _handle_date_butoire(event, soup, mail_type):
         jours_restant = 5
 
     date_j_plus_10 = datetime.now() + timedelta(days=jours_restant)
-    soup.find('b', class_='date_butoire').string = date_j_plus_10.strftime('%d/%m/%Y')
+    date_butoire = soup.find('b', class_='date_butoire')
+    if date_butoire:
+        date_butoire.string = date_j_plus_10.strftime('%d/%m/%Y')
 
 
 def _handle_reduc(event, soup, mail_type):
@@ -68,23 +71,16 @@ def _handle_reduc(event, soup, mail_type):
         event.event_option.Phonebooth_reduc_prix = 50
         event.event_option.save()
 
+    # En B2B, ce dernier rappel ne crée aucune nouvelle réduction.
+    # Son contenu n'annonce pas non plus de promotion (template dédié).
+    if mail_type == 'last_chance_devis' and event.client.raison_sociale:
+        return
+
     if mail_type == 'last_chance_devis':
-        if event.client.raison_sociale:
-            # Entreprise : rappeler le devis sans remise automatique supplémentaire.
-            offer = soup.find('p', class_='last-chance-offer')
-            details = soup.find('p', class_='last-chance-offer-details')
-            if offer:
-                offer.string = "Notre proposition commerciale reste disponible aux conditions convenues."
-            if details:
-                details.string = (
-                    "Nous vous invitons à confirmer votre réservation sur la base "
-                    "du devis transmis, sans modification du tarif."
-                )
-        else:
-            # Particulier : conserver la remise Last Chance de 50 €.
-            event.reduc_all = (event.reduc_all or 0) + 50
-            event.prix_proposed = (event.prix_proposed or 0) - 50
-            event.save()
+        event.reduc_all = (event.reduc_all or 0) + 50
+        event.prix_proposed = (event.prix_proposed or 0) - 50
+        event.save()
+
     reduction = (
         (event.reduc_product or 0)
         + (event.reduc_all or 0)
@@ -98,9 +94,7 @@ def _handle_reduc(event, soup, mail_type):
         soup.find('a', class_='txt_reduc').string = ""
         soup.find('a', class_='reduc_all').string = ""
 
-    if mail_type == 'relance_devis' or (
-        mail_type == 'last_chance_devis' and not event.client.raison_sociale
-    ):
+    if mail_type in ('relance_devis', 'last_chance_devis'):
         soup.find('a', class_='reduc_all_title').string = f"-{reduction}€"
 
 
