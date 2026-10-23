@@ -97,7 +97,7 @@
                         <div class="quote-essential-field">
                             <small><i class="far fa-clock" aria-hidden="true"></i> Horaire & durée</small>
                             <strong>{{ event.event_details.horaire|default:'À définir' }}</strong>
-                            <span class="quote-essential-field__hint">Durée : {% if event.event_option and event.event_option.duree is not None %}{{ event.event_option.duree }} h{% else %}à définir{% endif %}</span>
+                            <span class="quote-essential-field__hint">Durée : {% if event.event_option.duree %}{{ event.event_option.duree }} h{% else %}non précisée{% endif %}</span>
                         </div>
                         <div class="quote-essential-field">
                             <small><i class="fas fa-phone-alt" aria-hidden="true"></i> Téléphone</small>
