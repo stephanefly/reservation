@@ -15,13 +15,25 @@ from app.models import Client
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_BCC
 
 
+DEVIS_RELANCE_TYPES = {
+    'rappel_devis',
+    'last_rappel_devis',
+    'prolongation_devis',
+    'last_chance_devis',
+    'temoingnage_client_devis',
+    'phonebooth_offert_devis',
+}
+
+
 def send_mail_event(event, mail_type, *, automatic=False):
     # Vérification en base au moment de l'envoi : un désabonnement récent doit être respecté.
     # Les envois déclenchés volontairement dans le back-office restent disponibles.
-    if automatic and not Client.objects.filter(
-        pk=event.client_id, autorisation_mail=True
-    ).exists():
-        return False
+    if automatic:
+        clients = Client.objects.filter(pk=event.client_id, autorisation_mail=True)
+        if mail_type in DEVIS_RELANCE_TYPES:
+            clients = clients.filter(relance_devis_auto=True)
+        if not clients.exists():
+            return False
 
     # Configuration du serveur SMTP
     server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
