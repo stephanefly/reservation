@@ -34,20 +34,20 @@ class PotentielGraphTests(TestCase):
             'Prix': [400, 500, 700],
         })
 
-        scripts, divs = tracage_figure_bar_potentiel(evenements)
+        script, divs = tracage_figure_bar_potentiel(evenements)
 
-        self.assertEqual(len(scripts), 3)
+        self.assertIsInstance(script, str)
         self.assertEqual(len(divs), 3)
+        # Une seule ressource embarquée, contenant les trois titres.
         for index, annee in enumerate((2025, 2026, 2027)):
-            # Le JSON Bokeh peut échapper « à » sous forme Unicode.
-            self.assertIn(f"Potentiel pour {annee} par rapport", scripts[index])
+            self.assertIn(f"Potentiel pour {annee} par rapport", script)
             self.assertIn('<div', divs[index])
 
     def test_dataframe_vide_ne_fait_pas_echouer_les_graphes(self):
         evenements = pd.DataFrame(columns=['Date-Event', 'Prix'])
 
         self.assertEqual(_potentiel_totaux_hebdomadaires(evenements), {})
-        scripts, divs = tracage_figure_bar_potentiel(evenements)
+        script, divs = tracage_figure_bar_potentiel(evenements)
 
-        self.assertEqual(len(scripts), 3)
+        self.assertIsInstance(script, str)
         self.assertEqual(len(divs), 3)

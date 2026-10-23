@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from bokeh.resources import CDN
 from ..module.lib_graph.lib_graph_all import tracage_figure_bar_bokeh, table_graph, tracage_figure_bar_cost, \
     tracage_figure_bar_potentiel
 from ..module.lib_graph.lib_pie_chart import table_graph_pie
@@ -33,7 +34,13 @@ def graph_potentiel(request):
     # Même jeu de données signé pour les trois comparaisons annuelles.
     # On ne filtre pas sur la date de signature : 2027 inclut les réservations déjà signées.
     script, div = tracage_figure_bar_potentiel(get_ok_data(), date_now)
-    return render(request, 'app/backend/graph/graph_potentiel.html', {'script': script, 'div': div})
+    return render(request, 'app/backend/graph/graph_potentiel.html', {
+        'script': script,
+        'div': div,
+        # Synchronise la version BokehJS avec celle du Python serveur :
+        # le layout général du CRM utilise encore une version 3.1.0 figée.
+        'bokeh_resources': CDN.render(),
+    })
 
 def cycle_strategique_view(request):
     today_date = datetime.now()
