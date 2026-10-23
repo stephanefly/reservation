@@ -69,10 +69,27 @@ def _handle_reduc(event, soup, mail_type):
         event.event_option.save()
 
     if mail_type == 'last_chance_devis':
-        event.reduc_all = event.reduc_all+50
-        event.prix_proposed = event.prix_proposed-50
-        event.save()
-    reduction = event.reduc_product + event.reduc_all + event.event_option.total_reduction()
+        if event.client.raison_sociale:
+            # Entreprise : rappeler le devis sans remise automatique supplémentaire.
+            offer = soup.find('p', class_='last-chance-offer')
+            details = soup.find('p', class_='last-chance-offer-details')
+            if offer:
+                offer.string = "Notre proposition commerciale reste disponible aux conditions convenues."
+            if details:
+                details.string = (
+                    "Nous vous invitons à confirmer votre réservation sur la base "
+                    "du devis transmis, sans modification du tarif."
+                )
+        else:
+            # Particulier : conserver la remise Last Chance de 50 €.
+            event.reduc_all = (event.reduc_all or 0) + 50
+            event.prix_proposed = (event.prix_proposed or 0) - 50
+            event.save()
+    reduction = (
+        (event.reduc_product or 0)
+        + (event.reduc_all or 0)
+        + event.event_option.total_reduction()
+    )
 
     if reduction > 0:
         soup.find('a', class_='txt_reduc').string = " et bénéficier de la réduction de "
@@ -81,7 +98,9 @@ def _handle_reduc(event, soup, mail_type):
         soup.find('a', class_='txt_reduc').string = ""
         soup.find('a', class_='reduc_all').string = ""
 
-    if mail_type == 'relance_devis' or mail_type == 'last_chance_devis':
+    if mail_type == 'relance_devis' or (
+        mail_type == 'last_chance_devis' and not event.client.raison_sociale
+    ):
         soup.find('a', class_='reduc_all_title').string = f"-{reduction}€"
 
 
