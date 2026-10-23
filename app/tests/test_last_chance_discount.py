@@ -66,6 +66,32 @@ class LastChanceDiscountTests(unittest.TestCase):
             "https://reservation.myselfiebooth-paris.fr/desabonner/token-test"
         )
 
+    def test_business_template_reuses_original_last_chance_visuals(self):
+        private_template = BeautifulSoup(
+            (MAIL_TEMPLATE_ROOT / "devis/mail_last_chance.html").read_text(encoding="utf-8"),
+            "html.parser",
+        )
+        business_template = BeautifulSoup(
+            (MAIL_TEMPLATE_ROOT / "devis/mail_last_chance_entreprise.html").read_text(encoding="utf-8"),
+            "html.parser",
+        )
+
+        # Same logo, four photos, client reviews, contact block and footer.
+        self.assertEqual(
+            [img.get("src") for img in private_template.find_all("img", class_="image")],
+            [img.get("src") for img in business_template.find_all("img", class_="image")],
+        )
+        self.assertEqual(
+            private_template.find("img", class_="logo").get("src"),
+            business_template.find("img", class_="logo").get("src"),
+        )
+        for class_name in ("image-table", "avis_clients", "text_fin", "contact_block", "footer"):
+            self.assertIsNotNone(business_template.find(class_=class_name))
+        self.assertIsNotNone(business_template.find(class_="acompte_entreprise"))
+        self.assertIsNone(business_template.find("div", class_="acompte_particulier"))
+        self.assertNotIn("Nouvelle offre exclusive", business_template.get_text(" ", strip=True))
+        self.assertNotIn("profitez de cette réduction", business_template.get_text(" ", strip=True))
+
     def test_enterprise_without_prior_discount_also_keeps_price(self):
         event = FakeEvent(enterprise=True, reduc_all=0)
         event.reduc_product = 0
