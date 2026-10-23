@@ -673,6 +673,124 @@ html {
     justify-content: center;
 }
 
+/* Détails utiles des cartes devis : isolés du reste du back-office. */
+.quote-essential-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.quote-essential-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 86px;
+    padding: 11px;
+    border: 1px solid #e8ebf3;
+    border-radius: 12px;
+    background: #f8f9fc;
+}
+
+.quote-essential-field > small {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+    color: #667085;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.quote-essential-field > small i {
+    color: var(--admin-primary);
+}
+
+.quote-essential-field > strong,
+.quote-essential-field > a {
+    color: #344054;
+    font-size: 0.83rem;
+    font-weight: 780;
+    line-height: 1.4;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.quote-essential-field > a {
+    color: var(--admin-primary-dark);
+}
+
+.quote-essential-field > a:hover {
+    text-decoration: underline;
+}
+
+.quote-essential-field__hint {
+    display: block;
+    margin-top: 4px;
+    color: #667085;
+    font-size: 0.73rem;
+}
+
+.quote-essential-section {
+    min-width: 0;
+    padding: 13px 12px;
+    border: 1px solid #e8ebf3;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.quote-essential-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    color: #344054;
+    font-size: 0.78rem;
+    font-weight: 820;
+}
+
+.quote-essential-section h3 i {
+    color: var(--admin-primary);
+}
+
+.quote-essential-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.quote-essential-tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 6px 9px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.73rem;
+    line-height: 1.3;
+    font-weight: 760;
+    overflow-wrap: anywhere;
+}
+
+.quote-essential-tag--product {
+    color: #5032a6;
+    border-color: #e0d6ff;
+    background: #f3efff;
+}
+
+.quote-essential-tag--option {
+    color: #7a5208;
+    border-color: #f1dfb7;
+    background: #fff8e9;
+}
+
+.quote-essential-empty {
+    color: #667085;
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
 @media (max-width: 860px) {
     .backend-table-heading__hint {
         display: none;
