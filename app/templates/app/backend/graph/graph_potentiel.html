@@ -1,4 +1,5 @@
 {% extends 'app/backend/base.html' %}
+{% load l10n %}
 {% block title %}Potentiel{% endblock title %}
 
 {% block extra_css %}
@@ -208,15 +209,15 @@
                             <div class="potentiel-chart__bars" role="img" aria-label="Barres vertes pour {{ chart.year }}, contours bleus pour {{ chart.previous_year }}.">
                                 {% for week in chart.weeks %}
                                 <span class="potentiel-chart__week" title="{{ week.tooltip }}">
-                                    <span class="potentiel-chart__bar potentiel-chart__bar--current" style="height: {{ week.current_height }}%;"></span>
-                                    <span class="potentiel-chart__bar potentiel-chart__bar--previous" style="height: {{ week.previous_height }}%;"></span>
+                                    <span class="potentiel-chart__bar potentiel-chart__bar--current" style="height: {{ week.current_height|unlocalize }}%;"></span>
+                                    <span class="potentiel-chart__bar potentiel-chart__bar--previous" style="height: {{ week.previous_height|unlocalize }}%;"></span>
                                 </span>
                                 {% endfor %}
                             </div>
                         </div>
                         <div class="potentiel-chart__months" aria-hidden="true">
                             {% for month in chart.months %}
-                            <span class="potentiel-chart__month" style="left: {{ month.left }}%;">{{ month.label }}</span>
+                            <span class="potentiel-chart__month" style="left: {{ month.left|unlocalize }}%;">{{ month.label }}</span>
                             {% endfor %}
                         </div>
                     </div>
