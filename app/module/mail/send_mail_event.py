@@ -11,10 +11,18 @@ from app.module.cloud.get_pcloud_data import get_public_image_link_from_path
 from app.module.data_bdd.post_form import make_num_devis
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail
+from app.models import Client
 from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_BCC
 
 
-def send_mail_event(event, mail_type):
+def send_mail_event(event, mail_type, *, automatic=False):
+    # Vérification en base au moment de l'envoi : un désabonnement récent doit être respecté.
+    # Les envois déclenchés volontairement dans le back-office restent disponibles.
+    if automatic and not Client.objects.filter(
+        pk=event.client_id, autorisation_mail=True
+    ).exists():
+        return False
+
     # Configuration du serveur SMTP
     server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
     server.login(MAIL_MYSELFIEBOOTH, MP)

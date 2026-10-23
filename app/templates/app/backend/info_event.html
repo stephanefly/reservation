@@ -8,6 +8,10 @@
 
 {% block content %}
 <div class="event-admin">
+    <form id="client-auto-mail-form" method="post" action="{% url 'set_client_auto_emails' event.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="autorisation_mail" value="{% if event.client.autorisation_mail %}0{% else %}1{% endif %}">
+    </form>
     <header class="event-hero">
         <div class="event-hero__content">
             <a class="event-breadcrumb" href="{% url 'lst_devis' %}">
@@ -88,6 +92,23 @@
                                 <p class="event-panel__subtitle">Coordonnées, provenance et repères administratifs.</p>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="event-auto-mail-control" aria-label="Gestion des e-mails automatiques du client">
+                        <div>
+                            <strong>E-mails automatiques : {% if event.client.autorisation_mail %}activés{% else %}suspendus{% endif %}</strong>
+                            <p>
+                                {% if event.client.autorisation_mail %}
+                                    Les relances planifiées sont autorisées pour ce client.
+                                {% else %}
+                                    Les relances planifiées sont arrêtées pour ce client. Les envois manuels restent possibles.
+                                {% endif %}
+                            </p>
+                        </div>
+                        <button type="submit" form="client-auto-mail-form" class="event-auto-mail-button{% if event.client.autorisation_mail %} event-auto-mail-button--stop{% endif %}">
+                            <i class="fas {% if event.client.autorisation_mail %}fa-pause-circle{% else %}fa-play-circle{% endif %}" aria-hidden="true"></i>
+                            {% if event.client.autorisation_mail %}Suspendre les e-mails auto{% else %}Réactiver les e-mails auto{% endif %}
+                        </button>
                     </div>
 
                     <div class="event-facts">

@@ -674,6 +674,53 @@ main.container {
     border-top: 1px solid var(--event-border);
 }
 
+.event-auto-mail-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid var(--event-border);
+    border-radius: 12px;
+    background: var(--event-soft);
+}
+
+.event-auto-mail-control p {
+    margin: 6px 0 0;
+    color: var(--event-muted);
+    font-size: 0.9rem;
+}
+
+.event-auto-mail-button {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    border: 1px solid #a5d6ba;
+    border-radius: 10px;
+    background: #edf9f2;
+    color: var(--event-success);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.event-auto-mail-button--stop {
+    border-color: #f0b7b2;
+    background: #fff5f4;
+    color: var(--event-danger);
+}
+
+.event-auto-mail-button:focus-visible {
+    outline: 3px solid var(--event-primary);
+    outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+    .event-auto-mail-control {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
 @media (max-width: 1100px) {
     .event-kpis {
         grid-template-columns: repeat(2, minmax(0, 1fr));

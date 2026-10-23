@@ -1,6 +1,6 @@
 from django.urls import path
 from ..views import (
-    lst_devis, info_event, update_event, generate_devis_pdf,
+    lst_devis, info_event, update_event, set_client_auto_emails, generate_devis_pdf,
     generate_facture_pdf, confirmation_val_devis, confirmation_del_devis,
     del_devis, refused_devis, confirmation_envoi_mail, envoi_mail_devis, rappel_devis_client,
     prolongation_devis_client, phonebooth_offert_devis_client, last_chance_devis_client, last_rappel_devis_client,
@@ -11,6 +11,7 @@ urlpatterns = [
     path('lst/', lst_devis, name='lst_devis'),
     path('<int:id>/', info_event, name='info_event'),
     path('event/update/<int:id>/', update_event, name='update_event'),
+    path('event/client-auto-emails/<int:id>/', set_client_auto_emails, name='set_client_auto_emails'),
     path('generate-pdf/<int:event_id>/', generate_devis_pdf, name='generate_devis_pdf'),
     path('generate-facture-pdf/<int:event_id>/', generate_facture_pdf, name='generate_facture_pdf'),
     path('confirmation/val/<int:id>/', confirmation_val_devis, name='confirmation_val_devis'),

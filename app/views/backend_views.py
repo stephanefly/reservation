@@ -1,8 +1,12 @@
 import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.http import HttpResponseBadRequest
 from ..forms import ValidationForm
-from ..models import Event, EventAcompte, EventTemplate, EmailTracking, TeamMember
+from ..models import Client, Event, EventAcompte, EventTemplate, EmailTracking, TeamMember
 
 from ..module.data_bdd.update_event import update_data, process_validation_event
 from app.module.mail.send_mail_event import send_mail_event
@@ -159,6 +163,19 @@ def lst_devis(request):
         },
         'status_choices': Event.STATUS,  # Passer les choix de status au template
     })
+
+
+@staff_member_required
+@require_POST
+def set_client_auto_emails(request, id):
+    """Active ou suspend les e-mails automatiques pour un client, sans modifier le devis."""
+    event = get_object_or_404(Event.objects.only('id', 'client_id'), pk=id)
+    enabled = request.POST.get('autorisation_mail')
+    if enabled not in ('0', '1'):
+        return HttpResponseBadRequest("Valeur d'autorisation invalide.")
+
+    Client.objects.filter(pk=event.client_id).update(autorisation_mail=(enabled == '1'))
+    return redirect(reverse('info_event', kwargs={'id': event.id}) + '#client')
 
 
 def info_event(request, id):

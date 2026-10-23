@@ -46,11 +46,13 @@ def process_events_until(min_days_ago: int, current_status: str, new_status: str
             )
 
             # Vérif temps réel & idempotence
-            if evt.status != current_status or evt.signer_at is not None or evt.created_at >= cutoff:
+            if (evt.status != current_status or evt.signer_at is not None
+                    or evt.created_at >= cutoff or not evt.client.autorisation_mail):
                 continue
 
             # Envoi email (idéalement asynchrone)
-            send_mail_event(evt, email_template)
+            if not send_mail_event(evt, email_template, automatic=True):
+                continue
 
             # MàJ atomiques
             evt.status = new_status
@@ -102,9 +104,10 @@ def choose_to_relance_espace_client():
     lst_event_valid = (
         Event.objects.filter(
             Q(event_details__date_evenement__in=target_dates),
-            status='Acompte OK'
+            status='Acompte OK',
+            client__autorisation_mail=True,
         )
-        .select_related('event_template', 'event_details', 'event_product')
+        .select_related('client', 'event_template', 'event_details', 'event_product')
     )
 
     for event_valid in lst_event_valid:
@@ -115,26 +118,26 @@ def choose_to_relance_espace_client():
             or event_valid.event_details is None
             or not event_valid.event_details.horaire
         ):
-            send_mail_event(event_valid, 'relance_espace_client')
-            sleep(30)
+            if send_mail_event(event_valid, 'relance_espace_client', automatic=True):
+                sleep(30)
             continue
 
         # Vérification spécifique si un design est nécessaire
         if event_valid.event_product.need_design() and not event_valid.event_template.url_modele:
-            send_mail_event(event_valid, 'relance_espace_client')
-            sleep(30)
+            if send_mail_event(event_valid, 'relance_espace_client', automatic=True):
+                sleep(30)
             continue
 
         # Vérification spécifique si la musique est nécessaire
         if event_valid.event_product.need_music() and not event_valid.event_template.url_music_360:
-            send_mail_event(event_valid, 'relance_espace_client')
-            sleep(30)
+            if send_mail_event(event_valid, 'relance_espace_client', automatic=True):
+                sleep(30)
             continue
 
         # Vérification spécifique si un mur floral est nécéssaire
         if event_valid.event_option.MurFloral and not event_valid.event_option.mur_floral_style:
-            send_mail_event(event_valid, 'relance_espace_client')
-            sleep(30)
+            if send_mail_event(event_valid, 'relance_espace_client', automatic=True):
+                sleep(30)
             continue
 
 
@@ -150,8 +153,8 @@ def choose_to_make_review_mail():
     )
 
     for event in lst_event_to_make_review:
-        send_mail_event(event, 'relance_avis')
-        sleep(30)  # Pause de 30 sec
+        if send_mail_event(event, 'relance_avis', automatic=True):
+            sleep(30)  # Pause de 30 sec
 
 #
 # def choose_to_make_review_sms():
