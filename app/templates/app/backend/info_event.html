@@ -104,12 +104,12 @@
                                     Les relances commerciales sont arrêtées. Les devis manuels, confirmations et rappels de préparation continuent.
                                 {% endif %}
                             </p>
+                            <p class="event-auto-mail-consent">Désabonnement : {% if event.client.autorisation_mail %}non{% else %}oui{% endif %} (réglage indépendant).</p>
                         </div>
                         <button type="submit" form="client-quote-reminders-form" class="event-auto-mail-button{% if event.client.relance_devis_auto %} event-auto-mail-button--stop{% endif %}">
                             <i class="fas {% if event.client.relance_devis_auto %}fa-pause-circle{% else %}fa-play-circle{% endif %}" aria-hidden="true"></i>
                             {% if event.client.relance_devis_auto %}Arrêter les relances devis{% else %}Réactiver les relances devis{% endif %}
                         </button>
-                        <p class="event-auto-mail-consent">Désabonnement : {% if event.client.autorisation_mail %}non{% else %}oui{% endif %} (réglage indépendant).</p>
                     </div>
 
                     <div class="event-facts">
