@@ -122,6 +122,8 @@ def lst_devis(request):
     event_queryset = Event.objects.select_related(
         'client',
         'event_details',
+        'event_product',
+        'event_option',
         'event_acompte',
     ).order_by('-created_at')
     all_event = event_queryset[:15]
