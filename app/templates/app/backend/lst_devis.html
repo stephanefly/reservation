@@ -320,6 +320,61 @@
         grid-column: 1;
     }
 }
+
+/* Produits et prix toujours visibles dans chaque ligne. */
+.quote-list-card .quote-row-disclosure > summary {
+    grid-template-columns: minmax(175px, 1.4fr) minmax(100px, .7fr) minmax(175px, 1.35fr) minmax(95px, .65fr) minmax(125px, .85fr) 20px;
+    gap: 10px 16px;
+}
+.quote-list-card .quote-row-summary__item.quote-row-summary__date { grid-column: 2; grid-row: 1; }
+.quote-list-card .quote-row-summary__item.quote-row-summary__products { grid-column: 3; grid-row: 1; }
+.quote-list-card .quote-row-summary__item.quote-row-summary__price { grid-column: 4; grid-row: 1; }
+.quote-list-card .quote-row-summary__status { grid-column: 5; grid-row: 1; }
+.quote-list-card .quote-row-summary__chevron { grid-column: 6; grid-row: 1; }
+.quote-list-card .quote-row-summary__product-list { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.quote-list-card .quote-row-summary__product-tag {
+    display: inline-flex; max-width: 100%; padding: 4px 7px;
+    border: 1px solid #e2d9ff; border-radius: 7px;
+    color: #5032a6; background: #f1edff;
+    font-size: .72rem; font-weight: 750; line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+.quote-list-card .quote-row-summary__price > strong { display: block; color: #5635c4; font-size: 1.02rem; font-weight: 850; }
+.quote-list-card .quote-row-summary__price-type { display: block; color: #777f8e; font-size: .66rem; }
+.quote-list-card .quote-row-summary__missing { color: #8992a1; font-size: .73rem; }
+.quote-list-card .quote-row-details {
+    grid-template-columns: minmax(150px, .85fr) minmax(160px, 1fr) minmax(200px, 1.35fr) minmax(140px, .8fr);
+}
+.quote-list-card .quote-row-details .quote-essentials { grid-template-columns: 1fr; }
+@media (min-width: 681px) and (max-width: 1150px) {
+    .quote-list-card .quote-row-disclosure > summary {
+        grid-template-columns: minmax(0, 1.4fr) minmax(100px, .75fr) minmax(120px, .8fr) 20px;
+        grid-template-rows: auto auto;
+    }
+    .quote-list-card .quote-row-summary__client { grid-column: 1; grid-row: 1; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__date { grid-column: 2; grid-row: 1; }
+    .quote-list-card .quote-row-summary__status { grid-column: 3; grid-row: 1; }
+    .quote-list-card .quote-row-summary__chevron { grid-column: 4; grid-row: 1; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__products { grid-column: 1 / 3; grid-row: 2; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__price { grid-column: 3; grid-row: 2; }
+}
+@media (max-width: 1100px) {
+    .quote-list-card .quote-row-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+    .quote-list-card .quote-row-disclosure > summary {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto auto;
+        align-items: start;
+    }
+    .quote-list-card .quote-row-summary__client { grid-column: 1; grid-row: 1; }
+    .quote-list-card .quote-row-summary__chevron { grid-column: 2; grid-row: 1; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__date { grid-column: 1; grid-row: 2; }
+    .quote-list-card .quote-row-summary__status { grid-column: 2; grid-row: 2; text-align: right; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__products { grid-column: 1; grid-row: 3; }
+    .quote-list-card .quote-row-summary__item.quote-row-summary__price { grid-column: 2; grid-row: 3; text-align: right; }
+    .quote-list-card .quote-row-details { grid-template-columns: minmax(0, 1fr); }
+}
 </style>
 {% endblock extra_css %}
 
@@ -393,9 +448,30 @@
                         <small>Client</small>
                         <strong>{{ event.client.nom }}</strong>
                     </span>
-                    <span class="quote-row-summary__item">
+                    <span class="quote-row-summary__item quote-row-summary__date">
                         <small>Date</small>
                         <strong>{{ event.event_details.date_evenement|date:'d/m/Y' }}</strong>
+                    </span>
+                    <span class="quote-row-summary__item quote-row-summary__products">
+                        <small>Produits{% if event.event_option.duree %} · {{ event.event_option.duree }} h{% endif %}</small>
+                        <span class="quote-row-summary__product-list">
+                            {% if event.event_product and event.event_product.get_selected_booths %}
+                                {% if event.event_product.photobooth %}<span class="quote-row-summary__product-tag">Photobooth</span>{% endif %}
+                                {% if event.event_product.miroirbooth %}<span class="quote-row-summary__product-tag">Miroirbooth</span>{% endif %}
+                                {% if event.event_product.videobooth %}<span class="quote-row-summary__product-tag">360Booth</span>{% endif %}
+                                {% if event.event_product.voguebooth %}<span class="quote-row-summary__product-tag">VogueBooth</span>{% endif %}
+                                {% if event.event_product.ipadbooth %}<span class="quote-row-summary__product-tag">iPadBooth</span>{% endif %}
+                                {% if event.event_product.airbooth %}<span class="quote-row-summary__product-tag">AirBooth</span>{% endif %}
+                            {% else %}<span class="quote-row-summary__missing">—</span>{% endif %}
+                        </span>
+                    </span>
+                    <span class="quote-row-summary__item quote-row-summary__price">
+                        <small>Prix</small>
+                        {% if event.prix_valided is not None %}
+                            <strong>{{ event.prix_valided }} €</strong><span class="quote-row-summary__price-type">Validé</span>
+                        {% elif event.prix_proposed is not None %}
+                            <strong>{{ event.prix_proposed }} €</strong><span class="quote-row-summary__price-type">Proposé</span>
+                        {% else %}<strong class="quote-row-summary__missing">À définir</strong>{% endif %}
                     </span>
                     <span class="quote-row-summary__item quote-row-summary__status">
                         <small>Statut</small>
@@ -416,18 +492,6 @@
                             <span class="quote-essentials__label"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ville</span>
                             <strong class="quote-essentials__value">{{ event.event_details.ville_evenement|default:'Non renseignée' }}</strong>
                         </div>
-                        <div class="quote-essentials__box">
-                            <span class="quote-essentials__label"><i class="fas fa-euro-sign" aria-hidden="true"></i> Prix</span>
-                            {% if event.prix_valided is not None %}
-                                <strong class="quote-essentials__value quote-essentials__value--price">{{ event.prix_valided }} €</strong>
-                                <span class="quote-essentials__sub">Validé</span>
-                            {% elif event.prix_proposed is not None %}
-                                <strong class="quote-essentials__value quote-essentials__value--price">{{ event.prix_proposed }} €</strong>
-                                <span class="quote-essentials__sub">Proposé</span>
-                            {% else %}
-                                <strong class="quote-essentials__value">À définir</strong>
-                            {% endif %}
-                        </div>
                     </div>
 
                     <div class="quote-call">
@@ -438,27 +502,6 @@
                             <span class="quote-call__missing">Non renseigné</span>
                         {% endif %}
                     </div>
-
-                    <section class="quote-essential-section quote-compact-section" aria-label="Produits de l'événement">
-                        <h3>
-                            <i class="fas fa-camera-retro" aria-hidden="true"></i> Produits
-                            {% if event.event_option.duree %}
-                                <span class="quote-essential-duration"><i class="far fa-clock" aria-hidden="true"></i> {{ event.event_option.duree }} h</span>
-                            {% endif %}
-                        </h3>
-                        <div class="quote-essential-tags">
-                            {% if event.event_product and event.event_product.get_selected_booths %}
-                                {% if event.event_product.photobooth %}<span class="quote-essential-tag quote-essential-tag--product">Photobooth</span>{% endif %}
-                                {% if event.event_product.miroirbooth %}<span class="quote-essential-tag quote-essential-tag--product">Miroirbooth</span>{% endif %}
-                                {% if event.event_product.videobooth %}<span class="quote-essential-tag quote-essential-tag--product">360Booth</span>{% endif %}
-                                {% if event.event_product.voguebooth %}<span class="quote-essential-tag quote-essential-tag--product">VogueBooth</span>{% endif %}
-                                {% if event.event_product.ipadbooth %}<span class="quote-essential-tag quote-essential-tag--product">iPadBooth</span>{% endif %}
-                                {% if event.event_product.airbooth %}<span class="quote-essential-tag quote-essential-tag--product">AirBooth</span>{% endif %}
-                            {% else %}
-                                <span class="quote-essential-empty">Aucun produit renseigné</span>
-                            {% endif %}
-                        </div>
-                    </section>
 
                     <section class="quote-essential-section quote-compact-section" aria-label="Options de l'événement">
                         <h3><i class="fas fa-plus-circle" aria-hidden="true"></i> Options</h3>
