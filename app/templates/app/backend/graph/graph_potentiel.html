@@ -1,16 +1,237 @@
 {% extends 'app/backend/base.html' %}
 {% block title %}Potentiel{% endblock title %}
+
 {% block extra_css %}
-{{ bokeh_resources|safe }}
+<style>
+/* Histogrammes HTML rendus par Django : aucun chargement JavaScript nécessaire. */
+.potentiel-list {
+    display: grid;
+    gap: 18px;
+}
+.potentiel-chart {
+    min-width: 0;
+    padding: 20px 22px 17px;
+    overflow: hidden;
+}
+.potentiel-chart__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+.potentiel-chart__title {
+    margin: 0;
+    color: #252c3b;
+    font-size: 1rem;
+    font-weight: 830;
+}
+.potentiel-chart__subtitle {
+    margin: 4px 0 0;
+    color: #7a8394;
+    font-size: .76rem;
+}
+.potentiel-chart__totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: .76rem;
+    font-weight: 700;
+}
+.potentiel-chart__totals span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: #f6f7fa;
+}
+.potentiel-chart__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    background: #15803d;
+}
+.potentiel-chart__dot--previous {
+    background: #fff;
+    border: 1.5px solid #3659e3;
+}
+.potentiel-chart__viewport {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+}
+.potentiel-chart__graph {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 8px;
+    min-width: 890px;
+    padding: 8px 10px 0 0;
+}
+.potentiel-chart__y {
+    position: relative;
+    height: 265px;
+}
+.potentiel-chart__y-label {
+    position: absolute;
+    right: 3px;
+    transform: translateY(50%);
+    color: #7d8594;
+    font-size: .65rem;
+    white-space: nowrap;
+}
+.potentiel-chart__plot-wrap {
+    min-width: 0;
+}
+.potentiel-chart__plot {
+    position: relative;
+    height: 265px;
+    border-left: 1px solid #a7adbb;
+    border-bottom: 1px solid #a7adbb;
+    background: #fff;
+}
+.potentiel-chart__gridline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #e7eaf0;
+    pointer-events: none;
+}
+.potentiel-chart__bars {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(53, minmax(0, 1fr));
+    gap: 2px;
+    align-items: end;
+}
+.potentiel-chart__week {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-width: 0;
+    cursor: help;
+}
+.potentiel-chart__bar {
+    position: absolute;
+    bottom: 0;
+    left: 5%;
+    width: 90%;
+    display: block;
+    min-height: 0;
+    box-sizing: border-box;
+}
+.potentiel-chart__bar--current {
+    z-index: 1;
+    background: #078b22;
+}
+.potentiel-chart__bar--previous {
+    z-index: 2;
+    border: 1.5px solid #3057ed;
+    background: transparent;
+}
+.potentiel-chart__week:hover {
+    background: rgba(99, 72, 190, .06);
+}
+.potentiel-chart__week:hover .potentiel-chart__bar--current {
+    background: #00a02c;
+}
+.potentiel-chart__months {
+    position: relative;
+    height: 25px;
+}
+.potentiel-chart__month {
+    position: absolute;
+    top: 7px;
+    color: #6b7383;
+    font-size: .67rem;
+}
+.potentiel-chart__empty {
+    margin: 12px 0 0;
+    color: #6d7587;
+    font-size: .8rem;
+}
+.potentiel-chart__note {
+    margin: 8px 0 0;
+    color: #7a8393;
+    font-size: .7rem;
+}
+@media (max-width: 760px) {
+    .potentiel-chart {
+        padding: 15px 12px;
+    }
+    .potentiel-chart__graph {
+        min-width: 750px;
+    }
+}
+</style>
 {% endblock extra_css %}
+
 {% block content %}
 <div class="backend-page">
-    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses</p><h1>Potentiel</h1><p class="backend-page-header__description">Visualisez les opportunités et leur évolution.</p></div></header>
-    <div class="backend-chart-grid">
-        {% for divgraph in div %}
-            <section class="backend-chart-card">{{ divgraph|safe }}</section>
+    <header class="backend-page-header">
+        <div>
+            <p class="backend-page-header__eyebrow">Analyses</p>
+            <h1>Potentiel</h1>
+            <p class="backend-page-header__description">Évolution hebdomadaire des montants des événements signés.</p>
+        </div>
+    </header>
+
+    <div class="potentiel-list">
+        {% for chart in charts %}
+        <section class="backend-chart-card potentiel-chart" aria-label="Comparaison {{ chart.year }} et {{ chart.previous_year }}">
+            <div class="potentiel-chart__header">
+                <div>
+                    <h2 class="potentiel-chart__title">Potentiel pour {{ chart.year }} par rapport à {{ chart.previous_year }}</h2>
+                    <p class="potentiel-chart__subtitle">Comparaison sur les mêmes périodes de 7 jours</p>
+                </div>
+                <div class="potentiel-chart__totals" aria-label="Totaux annuels">
+                    <span><i class="potentiel-chart__dot" aria-hidden="true"></i>{{ chart.year }} : {{ chart.total_current }}</span>
+                    <span><i class="potentiel-chart__dot potentiel-chart__dot--previous" aria-hidden="true"></i>{{ chart.previous_year }} : {{ chart.total_previous }}</span>
+                </div>
+            </div>
+
+            <div class="potentiel-chart__viewport" tabindex="0" aria-label="Histogramme {{ chart.year }} par rapport à {{ chart.previous_year }}. Défilement horizontal possible.">
+                <div class="potentiel-chart__graph">
+                    <div class="potentiel-chart__y" aria-hidden="true">
+                        {% for tick in chart.y_ticks %}
+                        <span class="potentiel-chart__y-label" style="bottom: {{ tick.bottom }}%;">{{ tick.label }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="potentiel-chart__plot-wrap">
+                        <div class="potentiel-chart__plot">
+                            {% for tick in chart.y_ticks %}
+                            <span class="potentiel-chart__gridline" style="bottom: {{ tick.bottom }}%;" aria-hidden="true"></span>
+                            {% endfor %}
+                            <div class="potentiel-chart__bars" role="img" aria-label="Barres vertes pour {{ chart.year }}, contours bleus pour {{ chart.previous_year }}.">
+                                {% for week in chart.weeks %}
+                                <span class="potentiel-chart__week" title="{{ week.tooltip }}">
+                                    <span class="potentiel-chart__bar potentiel-chart__bar--current" style="height: {{ week.current_height }}%;"></span>
+                                    <span class="potentiel-chart__bar potentiel-chart__bar--previous" style="height: {{ week.previous_height }}%;"></span>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="potentiel-chart__months" aria-hidden="true">
+                            {% for month in chart.months %}
+                            <span class="potentiel-chart__month" style="left: {{ month.left }}%;">{{ month.label }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if chart.is_empty %}
+            <p class="potentiel-chart__empty">Aucun montant d'événement signé pour ces deux années.</p>
+            {% endif %}
+            <p class="potentiel-chart__note">Survolez une barre pour voir les montants hebdomadaires. Sur mobile, faites défiler le graphique horizontalement.</p>
+        </section>
+        {% empty %}
+        <section class="backend-chart-card">
+            <p>Impossible de préparer les graphiques : aucune comparaison n'a été générée.</p>
+        </section>
         {% endfor %}
     </div>
-    {{ script|safe }}
 </div>
 {% endblock content %}
