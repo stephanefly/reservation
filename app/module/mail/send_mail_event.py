@@ -153,10 +153,11 @@ def get_mail_template(event, mail_type):
     elif mail_type == 'last_chance_devis':
         # Mail pour relancer un client concernant un devis envoyé précédemment
         if event.client.raison_sociale:
-            subject = "📸 Dernier rappel concernant votre devis MySelfieBooth"
+            subject = "Suivi de votre devis MySelfieBooth – votre événement"
+            template_name = "devis/mail_last_chance_entreprise.html"
         else:
             subject = "📸 Dernière chance : 50€ supplémentaires de remise ! ⚠️"
-        template_name = "devis/mail_last_chance.html"
+            template_name = "devis/mail_last_chance.html"
         file_to_send.append('devis_file')
 
 # ---------------------------------------------------------------------------------------------------------------------
