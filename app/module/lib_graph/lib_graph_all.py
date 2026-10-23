@@ -160,38 +160,113 @@ def tracage_figure_bar_cost(df_brut_net, year, date_now):
 
     return components(graph)
 
-def tracage_figure_bar_potentiel(df_brut_net, df_brut_net_before, date_now):
+def _potentiel_totaux_hebdomadaires(df_evenements):
+    """Additionne les prix par année et périodes de sept jours depuis le 1er janvier.
 
-    year_before = 2024
-    year_now = 2025
-    df_brut_net_before['date4'] = df_brut_net_before['Date-Event'] + pd.offsets.DateOffset(years=1, days=-1.25)
-    all_brut_data = pd.concat([df_brut_net_before, df_brut_net], ignore_index=True)
-    all_brut_data['Date-Event'] = pd.to_datetime(all_brut_data['Date-Event'])
-    source = ColumnDataSource(data=all_brut_data)
+    Les semaines des deux années sont ainsi superposées sur les mêmes positions.
+    Les événements sans date ou sans montant ne font pas échouer le graphique.
+    """
+    totaux = {}
+    if df_evenements.empty:
+        return totaux
 
-    print(all_brut_data)
+    donnees = df_evenements[['Date-Event', 'Prix']].copy()
+    donnees['Date-Event'] = pd.to_datetime(donnees['Date-Event'], errors='coerce')
+    donnees['Prix'] = pd.to_numeric(donnees['Prix'], errors='coerce').fillna(0)
+    donnees = donnees.dropna(subset=['Date-Event'])
 
-    hover = HoverTool(tooltips=[
-        ("week", "@{Date-Event}{%d %b %Y}"),
-        ("Brut", "@Prix €"),],
-        formatters={'@{Date-Event}': 'datetime'})
+    for date_evenement, prix in donnees.itertuples(index=False, name=None):
+        annee = date_evenement.year
+        semaine = (date_evenement.dayofyear - 1) // 7
+        cle = (annee, semaine)
+        totaux[cle] = totaux.get(cle, 0) + float(prix)
+
+    return totaux
 
 
-    graph = figure(title=f"Potentiel pour 2025 par rapport à 2024",width=1150, height=300, tools=[hover])
-    graph.vbar(pd.to_datetime(date_now), top=3000, width=1.5, color="red")
-    graph.x_range = Range1d(pd.to_datetime(f"{year_now}-01-01"), pd.to_datetime(f"{year_now}-12-30"))
-    graph.xaxis.formatter = DatetimeTickFormatter(days=["%d %b %Y"],
-                                                  months=["%d %b %Y"],
-                                                  years=["%d %b %Y"])
+def tracage_figure_bar_potentiel(df_evenements, date_now=None):
+    """Affiche trois comparaisons annuelles avec les mêmes données et le même style.
 
-    # GRAPH 2025
-    graph.vbar_stack(["Prix"], x='Date-Event', fill_color="green", color="green",
-                     source=source, width=datetime.timedelta(weeks=1), legend_label=str(year_now))
-    # GRAPH 2024 alpha 0
-    graph.vbar_stack(["Prix"], x='date4', fill_color=['blue'], fill_alpha=0, color="blue",
-                     source=source, width=datetime.timedelta(weeks=1), legend_label=str(year_before))
+    2025 / 2024, 2026 / 2025, puis 2027 / 2026.
+    Vert = année étudiée ; contour bleu = année précédente.
+    """
+    totaux = _potentiel_totaux_hebdomadaires(df_evenements)
+    scripts, divs = [], []
 
-    return components(graph)
+    for annee in (2025, 2026, 2027):
+        annee_precedente = annee - 1
+        debut = pd.Timestamp(annee, 1, 1)
+        fin = pd.Timestamp(annee, 12, 31)
+        positions = [debut + pd.Timedelta(days=7 * i) for i in range(53)]
+        prix_annee = [totaux.get((annee, i), 0) for i in range(53)]
+        prix_precedent = [totaux.get((annee_precedente, i), 0) for i in range(53)]
+
+        # Les 53 positions couvrent aussi les dernières journées de décembre.
+        semaines = []
+        for index, position in enumerate(positions):
+            if position > fin:
+                semaines.append(f"Semaine {index + 1}")
+                continue
+            fin_semaine = min(position + pd.Timedelta(days=6), fin)
+            semaines.append(
+                f"Semaine {index + 1} · {position.strftime('%d/%m')} - {fin_semaine.strftime('%d/%m')}"
+            )
+
+        source = ColumnDataSource(data={
+            'Date-Event': positions,
+            'Prix': prix_annee,
+            'PrixBefore': prix_precedent,
+            'Semaine': semaines,
+        })
+        graphique = figure(
+            title=f"Potentiel pour {annee} par rapport à {annee_precedente}",
+            width=1150,
+            height=300,
+            sizing_mode="stretch_width",
+            tools="pan,wheel_zoom,box_zoom,reset,save",
+        )
+        graphique.vbar(
+            x='Date-Event',
+            top='Prix',
+            width=datetime.timedelta(days=6),
+            color="green",
+            source=source,
+            legend_label=str(annee),
+        )
+        graphique.vbar(
+            x='Date-Event',
+            top='PrixBefore',
+            width=datetime.timedelta(days=6),
+            fill_alpha=0,
+            line_color="blue",
+            line_width=1.5,
+            source=source,
+            legend_label=str(annee_precedente),
+        )
+        graphique.add_tools(HoverTool(tooltips=[
+            ("Période", "@Semaine"),
+            (str(annee), "@Prix{0,0} €"),
+            (str(annee_precedente), "@PrixBefore{0,0} €"),
+        ]))
+        graphique.x_range = Range1d(
+            debut - pd.Timedelta(days=4),
+            pd.Timestamp(annee + 1, 1, 1) + pd.Timedelta(days=4),
+        )
+        prix_max = max(prix_annee + prix_precedent)
+        graphique.y_range = Range1d(0, max(100, prix_max * 1.15))
+        graphique.xaxis.formatter = DatetimeTickFormatter(
+            days=["%d %b %Y"],
+            months=["%d %b %Y"],
+            years=["%d %b %Y"],
+        )
+        graphique.legend.location = "top_right"
+        graphique.legend.background_fill_alpha = 0.7
+
+        script, div = components(graphique)
+        scripts.append(script)
+        divs.append(div)
+
+    return scripts, divs
 
 
 def table_graph(df_brut_net, date_now):
