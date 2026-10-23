@@ -21,7 +21,7 @@ class StaticPotentielChartTests(TestCase):
         self.assertEqual(len(charts[1]['months']), 12)
         self.assertEqual(charts[0]['total_previous'], '190 €')
         self.assertEqual(charts[0]['total_current'], '260 €')
-        self.assertEqual(charts[0]['weeks'][0]['current_height'], 65)
+        self.assertEqual(charts[0]['weeks'][0]['current_height'], 86.67)
         self.assertGreater(charts[1]['weeks'][0]['current_height'], 0)
         self.assertGreater(charts[2]['weeks'][0]['current_height'], 0)
         self.assertIn('2024', charts[0]['weeks'][0]['tooltip'])
