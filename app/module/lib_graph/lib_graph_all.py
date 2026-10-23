@@ -191,7 +191,7 @@ def tracage_figure_bar_potentiel(df_evenements, date_now=None):
     Vert = année étudiée ; contour bleu = année précédente.
     """
     totaux = _potentiel_totaux_hebdomadaires(df_evenements)
-    scripts, divs = [], []
+    graphiques = []
 
     for annee in (2025, 2026, 2027):
         annee_precedente = annee - 1
@@ -262,11 +262,13 @@ def tracage_figure_bar_potentiel(df_evenements, date_now=None):
         graphique.legend.location = "top_right"
         graphique.legend.background_fill_alpha = 0.7
 
-        script, div = components(graphique)
-        scripts.append(script)
-        divs.append(div)
+        graphiques.append(graphique)
 
-    return scripts, divs
+    # Les trois graphiques partagent le même document Bokeh et un unique
+    # script JavaScript. Cela évite les chargements indépendants qui peuvent
+    # laisser les conteneurs vides dans le navigateur.
+    script, divs = components(graphiques)
+    return script, divs
 
 
 def table_graph(df_brut_net, date_now):
