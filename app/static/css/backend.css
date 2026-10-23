@@ -684,8 +684,8 @@ html {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 86px;
-    padding: 11px;
+    min-height: 69px;
+    padding: 9px 11px;
     border: 1px solid #e8ebf3;
     border-radius: 12px;
     background: #f8f9fc;
@@ -725,11 +725,17 @@ html {
     text-decoration: underline;
 }
 
-.quote-essential-field__hint {
-    display: block;
-    margin-top: 4px;
-    color: #667085;
-    font-size: 0.73rem;
+.quote-essential-field--contact {
+    grid-column: 1 / -1;
+    min-height: 46px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.quote-essential-field--contact > small {
+    margin: 0;
 }
 
 .quote-essential-section {
@@ -752,6 +758,20 @@ html {
 
 .quote-essential-section h3 i {
     color: var(--admin-primary);
+}
+
+.quote-essential-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 5px 9px;
+    border-radius: 999px;
+    color: #5032a6;
+    background: #f3efff;
+    white-space: nowrap;
+    font-size: 0.73rem;
+    font-weight: 800;
 }
 
 .quote-essential-tags {
