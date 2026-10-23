@@ -255,9 +255,9 @@ def tracage_figure_bar_potentiel(df_evenements, date_now=None):
         prix_max = max(prix_annee + prix_precedent)
         graphique.y_range = Range1d(0, max(100, prix_max * 1.15))
         graphique.xaxis.formatter = DatetimeTickFormatter(
-            days=["%d %b %Y"],
-            months=["%d %b %Y"],
-            years=["%d %b %Y"],
+            days="%d %b %Y",
+            months="%d %b %Y",
+            years="%d %b %Y",
         )
         graphique.legend.location = "top_right"
         graphique.legend.background_fill_alpha = 0.7
