@@ -28,6 +28,7 @@ def process_events_until(min_days_ago: int, current_status: str, new_status: str
         .select_related('client')
         .filter(
             client__autorisation_mail=True,
+            client__relance_devis_auto=True,
             signer_at__isnull=True,
             status=current_status,
             created_at__lt=cutoff,  # <= J-N (fenêtre ouverte vers le passé)
@@ -47,7 +48,8 @@ def process_events_until(min_days_ago: int, current_status: str, new_status: str
 
             # Vérif temps réel & idempotence
             if (evt.status != current_status or evt.signer_at is not None
-                    or evt.created_at >= cutoff or not evt.client.autorisation_mail):
+                    or evt.created_at >= cutoff or not evt.client.autorisation_mail
+                    or not evt.client.relance_devis_auto):
                 continue
 
             # Envoi email (idéalement asynchrone)
