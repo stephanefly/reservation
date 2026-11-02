@@ -5,8 +5,8 @@
 <form method="post" id="monFormulaire" class="quote-wizard" novalidate>
     {% csrf_token %}
 
-    <input type="hidden" id="selectedImages" name="selectedImages">
-    <input type="hidden" id="selectedOption" name="selectedOption">
+    <input type="hidden" id="selectedImages" name="selectedImages" value="{{ form.selectedImages }}">
+    <input type="hidden" id="selectedOption" name="selectedOption" value="{{ form.selectedOption }}">
     <input type="hidden" name="livraison" value="1">
 
     <section class="wizard-hero">
@@ -1969,6 +1969,17 @@ document.addEventListener("DOMContentLoaded", function () {
             updateQuantityDisplay(inputId);
         });
     }
+
+    // Restaurer les cartes après « Modifier ma demande » avant de recalculer le résumé.
+    [
+        [".selectable-image", selectedImagesInput.value],
+        [".selectable-option", selectedOptionInput.value]
+    ].forEach(function ([selector, savedValue]) {
+        const values = savedValue.split(",").filter(Boolean);
+        document.querySelectorAll(selector).forEach(function (card) {
+            card.classList.toggle("selected", values.includes(card.dataset.value));
+        });
+    });
 
     applySelectionsFromUrl();
     toggleClientType();

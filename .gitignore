@@ -5,3 +5,5 @@ donnees
 /facture.pdf
 /backup/
 __pycache__/
+# Preuves locales des tests du parcours commercial
+/test-results/

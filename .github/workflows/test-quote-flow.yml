@@ -1,0 +1,60 @@
+name: Test formulaire et devis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quote-flow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quote-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: crm_e2e
+          MYSQL_USER: crm_e2e
+          MYSQL_PASSWORD: crm-e2e-only
+          MYSQL_ROOT_PASSWORD: root-e2e-only
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: tests_e2e/requirements.txt
+      - name: Installer les dépendances du test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
+          python -m pip install -r tests_e2e/requirements.txt mysqlclient
+          python -m playwright install --with-deps chromium
+      - name: Vérifier prix et acomptes
+        run: python -m unittest app.tests.test_event_pricing app.tests.test_panneaux_xxl app.tests.test_acompte_devis
+      - name: Tester le formulaire jusqu'au mail et au PDF
+        env:
+          CRM_E2E_MYSQL: "1"
+        run: python -m tests_e2e.run_quote_flow
+      - name: Conserver les preuves de test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parcours-devis-test
+          path: test-results/quote-flow/
+          if-no-files-found: warn
+          retention-days: 7
