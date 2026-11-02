@@ -194,14 +194,13 @@ def prix_ligne_option(event, data_tableau_devis):
 
     option = event.event_option
     if option.panneaux_xxl:
-        remise = option.panneaux_remise or 0
-        montant = option.panneaux_forfait - remise
-        data_tableau_devis.append([
-            f"Panneau XXL — forfait {format_prix(option.panneaux_forfait)}",
-            "Forfait", str(option.panneaux_xxl), format_prix(remise) if remise else "",
-            format_prix(montant),
-        ])
-        total += montant
+        total += ajouter_ligne_option(
+            data_tableau_devis=data_tableau_devis,
+            description="Panneau XXL",
+            prix_total=option.panneaux_forfait,
+            quantite=option.panneaux_xxl,
+            reduction=option.panneaux_remise,
+        )
 
     if event.event_option.magnets:
         total += ajouter_ligne_option(

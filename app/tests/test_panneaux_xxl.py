@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from app.module.data_bdd.panneau_xxl import appliquer_panneaux, quantite_panneaux
 from app.module.data_bdd.event_pricing import calculate_option_total
-from app.module.devis_pdf.make_table import prix_ligne_option
+from app.module.devis_pdf.make_table import prix_ligne_option, format_prix
 from app.tests.test_event_pricing import FakeEventOption
 
 
@@ -23,6 +23,7 @@ class PanneauxXXLTests(unittest.TestCase):
             lignes, total = prix_ligne_option(SimpleNamespace(event_option=option), [])
             self.assertEqual(total, prix - 25)
             self.assertEqual(calculate_option_total(option), total)
+            self.assertEqual(lignes[0][:2], ["Panneau XXL", format_prix(prix / q)])
             self.assertEqual(lignes[0][2:], [str(q), "25 €", f"{total} €"])
 
     def test_keep_agreed_price_and_clear_when_removed(self):
