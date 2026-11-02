@@ -1,20 +1,51 @@
 {% load static %}
-<fieldset class="panneaux-option {% if not interne %}choice-card option-card line-option-card{% endif %}">
-    {% if interne %}<legend>Panneau XXL</legend>{% endif %}
-    <img {% if interne %}style="display:block;width:100%;max-width:240px;height:auto;margin-bottom:.6rem;border-radius:.5rem"{% endif %} src="{% static 'img/panneaux-xxl.webp' %}" alt="Deux panneaux XXL avec deux portraits d’un couple en tenues de ville élégantes, photographié en extérieur" width="960" height="640" loading="lazy">
+{% if interne %}
+<div class="event-option-row">
+    <div class="event-option-control">
+        <label for="panneaux_xxl">Quantité de panneaux XXL</label>
+        <select id="panneaux_xxl" name="panneaux_xxl">
+            <option value="0" {% if not actif %}selected{% endif %}>Sans</option>
+            {% for q, tarif in quantites_panneaux %}
+            <option value="{{ q }}" {% if actif and q == panneaux_choisis %}selected{% endif %}>{{ q }} — {{ tarif }} €</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="event-option-control">
+        <label for="panneaux_remise">Remise (€)</label>
+        <input id="panneaux_remise" type="number" min="0" name="panneaux_remise" value="{{ event.event_option.panneaux_remise|default_if_none:0 }}" inputmode="numeric">
+    </div>
+    <input type="hidden" name="panneaux_form" value="1">
+    <input type="checkbox" hidden name="avec_panneaux" id="avec_panneaux" {% if actif %}checked{% endif %}>
+</div>
+<script>
+(function () {
+    const quantite = document.getElementById('panneaux_xxl');
+    const actif = document.getElementById('avec_panneaux');
+    function synchroniser() {
+        actif.checked = quantite.value !== '0';
+    }
+    quantite.addEventListener('change', synchroniser);
+    synchroniser();
+})();
+</script>
+{% else %}
+<fieldset class="panneaux-option quantity-line-option">
+    <img src="{% static 'img/panneaux-xxl.webp' %}" alt="Deux panneaux XXL avec deux portraits d’un couple en tenues de ville élégantes, photographié en extérieur" width="960" height="640" loading="lazy">
     <div class="panneaux-controls">
-    <label class="panneaux-toggle"><input type="checkbox" name="avec_panneaux" id="avec_panneaux" {% if actif %}checked{% endif %}> <span><strong>Panneau XXL</strong><small>Portraits personnalisés grand format</small></span></label>
+    <label class="panneaux-toggle"><input hidden type="checkbox" name="avec_panneaux" id="avec_panneaux" {% if actif %}checked{% endif %}> <span><strong>Panneau XXL</strong><small class="panneaux-selection">Sans panneaux XXL</small><small>Portraits personnalisés grand format</small></span></label>
     <div class="panneaux-details">
         <label>Quantité
             <select name="panneaux_xxl" id="panneaux_xxl">
                 {% for q, tarif in quantites_panneaux %}<option value="{{ q }}" {% if q == panneaux_choisis %}selected{% endif %}>{{ q }} — {{ tarif }} €</option>{% endfor %}
             </select>
         </label>
-        {% if interne %}
-            <input type="hidden" name="panneaux_form" value="1">
-            {% if actif %}<span>Forfait enregistré : {{ event.event_option.panneaux_forfait }} €</span>{% endif %}
-            <label>Remise sur la ligne (€) <input type="number" min="0" name="panneaux_remise" value="{{ event.event_option.panneaux_remise|default_if_none:0 }}"></label>
-        {% endif %}
+
+    </div>
+    <div class="quantity-line-actions" aria-label="Nombre de panneaux XXL">
+        <button type="button" class="quantity-choice panneau-choice" data-quantite="0">Sans</button>
+        {% for q, tarif in quantites_panneaux %}
+        <button type="button" class="quantity-choice panneau-choice {% if q == 4 %}recommended{% endif %}" data-quantite="{{ q }}" title="{{ q }} panneau{{ q|pluralize:'x' }} — {{ tarif }} €">{{ q }}</button>
+        {% endfor %}
     </div>
     </div>
 </fieldset>
@@ -26,6 +57,7 @@
 .panneaux-toggle input { width:19px; height:19px; accent-color:#d4af37; flex-shrink:0; }
 .panneaux-toggle strong { display:block; font-size:20px; }
 .panneaux-toggle small { display:block; margin-top:4px; color:#d8d8d8; }
+.panneaux-option .quantity-line-actions { padding:16px 0 0; }
 .panneaux-details { margin-top:14px; }
 .panneaux-details label { display:block; }
 .panneaux-details select { display:block; width:100%; margin-top:6px; border:1px solid #bba352; border-radius:10px; padding:10px; background:#202020; color:#fff; }
@@ -34,8 +66,19 @@
 (function () {
     const active = document.getElementById('avec_panneaux');
     const details = active.closest('fieldset').querySelector('.panneaux-details');
+    const quantite = document.getElementById('panneaux_xxl');
+    const carte = active.closest('fieldset');
     function afficher() {
-        details.hidden = !active.checked;
+        details.hidden = true;
+        const choix = active.checked ? quantite.value : '0';
+        carte.querySelectorAll('.panneau-choice').forEach(function (button) {
+            const selectionne = button.dataset.quantite === choix;
+            button.classList.toggle('selected', selectionne);
+            button.setAttribute('aria-pressed', String(selectionne));
+        });
+        carte.querySelector('.panneaux-selection').textContent = active.checked
+            ? quantite.selectedOptions[0].textContent + ' · panneaux XXL'
+            : 'Sans panneaux XXL';
         active.closest("fieldset").classList.toggle("selected", active.checked);
         details.querySelectorAll('select, input[type=number]').forEach(field => field.disabled = !active.checked);
     }
@@ -43,6 +86,18 @@
         if (active.checked) details.querySelector('select').value = '4';
         afficher();
     });
+    carte.querySelectorAll('.panneau-choice').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const valeur = button.dataset.quantite;
+            active.checked = valeur !== '0';
+            quantite.value = active.checked ? valeur : '4';
+            afficher();
+            quantite.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    });
+    quantite.addEventListener('change', afficher);
     afficher();
 })();
 </script>
+
+{% endif %}
