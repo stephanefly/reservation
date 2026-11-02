@@ -1260,9 +1260,7 @@
             <article class="option-card">
                 <img src="{% static 'img/panneaux-xxl.webp' %}" alt="Deux panneaux XXL avec deux portraits d’un couple en tenues de ville élégantes, photographié en extérieur" width="960" height="640" loading="lazy">
                 <div class="option-card-body">
-                    <h3>Panneau XXL</h3>
-                    <p>{% for q, tarif in tarifs_panneaux %}{{ q }} panneau{{ q|pluralize:"x" }} : {{ tarif }} €{% if not forloop.last %} · {% endif %}{% endfor %}</p>
-                    <span class="option-price">Tarif par lot</span>
+                    {% include "app/partials/panneaux_xxl_presentation.html" %}
                 </div>
             </article>
 

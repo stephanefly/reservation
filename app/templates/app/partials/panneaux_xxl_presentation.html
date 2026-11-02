@@ -1,0 +1,28 @@
+<h3>Panneau XXL</h3>
+<p>Vos portraits de couple imprimés en grand format pour personnaliser votre réception.</p>
+<p>Format 2 × 1 m par panneau. Choisissez de 1 à 6 panneaux.</p>
+<table class="xxl-price-table">
+    <caption>Tarifs par lot de panneaux XXL</caption>
+    <thead><tr><th scope="col">Quantité</th><th scope="col">Prix du lot</th></tr></thead>
+    <tbody>
+        {% for q, tarif in tarifs_panneaux %}
+        <tr {% if q == 4 %}class="xxl-price-popular"{% endif %}>
+            <th scope="row">{{ q }} panneau{{ q|pluralize:"x" }} {% if q == 4 %}<span class="xxl-popular-label">Populaire</span>{% endif %}</th>
+            <td>{{ tarif }} €</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a class="xxl-quote-link" href="{% url 'demande_devis' %}">Demander un devis</a>
+<style>
+.xxl-price-table { width:100%; margin:16px 0; border-collapse:collapse; color:inherit; font-size:14px; }
+.xxl-price-table caption { text-align:left; color:#e5cf8c; font-weight:700; padding-bottom:8px; }
+.xxl-price-table th,.xxl-price-table td { padding:8px 6px; border-bottom:1px solid rgba(244,220,127,.2); text-align:left; }
+.xxl-price-table thead th { color:#d7d7d7; font-size:12px; }
+.xxl-price-table td { text-align:right; white-space:nowrap; font-weight:700; }
+.xxl-price-table thead th:last-child { text-align:right; }
+.xxl-price-popular { background:rgba(244,220,127,.1); color:#f4dc7f; }
+.xxl-popular-label { display:inline-block; margin-left:4px; font-size:10px; color:#f4dc7f; }
+.xxl-quote-link { display:inline-block; padding:10px 14px; border:1px solid #d4b95d; border-radius:10px; color:#f4dc7f; text-decoration:none; font-weight:700; }
+.xxl-quote-link:hover,.xxl-quote-link:focus-visible { background:#f4dc7f; color:#141414; }
+</style>
