@@ -1,8 +1,9 @@
 {% load static %}
-<fieldset>
-    <legend>Panneau XXL</legend>
-    <img style="display:block;width:100%;max-width:240px;height:auto;margin-bottom:.6rem;border-radius:.5rem" src="{% static 'img/panneaux-xxl.webp' %}" alt="Deux panneaux XXL avec deux portraits d’un couple en tenues de ville élégantes, photographié en extérieur" width="960" height="640" loading="lazy">
-    <label><input type="checkbox" name="avec_panneaux" id="avec_panneaux" {% if actif %}checked{% endif %}> Ajouter des panneaux XXL</label>
+<fieldset class="panneaux-option {% if not interne %}choice-card option-card line-option-card{% endif %}">
+    {% if interne %}<legend>Panneau XXL</legend>{% endif %}
+    <img {% if interne %}style="display:block;width:100%;max-width:240px;height:auto;margin-bottom:.6rem;border-radius:.5rem"{% endif %} src="{% static 'img/panneaux-xxl.webp' %}" alt="Deux panneaux XXL avec deux portraits d’un couple en tenues de ville élégantes, photographié en extérieur" width="960" height="640" loading="lazy">
+    <div class="panneaux-controls">
+    <label class="panneaux-toggle"><input type="checkbox" name="avec_panneaux" id="avec_panneaux" {% if actif %}checked{% endif %}> <span><strong>Panneau XXL</strong><small>Portraits personnalisés grand format</small></span></label>
     <div class="panneaux-details">
         <label>Quantité
             <select name="panneaux_xxl" id="panneaux_xxl">
@@ -15,13 +16,27 @@
             <label>Remise sur la ligne (€) <input type="number" min="0" name="panneaux_remise" value="{{ event.event_option.panneaux_remise|default_if_none:0 }}"></label>
         {% endif %}
     </div>
+    </div>
 </fieldset>
+<style>
+.panneaux-option { min-width:0; padding:0; margin:0; }
+.panneaux-option::after { pointer-events:none; }
+.panneaux-controls { padding:15px; }
+.panneaux-toggle { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.panneaux-toggle input { width:19px; height:19px; accent-color:#d4af37; flex-shrink:0; }
+.panneaux-toggle strong { display:block; font-size:20px; }
+.panneaux-toggle small { display:block; margin-top:4px; color:#d8d8d8; }
+.panneaux-details { margin-top:14px; }
+.panneaux-details label { display:block; }
+.panneaux-details select { display:block; width:100%; margin-top:6px; border:1px solid #bba352; border-radius:10px; padding:10px; background:#202020; color:#fff; }
+</style>
 <script>
 (function () {
     const active = document.getElementById('avec_panneaux');
     const details = active.closest('fieldset').querySelector('.panneaux-details');
     function afficher() {
         details.hidden = !active.checked;
+        active.closest("fieldset").classList.toggle("selected", active.checked);
         details.querySelectorAll('select, input[type=number]').forEach(field => field.disabled = !active.checked);
     }
     active.addEventListener('change', function () {
