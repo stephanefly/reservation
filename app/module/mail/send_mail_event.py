@@ -22,7 +22,7 @@ def send_mail_event(event, mail_type):
     subject, template_name, file_to_send, copy_mail = get_mail_template(event, mail_type)
 
     # Configuration de l'email
-    msg = MIMEMultipart('alternative')
+    msg = MIMEMultipart('mixed' if file_to_send else 'alternative')
     msg['Subject'] = subject
     msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
     msg['To'] = event.client.mail
@@ -66,7 +66,7 @@ def complete_mail_with_file_to_send(event, file_to_send):
         # Attacher le PDF
         pdf_name = 'Devis-' + str(event.client.nom) + "-" + str(event.num_devis) +".pdf"
         buffer.seek(0)  # Réinitialisez le pointeur si nécessaire
-        part = MIMEApplication(buffer.read(), Name=pdf_name)
+        part = MIMEApplication(buffer.read(), _subtype='pdf', Name=pdf_name)
         part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
 
     if 'template_file' in file_to_send:

@@ -14,7 +14,8 @@ from ..module.trello.move_card import to_acompte_ok, to_refused, to_list_devis_f
 from ..module.devis_pdf.generate_pdf import generate_pdf_devis, generate_pdf_facture
 from django.views.decorators.http import require_http_methods
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from app.module.data_bdd.panneau_xxl import TARIFS_PANNEAUX, QUANTITE_PAR_DEFAUT, quantite_panneaux, appliquer_panneaux
 from django.shortcuts import render
 from django.db.models import Q
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
@@ -175,7 +176,10 @@ def info_event(request, id):
         ),
         id=id,
     )
-    return render(request, 'app/backend/info_event.html', {'event': event})
+    return render(request, 'app/backend/info_event.html', {'event': event,
+        'quantites_panneaux': TARIFS_PANNEAUX.items(),
+        'panneaux_choisis': getattr(event.event_option, "panneaux_xxl", 0) or QUANTITE_PAR_DEFAUT,
+    })
 
 
 @require_http_methods(["POST"])
@@ -191,6 +195,12 @@ def update_event(request, id):
         ),
         id=id,
     )
+    if "panneaux_form" in request.POST:
+        try:
+            quantite = quantite_panneaux(request.POST)
+            appliquer_panneaux(event.event_option, quantite, request.POST.get("panneaux_remise"))
+        except ValueError as error:
+            return HttpResponseBadRequest(str(error))
     update_data(event, request)
     queue_trello_sync(event.id)
     return redirect('info_event', id=event.id)

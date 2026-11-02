@@ -600,12 +600,19 @@
             , MagnetsSimple photos : {{ form_data.MagnetsSimple_range }}
         {% endif %}
 
+        {% if form_data.avec_panneaux %}
+            , Panneau XXL × {{ form_data.panneaux_xxl }} — {{ form_data.panneaux_forfait }} €
+        {% endif %}
         {% if form_data.selectedOption %}
             , {{ form_data.selectedOption }}
         {% endif %}
     </div>
 
     <input type="hidden" name="livraison" value="{{ form_data.livraison }}">
+    {% if form_data.avec_panneaux %}
+            <input type="hidden" name="avec_panneaux" value="on">
+            <input type="hidden" name="panneaux_xxl" value="{{ form_data.panneaux_xxl }}">
+    {% endif %}
     <input type="hidden" name="magnets_range" value="{{ form_data.magnets_range }}">
     <input type="hidden" name="PorteCles_range" value="{{ form_data.PorteCles_range }}">
     <input type="hidden" name="MagnetsSimple_range" value="{{ form_data.MagnetsSimple_range }}">

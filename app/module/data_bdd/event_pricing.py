@@ -40,6 +40,9 @@ def calculate_option_total(event_option):
             reduction = getattr(event_option, f"{quantity_name}_reduc_prix") or 0
             total += base_price - reduction
 
+    if event_option.panneaux_xxl:
+        total += event_option.panneaux_forfait - (event_option.panneaux_remise or 0)
+
     return total
 
 

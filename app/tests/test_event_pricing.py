@@ -12,6 +12,7 @@ from app.module.data_bdd.event_pricing import (
 class FakeEventOption:
     def __init__(self):
         self.saved = 0
+        self.panneaux_xxl = 0
         self.magnets = 0
         self.PorteCles = 0
         self.MagnetsSimple = 0

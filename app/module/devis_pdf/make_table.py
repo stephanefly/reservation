@@ -1,12 +1,20 @@
 from app.module.data_bdd.price import DEPARTEMENT_INCLUS, DEPARTEMENT_PLUS
 
 
+def acompte_particulier(total_devis):
+    if total_devis < 600:
+        return 50
+    if total_devis < 1000:
+        return 100
+    return 150
+
+
 def make_tableau(event):
     total_brut_devis = 0
 
     data_tableau_devis = [['Description', 'Prix unitaire', 'Quantité', 'Réduction', 'Total']]
 
-    ligne_forfait, total_product, acompte = prix_ligne_product(event)
+    ligne_forfait, total_product = prix_ligne_product(event)
     data_tableau_devis.append(ligne_forfait)
     total_brut_devis += total_product
 
@@ -45,7 +53,8 @@ def make_tableau(event):
     data_tableau_devis, total_option = prix_ligne_option(event, data_tableau_devis)
     total_brut_devis += total_option
 
-    return data_tableau_devis, total_brut_devis, acompte
+    total_net = total_brut_devis - (event.reduc_all or 0)
+    return data_tableau_devis, total_brut_devis, acompte_particulier(total_net)
 
 
 def prix_ligne_product(event):
@@ -71,11 +80,6 @@ def prix_ligne_product(event):
 
     if event.event_product.airbooth:
         produits_descriptions.append("360Airbooth Vidéos Illimités")
-
-    if len(produits_descriptions) > 1:
-        acompte = "100"
-    else:
-        acompte = "50"
 
     if event.event_option.duree == 0:
         duree = "- Toute la soirée / Weekend"
@@ -103,7 +107,7 @@ def prix_ligne_product(event):
             str(total) + " €",
         ]
 
-    return ligne_forfait, total, acompte
+    return ligne_forfait, total
 
 
 def prix_ligne_option(event, data_tableau_devis):
@@ -187,6 +191,17 @@ def prix_ligne_option(event, data_tableau_devis):
                 quantite=1,
                 reduction=reduc_prix
             )
+
+    option = event.event_option
+    if option.panneaux_xxl:
+        remise = option.panneaux_remise or 0
+        montant = option.panneaux_forfait - remise
+        data_tableau_devis.append([
+            f"Panneau XXL — forfait {format_prix(option.panneaux_forfait)}",
+            "Forfait", str(option.panneaux_xxl), format_prix(remise) if remise else "",
+            format_prix(montant),
+        ])
+        total += montant
 
     if event.event_option.magnets:
         total += ajouter_ligne_option(

@@ -291,6 +291,7 @@
                 </div>
 
                 <div class="single-line-options general-options-list">
+                    {% include "app/partials/panneaux_xxl.html" with actif=form.avec_panneaux %}
                     <article class="choice-card option-card selectable-option general-option line-option-card" data-value="PanneauFontaine" data-title="Panneau fontaine" data-for="all">
                         <img src="{% static 'img/Panneau-fontaine.jpg' %}" alt="Panneau fontaine">
                         <div class="choice-content option-line-main">
@@ -1788,6 +1789,9 @@ document.addEventListener("DOMContentLoaded", function () {
         summaryDuration.textContent = heureRange.value + " h";
 
         const allOptions = quantityOptions.concat(optionTitles);
+        if (document.getElementById("avec_panneaux").checked) {
+            allOptions.push("Panneau XXL × " + document.getElementById("panneaux_xxl").value);
+        }
         summaryOptions.textContent = allOptions.length > 0 ? allOptions.join(" | ") : "Aucune";
 
         if (heureValue) {
@@ -1886,6 +1890,9 @@ document.addEventListener("DOMContentLoaded", function () {
             remonterPageFormulaire();
         }
     });
+
+    document.getElementById("avec_panneaux").addEventListener("change", updateSummary);
+    document.getElementById("panneaux_xxl").addEventListener("change", updateSummary);
 
     form.addEventListener("submit", function (event) {
         if (!validateCurrentStep()) {

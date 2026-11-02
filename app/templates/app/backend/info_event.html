@@ -347,6 +347,7 @@
                             <label class="event-option-toggle"><input type="checkbox" name="DecorVoguebooth" {% if event.event_option.DecorVoguebooth %}checked{% endif %}> Décor Voguebooth</label>
                             <div class="event-option-control"><label for="DecorVoguebooth_reduc_prix">Remise (€)</label><input id="DecorVoguebooth_reduc_prix" type="number" min="0" name="DecorVoguebooth_reduc_prix" value="{{ event.event_option.DecorVoguebooth_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>
                         </div>
+                        {% include "app/partials/panneaux_xxl.html" with actif=event.event_option.panneaux_xxl interne=True %}
                         <div class="event-option-row">
                             <div class="event-option-control"><label for="magnets">Quantité de magnets</label><input id="magnets" type="number" min="0" name="magnets" value="{{ event.event_option.magnets|default_if_none:0 }}" inputmode="numeric"></div>
                             <div class="event-option-control"><label for="magnets_reduc_prix">Remise (€)</label><input id="magnets_reduc_prix" type="number" min="0" name="magnets_reduc_prix" value="{{ event.event_option.magnets_reduc_prix|default_if_none:0 }}" inputmode="numeric"></div>

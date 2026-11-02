@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.apps import apps
+from app.module.devis_pdf.make_table import make_tableau
 
 
 def complete_mail(event, soup, mail_type):
@@ -36,9 +37,8 @@ def _handle_acompte(event, soup):
     else:
         balise_acompte = soup.find('div', class_='acompte_entreprise')
         balise_acompte.extract()
-        # Gestion des acomptes selon le prix proposé
-        acompte = "150 €" if event.prix_proposed >= 1000 else "100 €" if event.prix_proposed >= 600 else "50 €"
-        soup.find('b', class_='acompte').string = acompte
+        _, _, acompte = make_tableau(event)
+        soup.find('b', class_='acompte').string = f"{acompte} €"
 
 
 def _handle_date_butoire(event, soup, mail_type):

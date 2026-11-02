@@ -13,6 +13,7 @@
         {% if event.event_option.DecorVoguebooth %}<span class="team-tag team-tag--option">Décor VogueBooth</span>{% endif %}
         {% if event.event_option.magnets %}<span class="team-tag team-tag--option">Magnets · {{ event.event_option.magnets }}</span>{% endif %}
         {% if event.event_option.PorteCles %}<span class="team-tag team-tag--option">Porte-clés · {{ event.event_option.PorteCles }}</span>{% endif %}
+        {% if event.event_option.panneaux_xxl %}<span class="team-tag team-tag--option">{{ event.event_option.panneaux_libelle }}</span>{% endif %}
         {% if event.event_option.MagnetsSimple %}<span class="team-tag team-tag--option">Magnets simples · {{ event.event_option.MagnetsSimple }}</span>{% endif %}
     {% else %}
         <span class="team-muted">Aucune option renseignée</span>

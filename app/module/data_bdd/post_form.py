@@ -1,3 +1,4 @@
+from app.module.data_bdd.panneau_xxl import appliquer_panneaux
 from django.apps import apps
 from django.db import transaction
 from datetime import datetime
@@ -124,6 +125,7 @@ def initialize_event(post_data):
 
         # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
         event_option = EventOption(**options_attrs)
+        appliquer_panneaux(event_option, post_data.get("panneaux_xxl", 0))
         event_option.magnets = post_data['magnets_range']
         event_option.PorteCles = post_data['PorteCles_range']
         event_option.MagnetsSimple = post_data['MagnetsSimple_range']

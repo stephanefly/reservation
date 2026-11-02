@@ -163,6 +163,14 @@ class EventOption(models.Model):
     def prix_base_VideoLivreOr(self):
         return 200
 
+    panneaux_xxl = models.PositiveSmallIntegerField(null=True, blank=True)
+    panneaux_forfait = models.PositiveIntegerField(null=True, blank=True)
+    panneaux_remise = models.PositiveIntegerField(null=True, blank=True)
+
+    @property
+    def panneaux_libelle(self):
+        return f"{self.panneaux_xxl} panneau{'x' if self.panneaux_xxl != 1 else ''} XXL"
+
     magnets = models.IntegerField(null=True, blank=True)
     magnets_reduc_prix = models.IntegerField(null=True, default=False)
 
@@ -194,6 +202,7 @@ class EventOption(models.Model):
             self.Holo3D_reduc_prix or 0,
             self.PanneauFontaine_reduc_prix or 0,
             self.VideoLivreOr_reduc_prix or 0,
+            self.panneaux_remise or 0,
             self.magnets_reduc_prix or 0
         ]
         return sum(reduction_fields)
@@ -226,6 +235,8 @@ class EventOption(models.Model):
             options.append("Panneau Fontaine")
         if self.VideoLivreOr:
             options.append("Vidéo livre d'or")
+        if self.panneaux_xxl:
+            options.append(self.panneaux_libelle)
         if self.magnets:
             options.append(f"{self.magnets} magnets")
         if self.PorteCles:
