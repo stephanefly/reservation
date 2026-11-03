@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from unittest.mock import patch
 from types import SimpleNamespace
 from zoneinfo import ZoneInfo
@@ -310,3 +310,152 @@ class CommercialStatsTests(TestCase):
         self.assertContains(response, "Aucun devis en attente éligible")
         self.assertContains(response, "Aucun refus enregistré")
         self.assertIn("no-store", response["Cache-Control"])
+
+
+    def test_alerts_counts_priorities_filters_and_open_quote_eligibility(self):
+        """One dossier appears once, even when it matches several categories."""
+        future = EventDetails.objects.create(
+            date_evenement="2026-12-30", adresse_evenement="Test",
+            ville_evenement="Paris", code_postal_evenement=75001,
+        )
+        imminent = EventDetails.objects.create(
+            date_evenement="2026-11-12", adresse_evenement="Test",
+            ville_evenement="Paris", code_postal_evenement=75001,
+        )
+        past = EventDetails.objects.create(
+            date_evenement="2026-11-01", adresse_evenement="Test",
+            ville_evenement="Paris", code_postal_evenement=75001,
+        )
+        high = self.event(status="Sended", proposed=2400)
+        near = self.event(status="Sended", proposed=100)
+        issue = self.event(status="Sended", proposed=100)
+        opted = self.event(status="Sended", proposed=1400)
+        healthy = self.event(status="Sended", proposed=100)
+        refused = self.event(status="Refused", proposed=5000)
+        signed = self.event(status="Acompte OK", proposed=5000, signed=self.created)
+        draft = self.event(status="Initied", proposed=5000)
+        expired = self.event(status="Sended", proposed=5000)
+
+        for event in (high, issue, opted, healthy, refused, signed, draft):
+            Event.objects.filter(pk=event.pk).update(event_details=future)
+        Event.objects.filter(pk=near.pk).update(event_details=imminent)
+        Event.objects.filter(pk=expired.pk).update(event_details=past)
+        Event.objects.filter(pk=issue.pk).update(
+            created_at=datetime(2026, 11, 10, 9, tzinfo=ZoneInfo("Europe/Paris"))
+        )
+        Event.objects.filter(pk=healthy.pk).update(
+            created_at=datetime(2026, 11, 10, 9, tzinfo=ZoneInfo("Europe/Paris"))
+        )
+        separate_client = Client.objects.create(
+            nom="Sans emails", mail="optout@example.invalid",
+            numero_telephone="01", autorisation_mail=False,
+        )
+        Event.objects.filter(pk=opted.pk).update(client=separate_client)
+        failed = EmailTracking.objects.create(
+            event_traced=issue.id, status_devis="Sended", mail_type="devis",
+            delivery_status="bounced",
+        )
+        EmailTracking.objects.filter(pk=failed.pk).update(
+            sent_at=datetime(2026, 11, 10, 10, tzinfo=ZoneInfo("Europe/Paris"))
+        )
+        fake_now = datetime(2026, 11, 10, 12, tzinfo=ZoneInfo("Europe/Paris"))
+        with patch("django.utils.timezone.now", return_value=fake_now):
+            report = commercial_report(self.request())
+            filtered = commercial_report(self.request(alert="delivery"))
+
+        self.assertEqual(report["commercial_alert_total"], 4)
+        counts = {row["key"]: row["count"] for row in report["commercial_alert_categories"]}
+        self.assertEqual(counts, {
+            "all": 4, "delivery": 1, "upcoming": 1,
+            "followup": 3, "high_value": 2,
+        })
+        self.assertEqual([row["event"].id for row in filtered["commercial_alert_rows"]],
+                         [issue.id])
+        self.assertEqual(filtered["commercial_alert_total"], 4)
+        self.assertEqual(filtered["commercial_alert_filtered_count"], 1)
+        self.assertEqual(report["commercial_alert_rows"][0]["event"].id, issue.id)
+        opt_row = next(row for row in report["commercial_alert_rows"]
+                       if row["event"].id == opted.id)
+        self.assertFalse(opt_row["email_allowed"])
+        self.assertEqual(report["commercial_alert_as_of"], date(2026, 11, 10))
+        self.assertNotIn(healthy.id, {row["event"].id for row
+                                     in report["commercial_alert_rows"]})
+
+    def test_alerts_use_latest_quote_delivery_and_latest_recorded_contact(self):
+        future = EventDetails.objects.create(
+            date_evenement="2026-12-30", adresse_evenement="Test",
+            ville_evenement="Paris", code_postal_evenement=75001,
+        )
+        fixed = datetime(2026, 11, 10, 12, tzinfo=ZoneInfo("Europe/Paris"))
+        resolved = self.event(status="Sended", proposed=250)
+        failed = self.event(status="Sended", proposed=250)
+        contacted = self.event(status="Sended", proposed=250)
+        for event in (resolved, failed, contacted):
+            Event.objects.filter(pk=event.pk).update(event_details=future)
+
+        def mail(event, status, when):
+            delivery = EmailTracking.objects.create(
+                event_traced=event.id, status_devis="Sended", mail_type="devis",
+                delivery_status=status,
+            )
+            EmailTracking.objects.filter(pk=delivery.id).update(sent_at=when)
+
+        last_week = datetime(2026, 11, 4, 12, tzinfo=ZoneInfo("Europe/Paris"))
+        yesterday = datetime(2026, 11, 9, 12, tzinfo=ZoneInfo("Europe/Paris"))
+        today = datetime(2026, 11, 10, 10, tzinfo=ZoneInfo("Europe/Paris"))
+        mail(resolved, "bounced", last_week)
+        mail(resolved, "delivered", yesterday)
+        mail(failed, "accepted", yesterday)
+        mail(failed, "error", today)
+        # A non-quote transactional error must not override a healthy quote.
+        EmailTracking.objects.create(
+            event_traced=resolved.id, status_devis="Pending",
+            mail_type="confirmation", delivery_status="error",
+        )
+        EventRelance.objects.create(
+            event=contacted, membre="test", commentaire="Contact récent",
+            qualification=4, date_relance=yesterday,
+        )
+        with patch("django.utils.timezone.now", return_value=fixed):
+            with self.assertNumQueries(3):
+                report = commercial_report(self.request())
+
+        self.assertEqual(report["commercial_alert_total"], 1)
+        row = report["commercial_alert_rows"][0]
+        self.assertEqual(row["event"].id, failed.id)
+        self.assertEqual(row["delivery_state"], "error")
+        self.assertIn("delivery", row["matched"])
+        self.assertNotIn("followup", row["matched"])
+        self.assertEqual(row["days_since_touch"], 1)
+
+    def test_alerts_preserve_cohort_filters_and_staff_read_only(self):
+        # A separate business dossier is the only relevant selection.
+        self.event(status="Sended", proposed=1200)
+        business = self.event(status="Sended", proposed=1500, business=True)
+        fake_now = datetime(2026, 11, 4, 12, tzinfo=ZoneInfo("Europe/Paris"))
+        with patch("django.utils.timezone.now", return_value=fake_now):
+            report = commercial_report(self.request(
+                segment="business", start_date="2026-11-03",
+                end_date="2026-11-03", alert="high_value",
+            ))
+            self.assertEqual(report["commercial_alert_total"], 1)
+            self.assertEqual(report["commercial_alert_rows"][0]["event"].id,
+                             business.id)
+            self.assertEqual(report["commercial_alert_filtered_count"], 1)
+            request = self.request(segment="business", alert="high_value")
+            request.user = SimpleNamespace(is_active=True, is_staff=True)
+            response = graph_commercial_stats(request)
+            self.assertContains(response, "Alertes commerciales")
+            self.assertContains(response, "commercial-alerts")
+            self.assertContains(response, "Examiner")
+            self.assertContains(response, "Devis importants")
+            self.assertIn("no-store", response["Cache-Control"])
+            invalid = self.request(alert="not-a-category")
+            invalid.user = request.user
+            self.assertEqual(graph_commercial_stats(invalid).status_code, 400)
+            request.user.is_staff = False
+            self.assertEqual(graph_commercial_stats(request).status_code, 302)
+            post = RequestFactory().post("/backend/graph/commercial/",
+                                         {"alert": "delivery"})
+            post.user = SimpleNamespace(is_active=True, is_staff=True)
+            self.assertEqual(graph_commercial_stats(post).status_code, 405)
