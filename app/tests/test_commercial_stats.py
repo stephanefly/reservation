@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from unittest.mock import patch
 from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 
@@ -105,3 +106,53 @@ class CommercialStatsTests(TestCase):
         post = RequestFactory().post("/backend/graph/commercial/")
         post.user = bad.user
         self.assertEqual(graph_commercial_stats(post).status_code, 405)
+
+
+    def test_quote_graphs_use_only_processed_quotes_and_current_state(self):
+        pending_person = self.event(status="Sended", proposed=1400)
+        self.event(status="Pending", proposed=300, business=True, history="Sended")
+        self.event(status="Refused", proposed=500)
+        self.event(status="Acompte OK", proposed=1200, signed=self.created + timedelta(days=2), validated=900)
+        self.event(status="Initied", proposed=9999)  # Not yet sent: exclude.
+        with patch("app.module.lib_graph.commercial_pipeline.timezone.now",
+                   return_value=self.created + timedelta(days=40)):
+            report = commercial_report(self.request())
+
+        self.assertEqual(report["quote_portfolio"][0]["amount"], 900)
+        self.assertEqual(report["quote_portfolio"][1]["amount"], 1700)
+        self.assertEqual(report["quote_portfolio"][2]["amount"], 500)
+        self.assertEqual([row["count"] for row in report["quote_portfolio"]], [1, 2, 1])
+        self.assertEqual(report["quote_ages"][3]["count"], 2)
+        self.assertEqual(report["quote_clients"][0]["amount"], 1400)
+        self.assertEqual(report["quote_clients"][1]["amount"], 300)
+        self.assertEqual(report["quote_months"][0]["label"], "Nov 2026")
+        self.assertEqual(report["quote_months"][0]["processed"], 4)
+        self.assertEqual(report["quote_months"][0]["conversion"], 25.0)
+        self.assertEqual(report["quote_top_pending"][0]["event"].id, pending_person.id)
+        self.assertEqual(report["quote_top_pending"][0]["amount"], 1400)
+
+    def test_quote_graphs_respect_existing_client_and_date_filters(self):
+        self.event(status="Sended", proposed=200)
+        self.event(status="Sended", proposed=700, business=True)
+        self.event(status="Acompte OK", signed=self.created, proposed=400, business=True)
+        report = commercial_report(self.request(segment="business",
+                                                start_date="2026-11-03",
+                                                end_date="2026-11-03"))
+        self.assertEqual([row["count"] for row in report["quote_clients"]], [0, 1])
+        self.assertEqual([row["count"] for row in report["quote_portfolio"]], [1, 1, 0])
+        self.assertEqual(len(report["quote_months"]), 1)
+        self.assertEqual(report["quote_months"][0]["pending"], 1)
+
+    def test_dashboard_displays_all_quote_graphs(self):
+        self.event(status="Sended", proposed=450)
+        request = self.request()
+        request.user = SimpleNamespace(is_active=True, is_staff=True)
+        response = graph_commercial_stats(request)
+        for title in ("Évolution mensuelle des devis traités",
+                      "Ancienneté des devis en attente",
+                      "Potentiel non signé par clientèle",
+                      "Taux de signature par mois",
+                      "Répartition des montants de devis",
+                      "10 plus gros devis en attente à relancer"):
+            self.assertContains(response, title)
+        self.assertContains(response, "450 €")
