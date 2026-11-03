@@ -373,7 +373,7 @@ class CommercialStatsTests(TestCase):
                          [issue.id])
         self.assertEqual(filtered["commercial_alert_total"], 4)
         self.assertEqual(filtered["commercial_alert_filtered_count"], 1)
-        self.assertEqual(report["commercial_alert_rows"][0]["event"].id, issue.id)
+        self.assertEqual(report["commercial_alert_rows"][0]["event"].id, near.id)
         opt_row = next(row for row in report["commercial_alert_rows"]
                        if row["event"].id == opted.id)
         self.assertFalse(opt_row["email_allowed"])
