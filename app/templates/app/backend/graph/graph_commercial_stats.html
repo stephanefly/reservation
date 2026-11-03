@@ -37,12 +37,12 @@
 .commercial-signed {background:#b48b37}
 .commercial-pending {background:#211747}
 .commercial-refused {background:#b4bcc9}
-.commercial-month-scroll {max-width:100%;overflow-x:auto;padding-bottom:6px}
-.commercial-month-columns {display:flex;min-width:760px;gap:13px;padding:0 4px}
-.commercial-month-column {display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;gap:8px;font-size:.75rem;color:#596274}
-.commercial-month-bars {display:flex;align-items:end;justify-content:center;width:100%;height:180px;gap:5px;border-bottom:1px solid #ccd0d8;background:repeating-linear-gradient(to top,#edf0f4 0 1px,transparent 1px 45px)}
-.commercial-month-bars span {width:23%;border-radius:4px 4px 0 0;display:block;min-height:0}
-.commercial-month-column strong {font-size:.74rem;color:#252c3b}
+.commercial-period-scroll {max-width:100%;overflow-x:auto;padding-bottom:6px}
+.commercial-period-columns {display:flex;min-width:760px;gap:13px;padding:0 4px}
+.commercial-period-column {display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;gap:8px;font-size:.75rem;color:#596274}
+.commercial-period-bars {display:flex;align-items:end;justify-content:center;width:100%;height:180px;gap:5px;border-bottom:1px solid #ccd0d8;background:repeating-linear-gradient(to top,#edf0f4 0 1px,transparent 1px 45px)}
+.commercial-period-bars span {width:23%;border-radius:4px 4px 0 0;display:block;min-height:0}
+.commercial-period-column strong {font-size:.74rem;color:#252c3b}
 .commercial-graph-line {margin:0 0 18px}
 .commercial-graph-line-header {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px;font-size:.85rem}
 .commercial-graph-line-header strong {font-weight:700;color:#252c3b}
@@ -82,31 +82,40 @@
     </div>
 
     <div class="commercial-graph-grid" aria-label="Graphiques des devis">
+        {% for series in quote_periods %}
         <section class="backend-chart-card commercial-graph-wide">
-            <h2>Évolution mensuelle des devis traités</h2>
+            <h2>{{ series.title }}</h2>
+            <p class="commercial-note">{{ series.subtitle }}</p>
             <div class="commercial-legend" aria-label="Légende">
                 <span><i class="commercial-signed"></i>Signés</span>
                 <span><i class="commercial-pending"></i>Non signés, en attente</span>
                 <span><i class="commercial-refused"></i>Refusés</span>
             </div>
-            {% if quote_months %}
-            <div class="commercial-month-scroll" tabindex="0" aria-label="Histogramme mensuel, défilement horizontal possible">
-                <div class="commercial-month-columns">
-                    {% for row in quote_months %}
-                    <div class="commercial-month-column">
-                        <div class="commercial-month-bars" role="img" aria-label="{{ row.label }} : {{ row.signed }} signés, {{ row.pending }} en attente, {{ row.refused }} refusés">
-                            <span class="commercial-signed" title="{{ row.label }} : {{ row.signed }} signés" style="height:{{ row.signed_height|unlocalize }}%"></span>
-                            <span class="commercial-pending" title="{{ row.label }} : {{ row.pending }} en attente" style="height:{{ row.pending_height|unlocalize }}%"></span>
-                            <span class="commercial-refused" title="{{ row.label }} : {{ row.refused }} refusés" style="height:{{ row.refused_height|unlocalize }}%"></span>
+            {% if series.rows %}
+            <div class="commercial-period-scroll" tabindex="0" aria-label="Histogramme {{ series.title|lower }}, défilement horizontal possible">
+                <div class="commercial-period-columns">
+                    {% for row in series.rows %}
+                    <div class="commercial-period-column">
+                        <div class="commercial-period-bars" role="img" aria-label="{{ row.label }} : {{ row.signed }} signés, {{ row.pending }} en attente, {{ row.refused }} refusés">
+                            <span class="commercial-signed" title="{{ row.label }} : {{ row.signed }} signés, {{ row.signed_amount|floatformat:0 }} €" style="height:{{ row.signed_height|unlocalize }}%"></span>
+                            <span class="commercial-pending" title="{{ row.label }} : {{ row.pending }} en attente, {{ row.pending_amount|floatformat:0 }} €" style="height:{{ row.pending_height|unlocalize }}%"></span>
+                            <span class="commercial-refused" title="{{ row.label }} : {{ row.refused }} refusés, {{ row.refused_amount|floatformat:0 }} €" style="height:{{ row.refused_height|unlocalize }}%"></span>
                         </div>
                         <strong>{{ row.label }}</strong><span>{{ row.processed }} traités</span>
                     </div>
                     {% endfor %}
                 </div>
             </div>
-            <p class="commercial-note">Barres à échelle commune (nombre de devis). Les 12 derniers mois présents dans la sélection sont affichés.{% if quote_months_hidden %} {{ quote_months_hidden }} mois plus anciens ne sont pas représentés.{% endif %}</p>
+            <p class="commercial-note">Barres à échelle commune (nombre de devis).{% if series.hidden %} {{ series.hidden }} {{ series.hidden_label }} plus anciens ne sont pas représentés.{% endif %}</p>
+            <div class="commercial-table-wrap"><table class="commercial-table">
+                <thead><tr><th scope="col">Période</th><th scope="col">Traités</th><th scope="col">Signés</th><th scope="col">En attente</th><th scope="col">Refusés</th><th scope="col">Montant signé</th><th scope="col">Potentiel non signé</th></tr></thead>
+                <tbody>{% for row in series.rows %}
+                    <tr><th scope="row">{{ row.label }}</th><td>{{ row.processed }}</td><td>{{ row.signed }}</td><td>{{ row.pending }}</td><td>{{ row.refused }}</td><td>{{ row.signed_amount|floatformat:0 }} €</td><td>{{ row.pending_amount|floatformat:0 }} €</td></tr>
+                {% endfor %}</tbody>
+            </table></div>
             {% else %}<p class="commercial-graph-empty">Aucun devis traité sur cette sélection.</p>{% endif %}
         </section>
+        {% endfor %}
 
         <section class="backend-chart-card">
             <h2>Ancienneté des devis en attente</h2>
@@ -132,17 +141,19 @@
             <p class="commercial-note">Montants proposés aux clients, pas un chiffre d'affaires acquis.</p>
         </section>
 
+        {% for series in quote_periods %}
         <section class="backend-chart-card">
-            <h2>Taux de signature par mois</h2>
-            {% for row in quote_months %}
+            <h2>{{ series.rate_title }}</h2>
+            {% for row in series.rows %}
             <div class="commercial-graph-line">
                 <div class="commercial-graph-line-header"><strong>{{ row.label }}</strong><span>{{ row.conversion|floatformat:1 }} %</span></div>
                 <div class="commercial-graph-track" role="img" aria-label="{{ row.signed }} signatures sur {{ row.processed }} devis traités en {{ row.label }}"><span style="width:{{ row.conversion|unlocalize }}%"></span></div>
                 <small>{{ row.signed }} signés / {{ row.processed }} traités</small>
             </div>
             {% empty %}<p class="commercial-graph-empty">Aucun devis traité sur cette sélection.</p>{% endfor %}
-            <p class="commercial-note">Comparaison des cohortes par date de demande : une signature ultérieure peut modifier un mois passé.</p>
+            <p class="commercial-note">Comparaison par date de demande ; une signature ultérieure peut faire évoluer le taux d'une période passée.</p>
         </section>
+        {% endfor %}
 
         <section class="backend-chart-card">
             <h2>Répartition des montants de devis</h2>
