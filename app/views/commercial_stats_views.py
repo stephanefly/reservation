@@ -7,6 +7,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
 from app.models import EmailTracking, Event
+from app.module.lib_graph.commercial_pipeline import prepare_quote_graphs
 from app.views.private_api_data import filter_dates
 
 
@@ -103,6 +104,7 @@ def commercial_report(request):
     totals["outstanding_count"] = len(outstanding)
     totals["outstanding_amount"] = sum(event.event_acompte.montant_restant for event in outstanding)
     return {
+        **prepare_quote_graphs(events, processed_ids, amount),
         "totals": totals, "statuses": statuses, "segments": segments, "relances": relances,
         "outstanding": outstanding[:30], "outstanding_more": max(0, len(outstanding) - 30),
         "unsigned_confirmed": sum(event.signer_at is None and event.status in (DONE_STATUS | {"Acompte OK"}) for event in events),
