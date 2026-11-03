@@ -30,8 +30,8 @@ def _last_contact_day(quote, contact):
     dates = []
     if contact and contact.get("date_relance"):
         dates.append(local_date(contact["date_relance"]))
-    if quote and quote.get("delivery_status") in MAIL_TOUCH_STATES:
-        dates.append(local_date(quote["sent_at"]))
+    if quote and quote.get("last_valid_sent"):
+        dates.append(local_date(quote["last_valid_sent"]))
     return max(dates) if dates else None
 
 
