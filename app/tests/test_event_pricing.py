@@ -1,4 +1,6 @@
 import unittest
+
+from app.models import EventOption
 from types import SimpleNamespace
 
 from app.module.data_bdd.event_pricing import (
@@ -39,6 +41,17 @@ class FakeEventOption:
 
     def save(self):
         self.saved += 1
+
+
+class VogueOptionPricingTests(unittest.TestCase):
+    def test_vogue_photographer_and_print_prices(self):
+        option = EventOption(
+            PhotographeVoguebooth=True,
+            ImpressionVoguebooth=True,
+        )
+        self.assertEqual(option.prix_base_PhotographeVoguebooth(), 150)
+        self.assertEqual(option.prix_base_ImpressionVoguebooth(), 100)
+        self.assertEqual(calculate_option_total(option), 250)
 
 
 class EventPricingTests(unittest.TestCase):
