@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
-      PA_USERNAME: ${{ vars.PA_USERNAME }}
-      PA_PROJECT_DIR: ${{ vars.PA_PROJECT_DIR }}
+      PA_USERNAME: stephanefly
+      PA_PROJECT_DIR: /home/stephanefly/reservation
       PA_SSH_HOST: ${{ vars.PA_SSH_HOST || 'ssh.pythonanywhere.com' }}
       PA_API_HOST: ${{ vars.PA_API_HOST || 'www.pythonanywhere.com' }}
       PA_WEBAPP_DOMAIN: reservation.myselfiebooth-paris.fr
