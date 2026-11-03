@@ -79,13 +79,13 @@
         <div class="auto-grid">
             <section class="auto-card">
                 <h2>Sources autorisées</h2><p>Recommandation reste exclue, sans possibilité de la réactiver.</p>
-                <ul class="auto-choice-list">{{ form.sources }}</ul>
+                <div class="auto-choice-list">{{ form.sources }}</div>
                 <div class="auto-note">Recommandation : manuel · Entreprises : manuel</div>
             </section>
             <section class="auto-card">
                 <h2>Prestations seules</h2>
                 <p>Une seule machine et durée 3 h ou 5 h. Les prix de 3 h restent ceux du catalogue CRM.</p>
-                <ul class="auto-choice-list">{{ form.products }}</ul>
+                <div class="auto-choice-list">{{ form.products }}</div>
             </section>
         </div>
 
@@ -105,7 +105,7 @@
             <h2>Packs activés et tarifs TTC</h2>
             <p>Seule la composition exacte des machines et des options incluses ouvre droit au tarif du pack.
             Les options complémentaires et frais de déplacement s'ajoutent.</p>
-            <ul class="auto-choice-list">{{ form.packs }}</ul>
+            <div class="auto-choice-list">{{ form.packs }}</div>
             <div class="auto-grid">
             {% for item in pack_rows %}
                 <div class="auto-row"><label for="{{ item.field.id_for_label }}">{{ item.label }}</label>
