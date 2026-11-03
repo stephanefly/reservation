@@ -5,9 +5,10 @@ from zoneinfo import ZoneInfo
 
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase, override_settings
+from django.utils import timezone
 from django.urls import path
 
-from app.models import Client, EmailTracking, Event, EventAcompte, EventDetails
+from app.models import Client, EmailTracking, Event, EventAcompte, EventDetails, EventProduct, EventRelance
 from app.views.commercial_stats_views import commercial_report, graph_commercial_stats
 
 
@@ -42,7 +43,7 @@ class CommercialStatsTests(TestCase):
         self.event(status="Refused", proposed=500)
         self.event(status="Presta FINI", proposed=600, balance=200)
         self.event(status="Acompte OK", signed=self.created - timedelta(days=1), validated=0, business=True)
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             report = commercial_report(self.request())
         totals = report["totals"]
         for key, value in {"requests":6, "processed":5, "signed":2, "refused":1, "pending":2,
@@ -190,3 +191,122 @@ class CommercialStatsTests(TestCase):
         self.assertEqual(years[1]["refused_amount"], 200)
         self.assertEqual(months["Juin 2026"]["conversion"], 100.0)
         self.assertEqual(months["Juil 2026"]["conversion"], 0.0)
+
+
+    def test_insights_funnel_unique_tracking_and_multi_product_attribution(self):
+        both = EventProduct.objects.create(photobooth=True, miroirbooth=True)
+        mirror = EventProduct.objects.create(miroirbooth=True)
+        photo = EventProduct.objects.create(photobooth=True)
+        unprocessed = self.event(status="Initied", proposed=999)
+        signed = self.event(status="Acompte OK", signed=self.created,
+                            validated=900, proposed=1200)
+        pending = self.event(status="Sended", proposed=1000, business=True)
+        refused = self.event(status="Refused", proposed=500)
+        for event, product in ((signed, both), (pending, mirror), (refused, photo)):
+            Event.objects.filter(pk=event.pk).update(event_product=product)
+
+        # Two quote emails for the same dossier must not double-count a send/open.
+        for _ in range(2):
+            EmailTracking.objects.create(
+                event_traced=pending.id, status_devis="Sended", mail_type="devis",
+                delivery_status="accepted", opened=True, opening_tracked=True,
+            )
+        EmailTracking.objects.create(
+            event_traced=refused.id, status_devis="Sended", mail_type="devis",
+            delivery_status="bounced", opened=False,
+        )
+        EmailTracking.objects.create(
+            event_traced=signed.id, status_devis="Acompte OK",
+            mail_type="confirmation", delivery_status="delivered", opened=True,
+        )
+        EmailTracking.objects.create(
+            event_traced=unprocessed.id, status_devis="Initied", mail_type="devis",
+            delivery_status="error", opened=False,
+        )
+
+        report = commercial_report(self.request())
+        stages = report["insight_funnel"]
+        self.assertEqual([stage["count"] for stage in stages], [4, 3, 2, 1, 1])
+        products = {row["label"]: row for row in report["insight_products"]}
+        self.assertEqual(products["Photobooth"]["signed"], 1)
+        self.assertEqual(products["Photobooth"]["refused"], 1)
+        self.assertEqual(products["Photobooth"]["signed_amount"], 900)
+        self.assertEqual(products["Miroirbooth"]["pending_amount"], 1000)
+        self.assertEqual(products["Miroirbooth"]["signed_amount"], 900)
+        self.assertEqual(products["Photobooth"]["conversion"], 50.0)
+        self.assertEqual(report["insight_products_missing"], 1)
+        self.assertEqual(report["insight_loss_count"], 1)
+        self.assertEqual(report["insight_loss_amount"], 500)
+        self.assertEqual(report["insight_loss_rate"], 33.3)
+        self.assertEqual(report["insight_loss_bands"][1]["count"], 1)
+        self.assertEqual(report["insight_loss_segments"][0]["amount"], 500)
+
+    def test_lead_scoring_uses_eligibility_human_qualification_and_recent_contact(self):
+        product = EventProduct.objects.create(photobooth=True)
+        hot = self.event(status="Sended", proposed=2200)
+        warm = self.event(status="Sended", proposed=500, business=True)
+        opt_out = self.event(status="Sended", proposed=4000)
+        refused = self.event(status="Refused", proposed=5000)
+        signed = self.event(status="Acompte OK", proposed=5000, signed=self.created)
+        draft = self.event(status="Initied", proposed=10000)
+        past = self.event(status="Sended", proposed=9000)
+        old_details = EventDetails.objects.create(
+            date_evenement="2026-01-01", adresse_evenement="Test",
+            ville_evenement="Paris", code_postal_evenement=75001,
+        )
+        Event.objects.filter(pk=past.pk).update(event_details=old_details)
+        for event in (hot, warm, opt_out, refused, signed, draft, past):
+            Event.objects.filter(pk=event.pk).update(event_product=product)
+        self.person.autorisation_mail = False
+        # Use a separate client for the opted-out dossier so hot/refused keep consent.
+        self.person.save(update_fields=["autorisation_mail"])
+        self.business.autorisation_mail = True
+        self.business.save(update_fields=["autorisation_mail"])
+        hot.client = self.business
+        hot.save(update_fields=["client"])
+        opt_out.client = self.person
+        opt_out.save(update_fields=["client"])
+        EventRelance.objects.create(
+            event=warm, membre="Test", qualification=5,
+            date_relance=self.created - timedelta(days=10), commentaire="Qualifié",
+        )
+        EmailTracking.objects.create(
+            event_traced=hot.id, status_devis="Sended", mail_type="devis",
+            delivery_status="accepted", opened=True,
+        )
+
+        with patch("app.module.lib_graph.commercial_insights.timezone.now",
+                   return_value=self.created + timedelta(days=5)):
+            report = commercial_report(self.request())
+        rows = report["insight_leads"]
+        ids = {row["event"].id for row in rows}
+        self.assertEqual(ids, {hot.id, warm.id})
+        self.assertEqual(rows[0]["event"].id, hot.id)
+        self.assertGreater(rows[0]["score"], rows[1]["score"])
+        self.assertTrue(rows[0]["opened"])
+        self.assertEqual(report["insight_leads_count"], 2)
+        self.assertEqual(report["insight_leads_more"], 0)
+
+    def test_insights_respect_business_and_date_filters(self):
+        self.event(status="Refused", proposed=400)
+        self.event(status="Sended", proposed=1500, business=True)
+        filtered = commercial_report(self.request(
+            segment="business", start_date="2026-11-03", end_date="2026-11-03",
+        ))
+        self.assertEqual(filtered["insight_funnel"][0]["count"], 1)
+        self.assertEqual(filtered["insight_loss_count"], 0)
+        self.assertEqual(filtered["insight_leads_count"], 1)
+        self.assertEqual(filtered["insight_loss_segments"][0]["count"], 0)
+
+    def test_insight_dashboard_renders_and_handles_no_data(self):
+        request = self.request()
+        request.user = SimpleNamespace(is_active=True, is_staff=True)
+        response = graph_commercial_stats(request)
+        for title in ("Tunnel de conversion commercial",
+                      "Performance commerciale par produit",
+                      "Analyse des devis refusés",
+                      "Prospects à relancer en priorité"):
+            self.assertContains(response, title)
+        self.assertContains(response, "Aucun devis en attente éligible")
+        self.assertContains(response, "Aucun refus enregistré")
+        self.assertIn("no-store", response["Cache-Control"])

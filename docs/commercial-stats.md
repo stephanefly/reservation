@@ -47,11 +47,46 @@ La liste des soldes contient les 30 premiers dossiers, triés par date de presta
 avec lien vers la fiche. Les compteurs incluent tous les dossiers de la sélection.
 L'existence d'un solde ne signifie pas nécessairement un retard contractuel.
 
+## Modules de pilotage commercial
+
+Les données de la page commerciale sont enrichies avec quatre modules, sans écriture
+dans les dossiers clients :
+
+- **Tunnel de conversion** : demandes, devis traités, devis soumis au SMTP avec
+  suivi, ouvertures détectées et signatures. Chaque étape représente un nombre
+  de dossiers uniques et un pourcentage des demandes. Les ouvertures sont
+  indépendantes de la signature ; la présence d'un pixel ne prouve pas une
+  lecture. Les e-mails sans type historique sont pris en compte uniquement si
+  le statut du suivi correspond à un devis / une relance. Les messages
+  transactionnels non liés au devis sont exclus du tunnel.
+- **Performance par produit** : les six équipements de `EventProduct`, avec
+  demandes, devis traités, signatures, attentes, refus, taux et montants.
+  Un devis combinant plusieurs équipements apparaît sur chaque ligne :
+  les sommes par produit ne sont pas additionnables et ne correspondent
+  pas à du revenu réellement attribué à une machine.
+- **Devis refusés** : statut actuel `Refused` sans date de signature.
+  Nombre, montant, taux sur les devis traités, ventilation par type de
+  client et tranche de prix, accès aux dix plus gros refus.
+  Les motifs de refus ne sont pas enregistrés de façon structurée :
+  aucune cause n'est devinée. Les dossiers toujours en attente sont exclus.
+- **Prospects prioritaires** : maximum vingt devis traités en attente,
+  événements non passés, `autorisation_mail=True`. Le tri repose sur
+  un score explicable de 0 à 100 : valeur du devis (0–25), proximité
+  de l'événement (0–25), ancienneté (0–10), pixel d'ouverture (0–10),
+  dernière qualification manuelle (0–20), pénalité en cas de contact
+  très récent (-15). Ce score n'est pas une probabilité de signature.
+  Les incidents de livraison e-mail historiques sont signalés, mais
+  aucun envoi ni relance automatique n'est déclenché.
+
+Les suivis d'e-mails et la dernière relance sont chargés en deux requêtes
+supplémentaires sans accès SQL par dossier. Le rapport repose désormais
+sur **trois requêtes SQL** : dossiers, suivi e-mail, relances.
+
 ## Validation
 
 `python -m tests_api.run` vérifie l'API, les ouvertures et ces statistiques sur une
 base temporaire : cohortes, bornes de dates, segments, signatures, montants nuls
 ou à zéro, doublons de tracking, délais incohérents, accès et rendu HTML.
-Les calculs commerciaux utilisent deux requêtes SQL, sans requête par dossier.
+Les calculs commerciaux utilisent trois requêtes SQL, sans requête par dossier.
 
 Après publication : `git pull`, puis Reload sur PythonAnywhere. Pas de migration.
