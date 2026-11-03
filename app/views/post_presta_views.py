@@ -105,7 +105,29 @@ def post_presta(request):
         .prefetch_related('event_team_members')
         .order_by('event_details__date_evenement')
     )
-    return render(request, 'app/backend/post_presta.html', {'lst_post_event': lst_post_event})
+    # Les compteurs concernent les dossiers effectivement affichés sur cette page.
+    events = list(lst_post_event)
+    post_stats = {
+        'total': len(events),
+        'media_pending': sum(
+            not (event.event_post_presta and event.event_post_presta.collected and event.event_post_presta.sent)
+            for event in events
+        ),
+        'payment_pending': sum(
+            not (event.event_post_presta and event.event_post_presta.client_paid and event.event_post_presta.members_paid)
+            for event in events
+        ),
+        'feedback_pending': sum(
+            not (event.event_post_presta and (
+                event.event_post_presta.feedback_message or event.event_post_presta.feedback_google
+            ))
+            for event in events
+        ),
+    }
+    return render(request, 'app/backend/post_presta.html', {
+        'lst_post_event': events,
+        'post_stats': post_stats,
+    })
 
 
 # ------------------- Envoi médias -------------------
