@@ -9,6 +9,9 @@ from datetime import timedelta, datetime
 
 from ..models import Event
 from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
+from ..module.data_bdd.instant_quote import preparer_et_envoyer_devis
+from app.module.mail.send_mail_event import send_mail_event
+from django.conf import settings
 from ..module.data_bdd.price import PRIX_PRODUITS
 from ..module.google.contact import create_google_contact
 from ..module.trello.create_card import create_card
@@ -72,6 +75,19 @@ def confirmation(request):
             event.save(update_fields=['id_card'])
         except Exception:
             logger.exception("Création Trello échouée pour l'événement %s", event.id)
+
+        # Option désactivée par défaut : aucun devis n'est envoyé sans validation
+        # préalable des tarifs et de la délivrabilité. RECOMMANDATION reste manuelle.
+        if getattr(settings, "INSTANT_QUOTES_ENABLED", False):
+            try:
+                preparer_et_envoyer_devis(event, send_mail_event)
+            except Exception:
+                # Ne jamais perdre la demande en cas de problème de prix ou de SMTP.
+                # L'événement reste dans le CRM pour traitement manuel.
+                logger.exception(
+                    "Devis instantané non traité pour l'événement %s (manuel requis)",
+                    event.id,
+                )
 
         return redirect('remerciement')
 

@@ -59,6 +59,8 @@ GOOGLE_TOKEN = config.get("GOOGLE_TOKEN")
 NOTION_TOKEN = config.get("NOTION_TOKEN")
 DATABASE_NOTION_ID   = config.get("DATABASE_NOTION_ID")
 PRIVATE_API_TOKEN = config.get("PRIVATE_API_TOKEN")
+# Activer uniquement après validation des prix et des scénarios d'envoi.
+INSTANT_QUOTES_ENABLED = config.get("INSTANT_QUOTES_ENABLED") is True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('DEBUG')
