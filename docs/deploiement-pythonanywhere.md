@@ -68,15 +68,13 @@ Dans [GitHub → Settings → Secrets and variables → Actions](https://github.
 
 | Type | Nom | Valeur |
 |---|---|---|
-| Variable | `PA_USERNAME` | Identifiant PythonAnywhere, pas l'adresse e-mail |
-| Variable | `PA_PROJECT_DIR` | Chemin absolu du dépôt, ex. `/home/utilisateur/reservation` |
 | Variable optionnelle | `PA_SSH_HOST` | `ssh.pythonanywhere.com` (défaut) ou `ssh.eu.pythonanywhere.com` |
 | Variable optionnelle | `PA_API_HOST` | `www.pythonanywhere.com` (défaut) ou `eu.pythonanywhere.com` |
 | Secret | `PA_SSH_PRIVATE_KEY` | Contenu **complet** de `pythonanywhere_deploy`, sans l'extension `.pub` |
 | Secret | `PA_SSH_KNOWN_HOSTS` | Contenu du fichier `pythonanywhere_known_hosts`, après vérification |
 | Secret | `PA_API_TOKEN` | Jeton créé dans PythonAnywhere > Account > API Token |
 
-Le nom de domaine à recharger est déjà configuré dans le workflow : `reservation.myselfiebooth-paris.fr`.
+Le compte `stephanefly`, le chemin `/home/stephanefly/reservation` et le nom de domaine `reservation.myselfiebooth-paris.fr` sont déjà configurés dans le workflow. Aucun paramètre GitHub n'est à saisir pour ces trois valeurs.
 
 ### 5. Activer
 
