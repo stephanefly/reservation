@@ -1,143 +1,101 @@
 {% extends 'app/backend/base.html' %}
+{% load static %}
 {% block title %}Post-prestation{% endblock title %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/post_presta.css' %}">{% endblock extra_css %}
 {% block content %}
-<div class="backend-page">
-<header class="backend-page-header">
-  <div><p class="backend-page-header__eyebrow">Suivi client</p><h1>Post-prestation</h1><p class="backend-page-header__description">Pilotez les médias, paiements, montages, publications et retours clients.</p></div>
-</header>
-
-<section class="backend-table-card" aria-label="Vue synthétique post-prestation">
-<div class="backend-table-scroll">
-<table id="table-haut" class="table table-hover">
-  <thead>
-    <tr>
-      <th>NOM</th>
-      <th>Status</th>
-      <th>Media Collecté</th>
-      <th>Envoi</th>
-      <th>Feedback</th>
-      <th>Feedback Posté</th>
-      <th>Photo ?</th>
-      <th>Photo Post ?</th>
-      <th>Rush Collecté</th>
-      <th>Montage ?</th>
-      <th>Montage post ?</th>
-      <th>Client Paid</th>
-      <th>Membre Paid</th>
-      <th>Sold ok</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for event in lst_post_event %}
-    <tr>
-      <td><a href="#event-{{ event.id }}" class="btn btn-link">{{ event.client.nom }}</a></td>
-
-      {# Status cell: style + contenu valides #}
-      <td><span class="backend-status {% if event.status == 'Pending' %}backend-status--warning{% elif event.status == 'Sent Media' %}backend-status--success{% elif event.status == 'Post Presta' %}backend-status--purple{% elif event.status == 'Media KO' %}backend-status--danger{% endif %}">{{ event.status }}</span></td>
-
-      <td class="{% if event.event_post_presta.collected %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.collected %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.sent %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.sent %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}bg-success{% else %}bg-warning{% endif %}">
-        {% if not event.event_post_presta.feedback_message and not event.event_post_presta.feedback_google %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.feedback_posted %}bg-success{% else %}bg-warning{% endif %}">
-        {% if not event.event_post_presta.feedback_posted %}Pas OK{% else %}Fait{% endif %}
-      </td>
-
-{% with val=event.event_post_presta.go_post_photo %}
-<td class="
-  {% if val == 'oui' %}bg-success
-  {% elif val == 'non' %}bg-danger
-  {% else %}bg-warning
-  {% endif %}
-">
-  {% if val == 'oui' %}Oui
-  {% elif val == 'non' %}Non
-  {% else %}À définir
-  {% endif %}
-</td>
-{% endwith %}
-
-
-      <td class="{% if event.event_post_presta.post_photo %}bg-success{% else %}bg-info{% endif %}">
-        {% if not event.event_post_presta.post_photo %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.rush_collected %}bg-success{% else %}bg-primary{% endif %}">
-        {% if not event.event_post_presta.rush_collected %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.go_montage %}bg-success{% else %}bg-primary{% endif %}">
-        {% if not event.event_post_presta.go_montage %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.post_montage %}bg-success{% else %}bg-primary{% endif %}">
-        {% if not event.event_post_presta.post_montage %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.client_paid %}bg-success{% else %}bg-danger{% endif %}">
-        {% if not event.event_post_presta.client_paid %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.members_paid %}bg-success{% else %}bg-danger{% endif %}">
-        {% if not event.event_post_presta.members_paid %}Pas OK{% else %}Fait{% endif %}
-      </td>
-      <td class="{% if event.event_post_presta.sold_ok %}bg-success{% else %}bg-danger{% endif %}">
-        {% if not event.event_post_presta.sold_ok %}Pas OK{% else %}Fait{% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-</div>
-</section>
-
-<div class="backend-event-stack">
-{% for event in lst_post_event %}
-<article id="event-{{ event.id }}" class="backend-card backend-post-card">
-  <div class="card-header d-flex align-items-center justify-content-between">
-    <h2>
-      <a href="{% url 'info_event' event.id %}">
-        {{ event.client.nom }}
-      </a>
-    </h2>
-
-    <button class="backToTopFixed"
-            onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
-        <i class="fas fa-arrow-up"></i> Haut
-    </button>
-
-  </div>
-
-  <div class="card-body">
-
-    {# --- Informations client / event --- #}
-    <div class="backend-table-scroll backend-post-section">
-    <table class="table table-bordered table-striped bg-white">
-      <thead>
-        <tr>
-          <th>Mail</th>
-          <th>Date-Event</th>
-          <th>PRIX</th>
-          <th>Acompte</th>
-          <th>Restant</th>
-          <th>Mode</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ event.client.mail }}</td>
-          <td>{{ event.event_details.date_evenement|date:"Y-m-d" }}</td>
-          <td class="prix_valided">{{ event.prix_valided }}</td>
-          <td class="montant_acompte">{{ event.event_acompte.montant_acompte }}</td>
-          <td class="difference">{{ event.event_acompte.montant_restant }}</td>
-          <td class="mode_payement">{{ event.event_acompte.mode_payement }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="backend-page post-presta-page">
+  <header class="backend-page-header">
+    <div>
+      <p class="backend-page-header__eyebrow">Suivi opérationnel</p>
+      <h1>Post-prestation</h1>
+      <p class="backend-page-header__description">Identifiez les actions en attente, puis ouvrez un dossier pour les traiter.</p>
     </div>
+  </header>
 
-    {# --- Produits / options --- #}
-    <div class="backend-table-scroll backend-post-section">
+  <section class="post-overview" aria-label="Indicateurs post-prestation">
+    <button class="post-overview__item post-filter is-active" type="button" data-post-filter="all" aria-pressed="true">
+      <span>Dossiers en cours</span><strong>{{ post_stats.total }}</strong><small>Voir tous les dossiers</small>
+    </button>
+    <button class="post-overview__item post-filter" type="button" data-post-filter="media" aria-pressed="false">
+      <span>Médias à traiter</span><strong>{{ post_stats.media_pending }}</strong><small>Collecte ou envoi</small>
+    </button>
+    <button class="post-overview__item post-filter" type="button" data-post-filter="payment" aria-pressed="false">
+      <span>Paiements à vérifier</span><strong>{{ post_stats.payment_pending }}</strong><small>Client ou équipe</small>
+    </button>
+    <button class="post-overview__item post-filter" type="button" data-post-filter="review" aria-pressed="false">
+      <span>Avis à obtenir</span><strong>{{ post_stats.feedback_pending }}</strong><small>Aucun retour enregistré</small>
+    </button>
+  </section>
+
+  <section class="backend-table-card post-list-card" aria-labelledby="post-list-title">
+    <div class="backend-table-heading post-list-heading">
+      <div>
+        <h2 id="post-list-title">Dossiers à suivre</h2>
+        <p>La synthèse des étapes importantes. Cliquez sur une ligne pour accéder à son suivi détaillé.</p>
+      </div>
+      <label class="post-search-label" for="post-search">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <span class="visually-hidden">Rechercher un dossier</span>
+        <input id="post-search" type="search" placeholder="Rechercher un client, statut..." autocomplete="off">
+      </label>
+    </div>
+    <div class="backend-table-scroll">
+      <table id="table-haut" class="table table-hover post-summary-table">
+        <thead><tr>
+          <th>Client</th><th>Date</th><th>Statut</th><th>Médias</th><th>Avis</th><th>Paiements</th><th>Dossier</th>
+        </tr></thead>
+        <tbody>
+          {% for event in lst_post_event %}
+          <tr data-event-id="{{ event.id }}"
+              data-post-media="{% if event.event_post_presta.collected and event.event_post_presta.sent %}ok{% else %}todo{% endif %}"
+              data-post-payment="{% if event.event_post_presta.client_paid and event.event_post_presta.members_paid %}ok{% else %}todo{% endif %}"
+              data-post-review="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}ok{% else %}todo{% endif %}">
+            <td class="post-summary-table__client">{{ event.client.nom }}</td>
+            <td data-order="{{ event.event_details.date_evenement|date:'Y-m-d' }}">{{ event.event_details.date_evenement|date:"d/m/Y" }}</td>
+            <td><span class="backend-status {% if event.status == 'Pending' %}backend-status--warning{% elif event.status == 'Sent Media' %}backend-status--success{% elif event.status == 'Post Presta' %}backend-status--purple{% elif event.status == 'Media KO' %}backend-status--danger{% endif %}">{{ event.status }}</span></td>
+            <td>{% if event.event_post_presta.collected and event.event_post_presta.sent %}<span class="backend-status backend-status--success">Envoyés</span>{% elif event.event_post_presta.collected %}<span class="backend-status backend-status--warning">À envoyer</span>{% else %}<span class="backend-status backend-status--danger">À collecter</span>{% endif %}</td>
+            <td>{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}<span class="backend-status backend-status--success">Reçu</span>{% else %}<span class="backend-status backend-status--warning">En attente</span>{% endif %}</td>
+            <td>{% if event.event_post_presta.client_paid and event.event_post_presta.members_paid %}<span class="backend-status backend-status--success">Vérifiés</span>{% else %}<span class="backend-status backend-status--warning">À vérifier</span>{% endif %}</td>
+            <td><a class="post-open-link" href="#event-{{ event.id }}">Ouvrir <i class="fas fa-chevron-right" aria-hidden="true"></i></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p id="post-results-count" class="post-results-count" aria-live="polite"></p>
+  </section>
+
+  <section class="post-detail-list" aria-label="Dossiers détaillés">
+    <div class="post-detail-list__heading"><h2>Suivi par client</h2><p>Les fiches sont repliées pour garder une vue lisible.</p></div>
+    <div class="backend-event-stack">
+    {% for event in lst_post_event %}
+      <details id="event-{{ event.id }}" class="backend-card backend-post-card post-event-detail" data-event-id="{{ event.id }}">
+        <summary class="post-event-summary">
+          <span class="post-event-summary__main">
+            <strong>{{ event.client.nom }}</strong>
+            <small>{{ event.event_details.date_evenement|date:"d/m/Y" }}</small>
+          </span>
+          <span class="backend-status {% if event.status == 'Pending' %}backend-status--warning{% elif event.status == 'Sent Media' %}backend-status--success{% elif event.status == 'Post Presta' %}backend-status--purple{% elif event.status == 'Media KO' %}backend-status--danger{% endif %}">{{ event.status }}</span>
+          <span class="post-event-summary__chevron"><i class="fas fa-chevron-down" aria-hidden="true"></i></span>
+        </summary>
+        <div class="card-body">
+          <div class="post-event-toolbar">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'info_event' event.id %}"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Fiche complète</a>
+            <a class="post-back-link" href="#post-list-title">Retour à la liste</a>
+          </div>
+
+          <section class="post-workflow-block" aria-label="Informations et prestations">
+            <div class="post-workflow-heading"><span class="post-workflow-heading__index">01</span><div><h3>Informations et prestations</h3><p>Coordonnées, montant et équipements réservés.</p></div></div>
+            <div class="post-info-grid">
+              <div><span>Contact</span><strong>{{ event.client.mail|default:"Non renseigné" }}</strong></div>
+              <div><span>Date de l'événement</span><strong>{{ event.event_details.date_evenement|date:"d/m/Y" }}</strong></div>
+              <div><span>Prix total</span><strong>{{ event.prix_valided }} €</strong></div>
+              <div><span>Acompte</span><strong>{{ event.event_acompte.montant_acompte|default:"0" }} €</strong></div>
+              <div><span>Solde restant</span><strong>{{ event.event_acompte.montant_restant|default:"0" }} €</strong></div>
+              <div><span>Mode de paiement</span><strong>{{ event.event_acompte.mode_payement|default:"Non renseigné" }}</strong></div>
+            </div>
+            <h4 class="post-subheading">Produits et options</h4>
+<div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead><tr><th>Prestation</th><th>Option</th><th>Num PC</th><th>Status</th></tr></thead>
       <tbody>
@@ -173,53 +131,23 @@
       </tbody>
     </table>
     </div>
+          </section>
 
-    {# --- Liens / envoi --- #}
-    <div class="backend-table-scroll backend-post-section">
-    <table class="table table-bordered table-striped bg-white">
-      <thead>
-        <tr>
-          <th>Nom Dossier</th>
-          <th>Media Collecté</th>
-          <th>Path Depot Fichier</th>
-          <th>Lien Depot Fichier</th>
-          <th>Envoi</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ event.event_template.directory_name }}</td>
-          <td>
-            {% if not event.event_post_presta.collected %}
-              <span class="backend-status backend-status--danger">Non</span>
-            {% else %}
-              <span class="backend-status backend-status--success">Fait</span>
-            {% endif %}
-          </td>
-          <td><a href="P:/CLIENT-EVENT/{{ event.event_template.directory_name }}">P:\CLIENT-EVENT</a></td>
-          <td><a href="{{ event.event_post_presta.link_media_shared }}">Lien</a></td>
-          <td>
-            {% if not event.event_post_presta.sent %}
-              <span class="backend-status backend-status--danger">Non</span>
-            {% else %}
-              <span class="backend-status backend-status--success">
-                Fait - {{ event.event_post_presta.date_media_sent|date:"d/m/y" }}
-              </span>
-            {% endif %}
-          </td>
-          <td>
-            <form method="POST" action="{% url 'send_media' event.id %}">{% csrf_token %}
-              <button class="btn btn-primary" type="submit">Envoyer Fichiers</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
+          <section class="post-workflow-block" aria-label="Collecte et envoi médias">
+            <div class="post-workflow-heading"><span class="post-workflow-heading__index">02</span><div><h3>Collecte et envoi des médias</h3><p>Vérifiez les fichiers et le lien de livraison avant l'envoi.</p></div></div>
+            <div class="post-info-grid">
+              <div><span>Nom du dossier</span><strong>{{ event.event_template.directory_name|default:"Non défini" }}</strong></div>
+              <div><span>Collecte des médias</span><strong>{% if event.event_post_presta.collected %}Fait{% else %}À collecter{% endif %}</strong></div>
+              <div><span>Dossier local</span><strong>P:\\CLIENT-EVENT\\{{ event.event_template.directory_name }}</strong></div>
+              <div><span>Accès client</span><strong>{% if event.event_post_presta.link_media_shared %}<a href="{{ event.event_post_presta.link_media_shared }}" target="_blank" rel="noopener noreferrer">Ouvrir le lien média</a>{% else %}Aucun lien{% endif %}</strong></div>
+              <div><span>Envoi des médias</span><strong>{% if event.event_post_presta.sent %}Envoyé le {{ event.event_post_presta.date_media_sent|date:"d/m/Y" }}{% else %}En attente{% endif %}</strong></div>
+              <div class="post-info-grid__action"><span>Action</span><form method="POST" action="{% url 'send_media' event.id %}">{% csrf_token %}<button class="btn btn-primary" type="submit">Envoyer les fichiers</button></form></div>
+            </div>
+          </section>
 
-    {# --- Paiements / flags --- #}
-    <div class="backend-table-scroll backend-post-section">
+          <section class="post-workflow-block" aria-label="Finances et équipe">
+            <div class="post-workflow-heading"><span class="post-workflow-heading__index">03</span><div><h3>Finances et équipe</h3><p>Rémunérations, charges et règlements.</p></div></div>
+<div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
@@ -295,9 +223,11 @@
       </tbody>
     </table>
     </div>
+          </section>
 
-    {# --- Montage / go_post_photo (select modifiable en continu) --- #}
-    <div class="backend-table-scroll backend-post-section">
+          <section class="post-workflow-block" aria-label="Publications photo et vidéo">
+            <div class="post-workflow-heading"><span class="post-workflow-heading__index">04</span><div><h3>Publications photo et vidéo</h3><p>Photos à publier, collecte des rushs et montages.</p></div></div>
+<div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
@@ -364,9 +294,11 @@
       </tbody>
     </table>
     </div>
+          </section>
 
-    {# --- Feedback + actions --- #}
-    <div class="backend-table-scroll backend-post-section">
+          <section class="post-workflow-block" aria-label="Avis et clôture">
+            <div class="post-workflow-heading"><span class="post-workflow-heading__index">05</span><div><h3>Avis clients et clôture</h3><p>Retours, relances, commentaire et fermeture du dossier.</p></div></div>
+<div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead>
         <tr>
@@ -414,9 +346,8 @@
       </tbody>
     </table>
     </div>
-
-    {# --- Commentaire --- #}
-    <div class="backend-table-scroll backend-post-section">
+            <h4 class="post-subheading">Commentaire interne</h4>
+<div class="backend-table-scroll backend-post-section">
     <table class="table table-bordered table-striped bg-white">
       <thead><tr><th>Commentaire Feedback</th></tr></thead>
       <tbody>
@@ -436,11 +367,14 @@
       </tbody>
     </table>
     </div>
-
-  </div>
-</article>
-{% endfor %}
-</div>
+          </section>
+        </div>
+      </details>
+    {% empty %}
+      <p class="post-empty">Aucune prestation en cours.</p>
+    {% endfor %}
+    </div>
+  </section>
 </div>
 
 <!-- =============================== -->
@@ -469,13 +403,24 @@ function debounce(fn, delay=700){
 <!--  SCRIPT 2 : Scroll doux vers #event-X -->
 <!-- =============================== -->
 <script>
-document.querySelectorAll('a[href^="#event-"]').forEach(a=>{
-  a.addEventListener('click', e=>{
-    e.preventDefault();
-    const t = document.querySelector(a.getAttribute('href'));
-    if(t) t.scrollIntoView({behavior:'smooth'});
+function openPostEvent(hash, smooth = false) {
+  if (!/^#event-\d+$/.test(hash)) return;
+  const target = document.getElementById(hash.slice(1));
+  if (!target) return;
+  target.hidden = false;
+  target.open = true;
+  target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+}
+document.querySelectorAll('a[href^="#event-"]').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    const hash = link.getAttribute('href');
+    history.replaceState(null, '', hash);
+    openPostEvent(hash, true);
   });
 });
+window.addEventListener('hashchange', () => openPostEvent(window.location.hash));
+if (window.location.hash) openPostEvent(window.location.hash);
 </script>
 
 
@@ -496,13 +441,47 @@ window.addEventListener("scroll", () => backButtons.forEach(button => {
 <!-- =============================== -->
 <script>
 $(document).ready(function(){
-  $('#table-haut').DataTable({
-    dom:'Bfrtip',
+  let activeFilter = 'all';
+  $.fn.dataTable.ext.search.push((settings, data, index) => {
+    if (settings.nTable.id !== 'table-haut') return true;
+    const row = settings.aoData[index].nTr;
+    if (!row || activeFilter === 'all') return true;
+    if (activeFilter === 'media') return row.dataset.postMedia === 'todo';
+    if (activeFilter === 'payment') return row.dataset.postPayment === 'todo';
+    if (activeFilter === 'review') return row.dataset.postReview === 'todo';
+    return true;
+  });
+  const table = $('#table-haut').DataTable({
+    dom:'Bt',
     buttons:['csv','excel'],
     paging:false,
     info:false,
     language:{ url:"//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json" }
   });
+  function syncPostCards(){
+    const visible = new Set(Array.from(table.rows({search:'applied'}).nodes()).map(row => row.dataset.eventId));
+    document.querySelectorAll('.post-event-detail').forEach(card => {
+      card.hidden = !visible.has(card.dataset.eventId);
+    });
+    const count = visible.size;
+    document.getElementById('post-results-count').textContent = count + (count > 1 ? ' dossiers affichés' : ' dossier affiché');
+  }
+  document.getElementById('post-search').addEventListener('input', event => {
+    table.search(event.target.value).draw();
+  });
+  document.querySelectorAll('.post-filter').forEach(button => {
+    button.addEventListener('click', () => {
+      activeFilter = button.dataset.postFilter;
+      document.querySelectorAll('.post-filter').forEach(item => {
+        const selected = item === button;
+        item.classList.toggle('is-active', selected);
+        item.setAttribute('aria-pressed', String(selected));
+      });
+      table.draw();
+    });
+  });
+  table.on('draw', syncPostCards);
+  syncPostCards();
 });
 </script>
 
