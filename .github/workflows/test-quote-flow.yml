@@ -48,6 +48,8 @@ jobs:
         run: python -m tests_api.run
       - name: Vérifier prix et acomptes
         run: python -m unittest app.tests.test_event_pricing app.tests.test_panneaux_xxl app.tests.test_acompte_devis
+      - name: Vérifier le tableau post-prestation
+        run: python manage.py test app.tests.test_post_presta_dashboard --verbosity=2
       - name: Tester le formulaire jusqu'au mail et au PDF
         env:
           CRM_E2E_MYSQL: "1"
