@@ -129,7 +129,7 @@ class CommercialStatsTests(TestCase):
         self.assertEqual(report["quote_periods"][0]["rows"][0]["processed"], 4)
         self.assertEqual(report["quote_periods"][0]["rows"][0]["conversion"], 25.0)
         self.assertEqual(report["quote_periods"][0]["rows"][0]["pending_amount"], 1700)
-        self.assertEqual(report["quote_periods"][1]["rows"][0]["label"], "2026 · S2")
+        self.assertEqual(report["quote_periods"][1]["rows"][0]["label"], "Nov 2026")
         self.assertEqual(report["quote_periods"][1]["rows"][0]["processed"], 4)
         self.assertEqual(report["quote_top_pending"][0]["event"].id, pending_person.id)
         self.assertEqual(report["quote_top_pending"][0]["amount"], 1400)
@@ -153,18 +153,18 @@ class CommercialStatsTests(TestCase):
         request.user = SimpleNamespace(is_active=True, is_staff=True)
         response = graph_commercial_stats(request)
         for title in ("Évolution annuelle des devis traités",
-                      "Évolution semestrielle des devis traités",
+                      "Évolution mensuelle des devis traités",
                       "Ancienneté des devis en attente",
                       "Potentiel non signé par clientèle",
                       "Taux de signature par année",
-                      "Taux de signature par semestre",
+                      "Taux de signature par mois",
                       "Répartition des montants de devis",
                       "10 plus gros devis en attente à relancer"):
             self.assertContains(response, title)
         self.assertContains(response, "450 €")
 
 
-    def test_annual_and_semester_boundary_with_paris_timezone(self):
+    def test_annual_and_month_boundary_with_paris_timezone(self):
         old = self.event(status="Sended", proposed=350)
         s1 = self.event(status="Acompte OK", signed=self.created, validated=800)
         s2 = self.event(status="Refused", proposed=200)
@@ -176,13 +176,17 @@ class CommercialStatsTests(TestCase):
         for event, created in dates:
             Event.objects.filter(pk=event.pk).update(created_at=created)
         report = commercial_report(self.request())
-        years, semesters = [row["rows"] for row in report["quote_periods"]]
+        years, monthly = [row["rows"] for row in report["quote_periods"]]
+        months = {row["label"]: row for row in monthly}
         self.assertEqual([(row["label"], row["processed"]) for row in years],
                          [("2025", 1), ("2026", 2)])
-        self.assertEqual([(row["label"], row["processed"]) for row in semesters],
-                         [("2025 · S2", 1), ("2026 · S1", 1), ("2026 · S2", 1)])
+        self.assertEqual(months["Déc 2025"]["processed"], 1)
+        self.assertEqual(months["Juin 2026"]["processed"], 1)
+        self.assertEqual(months["Juil 2026"]["processed"], 1)
+        self.assertEqual(months["Jan 2026"]["processed"], 0)
+        self.assertEqual(len(months), 8)
         self.assertEqual(years[0]["pending_amount"], 350)
         self.assertEqual(years[1]["signed_amount"], 800)
         self.assertEqual(years[1]["refused_amount"], 200)
-        self.assertEqual(semesters[1]["conversion"], 100.0)
-        self.assertEqual(semesters[2]["conversion"], 0.0)
+        self.assertEqual(months["Juin 2026"]["conversion"], 100.0)
+        self.assertEqual(months["Juil 2026"]["conversion"], 0.0)
