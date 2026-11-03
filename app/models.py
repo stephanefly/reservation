@@ -136,12 +136,12 @@ class EventOption(models.Model):
     PhotographeVoguebooth = models.BooleanField(default=False)
     PhotographeVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_PhotographeVoguebooth(self):
-        return 100
+        return 150
 
     ImpressionVoguebooth = models.BooleanField(default=False)
     ImpressionVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
     def prix_base_ImpressionVoguebooth(self):
-        return 50
+        return 100
 
     DecorVoguebooth = models.BooleanField(default=False)
     DecorVoguebooth_reduc_prix = models.IntegerField(null=True, default=False)
