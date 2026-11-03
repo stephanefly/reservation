@@ -4,13 +4,14 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "crm-e2e-local-only"
-INSTALLED_APPS = ["django.contrib.contenttypes", "django.contrib.auth", "app", "bootstrap5"]
+INSTALLED_APPS = ["django.contrib.contenttypes", "django.contrib.auth", "app", "quote_control", "bootstrap5"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ROOT_URLCONF = "tests_e2e.urls"
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
 ]
 TEMPLATES = [{"BACKEND": "django.template.backends.django.DjangoTemplates", "APP_DIRS": True}]

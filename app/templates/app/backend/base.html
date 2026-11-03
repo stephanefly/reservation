@@ -61,6 +61,13 @@
                         <i class="fas fa-file-signature" aria-hidden="true"></i> Devis
                     </a>
                 </li>
+                {% if request.user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/backend/devis-auto/' in request.path %}active{% endif %}" href="{% url 'admin_auto_quotes' %}">
+                        <i class="fas fa-magic" aria-hidden="true"></i> Devis auto
+                    </a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'unopened_leads' %}active{% endif %}" href="{% url 'unopened_leads' %}"><i class="fas fa-phone-alt" aria-hidden="true"></i> À relancer</a>
                 </li>

@@ -9,6 +9,7 @@ urlpatterns = [
     path('backend/leads/', unopened_leads, name='unopened_leads'),
     path('', include('app.urls.frontend_urls')),
 
+    path('backend/devis-auto/', include('quote_control.urls')),
     path('backend/', tableau_de_bord, name='tableau_de_bord'),
     path('api/private/', include('app.urls.private_api_urls')),
     path('api/ajouter-membre/<int:event_id>/', api_add_member, name='api_add_member'),

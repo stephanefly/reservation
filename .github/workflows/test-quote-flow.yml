@@ -48,6 +48,11 @@ jobs:
         run: python -m tests_api.run
       - name: Vérifier prix et acomptes
         run: python -m unittest app.tests.test_event_pricing app.tests.test_panneaux_xxl app.tests.test_acompte_devis app.tests.test_instant_quote
+      - name: Tester les règles et l'administration des devis automatiques
+        env:
+          DJANGO_SETTINGS_MODULE: tests_e2e.settings
+          CRM_E2E_SQLITE_PATH: ":memory:"
+        run: python -m tests_e2e.run_quote_control
       - name: Vérifier le tableau post-prestation
         run: python -m tests_post_presta.run
       - name: Tester le formulaire jusqu'au mail et au PDF

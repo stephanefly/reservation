@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'quote_control',
     'bootstrap5',
     "django_forms_bootstrap",
 ]

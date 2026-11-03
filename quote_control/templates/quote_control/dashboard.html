@@ -1,0 +1,164 @@
+{% extends 'app/backend/base.html' %}
+{% block title %}Devis automatiques{% endblock %}
+
+{% block extra_css %}
+<style>
+.auto-dashboard{max-width:1300px;margin:0 auto;padding:26px 14px 50px;color:#24232a}
+.auto-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:15px;align-items:center;margin-bottom:20px}
+.auto-head h1{font-size:1.8rem;font-weight:800;margin:0;color:#18131e}
+.auto-sub{color:#6b6574;margin:4px 0 0}
+.auto-pill{display:inline-flex;align-items:center;font-size:.88rem;padding:8px 13px;border-radius:999px;font-weight:800;background:#fff3d2;color:#684800}
+.auto-pill.on{background:#dff5e7;color:#1e6944}
+.auto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.auto-card{background:#fff;border:1px solid #e8e2d7;border-radius:17px;padding:20px;box-shadow:0 8px 25px rgba(34,24,14,.04);margin-bottom:16px}
+.auto-card h2{font-size:1.12rem;font-weight:800;margin-bottom:13px}
+.auto-card p{color:#64606a}
+.auto-label{display:flex;gap:10px;align-items:center;margin:9px 0;font-size:.94rem;cursor:pointer}
+.auto-label input{accent-color:#9a7b38;width:18px;height:18px}
+.auto-choice-list{list-style:none;padding:0;margin:0}
+.auto-choice-list li{margin:6px 0}
+.auto-choice-list label{display:flex;gap:9px;align-items:center;margin:0}
+.auto-choice-list input{accent-color:#967231;width:17px;height:17px}
+.auto-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #efedf0}
+.auto-row:last-child{border-bottom:0}
+.auto-money{max-width:122px;border:1px solid #dcd7d0;border-radius:8px;padding:9px;font-weight:700}
+.auto-btn{display:inline-block;border:0;border-radius:9px;background:#151318;color:#fff;padding:12px 18px;font-weight:800;text-decoration:none;cursor:pointer}
+.auto-btn:hover{color:#fff;background:#51402c}
+.auto-btn.alt{background:#f3eddf;color:#3a3023}
+.auto-note{border-left:3px solid #be9446;padding:12px 15px;margin-bottom:15px;background:#faf6eb;color:#5e502e;font-size:.92rem}
+.auto-success{background:#e6f7ee;border:1px solid #a2d8b8;color:#165e37;border-radius:8px;padding:10px 15px;margin-bottom:18px}
+.auto-error{color:#a51730;font-size:.85rem;margin:5px 0}
+.auto-scroll{overflow-x:auto}
+.auto-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.auto-table th,.auto-table td{padding:11px;border-bottom:1px solid #efedf0;text-align:left;white-space:nowrap}
+.auto-table th{color:#6c6772;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.auto-counter{font-size:1.6rem;font-weight:800;color:#3b3021}
+.auto-field{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.auto-field input[type=number]{width:110px;border:1px solid #dcd7d0;border-radius:9px;padding:9px}
+.auto-input{border:1px solid #d8d4cf;padding:10px;border-radius:9px;max-width:210px;width:100%}
+@media(max-width:660px){.auto-dashboard{padding:16px 10px}.auto-card{padding:16px}.auto-table{font-size:.8rem}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auto-dashboard">
+    <header class="auto-head">
+        <div><p class="auto-sub">CRM · Administration</p><h1>Devis automatiques</h1>
+            <p class="auto-sub">Pilotez les offres, les exceptions et les envois depuis une seule page.</p>
+        </div>
+        <span class="auto-pill {% if config.enabled %}on{% endif %}">
+            {% if config.enabled %}Envoi automatique actif{% else %}Envoi automatique désactivé{% endif %}
+        </span>
+    </header>
+
+    {% if saved %}<div class="auto-success" role="status">Configuration enregistrée.</div>{% endif %}
+    <div class="auto-note"><strong>Recommandation et entreprises : toujours manuelles.</strong>
+        Aucun envoi automatique ne valide une réservation ni ne facture un acompte.
+        Le contrôle des stocks et des déplacements reste organisé par l'équipe.
+    </div>
+
+    <div class="auto-grid">
+        <section class="auto-card"><h2>Devis envoyés</h2><div class="auto-counter">{{ sent_count }}</div>
+            <p>Historique depuis l'activation du module</p></section>
+        <section class="auto-card"><h2>À traiter manuellement</h2><div class="auto-counter">{{ manual_count }}</div>
+            <p>Exceptions enregistrées</p></section>
+        <section class="auto-card"><h2>Alertes d'envoi</h2><div class="auto-counter">{{ error_count }}</div>
+            <p>Contrôler les événements concernés</p></section>
+    </div>
+
+    <form method="post" action="{% url 'admin_auto_quotes' %}">
+        {% csrf_token %}
+        <div class="auto-card">
+            <h2>Activation générale</h2>
+            <label class="auto-label" for="{{ form.enabled.id_for_label }}">{{ form.enabled }} <strong>Autoriser l'envoi automatique de devis PDF</strong></label>
+            <p>Au départ, le module est désactivé. Les modifications sont enregistrées sans envoi immédiat.</p>
+            <label class="auto-label" for="{{ form.confirm_activation.id_for_label }}">{{ form.confirm_activation }} Je confirme avoir vérifié les prix, les packs et les e-mails avant l'activation.</label>
+            {% for err in form.confirm_activation.errors %}<div class="auto-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="auto-grid">
+            <section class="auto-card">
+                <h2>Sources autorisées</h2><p>Recommandation reste exclue, sans possibilité de la réactiver.</p>
+                <div class="auto-choice-list">{{ form.sources }}</div>
+                <div class="auto-note">Recommandation : manuel · Entreprises : manuel</div>
+            </section>
+            <section class="auto-card">
+                <h2>Prestations seules</h2>
+                <p>Une seule machine et durée 3 h ou 5 h. Les prix de 3 h restent ceux du catalogue CRM.</p>
+                <div class="auto-choice-list">{{ form.products }}</div>
+            </section>
+        </div>
+
+        <section class="auto-card">
+            <h2>Tarifs des machines (5 h, TTC)</h2>
+            <p>Le montant final est calculé côté serveur, avec les options et le déplacement éventuel.</p>
+            <div class="auto-grid">
+            {% for item in product_rows %}
+                <div class="auto-row"><label for="{{ item.field.id_for_label }}">{{ item.label }}</label>
+                    <div>{{ item.field }} {% for err in item.field.errors %}<div class="auto-error">{{ err }}</div>{% endfor %}</div>
+                </div>
+            {% endfor %}
+            </div>
+        </section>
+
+        <section class="auto-card">
+            <h2>Packs activés et tarifs TTC</h2>
+            <p>Seule la composition exacte des machines et des options incluses ouvre droit au tarif du pack.
+            Les options complémentaires et frais de déplacement s'ajoutent.</p>
+            <div class="auto-choice-list">{{ form.packs }}</div>
+            <div class="auto-grid">
+            {% for item in pack_rows %}
+                <div class="auto-row"><label for="{{ item.field.id_for_label }}">{{ item.label }}</label>
+                    <div>{{ item.field }} {% for err in item.field.errors %}<div class="auto-error">{{ err }}</div>{% endfor %}</div>
+                </div>
+            {% endfor %}
+            </div>
+        </section>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px">
+            <button class="auto-btn" type="submit">Enregistrer la configuration</button>
+            <span class="auto-sub">Les modifications s'appliqueront aux nouveaux devis, pas aux devis déjà signés.</span>
+        </div>
+    </form>
+
+    <section class="auto-card">
+        <h2>Simuler un devis existant</h2>
+        <p>Vérification sans envoyer d'e-mail ni modifier les montants enregistrés.</p>
+        <form class="auto-field" method="get" action="{% url 'admin_auto_quotes' %}">
+            <label for="preview-id">Numéro de dossier CRM</label>
+            <input class="auto-input" type="number" id="preview-id" name="event" min="1" required value="{% if preview_event %}{{ preview_event.id }}{% endif %}">
+            <button class="auto-btn alt" type="submit">Simuler</button>
+        </form>
+        {% if preview %}
+            <hr>
+            {% if preview.eligible %}
+                <p><strong>Offre :</strong> {{ preview.label }} · <strong>Tarif calculé :</strong> {{ preview.amount }} €</p>
+                <a class="auto-btn" target="_blank" rel="noopener" href="{% url 'admin_auto_quotes_preview_pdf' preview_event.id %}">Aperçu PDF non enregistré</a>
+            {% else %}
+                <p><strong>Traitement manuel :</strong> {{ preview.reason }}</p>
+            {% endif %}
+        {% endif %}
+    </section>
+
+    <section class="auto-card">
+        <h2>Historique et alertes</h2>
+        <div class="auto-scroll">
+            <table class="auto-table">
+                <thead><tr><th>Date</th><th>Dossier</th><th>Source</th><th>Résultat</th><th>Montant</th><th>Motif</th></tr></thead>
+                <tbody>
+                {% for row in logs %}
+                    <tr><td>{{ row.created_at|date:"d/m/Y H:i" }}</td>
+                        <td><a href="{% url 'info_event' row.event_id %}">#{{ row.event_id }}</a></td>
+                        <td>{{ row.source }}</td>
+                        <td>{{ row.get_outcome_display }}</td>
+                        <td>{% if row.amount %}{{ row.amount }} €{% else %}—{% endif %}</td>
+                        <td>{{ row.reason }}</td></tr>
+                {% empty %}
+                    <tr><td colspan="6">Aucun devis automatique traité pour l'instant.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
