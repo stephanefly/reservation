@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from django.apps import apps
-from app.module.devis_pdf.make_table import make_tableau
 
 
 def complete_mail(event, soup, mail_type):
@@ -35,6 +34,7 @@ def _handle_acompte(event, soup):
         balise_acompte = soup.find('div', class_='acompte_particulier')
         balise_acompte.extract()
     else:
+        from app.module.devis_pdf.make_table import make_tableau
         balise_acompte = soup.find('div', class_='acompte_entreprise')
         balise_acompte.extract()
         _, _, acompte = make_tableau(event)
@@ -138,3 +138,4 @@ def _handle_tracer(event, soup):
 
     # Trouver l'élément avec la classe `traceur_devis`
     soup.find('img', class_='traceur_devis')['src'] = tracer_link
+

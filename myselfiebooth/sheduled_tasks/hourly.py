@@ -15,6 +15,14 @@ import django
 
 django.setup()
 
+# Lecture seule de la boîte ; une panne IMAP ne bloque pas les autres tâches.
+from django.core.management import call_command
+import logging
+try:
+    call_command('sync_email_bounces')
+except Exception:
+    logging.getLogger(__name__).warning('Contrôle des retours mail indisponible : consulter la configuration IMAP et les migrations.')
+
 from app.models import Event
 from app.module.cloud.send_media import send_media_logic
 

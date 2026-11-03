@@ -431,3 +431,35 @@ class EventRelance(models.Model):
     date_relance = models.DateTimeField(null=True, blank=True)
     commentaire = models.TextField(blank=True, null=True)
     qualification = models.PositiveSmallIntegerField(default=0)  # Valeur entre 0 et 5
+
+
+class EmailDelivery(models.Model):
+    """One client recipient per attempt; SMTP acceptance is not inbox delivery."""
+    event = models.ForeignKey(Event, null=True, blank=True, on_delete=models.SET_NULL, related_name="email_deliveries")
+    tracking = models.ForeignKey(EmailTracking, null=True, blank=True, on_delete=models.SET_NULL)
+    message_id = models.CharField(max_length=255, unique=True)
+    recipient = models.EmailField(max_length=254)
+    mail_type = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    STATUS = [("preparing", "Préparation"), ("accepted", "Accepté par IONOS"),
+              ("refused", "Refusé à l'envoi"), ("error", "Erreur d'envoi"),
+              ("unknown", "Résultat SMTP incertain"), ("delayed", "Retour : livraison différée"),
+              ("bounced", "Retour : échec de livraison"), ("delivered", "Confirmation technique de livraison")]
+    status = models.CharField(max_length=20, choices=STATUS, default="preparing", db_index=True)
+    smtp_code = models.PositiveSmallIntegerField(null=True, blank=True)
+    diagnostic = models.CharField(max_length=500, blank=True)
+    copy_refused = models.BooleanField(default=False)
+    feedback_at = models.DateTimeField(null=True, blank=True)
+
+
+class EmailMailboxCheck(models.Model):
+    key = models.CharField(max_length=30, unique=True, default="ionos")
+    checked_at = models.DateTimeField(null=True, blank=True)
+    success = models.BooleanField(default=False)
+    scanned = models.PositiveIntegerField(default=0)
+    matched = models.PositiveIntegerField(default=0)
+    unmatched = models.PositiveIntegerField(default=0)
+    skipped = models.PositiveIntegerField(default=0)
+    diagnostic = models.CharField(max_length=250, blank=True)
+

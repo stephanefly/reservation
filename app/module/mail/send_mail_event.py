@@ -7,55 +7,55 @@ from email.mime.application import MIMEApplication
 from bs4 import BeautifulSoup
 import requests
 from datetime import datetime
-from app.module.cloud.get_pcloud_data import get_public_image_link_from_path
-from app.module.data_bdd.post_form import make_num_devis
-from app.module.devis_pdf.generate_pdf import generate_pdf_devis
 from app.module.mail.complete_mail import complete_mail
-from myselfiebooth.settings import MP, MAIL_MYSELFIEBOOTH, MAIL_TEMPLATE_REPOSITORY, MAIL_BCC
+from django.conf import settings
 
 
 def send_mail_event(event, mail_type):
-    # Configuration du serveur SMTP
-    server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
-    server.login(MAIL_MYSELFIEBOOTH, MP)
+    from app.module.mail.delivery import begin_delivery, finish, submit
 
-    subject, template_name, file_to_send, copy_mail = get_mail_template(event, mail_type)
-
-    # Configuration de l'email
-    msg = MIMEMultipart('mixed' if file_to_send else 'alternative')
-    msg['Subject'] = subject
-    msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
-    msg['To'] = event.client.mail
-    if copy_mail:
-        msg['Cc'] = ",".join(copy_mail)
-
-    # Lecture du template HTML
-    template_path = os.path.join(MAIL_TEMPLATE_REPOSITORY, template_name)
-    with open(template_path, 'r', encoding='utf-8') as fichier_html:
-        html_message = fichier_html.read()
-
-    # Compléter le contenu du mail
-    soup = BeautifulSoup(html_message, 'html.parser')
-    soup_completed = complete_mail(event, soup, mail_type)
-
-    # Attacher le contenu HTML à l'e-mail
-    msg.attach(MIMEText(soup_completed.prettify(), 'html'))
-
-    if file_to_send:
-        part = complete_mail_with_file_to_send(event, file_to_send)
-
-        msg.attach(part)
-
-    # Envoi de l'e-mail
-    server.sendmail(MAIL_MYSELFIEBOOTH, [msg['To']] + [MAIL_BCC], msg.as_string())
-    server.quit()  # Toujours fermer la connexion au serveur
-
-    return True
+    delivery = begin_delivery(event, mail_type)
+    try:
+        subject, template_name, file_to_send, copy_mail = get_mail_template(event, mail_type)
+        msg = MIMEMultipart('mixed' if file_to_send else 'alternative')
+        msg['Subject'] = subject
+        msg['From'] = formataddr(("MySelfieBooth", settings.MAIL_MYSELFIEBOOTH))
+        msg['To'] = delivery.recipient
+        if copy_mail:
+            msg['Cc'] = ",".join(copy_mail)
+        template_path = os.path.join(settings.MAIL_TEMPLATE_REPOSITORY, template_name)
+        with open(template_path, 'r', encoding='utf-8') as fichier_html:
+            soup = BeautifulSoup(fichier_html.read(), 'html.parser')
+        soup_completed = complete_mail(event, soup, mail_type)
+        tracker = soup_completed.find('img', class_='traceur_devis')
+        if tracker:
+            from app.models import EmailTracking
+            from urllib.parse import urlparse
+            tracker_uuid = urlparse(tracker.get('src', '')).path.rstrip('/').rsplit('/', 1)[-1]
+            tracking = EmailTracking.objects.filter(uuid=tracker_uuid, event_traced=event.id).first()
+            delivery.tracking = tracking
+            delivery.save(update_fields=['tracking'])
+        msg.attach(MIMEText(soup_completed.prettify(), 'html'))
+        if file_to_send:
+            msg.attach(complete_mail_with_file_to_send(event, file_to_send))
+    except Exception:
+        finish(delivery, "error", diagnostic="Échec de préparation du message ; aucun envoi SMTP effectué.")
+        raise
+    result = submit(delivery, msg, copies=copy_mail + [settings.MAIL_BCC])
+    if mail_type == 'send_media':
+        event.event_post_presta.sent = True
+        event.event_post_presta.save()
+    elif mail_type == 'relance_avis':
+        event.client.nb_relance_avis = (event.client.nb_relance_avis or 0) + 1
+        event.client.save()
+    return result
 
 def complete_mail_with_file_to_send(event, file_to_send):
 
     # Si c'est un devis, générer et attacher le PDF
     if 'devis_file' in file_to_send:
+        from app.module.data_bdd.post_form import make_num_devis
+        from app.module.devis_pdf.generate_pdf import generate_pdf_devis
         if event.num_devis is None:
             make_num_devis(event)
         else:
@@ -70,6 +70,7 @@ def complete_mail_with_file_to_send(event, file_to_send):
         part['Content-Disposition'] = f'attachment; filename="{pdf_name}"'
 
     if 'template_file' in file_to_send:
+        from app.module.cloud.get_pcloud_data import get_public_image_link_from_path
         full_path = r"/PREPA-EVENT/" + str(event.event_template.directory_name) + "/" + str(
             event.event_template.image_name)
         template_url = get_public_image_link_from_path(full_path)
@@ -85,16 +86,16 @@ def complete_mail_with_file_to_send(event, file_to_send):
 
 def send_mail_system_token_missing():
     server = smtplib.SMTP_SSL('smtp.ionos.fr', 465)
-    server.login(MAIL_MYSELFIEBOOTH, MP)
+    server.login(settings.MAIL_MYSELFIEBOOTH, settings.MP)
 
     subject = "Token manquant – action requise (generate_token.py)"
 
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
-    msg['From'] = formataddr(("MySelfieBooth", MAIL_MYSELFIEBOOTH))
+    msg['From'] = formataddr(("MySelfieBooth", settings.MAIL_MYSELFIEBOOTH))
     msg['To'] = "contact@myselfiebooth-paris.fr"
 
-    template_path = os.path.join(MAIL_TEMPLATE_REPOSITORY, "system/mail_token_manquant.html")
+    template_path = os.path.join(settings.MAIL_TEMPLATE_REPOSITORY, "system/mail_token_manquant.html")
     with open(template_path, 'r', encoding='utf-8') as fichier_html:
         html_message = fichier_html.read()
 
@@ -103,7 +104,7 @@ def send_mail_system_token_missing():
 
     msg.attach(MIMEText(html_message, 'html'))
 
-    server.sendmail(MAIL_MYSELFIEBOOTH, [msg['To']] + [MAIL_BCC], msg.as_string())
+    server.sendmail(settings.MAIL_MYSELFIEBOOTH, [msg['To']] + [settings.MAIL_BCC], msg.as_string())
     server.quit()
 
     return True
@@ -172,17 +173,11 @@ def get_mail_template(event, mail_type):
         # Mail pour envoyer les photos finales au client après l'événement
         subject = "📸 Vos photos sont là ! " + str(event.client.nom) + " ✨"
         template_name = "clients/mail_send_media.html"
-        # Marquer les médias comme envoyés dans la base de données
-        event.event_post_presta.sent = True
-        event.event_post_presta.save()
 
     elif mail_type == 'relance_avis':
         # Mail pour demander au client de donner son avis sur la prestation
         subject = "📸 Votre avis compte ! ✨"
         template_name = "clients/mail_relance_avis.html"
-        # Mise à jour du nombre de relances pour avis effectuées dans la base de données
-        event.client.nb_relance_avis = event.client.nb_relance_avis + 1
-        event.client.save()
 
     elif mail_type == 'envoi_template':
         # Mail pour envoyer le template au client
@@ -200,4 +195,5 @@ def get_mail_template(event, mail_type):
         raise ValueError("Type de mail non reconnu.")
 
     return subject, template_name, file_to_send, copy_mail
+
 

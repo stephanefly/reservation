@@ -5,7 +5,7 @@
     {% if mail %}
     <span class="backend-confirmation__icon backend-confirmation__icon--success"><i class="fas fa-check"></i></span>
     <h1>E-mail envoyé</h1>
-    <p>Le message a bien été transmis au client.</p>
+    <p>Le message a été accepté par IONOS pour le client. La réception finale n'est pas encore confirmée.</p>
     {% else %}
     <span class="backend-confirmation__icon backend-confirmation__icon--danger"><i class="fas fa-exclamation-triangle"></i></span>
     <h1>Échec de l'envoi</h1>
@@ -14,3 +14,4 @@
     <div class="backend-actions"><a class="backend-button backend-button--primary" href="{% url 'lst_devis' %}">Retour à la liste des devis</a></div>
 </section>
 {% endblock content %}
+

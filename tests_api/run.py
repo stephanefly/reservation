@@ -32,7 +32,7 @@ def main():
     import django
     django.setup()
     from django.test.runner import DiscoverRunner
-    failures = DiscoverRunner(verbosity=2).run_tests(["app.tests.test_private_api", "app.tests.test_email_stats", "app.tests.test_commercial_stats"])
+    failures = DiscoverRunner(verbosity=2).run_tests(["app.tests.test_private_api", "app.tests.test_email_stats", "app.tests.test_commercial_stats", "app.tests.test_email_delivery"])
     raise SystemExit(bool(failures))
 
 

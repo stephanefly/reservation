@@ -14,6 +14,8 @@ from app.views.private_api import PARIS_TIME_ZONE, _check_private_token
 
 # Explicit allowlists: adding a model field never exposes it automatically.
 RESOURCES = {
+    "email-deliveries": (models.EmailDelivery, "event_id tracking_id message_id recipient mail_type created_at accepted_at status smtp_code diagnostic copy_refused feedback_at"),
+    "email-mailbox-checks": (models.EmailMailboxCheck, "key checked_at success scanned matched unmatched skipped diagnostic"),
     "clients": (models.Client, "nom mail numero_telephone how_find raison_sociale nb_relance_devis nb_relance_avis autorisation_mail mail_sondage"),
     "events": (models.Event, "id_card num_devis client_id event_details_id event_product_id event_option_id event_acompte_id event_template_id event_post_presta_id prix_brut reduc_product reduc_all prix_proposed prix_valided created_at signer_at status history_status"),
     "event-details": (models.EventDetails, "date_evenement adresse_evenement ville_evenement code_postal_evenement comment comment_client horaire"),
@@ -122,6 +124,12 @@ def filtered(request, resource):
         queryset = queryset.filter(Q(nom__icontains=term) | Q(mail__icontains=term) | Q(numero_telephone__icontains=term))
     if resource == "costs":
         queryset = filter_dates(request, queryset, "created_at", with_time=True)
+    if resource == "email-deliveries":
+        queryset = filter_dates(request, queryset, "created_at", with_time=True)
+        if request.GET.get("event_id"):
+            queryset = queryset.filter(event_id=integer(request, "event_id", 0))
+        if request.GET.get("status"):
+            queryset = queryset.filter(status=request.GET["status"])
     return queryset
 
 
