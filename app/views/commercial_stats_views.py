@@ -6,7 +6,10 @@ from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
-from app.models import EmailTracking, Event
+from app.models import EmailTracking, Event, EventRelance
+from app.module.lib_graph.commercial_insights import (
+    SUBMITTED_STATES, is_quote_tracking, prepare_commercial_insights,
+)
 from app.module.lib_graph.commercial_pipeline import prepare_quote_graphs
 from app.views.private_api_data import filter_dates
 
@@ -61,7 +64,7 @@ def summarise(events, processed_ids):
 
 
 def commercial_report(request):
-    queryset = Event.objects.select_related("client", "event_details", "event_acompte")
+    queryset = Event.objects.select_related("client", "event_details", "event_acompte", "event_product")
     queryset = filter_dates(request, queryset, "created_at", with_time=True)
     segment = request.GET.get("segment", "all")
     if segment not in ("all", "individual", "business"):
@@ -71,8 +74,35 @@ def commercial_report(request):
     events = list(queryset.order_by("id"))
     # A subquery avoids a large IN parameter list with historical CRM data.
     tracked_statuses = {}
-    for event_id, status in EmailTracking.objects.filter(event_traced__in=queryset.values("id")).exclude(delivery_status__in=["preparing", "error", "refused"]).values_list("event_traced", "status_devis"):
-        tracked_statuses.setdefault(event_id, set()).add(status)
+    mail_signals = {}
+    for event_id, status, mail_type, delivery_status, opened, opening_tracked in (
+        EmailTracking.objects.filter(event_traced__in=queryset.values("id"))
+        .values_list("event_traced", "status_devis", "mail_type",
+                     "delivery_status", "opened", "opening_tracked")
+    ):
+        if delivery_status not in {"preparing", "error", "refused"}:
+            tracked_statuses.setdefault(event_id, set()).add(status)
+        if not is_quote_tracking(mail_type, status):
+            continue
+        signal = mail_signals.setdefault(
+            event_id, {"sent": False, "opened": False, "mail_issue": False},
+        )
+        if delivery_status in SUBMITTED_STATES:
+            signal["sent"] = True
+            if opened and opening_tracked:
+                signal["opened"] = True
+        if delivery_status in {"refused", "error", "unknown", "delayed", "bounced"}:
+            signal["mail_issue"] = True
+    last_contacts = {}
+    for event_id, qualification, contact_date in (
+        EventRelance.objects.filter(event_id__in=queryset.values("id"),
+                                    date_relance__isnull=False)
+        .order_by("event_id", "-date_relance", "-id")
+        .values_list("event_id", "qualification", "date_relance")
+    ):
+        last_contacts.setdefault(
+            event_id, {"qualification": qualification, "date_relance": contact_date},
+        )
     processed_ids = set()
     histories = {}
     for event in events:
@@ -105,6 +135,8 @@ def commercial_report(request):
     totals["outstanding_amount"] = sum(event.event_acompte.montant_restant for event in outstanding)
     return {
         **prepare_quote_graphs(events, processed_ids, amount),
+        **prepare_commercial_insights(events, processed_ids, mail_signals,
+                                      last_contacts, amount),
         "totals": totals, "statuses": statuses, "segments": segments, "relances": relances,
         "outstanding": outstanding[:30], "outstanding_more": max(0, len(outstanding) - 30),
         "unsigned_confirmed": sum(event.signer_at is None and event.status in (DONE_STATUS | {"Acompte OK"}) for event in events),
