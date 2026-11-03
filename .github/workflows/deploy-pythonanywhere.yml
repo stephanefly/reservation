@@ -1,0 +1,114 @@
+name: Déployer MySelfieBooth sur PythonAnywhere
+
+# La mise en production ne part qu'après les tests de main.
+# Désactivé tant que la variable PA_AUTODEPLOY_ENABLED n'est pas "true".
+on:
+  workflow_run:
+    workflows: ["Test formulaire et devis"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reservation-pythonanywhere-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      vars.PA_AUTODEPLOY_ENABLED == 'true' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      PA_USERNAME: ${{ vars.PA_USERNAME }}
+      PA_PROJECT_DIR: ${{ vars.PA_PROJECT_DIR }}
+      PA_SSH_HOST: ${{ vars.PA_SSH_HOST || 'ssh.pythonanywhere.com' }}
+      PA_API_HOST: ${{ vars.PA_API_HOST || 'www.pythonanywhere.com' }}
+      PA_WEBAPP_DOMAIN: reservation.myselfiebooth-paris.fr
+      PA_SSH_PRIVATE_KEY: ${{ secrets.PA_SSH_PRIVATE_KEY }}
+      PA_SSH_KNOWN_HOSTS: ${{ secrets.PA_SSH_KNOWN_HOSTS }}
+      PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+      DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+
+    steps:
+      - name: Vérifier les paramètres de déploiement
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in PA_USERNAME PA_PROJECT_DIR PA_SSH_PRIVATE_KEY PA_SSH_KNOWN_HOSTS PA_API_TOKEN; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Paramètre manquant : $name (Settings > Secrets and variables > Actions)"
+              exit 1
+            fi
+          done
+
+          # Limiter les valeurs interpolées dans les commandes distantes.
+          [[ "$PA_USERNAME" =~ ^[a-zA-Z0-9_-]+$ ]] || { echo "::error::PA_USERNAME invalide"; exit 1; }
+          [[ "$PA_PROJECT_DIR" =~ ^/home/[a-zA-Z0-9_-]+/[a-zA-Z0-9._/-]+$ ]] || { echo "::error::PA_PROJECT_DIR invalide"; exit 1; }
+
+          case "$PA_SSH_HOST:$PA_API_HOST" in
+            ssh.pythonanywhere.com:www.pythonanywhere.com|ssh.eu.pythonanywhere.com:eu.pythonanywhere.com) ;;
+            *) echo "::error::Hôtes PythonAnywhere SSH/API incohérents"; exit 1 ;;
+          esac
+          [[ "$DEPLOY_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::SHA Git invalide"; exit 1; }
+
+      - name: Préparer une connexion SSH vérifiée
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          (umask 077; printf '%s\n' "$PA_SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519")
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          (umask 077; printf '%s\n' "$PA_SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts")
+          chmod 600 "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/id_ed25519" > /dev/null
+          ssh-keygen -F "$PA_SSH_HOST" -f "$HOME/.ssh/known_hosts" > /dev/null || {
+            echo "::error::Clé d'hôte absente de PA_SSH_KNOWN_HOSTS"; exit 1;
+          }
+
+      - name: Déployer uniquement le commit testé
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/id_ed25519" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${PA_USERNAME}@${PA_SSH_HOST}" \
+            bash -se -- "$PA_PROJECT_DIR" "$DEPLOY_SHA" <<'REMOTE_DEPLOY'
+          set -euo pipefail
+          project_dir="$1"
+          expected_sha="$2"
+          cd "$project_dir"
+
+          [[ "$(git rev-parse --is-inside-work-tree)" == "true" ]] || { echo "Dossier non Git"; exit 1; }
+          [[ "$(git branch --show-current)" == "main" ]] || { echo "La copie sur PythonAnywhere n'est pas sur main"; exit 1; }
+          [[ -z "$(git status --porcelain --untracked-files=no)" ]] || { echo "Modifications locales : déploiement refusé"; exit 1; }
+
+          git fetch --quiet origin main
+          actual_sha="$(git rev-parse refs/remotes/origin/main)"
+          if [[ "$actual_sha" != "$expected_sha" ]]; then
+            echo "main a évolué depuis les tests : déploiement annulé pour éviter un commit non testé."
+            exit 1
+          fi
+
+          git merge --ff-only "$expected_sha"
+          echo "Code actualisé : $(git rev-parse --short HEAD)"
+          REMOTE_DEPLOY
+
+      - name: Recharger le CRM avec l'API PythonAnywhere
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --connect-timeout 20 --max-time 60 \
+            --request POST \
+            --header "Authorization: Token ${PA_API_TOKEN}" \
+            "https://${PA_API_HOST}/api/v0/user/${PA_USERNAME}/webapps/${PA_WEBAPP_DOMAIN}/reload/" \
+            > /dev/null
+          echo "Rechargement demandé à PythonAnywhere pour ${PA_WEBAPP_DOMAIN}."
