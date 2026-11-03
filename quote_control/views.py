@@ -5,6 +5,7 @@ from copy import copy
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from app.models import Event
@@ -21,7 +22,7 @@ def event_queryset():
     )
 
 
-@staff_member_required
+@staff_member_required(login_url="/login/")
 @require_http_methods(["GET", "POST"])
 def admin_quotes(request):
     config, _ = AutoQuoteSettings.objects.get_or_create(pk=1)
@@ -31,7 +32,7 @@ def admin_quotes(request):
     )
     if request.method == "POST" and form.is_valid():
         form.save_to_config(config)
-        return redirect("admin_auto_quotes_saved")
+        return redirect(reverse("admin_auto_quotes") + "?saved=1")
 
     preview = None
     event = None
