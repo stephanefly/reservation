@@ -59,6 +59,32 @@
 .commercial-graph-empty {font-size:.9rem;color:#596274;margin:0}
 @media(max-width:1000px){.commercial-graph-grid{grid-template-columns:1fr}.commercial-graph-wide{grid-column:auto}}
 @media(max-width:600px){.commercial-portfolio-legend{grid-template-columns:1fr}.commercial-graph-grid>.backend-chart-card{padding:18px}}
+
+/* Commercial insights — consistent with existing backend chart cards */
+.commercial-insight-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.commercial-insight-grid>.backend-chart-card {min-width:0}
+.commercial-insight-wide {grid-column:1/-1}
+.commercial-insight-nav {display:flex;gap:8px;flex-wrap:wrap}
+.commercial-insight-nav a {padding:8px 12px;border-radius:8px;background:#f3f0e8;color:#5c4417;font-size:.83rem;text-decoration:none;font-weight:700}
+.commercial-funnel-line {display:grid;grid-template-columns:minmax(180px,1fr) minmax(100px,2fr) minmax(55px,auto);align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #edf0f4}
+.commercial-funnel-line strong {color:#252c3b}
+.commercial-funnel-line small {display:block;color:#697386;font-size:.74rem;line-height:1.4}
+.commercial-funnel-track {height:16px;background:#f0f1f4;border-radius:8px;overflow:hidden}
+.commercial-funnel-track span {display:block;height:100%;background:#b48b37;border-radius:8px}
+.commercial-funnel-value {white-space:nowrap;font-weight:800;font-variant-numeric:tabular-nums}
+.commercial-insight-number {font-size:1.65rem;font-weight:800;color:#211747}
+.commercial-loss-summary {display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px}
+.commercial-loss-summary>div {background:#f7f8fb;padding:12px 18px;border-radius:10px;min-width:135px}
+.commercial-loss-summary span {display:block;color:#697386;font-size:.76rem}
+.commercial-loss-bar {background:#edf0f4;height:9px;border-radius:8px;overflow:hidden}
+.commercial-loss-bar span {display:block;height:100%;background:#b48b37}
+.commercial-insight-priority {display:inline-block;border-radius:6px;padding:3px 8px;background:#f3f0e8;color:#705522;font-size:.76rem;font-weight:800}
+.commercial-insight-subtitle {color:#667185;font-size:.8rem;margin:0 0 12px}
+.commercial-products-table th,.commercial-products-table td {white-space:nowrap}
+.commercial-insight-warning {padding:12px 16px;background:#fbf7ed;border:1px solid #e8d5a4;border-radius:8px;color:#675228;font-size:.83rem}
+@media(max-width:900px){.commercial-insight-grid{grid-template-columns:1fr}.commercial-insight-wide{grid-column:auto}}
+@media(max-width:600px){.commercial-funnel-line{grid-template-columns:1fr auto;gap:6px}.commercial-funnel-track{grid-column:1/-1;grid-row:2}}
+
 </style>
 {% endblock extra_css %}
 {% block content %}
@@ -80,6 +106,127 @@
         <section class="backend-chart-card commercial-kpi"><h2>Devis refusés</h2><strong>{{ totals.refused_amount|floatformat:0 }} €</strong><span>{{ totals.refused }} devis refusés sans signature</span></section>
         <section class="backend-chart-card commercial-kpi"><h2>Délai avant signature</h2><strong>{{ totals.average_delay|floatformat:1|default:'—' }} j</strong><span>De la demande à la signature · {{ totals.delay_count }} dossier(s)</span></section>
         <section class="backend-chart-card commercial-kpi"><h2>Soldes à récupérer</h2><strong>{{ totals.outstanding_amount|floatformat:0 }} €</strong><span>{{ totals.outstanding_count }} prestation(s) terminée(s)</span></section>
+    </div>
+
+
+    <nav class="commercial-insight-nav" aria-label="Modules de pilotage commercial">
+        <a href="#commercial-funnel">Tunnel de conversion</a>
+        <a href="#commercial-products">Performance par produit</a>
+        <a href="#commercial-losses">Devis refusés</a>
+        <a href="#commercial-leads">Prospects prioritaires</a>
+    </nav>
+
+    <div class="commercial-insight-grid" aria-label="Pilotage de la conversion">
+        <section class="backend-chart-card commercial-insight-wide" id="commercial-funnel">
+            <h2>Tunnel de conversion commercial</h2>
+            <p class="commercial-insight-subtitle">Dossiers uniques, regroupés selon la date de création de la demande.</p>
+            {% for row in insight_funnel %}
+            <div class="commercial-funnel-line">
+                <div><strong>{{ row.label }}</strong><small>{{ row.note }}</small></div>
+                <div class="commercial-funnel-track" role="img" aria-label="{{ row.label }} : {{ row.count }} dossiers sur {{ totals.requests }} demandes">
+                    <span style="width:{{ row.share|unlocalize }}%"></span>
+                </div>
+                <span class="commercial-funnel-value">{{ row.count }} <small>({{ row.share|floatformat:1 }} %)</small></span>
+            </div>
+            {% endfor %}
+            <p class="commercial-note">Les étapes « ouvertures détectées » et « signés » sont des indicateurs indépendants : un dossier peut être signé sans ouverture traçable. Un envoi enregistré ne garantit pas sa livraison, et un pixel chargé ne prouve pas la lecture.</p>
+        </section>
+
+        <section class="backend-chart-card commercial-insight-wide" id="commercial-products">
+            <h2>Performance commerciale par produit</h2>
+            <div class="commercial-table-wrap">
+                <table class="commercial-table commercial-products-table">
+                    <thead><tr>
+                        <th scope="col">Équipement</th>
+                        <th scope="col">Demandes</th><th scope="col">Devis traités</th>
+                        <th scope="col">Signés</th><th scope="col">En attente</th>
+                        <th scope="col">Refusés</th><th scope="col">Taux de signature</th>
+                        <th scope="col">Montant associé aux signatures</th>
+                        <th scope="col">Potentiel en attente</th>
+                    </tr></thead>
+                    <tbody>
+                    {% for row in insight_products %}
+                    <tr>
+                        <th scope="row">{{ row.label }}</th>
+                        <td>{{ row.requests }}</td><td>{{ row.processed }}</td><td>{{ row.signed }}</td>
+                        <td>{{ row.pending }}</td><td>{{ row.refused }}</td>
+                        <td>{% if row.processed %}{{ row.conversion|floatformat:1 }} %{% else %}—{% endif %}</td>
+                        <td>{{ row.signed_amount|floatformat:0 }} €</td>
+                        <td>{{ row.pending_amount|floatformat:0 }} €</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="commercial-note">Un devis peut contenir plusieurs équipements. Il est alors compté dans chaque ligne concernée : les montants associés ne sont pas additionnables et ne constituent pas une répartition du chiffre d'affaires par machine. {{ insight_products_missing }} demande(s) sans équipement renseigné.</p>
+        </section>
+
+        <section class="backend-chart-card" id="commercial-losses">
+            <h2>Analyse des devis refusés</h2>
+            <div class="commercial-loss-summary">
+                <div><span>Refus explicites</span><strong class="commercial-insight-number">{{ insight_loss_count }}</strong></div>
+                <div><span>Montant refusé</span><strong class="commercial-insight-number">{{ insight_loss_amount|floatformat:0 }} €</strong></div>
+                <div><span>Part des devis traités</span><strong class="commercial-insight-number">{{ insight_loss_rate|floatformat:1 }} %</strong></div>
+            </div>
+            <h3 class="h6">Répartition des refus par montant du devis</h3>
+            {% for row in insight_loss_bands %}
+            <div class="commercial-graph-line">
+                <div class="commercial-graph-line-header"><strong>{{ row.label }}</strong><span>{{ row.count }} devis · {{ row.amount|floatformat:0 }} €</span></div>
+                <div class="commercial-loss-bar" role="img" aria-label="{{ row.label }} : {{ row.count }} refus"><span style="width:{{ row.width|unlocalize }}%"></span></div>
+            </div>
+            {% endfor %}
+            <h3 class="h6">Particuliers / entreprises</h3>
+            <div class="commercial-table-wrap"><table class="commercial-table">
+                <thead><tr><th scope="col">Clientèle</th><th scope="col">Refus</th><th scope="col">Montant refusé</th></tr></thead>
+                <tbody>{% for row in insight_loss_segments %}
+                <tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{{ row.amount|floatformat:0 }} €</td></tr>
+                {% endfor %}</tbody>
+            </table></div>
+            <p class="commercial-insight-warning">Le CRM ne contient pas de champ structuré indiquant pourquoi un devis est refusé. Aucun motif (prix, délai, concurrence…) n'est déduit automatiquement. Les devis simplement en attente ne sont pas comptés comme perdus.</p>
+        </section>
+
+        <section class="backend-chart-card">
+            <h2>Principaux devis refusés</h2>
+            <div class="commercial-table-wrap"><table class="commercial-table">
+                <thead><tr><th scope="col">Dossier</th><th scope="col">Clientèle</th><th scope="col">Date de prestation</th><th scope="col">Montant</th></tr></thead>
+                <tbody>{% for row in insight_loss_top %}
+                <tr>
+                    <th scope="row"><a href="{% url 'info_event' row.event.id %}">{{ row.event.client.nom }}</a></th>
+                    <td>{% if row.event.client.raison_sociale %}Entreprise{% else %}Particulier{% endif %}</td>
+                    <td>{{ row.event.event_details.date_evenement|date:'d/m/Y' }}</td>
+                    <td>{{ row.amount|floatformat:0 }} €</td>
+                </tr>
+                {% empty %}<tr><td colspan="4">Aucun refus enregistré dans cette sélection.</td></tr>{% endfor %}</tbody>
+            </table></div>
+            {% if insight_loss_more %}<p class="commercial-note">10 premiers refus par montant ; {{ insight_loss_more }} autres dossiers non affichés.</p>{% endif %}
+        </section>
+
+        <section class="backend-chart-card commercial-insight-wide" id="commercial-leads">
+            <h2>Prospects à relancer en priorité</h2>
+            <p class="commercial-insight-subtitle">{{ insight_leads_count }} dossier(s) éligible(s), triés par priorité. Aucun message n'est envoyé automatiquement.</p>
+            <div class="commercial-table-wrap"><table class="commercial-table">
+                <thead><tr>
+                    <th scope="col">Priorité</th><th scope="col">Client</th>
+                    <th scope="col">Montant proposé</th><th scope="col">Événement dans</th>
+                    <th scope="col">Ancienneté de la demande</th>
+                    <th scope="col">Interaction e-mail</th>
+                    <th scope="col">Fiche</th>
+                </tr></thead>
+                <tbody>{% for row in insight_leads %}
+                <tr>
+                    <td><span class="commercial-insight-priority">{{ row.priority }} · {{ row.score }}/100</span></td>
+                    <th scope="row">{{ row.event.client.nom }}</th>
+                    <td>{{ row.amount|floatformat:0 }} €</td>
+                    <td>{{ row.days_until }} j</td>
+                    <td>{{ row.age }} j</td>
+                    <td>{% if row.mail_issue %}Incident d'envoi à vérifier{% elif row.opened %}Ouverture détectée{% else %}Non confirmée{% endif %}</td>
+                    <td><a href="{% url 'info_event' row.event.id %}">Ouvrir</a></td>
+                </tr>
+                {% empty %}<tr><td colspan="7">Aucun devis en attente éligible pour une relance dans cette sélection.</td></tr>{% endfor %}</tbody>
+            </table></div>
+            {% if insight_leads_more %}<p class="commercial-note">20 premiers prospects affichés ; {{ insight_leads_more }} autres prospects classés.</p>{% endif %}
+            <p class="commercial-note">Score indicatif, non prédictif : montant du devis (0–25), proximité de l'événement (0–25), ancienneté (0–10), ouverture e-mail détectée (0–10), qualification manuelle (0–20), contact récent (−15). Seuls les dossiers non signés, non refusés, pour des événements à venir et sans désabonnement e-mail sont proposés. Vérifier chaque dossier avant contact.</p>
+        </section>
     </div>
 
     <div class="commercial-graph-grid" aria-label="Graphiques des devis">
