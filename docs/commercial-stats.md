@@ -82,6 +82,53 @@ Les suivis d'e-mails et la dernière relance sont chargés en deux requêtes
 supplémentaires sans accès SQL par dossier. Le rapport repose désormais
 sur **trois requêtes SQL** : dossiers, suivi e-mail, relances.
 
+## Alertes commerciales (lecture seule)
+
+Les alertes sont visibles en haut de **Analyses → Performance commerciale**,
+avec un accès direct par le menu Analyses, les compteurs par catégorie et un
+lien vers chaque fiche. Les filtres de cohorte (`start_date`, `end_date`) et
+de clientèle (`segment`) continuent de s'appliquer. Le paramètre facultatif
+`alert` accepte `all`, `delivery`, `upcoming`, `followup`, `high_value`.
+Une autre valeur est refusée avec HTTP 400.
+
+Seuls les dossiers avec devis **traité**, **non signé**, **non refusé**, dont
+l'événement n'est pas passé sont évalués. Un dossier répondant à plusieurs
+critères est affiché une seule fois dans la liste, même s'il est comptabilisé
+dans plusieurs catégories. La liste est triée par urgence puis date
+d'événement et montant, avec un maximum de 30 lignes par filtre.
+
+| Catégorie | Règle par défaut |
+| --- | --- |
+| Devis importants | Prix proposé ≥ 900 € |
+| Événement proche | Date de prestation dans 14 jours maximum |
+| Relance à vérifier | Aucun contact enregistré récent depuis au moins 3 jours |
+| Incident d'envoi | Dernier e-mail **de devis** non préparatoire en état `error`, `refused`, `bounced`, `unknown` ou `delayed` |
+
+La date du dernier contact est le maximum entre la dernière relance manuelle
+déjà effectuée et le dernier envoi de devis enregistré comme `accepted`,
+`delivered` ou `legacy` (statut historique incertain). Un envoi échoué
+ne remet pas à zéro le délai de relance. Une nouvelle tentative de devis
+acceptée ou livrée remplace un ancien échec pour l'alerte d'envoi.
+Une demande sans historique de contact commence à être signalée après
+3 jours à compter de sa création ; l'interface parle alors de **contact
+non confirmé**, pas d'absence de contact certaine.
+
+Priorités : *Urgente* si incident d'envoi ou événement dans les 7 jours ;
+*À traiter* si événement dans les 14 jours ou devis important associé
+à un contact à vérifier ; sinon *À surveiller*. Il ne s'agit ni d'une
+probabilité de signature ni d'un motif de contacter automatiquement.
+
+Les dossiers avec `autorisation_mail=False` peuvent apparaître pour
+examen manuel, mais sont signalés **« Ne pas envoyer d'e-mail »**. Aucune
+opération d'écriture, aucune relance SMTP, aucun cron et aucune modification
+de la base de données ne sont introduits. La page reste protégée par
+l'authentification staff, le GET uniquement et `Cache-Control: no-store`.
+
+Les seuils sont modifiables dans
+`app/module/lib_graph/commercial_alerts.py` ;
+la page réutilise les trois requêtes d'analyse déjà existantes
+(dossiers, suivis de mails, dernières relances), sans requête par dossier.
+
 ## Validation
 
 `python -m tests_api.run` vérifie l'API, les ouvertures et ces statistiques sur une

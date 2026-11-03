@@ -85,6 +85,28 @@
 @media(max-width:900px){.commercial-insight-grid{grid-template-columns:1fr}.commercial-insight-wide{grid-column:auto}}
 @media(max-width:600px){.commercial-funnel-line{grid-template-columns:1fr auto;gap:6px}.commercial-funnel-track{grid-column:1/-1;grid-row:2}}
 
+
+/* Alertes commerciales — signaux en lecture seule. */
+.commercial-alerts{display:grid;gap:16px;scroll-margin-top:24px}
+.commercial-alerts-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.commercial-alerts-header h2{margin:0 0 7px}
+.commercial-alerts-tally{font-weight:800;font-size:1.35rem;color:#211747}
+.commercial-alert-filters{display:flex;gap:10px;flex-wrap:wrap}
+.commercial-alert-filter{padding:10px 14px;border:1px solid #e1e5eb;border-radius:10px;text-decoration:none;color:#435066;background:#fbfcfd;font-size:.82rem}
+.commercial-alert-filter strong{color:#211747;margin-left:6px}
+.commercial-alert-filter--active{background:#f8f1e1;border-color:#b48b37;color:#775b21;font-weight:700}
+.commercial-alert-priority{display:inline-block;padding:4px 8px;border-radius:7px;font-size:.76rem;font-weight:700;white-space:nowrap;background:#f1f3f7;color:#48546a}
+.commercial-alert-priority--2{background:#fff1d7;color:#795414}
+.commercial-alert-priority--3{background:#fff0ec;color:#9d3126}
+.commercial-alert-reasons{display:flex;gap:6px;flex-wrap:wrap;max-width:650px}
+.commercial-alert-reason{display:inline-block;padding:4px 7px;background:#f3f5f8;border-radius:6px;color:#566275;font-size:.76rem}
+.commercial-alert-reason--warning{background:#fff0ec;color:#9d3126}
+.commercial-alert-note{color:#5d6678;font-size:.81rem}
+.commercial-alerts-table th,.commercial-alerts-table td{vertical-align:middle;white-space:nowrap}
+.commercial-alerts-table td.commercial-alerts-reason-cell{white-space:normal;min-width:250px}
+.commercial-alerts-table a{font-weight:700}
+@media(max-width:650px){.commercial-alerts{padding:16px!important}.commercial-alert-filters{gap:6px}.commercial-alert-filter{padding:8px 10px}}
+
 </style>
 {% endblock extra_css %}
 {% block content %}
@@ -99,6 +121,72 @@
     {% if error %}<p role="alert" class="commercial-error">{{ error }}</p>{% else %}
     <p class="commercial-note">La période porte sur la création des demandes. Les statuts et signatures reflètent leur situation actuelle. Les devis encore en attente peuvent donc faire évoluer le taux.</p>
     {% if unsigned_confirmed or missing_amounts or totals.invalid_delays %}<div class="commercial-warning">Données à compléter : {{ unsigned_confirmed }} dossier(s) confirmé(s) ou terminé(s) sans date de signature, {{ missing_amounts }} dossier(s) sans montant exploitable, {{ totals.invalid_delays }} signature(s) antérieure(s) à la demande. Les dates incohérentes sont exclues du délai moyen ; les montants manquants comptent pour 0 €.</div>{% endif %}
+
+    <section class="backend-chart-card commercial-alerts" id="commercial-alerts">
+        <div class="commercial-alerts-header">
+            <div>
+                <h2>Alertes commerciales</h2>
+                <p class="commercial-note">Dossiers non signés nécessitant une vérification. Signaux calculés au {{ commercial_alert_as_of|date:'d/m/Y' }}.</p>
+            </div>
+            <div>
+                <span class="commercial-alerts-tally">{{ commercial_alert_total }} dossier(s)</span>
+                <p class="commercial-note">Avec au moins une alerte active</p>
+            </div>
+        </div>
+        <nav class="commercial-alert-filters" aria-label="Filtrer les alertes commerciales">
+            {% for category in commercial_alert_categories %}
+                <a class="commercial-alert-filter {% if category.selected %}commercial-alert-filter--active{% endif %}"
+                   href="?start_date={{ start_date|urlencode }}&amp;end_date={{ end_date|urlencode }}&amp;segment={{ segment|urlencode }}&amp;alert={{ category.key }}#commercial-alerts"
+                   {% if category.selected %}aria-current="page"{% endif %}>{{ category.label }} <strong>{{ category.count }}</strong></a>
+            {% endfor %}
+        </nav>
+        <div class="commercial-table-wrap">
+            <table class="commercial-table commercial-alerts-table">
+                <thead>
+                <tr>
+                    <th scope="col">Priorité</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Montant</th>
+                    <th scope="col">Événement</th>
+                    <th scope="col">Dernier contact</th>
+                    <th scope="col">Signaux à vérifier</th>
+                    <th scope="col">Dossier</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in commercial_alert_rows %}
+                <tr>
+                    <td><span class="commercial-alert-priority commercial-alert-priority--{{ row.priority_rank }}">{{ row.priority }}</span></td>
+                    <th scope="row">{{ row.event.client.nom }}</th>
+                    <td>{{ row.amount|floatformat:0 }} €</td>
+                    <td>{{ row.event.event_details.date_evenement|date:'d/m/Y' }} <span class="commercial-alert-note">({{ row.days_until }} j)</span></td>
+                    <td>{{ row.days_since_touch }} j</td>
+                    <td class="commercial-alerts-reason-cell">
+                        <div class="commercial-alert-reasons">
+                            {% for reason in row.reasons %}
+                                <span class="commercial-alert-reason">{{ reason }}</span>
+                            {% endfor %}
+                            {% if not row.email_allowed %}
+                                <span class="commercial-alert-reason commercial-alert-reason--warning">Ne pas envoyer d'e-mail</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td><a href="{% url 'info_event' row.event.id %}">Examiner</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">Aucun dossier avec ce type d'alerte sur la sélection.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if commercial_alert_more %}
+        <p class="commercial-alert-note">30 premiers dossiers affichés sur {{ commercial_alert_filtered_count }}. Affinez les filtres pour cibler les urgences.</p>
+        {% endif %}
+        <p class="commercial-alert-note">
+            Une alerte peut appartenir à plusieurs catégories, mais chaque dossier ne figure qu'une fois dans la liste. Règles : devis proposé d'au moins 900 €, événement dans 14 jours ou moins, dernier contact enregistré datant d'au moins 3 jours, ou anomalie du dernier envoi de devis. Un envoi accepté par le SMTP ne garantit pas la réception. Aucune relance automatique ni modification des clients.
+        </p>
+    </section>
+
     <div class="commercial-kpis">
         <section class="backend-chart-card commercial-kpi"><h2>Demandes reçues</h2><strong>{{ totals.requests }}</strong><span>{{ totals.processed }} devis traités · {{ totals.signed }} signés</span></section>
         <section class="backend-chart-card commercial-kpi"><h2>Montant signé</h2><strong>{{ totals.signed_amount|floatformat:0 }} €</strong><span>Panier moyen : {{ totals.average_signed|floatformat:0|default:'—' }} €</span></section>
