@@ -8,8 +8,6 @@ from django.utils import timezone
 from app.views.private_api import PARIS_TIME_ZONE
 
 
-MONTHS = ("Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août",
-          "Sep", "Oct", "Nov", "Déc")
 AGE_LABELS = ("0 à 7 jours", "8 à 14 jours", "15 à 30 jours", "Plus de 30 jours")
 
 
@@ -23,12 +21,35 @@ def _local_date(value):
     return value.date()
 
 
+
+def _empty_period(label):
+    return {
+        "label": label,
+        "signed": 0, "pending": 0, "refused": 0, "processed": 0,
+        "signed_amount": 0, "pending_amount": 0, "refused_amount": 0,
+    }
+
+
+def _finish_periods(periods, limit):
+    rows = [periods[key] for key in sorted(periods)[-limit:]]
+    peak = max(
+        (row[category] for row in rows
+         for category in ("signed", "pending", "refused")),
+        default=0,
+    )
+    for row in rows:
+        for category in ("signed", "pending", "refused"):
+            row[category + "_height"] = _percent(row[category], peak)
+        row["conversion"] = _percent(row["signed"], row["processed"])
+    return rows
+
 def prepare_quote_graphs(events, processed_ids, amount, today=None):
     """Return graph series and a short actionable list without extra DB queries."""
     if today is None:
         today = timezone.localtime(timezone.now(), PARIS_TIME_ZONE).date()
 
-    months = {}
+    years = {}
+    semesters = {}
     age_groups = [{"label": label, "count": 0, "amount": 0} for label in AGE_LABELS]
     clients = [
         {"label": "Particuliers", "count": 0, "amount": 0},
@@ -46,14 +67,12 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
             continue
 
         created = _local_date(event.created_at)
-        key = (created.year, created.month)
-        if key not in months:
-            months[key] = {
-                "label": f"{MONTHS[created.month - 1]} {created.year}",
-                "signed": 0, "pending": 0, "refused": 0, "processed": 0,
-            }
-        month = months[key]
-        month["processed"] += 1
+        semester = 1 if created.month <= 6 else 2
+        if created.year not in years:
+            years[created.year] = _empty_period(str(created.year))
+        key = (created.year, semester)
+        if key not in semesters:
+            semesters[key] = _empty_period(f"{created.year} · S{semester}")
 
         if event.signer_at is not None:
             category = "signed"
@@ -65,8 +84,11 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
             category = "pending"
             index = 1
 
-        month[category] += 1
         value = amount(event, signed=(category == "signed"))
+        for period in (years[created.year], semesters[key]):
+            period["processed"] += 1
+            period[category] += 1
+            period[category + "_amount"] += value
         portfolio[index]["count"] += 1
         portfolio[index]["amount"] += value
 
@@ -83,17 +105,9 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
         clients[client_index]["amount"] += value
         biggest_pending.append({"event": event, "amount": value, "days": days})
 
-    # Display the most recent twelve months of the selected cohort.
-    recent_months = [months[key] for key in sorted(months)[-12:]]
-    max_month = max(
-        (month[category] for month in recent_months
-         for category in ("signed", "pending", "refused")),
-        default=0,
-    )
-    for month in recent_months:
-        for category in ("signed", "pending", "refused"):
-            month[category + "_height"] = _percent(month[category], max_month)
-        month["conversion"] = _percent(month["signed"], month["processed"])
+    # Comparisons use the request creation date, with local Paris semester bounds.
+    annual = _finish_periods(years, limit=10)
+    half_year = _finish_periods(semesters, limit=12)
 
     for rows in (age_groups, clients):
         max_value = max((max(0, row["amount"]) for row in rows), default=0)
@@ -107,8 +121,18 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
     biggest_pending.sort(key=lambda row: (-row["amount"], -row["days"], row["event"].id))
 
     return {
-        "quote_months": recent_months,
-        "quote_months_hidden": max(0, len(months) - len(recent_months)),
+        "quote_periods": [
+            {"title": "Évolution annuelle des devis traités",
+             "rate_title": "Taux de signature par année",
+             "subtitle": "Comparaison par année civile",
+             "rows": annual, "hidden": max(0, len(years) - len(annual)),
+             "hidden_label": "années"},
+            {"title": "Évolution semestrielle des devis traités",
+             "rate_title": "Taux de signature par semestre",
+             "subtitle": "S1 : janvier–juin · S2 : juillet–décembre",
+             "rows": half_year, "hidden": max(0, len(semesters) - len(half_year)),
+             "hidden_label": "semestres"},
+        ],
         "quote_ages": age_groups,
         "quote_clients": clients,
         "quote_portfolio": portfolio,

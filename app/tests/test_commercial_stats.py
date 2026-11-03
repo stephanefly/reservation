@@ -125,9 +125,12 @@ class CommercialStatsTests(TestCase):
         self.assertEqual(report["quote_ages"][3]["count"], 2)
         self.assertEqual(report["quote_clients"][0]["amount"], 1400)
         self.assertEqual(report["quote_clients"][1]["amount"], 300)
-        self.assertEqual(report["quote_months"][0]["label"], "Nov 2026")
-        self.assertEqual(report["quote_months"][0]["processed"], 4)
-        self.assertEqual(report["quote_months"][0]["conversion"], 25.0)
+        self.assertEqual(report["quote_periods"][0]["rows"][0]["label"], "2026")
+        self.assertEqual(report["quote_periods"][0]["rows"][0]["processed"], 4)
+        self.assertEqual(report["quote_periods"][0]["rows"][0]["conversion"], 25.0)
+        self.assertEqual(report["quote_periods"][0]["rows"][0]["pending_amount"], 1700)
+        self.assertEqual(report["quote_periods"][1]["rows"][0]["label"], "2026 · S2")
+        self.assertEqual(report["quote_periods"][1]["rows"][0]["processed"], 4)
         self.assertEqual(report["quote_top_pending"][0]["event"].id, pending_person.id)
         self.assertEqual(report["quote_top_pending"][0]["amount"], 1400)
 
@@ -140,19 +143,46 @@ class CommercialStatsTests(TestCase):
                                                 end_date="2026-11-03"))
         self.assertEqual([row["count"] for row in report["quote_clients"]], [0, 1])
         self.assertEqual([row["count"] for row in report["quote_portfolio"]], [1, 1, 0])
-        self.assertEqual(len(report["quote_months"]), 1)
-        self.assertEqual(report["quote_months"][0]["pending"], 1)
+        self.assertEqual(len(report["quote_periods"][0]["rows"]), 1)
+        self.assertEqual(report["quote_periods"][0]["rows"][0]["pending"], 1)
+        self.assertEqual(report["quote_periods"][1]["rows"][0]["pending"], 1)
 
     def test_dashboard_displays_all_quote_graphs(self):
         self.event(status="Sended", proposed=450)
         request = self.request()
         request.user = SimpleNamespace(is_active=True, is_staff=True)
         response = graph_commercial_stats(request)
-        for title in ("Évolution mensuelle des devis traités",
+        for title in ("Évolution annuelle des devis traités",
+                      "Évolution semestrielle des devis traités",
                       "Ancienneté des devis en attente",
                       "Potentiel non signé par clientèle",
-                      "Taux de signature par mois",
+                      "Taux de signature par année",
+                      "Taux de signature par semestre",
                       "Répartition des montants de devis",
                       "10 plus gros devis en attente à relancer"):
             self.assertContains(response, title)
         self.assertContains(response, "450 €")
+
+
+    def test_annual_and_semester_boundary_with_paris_timezone(self):
+        old = self.event(status="Sended", proposed=350)
+        s1 = self.event(status="Acompte OK", signed=self.created, validated=800)
+        s2 = self.event(status="Refused", proposed=200)
+        dates = [
+            (old, datetime(2025, 12, 31, 23, 59, tzinfo=ZoneInfo("Europe/Paris"))),
+            (s1, datetime(2026, 6, 30, 23, 59, tzinfo=ZoneInfo("Europe/Paris"))),
+            (s2, datetime(2026, 7, 1, 0, 0, tzinfo=ZoneInfo("Europe/Paris"))),
+        ]
+        for event, created in dates:
+            Event.objects.filter(pk=event.pk).update(created_at=created)
+        report = commercial_report(self.request())
+        years, semesters = [row["rows"] for row in report["quote_periods"]]
+        self.assertEqual([(row["label"], row["processed"]) for row in years],
+                         [("2025", 1), ("2026", 2)])
+        self.assertEqual([(row["label"], row["processed"]) for row in semesters],
+                         [("2025 · S2", 1), ("2026 · S1", 1), ("2026 · S2", 1)])
+        self.assertEqual(years[0]["pending_amount"], 350)
+        self.assertEqual(years[1]["signed_amount"], 800)
+        self.assertEqual(years[1]["refused_amount"], 200)
+        self.assertEqual(semesters[1]["conversion"], 100.0)
+        self.assertEqual(semesters[2]["conversion"], 0.0)
