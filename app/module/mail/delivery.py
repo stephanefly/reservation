@@ -5,23 +5,23 @@ from email.utils import make_msgid, formatdate
 from django.conf import settings
 from django.utils import timezone
 
-from app.models import EmailDelivery
+from app.models import EmailTracking
 
 
 def begin_delivery(event, mail_type):
     recipient = event.client.mail.strip()
-    if EmailDelivery.objects.filter(event=event, mail_type=mail_type, recipient__iexact=recipient, status="unknown").exists():
+    if EmailTracking.objects.filter(event_traced=event.id, mail_type=mail_type, recipient__iexact=recipient, delivery_status="unknown").exists():
         raise ValueError("Un envoi précédent est incertain. Vérifier et résoudre son état avant de renvoyer ce type de mail.")
     domain = settings.MAIL_MYSELFIEBOOTH.rsplit("@", 1)[-1]
-    return EmailDelivery.objects.create(event=event, recipient=recipient,
+    return EmailTracking.objects.create(event_traced=event.id, status_devis=event.status, opening_tracked=False, delivery_status="preparing", recipient=recipient,
                                        mail_type=mail_type, message_id=make_msgid(domain=domain))
 
 
 def finish(delivery, status, code=None, diagnostic=""):
-    delivery.status = status
+    delivery.delivery_status = status
     delivery.smtp_code = code if isinstance(code, int) and 0 <= code <= 999 else None
     delivery.diagnostic = diagnostic[:500]
-    delivery.save(update_fields=["status", "smtp_code", "diagnostic", "accepted_at", "copy_refused"])
+    delivery.save(update_fields=["delivery_status", "smtp_code", "diagnostic", "accepted_at", "copy_refused"])
 
 
 def submit(delivery, message, copies=()):
@@ -51,7 +51,7 @@ def submit(delivery, message, copies=()):
         finish(delivery, "accepted", diagnostic="Message accepté par IONOS pour le client ; réception finale non confirmée.")
         return True
     except smtplib.SMTPRecipientsRefused as exc:
-        if delivery.status != "refused":
+        if delivery.delivery_status != "refused":
             codes = [value[0] for value in exc.recipients.values()]
             finish(delivery, "refused", codes[0] if codes else None, "Destinataire(s) refusé(s) par le serveur SMTP.")
         raise

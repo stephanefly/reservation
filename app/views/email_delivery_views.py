@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
-from app.models import EmailDelivery, EmailMailboxCheck
+from app.models import EmailTracking, EmailMailboxCheck, Event
 from app.views.private_api_data import filter_dates, integer
 
 
@@ -15,19 +15,24 @@ from app.views.private_api_data import filter_dates, integer
 def graph_email_delivery(request):
     context = {"start_date": request.GET.get("start_date", ""), "end_date": request.GET.get("end_date", ""),
                "delivery_status": request.GET.get("status", ""), "event_id": request.GET.get("event_id", ""),
-               "choices": EmailDelivery.STATUS, "mailbox": EmailMailboxCheck.objects.filter(key="ionos").first()}
+               "choices": EmailTracking.DELIVERY_STATUS, "mailbox": EmailMailboxCheck.objects.filter(key="ionos").first()}
     try:
-        deliveries = filter_dates(request, EmailDelivery.objects.all(), "created_at", with_time=True)
+        deliveries = filter_dates(request, EmailTracking.objects.all(), "sent_at", with_time=True)
         if context["event_id"]:
-            deliveries = deliveries.filter(event_id=integer(request, "event_id", 0))
+            deliveries = deliveries.filter(event_traced=integer(request, "event_id", 0))
         if context["delivery_status"]:
-            if context["delivery_status"] not in dict(EmailDelivery.STATUS):
+            if context["delivery_status"] not in dict(EmailTracking.DELIVERY_STATUS):
                 raise ValueError("État d'envoi invalide.")
-            deliveries = deliveries.filter(status=context["delivery_status"])
-        counts = dict(deliveries.values("status").annotate(total=Count("id")).values_list("status", "total"))
-        context["counters"] = [{"label": label, "count": counts.get(status, 0)} for status, label in EmailDelivery.STATUS]
+            deliveries = deliveries.filter(delivery_status=context["delivery_status"])
+        counts = dict(deliveries.values("delivery_status").annotate(total=Count("id")).values_list("delivery_status", "total"))
+        context["counters"] = [{"label": label, "count": counts.get(status, 0)} for status, label in EmailTracking.DELIVERY_STATUS]
         context["total"] = sum(counts.values())
-        context["page"] = Paginator(deliveries.select_related("event__client", "tracking").order_by("-created_at", "-id"), 50).get_page(request.GET.get("page"))
+        context["page"] = Paginator(deliveries.order_by("-sent_at", "-id"), 50).get_page(request.GET.get("page"))
+        rows = list(context["page"].object_list)
+        events = {event.id: event for event in Event.objects.filter(id__in=[row.event_traced for row in rows if row.event_traced]).select_related("client")}
+        for row in rows:
+            row.event = events.get(row.event_traced)
+        context["page"].object_list = rows
         params = request.GET.copy()
         params.pop("page", None)
         context["query"] = params.urlencode()

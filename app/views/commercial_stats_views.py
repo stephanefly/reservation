@@ -70,7 +70,7 @@ def commercial_report(request):
     events = list(queryset.order_by("id"))
     # A subquery avoids a large IN parameter list with historical CRM data.
     tracked_statuses = {}
-    for event_id, status in EmailTracking.objects.filter(event_traced__in=queryset.values("id")).values_list("event_traced", "status_devis"):
+    for event_id, status in EmailTracking.objects.filter(event_traced__in=queryset.values("id")).exclude(delivery_status__in=["preparing", "error", "refused"]).values_list("event_traced", "status_devis"):
         tracked_statuses.setdefault(event_id, set()).add(status)
     processed_ids = set()
     histories = {}

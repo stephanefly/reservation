@@ -29,7 +29,7 @@ class PrivateApiTests(TestCase):
         for resource, (model, fields) in RESOURCES.items():
             actual = {field.attname for field in model._meta.concrete_fields} - {"id"} - excluded
             self.assertEqual(set(fields.split()), actual, resource)
-        self.assertEqual(len(RESOURCES), len(list(models.Client._meta.apps.get_app_config("app").get_models())))
+        self.assertEqual(len({model for model, fields in RESOURCES.values()}), len(list(models.Client._meta.apps.get_app_config("app").get_models())))
 
     def test_related_record_fields_and_resource_details(self):
         option = models.EventOption.objects.create(panneaux_xxl=4, panneaux_forfait=400)

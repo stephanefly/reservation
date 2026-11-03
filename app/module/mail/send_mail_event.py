@@ -26,15 +26,7 @@ def send_mail_event(event, mail_type):
         template_path = os.path.join(settings.MAIL_TEMPLATE_REPOSITORY, template_name)
         with open(template_path, 'r', encoding='utf-8') as fichier_html:
             soup = BeautifulSoup(fichier_html.read(), 'html.parser')
-        soup_completed = complete_mail(event, soup, mail_type)
-        tracker = soup_completed.find('img', class_='traceur_devis')
-        if tracker:
-            from app.models import EmailTracking
-            from urllib.parse import urlparse
-            tracker_uuid = urlparse(tracker.get('src', '')).path.rstrip('/').rsplit('/', 1)[-1]
-            tracking = EmailTracking.objects.filter(uuid=tracker_uuid, event_traced=event.id).first()
-            delivery.tracking = tracking
-            delivery.save(update_fields=['tracking'])
+        soup_completed = complete_mail(event, soup, mail_type, tracking=delivery)
         msg.attach(MIMEText(soup_completed.prettify(), 'html'))
         if file_to_send:
             msg.attach(complete_mail_with_file_to_send(event, file_to_send))

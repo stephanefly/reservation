@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.apps import apps
 
 
-def complete_mail(event, soup, mail_type):
+def complete_mail(event, soup, mail_type, tracking=None):
     # Complétion des champs communs
     soup.find('b', class_='client_nom').string = str(event.client.nom)
     try:
@@ -15,7 +15,7 @@ def complete_mail(event, soup, mail_type):
         _handle_reduc(event, soup, mail_type)
         _handle_date_butoire(event, soup, mail_type)
         _handle_acompte(event, soup)
-        _handle_tracer(event, soup)
+        _handle_tracer(event, soup, tracking=tracking)
 
     elif mail_type == 'send_media':
         _handle_send_media(event, soup)
@@ -126,13 +126,17 @@ def _handle_unsubscribe(event, soup):
     soup.find('a', class_='mail_client').string = str(event.client.mail)
 
 
-def _handle_tracer(event, soup):
+def _handle_tracer(event, soup, tracking=None):
     EmailTracking = apps.get_model("app", "EmailTracking")
     # Enregistrer le tracking en base de données
-    email_traced = EmailTracking.objects.create(
+    email_traced = tracking or EmailTracking.objects.create(
         event_traced=event.id,
         status_devis=event.status,
     )
+    if email_traced.event_traced != event.id:
+        raise ValueError("Le suivi ne correspond pas au dossier.")
+    email_traced.opening_tracked = True
+    email_traced.save(update_fields=["opening_tracked"])
 
     tracer_link = f"https://reservation.myselfiebooth-paris.fr/track_devis/{email_traced.uuid}"
 

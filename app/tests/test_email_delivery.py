@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import path
 
-from app.models import Client, EmailDelivery, EmailMailboxCheck, Event, EventDetails, EventOption, EmailTracking
+from app.models import Client, EmailTracking, EmailMailboxCheck, Event, EventDetails, EventOption
 from app.module.mail.bounces import apply_report, reports
 from app.module.mail.delivery import begin_delivery, submit
 from app.views.email_delivery_views import graph_email_delivery
@@ -33,7 +33,7 @@ def dsn(message_id, recipient="client@example.invalid", action="failed", code="5
 
 
 @override_settings(ROOT_URLCONF=__name__, MAIL_MYSELFIEBOOTH="sender@example.invalid", MP="fake-test-password", MAIL_BCC="archive@example.invalid")
-class EmailDeliveryTests(TestCase):
+class EmailTrackingTests(TestCase):
     def setUp(self):
         person = Client.objects.create(nom="Client test", mail="client@example.invalid", numero_telephone="01", raison_sociale=True)
         details = EventDetails.objects.create(date_evenement="2026-11-03", adresse_evenement="Test", ville_evenement="Paris", code_postal_evenement=75001)
@@ -54,7 +54,7 @@ class EmailDeliveryTests(TestCase):
         with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
             self.assertTrue(submit(delivery, MIMEText("Test"), ["archive@example.invalid"]))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "accepted")
+        self.assertEqual(delivery.delivery_status, "accepted")
         self.assertTrue(delivery.copy_refused)
         self.assertIsNotNone(delivery.accepted_at)
         message = message_from_string(server.sendmail.call_args.args[2])
@@ -68,7 +68,7 @@ class EmailDeliveryTests(TestCase):
             with self.assertRaises(smtplib.SMTPRecipientsRefused):
                 submit(delivery, MIMEText("Test"), ["archive@example.invalid"])
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "refused")
+        self.assertEqual(delivery.delivery_status, "refused")
         self.assertEqual(delivery.smtp_code, 550)
         self.assertIsNone(delivery.accepted_at)
 
@@ -79,7 +79,7 @@ class EmailDeliveryTests(TestCase):
         with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server), self.assertRaises(smtplib.SMTPRecipientsRefused):
             submit(delivery, MIMEText("Test"))
         delivery.refresh_from_db()
-        self.assertEqual((delivery.status, delivery.smtp_code), ("refused", 551))
+        self.assertEqual((delivery.delivery_status, delivery.smtp_code), ("refused", 551))
 
     def test_authentication_error_and_ambiguous_timeout(self):
         for after_login, expected in ((False, "error"), (True, "unknown")):
@@ -92,7 +92,7 @@ class EmailDeliveryTests(TestCase):
             with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server), self.assertRaises((OSError, smtplib.SMTPException)):
                 submit(delivery, MIMEText("Test"))
             delivery.refresh_from_db()
-            self.assertEqual(delivery.status, expected)
+            self.assertEqual(delivery.delivery_status, expected)
             self.assertNotIn("secret", delivery.diagnostic)
 
     def test_quit_failure_does_not_turn_acceptance_into_failure(self):
@@ -102,7 +102,7 @@ class EmailDeliveryTests(TestCase):
         with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
             self.assertTrue(submit(delivery, MIMEText("Test")))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "accepted")
+        self.assertEqual(delivery.delivery_status, "accepted")
 
     def test_dsn_options_are_requested_only_when_supported(self):
         delivery = self.delivery()
@@ -114,34 +114,34 @@ class EmailDeliveryTests(TestCase):
 
     def test_dsn_matching_requires_message_and_recipient_and_is_idempotent(self):
         delivery = self.delivery()
-        EmailDelivery.objects.filter(pk=delivery.pk).update(status="accepted")
+        EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="accepted")
         self.assertEqual(apply_report(dsn(delivery.message_id, recipient="other@example.invalid")), (0, 1))
         self.assertEqual(apply_report(dsn("<another@example.invalid>")), (0, 1))
         self.assertEqual(apply_report(dsn(delivery.message_id)), (1, 0))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "bounced")
+        self.assertEqual(delivery.delivery_status, "bounced")
         feedback_at = delivery.feedback_at
         apply_report(dsn(delivery.message_id))
         apply_report(dsn(delivery.message_id, action="delivered", code="2.0.0"))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "bounced")
+        self.assertEqual(delivery.delivery_status, "bounced")
         self.assertEqual(delivery.feedback_at, feedback_at)
         self.assertEqual(reports(b"Subject: Mail delivery failed\r\n\r\nJust a normal message"), [])
         self.assertEqual(reports(dsn(delivery.message_id, action="failed", code="2.0.0")), [])
 
     def test_delayed_report_can_become_delivered(self):
         delivery = self.delivery()
-        EmailDelivery.objects.filter(pk=delivery.pk).update(status="accepted")
+        EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="accepted")
         apply_report(dsn(delivery.message_id, action="delayed", code="4.2.0"))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "delayed")
+        self.assertEqual(delivery.delivery_status, "delayed")
         apply_report(dsn(delivery.message_id, action="delivered", code="2.0.0"))
         delivery.refresh_from_db()
-        self.assertEqual(delivery.status, "delivered")
+        self.assertEqual(delivery.delivery_status, "delivered")
 
     def test_mailbox_read_is_read_only_and_keeps_messages_unread(self):
         delivery = self.delivery()
-        EmailDelivery.objects.filter(pk=delivery.pk).update(status="accepted")
+        EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="accepted")
         raw = dsn(delivery.message_id)
         mailbox = Mock()
         mailbox.select.return_value = ("OK", [b"1"])
@@ -174,8 +174,8 @@ class EmailDeliveryTests(TestCase):
             template.write_text('<b class="client_nom"></b><a class="mail_desabonnement"></a><a class="mail_client"></a>')
             with override_settings(MAIL_TEMPLATE_REPOSITORY=directory), patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
                 self.assertTrue(send_mail_event(self.event, "validation"))
-        delivery = EmailDelivery.objects.get(event=self.event)
-        self.assertEqual(delivery.status, "accepted")
+        delivery = EmailTracking.objects.get(event_traced=self.event.id)
+        self.assertEqual(delivery.delivery_status, "accepted")
         self.assertEqual(set(server.sendmail.call_args.args[1]), {"client@example.invalid", "archive@example.invalid"})
         self.assertIn("Client test", server.sendmail.call_args.args[2])
 
@@ -185,7 +185,7 @@ class EmailDeliveryTests(TestCase):
             with self.assertRaises(FileNotFoundError):
                 send_mail_event(self.event, "validation")
         transport.assert_not_called()
-        self.assertEqual(EmailDelivery.objects.get(event=self.event).status, "error")
+        self.assertEqual(EmailTracking.objects.get(event_traced=self.event.id).delivery_status, "error")
 
     def test_delivery_dashboard_access_render_and_filters(self):
         self.delivery()
@@ -204,13 +204,13 @@ class EmailDeliveryTests(TestCase):
 
     def test_uncertain_attempt_blocks_retry_until_manually_resolved(self):
         delivery = self.delivery()
-        EmailDelivery.objects.filter(pk=delivery.pk).update(status="unknown")
+        EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="unknown")
         with self.assertRaises(ValueError):
             self.delivery()
         with self.assertRaises(CommandError):
             call_command("resolve_email_delivery", delivery.id, result="refused", stdout=io.StringIO())
         call_command("resolve_email_delivery", delivery.id, result="refused", confirm=True, stdout=io.StringIO())
-        self.assertEqual(self.delivery().status, "preparing")
+        self.assertEqual(self.delivery().delivery_status, "preparing")
 
     def test_devis_builder_links_tracking_and_keeps_pdf_attachment(self):
         from app.module.mail.send_mail_event import send_mail_event
@@ -231,8 +231,18 @@ class EmailDeliveryTests(TestCase):
             template.write_text('<b class="client_nom"></b><b class="date_butoire"></b><div class="acompte_particulier"></div><a class="txt_reduc"></a><a class="reduc_all"></a><img class="traceur_devis"><a class="mail_desabonnement"></a><a class="mail_client"></a>')
             with override_settings(MAIL_TEMPLATE_REPOSITORY=directory), patch.dict(sys.modules, {pdf.__name__:pdf, post_form.__name__:post_form}), patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
                 self.assertTrue(send_mail_event(self.event, "devis"))
-        delivery = EmailDelivery.objects.get(event=self.event)
-        self.assertEqual(delivery.tracking_id, EmailTracking.objects.get(event_traced=self.event.id).id)
+        delivery = EmailTracking.objects.get(event_traced=self.event.id)
+        self.assertTrue(delivery.opening_tracked)
+        self.assertEqual(EmailTracking.objects.filter(event_traced=self.event.id).count(), 1)
         msg = message_from_string(server.sendmail.call_args.args[2])
         self.assertEqual(msg.get_content_type(), "multipart/mixed")
         self.assertTrue(any(part.get_content_type() == "application/pdf" and part.get_payload(decode=True) == b"%PDF-1.4 test attachment" for part in msg.walk()))
+
+    def test_opening_rates_exclude_non_pixel_and_failed_attempts(self):
+        from app.views.private_api_data import email_counts
+        EmailTracking.objects.create(event_traced=self.event.id, opened=True)
+        EmailTracking.objects.create(event_traced=self.event.id, opening_tracked=False, delivery_status="accepted")
+        EmailTracking.objects.create(event_traced=self.event.id, opening_tracked=True, delivery_status="refused")
+        counts = email_counts(EmailTracking.objects.all())
+        self.assertEqual(counts["tracked"], 1)
+        self.assertEqual(counts["opening_rate_percent"], 100)

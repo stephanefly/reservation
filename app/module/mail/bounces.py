@@ -6,7 +6,7 @@ from email.utils import parseaddr
 
 from django.utils import timezone
 
-from app.models import EmailDelivery
+from app.models import EmailTracking
 
 
 def reports(raw):
@@ -47,7 +47,7 @@ def apply_report(raw):
     matched = 0
     unmatched = 0
     for message_id, recipient, action, code in reports(raw):
-        delivery = EmailDelivery.objects.filter(message_id=message_id, recipient__iexact=recipient).first()
+        delivery = EmailTracking.objects.filter(message_id=message_id, recipient__iexact=recipient).first()
         if delivery is None:
             unmatched += 1
             continue
@@ -57,8 +57,8 @@ def apply_report(raw):
         eligible = ["accepted", "unknown", "delayed"]
         if status == "bounced":
             eligible += ["delivered"]
-        EmailDelivery.objects.filter(pk=delivery.pk, status__in=eligible).update(
-            status=status, feedback_at=timezone.now(),
+        EmailTracking.objects.filter(pk=delivery.pk, delivery_status__in=eligible).update(
+            delivery_status=status, feedback_at=timezone.now(),
             diagnostic=f"Rapport technique reçu : {action}, code {code[:30]}.",
         )
     return matched, unmatched
