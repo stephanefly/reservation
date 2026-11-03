@@ -11,6 +11,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
 ]
 TEMPLATES = [{"BACKEND": "django.template.backends.django.DjangoTemplates", "APP_DIRS": True}]
