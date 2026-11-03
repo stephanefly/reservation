@@ -8,6 +8,7 @@ from django.utils import timezone
 from app.views.private_api import PARIS_TIME_ZONE
 
 
+MONTH_NAMES = ("Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc")
 AGE_LABELS = ("0 à 7 jours", "8 à 14 jours", "15 à 30 jours", "Plus de 30 jours")
 
 
@@ -49,7 +50,7 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
         today = timezone.localtime(timezone.now(), PARIS_TIME_ZONE).date()
 
     years = {}
-    semesters = {}
+    months = {}
     age_groups = [{"label": label, "count": 0, "amount": 0} for label in AGE_LABELS]
     clients = [
         {"label": "Particuliers", "count": 0, "amount": 0},
@@ -67,12 +68,11 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
             continue
 
         created = _local_date(event.created_at)
-        semester = 1 if created.month <= 6 else 2
         if created.year not in years:
             years[created.year] = _empty_period(str(created.year))
-        key = (created.year, semester)
-        if key not in semesters:
-            semesters[key] = _empty_period(f"{created.year} · S{semester}")
+        key = (created.year, created.month)
+        if key not in months:
+            months[key] = _empty_period(f"{MONTH_NAMES[created.month - 1]} {created.year}")
 
         if event.signer_at is not None:
             category = "signed"
@@ -85,7 +85,7 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
             index = 1
 
         value = amount(event, signed=(category == "signed"))
-        for period in (years[created.year], semesters[key]):
+        for period in (years[created.year], months[key]):
             period["processed"] += 1
             period[category] += 1
             period[category + "_amount"] += value
@@ -105,9 +105,22 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
         clients[client_index]["amount"] += value
         biggest_pending.append({"event": event, "amount": value, "days": days})
 
-    # Comparisons use the request creation date, with local Paris semester bounds.
+    # Use Paris dates and include empty calendar months for readable trends.
     annual = _finish_periods(years, limit=10)
-    half_year = _finish_periods(semesters, limit=12)
+    recent_months = {}
+    if months:
+        first_year, first_month = min(months)
+        last_year, last_month = max(months)
+        first_index = max(first_year * 12 + first_month - 1,
+                          last_year * 12 + last_month - 24)
+        last_index = last_year * 12 + last_month - 1
+        for month_index in range(first_index, last_index + 1):
+            year, zero_based_month = divmod(month_index, 12)
+            month = zero_based_month + 1
+            recent_months[(year, month)] = months.get(
+                (year, month), _empty_period(f"{MONTH_NAMES[zero_based_month]} {year}")
+            )
+    monthly = _finish_periods(recent_months, limit=24)
 
     for rows in (age_groups, clients):
         max_value = max((max(0, row["amount"]) for row in rows), default=0)
@@ -127,11 +140,12 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
              "subtitle": "Comparaison par année civile",
              "rows": annual, "hidden": max(0, len(years) - len(annual)),
              "hidden_label": "années"},
-            {"title": "Évolution semestrielle des devis traités",
-             "rate_title": "Taux de signature par semestre",
-             "subtitle": "S1 : janvier–juin · S2 : juillet–décembre",
-             "rows": half_year, "hidden": max(0, len(semesters) - len(half_year)),
-             "hidden_label": "semestres"},
+            {"title": "Évolution mensuelle des devis traités",
+             "rate_title": "Taux de signature par mois",
+             "subtitle": "Derniers 24 mois calendaires maximum, y compris les mois sans devis",
+             "period": "monthly",
+             "rows": monthly, "hidden": max(0, len(months) - len(recent_months)),
+             "hidden_label": "mois avec activité"},
         ],
         "quote_ages": age_groups,
         "quote_clients": clients,
