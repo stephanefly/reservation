@@ -1,13 +1,14 @@
 from datetime import timedelta
 from zoneinfo import ZoneInfo
+from secrets import compare_digest
 
+from django.conf import settings
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from app.models import Event
-from myselfiebooth.settings import PRIVATE_API_TOKEN
 
 PARIS_TIME_ZONE = ZoneInfo("Europe/Paris")
 CONFIRMED_STATUS_LIST = ["Acompte OK", "Presta FINI", "Post Presta", "Sent Media"]
@@ -33,7 +34,7 @@ def _json_error(message, status=400):
 
 
 def _get_private_api_token():
-    return PRIVATE_API_TOKEN
+    return getattr(settings, "PRIVATE_API_TOKEN", "")
 
 
 def _check_private_token(request):
@@ -45,9 +46,9 @@ def _check_private_token(request):
             status=500,
         )
 
-    received_token = request.GET.get("token") or request.headers.get("X-Private-Api-Token")
+    received_token = request.headers.get("X-Private-Api-Token") or request.GET.get("token", "")
 
-    if received_token != expected_token:
+    if not compare_digest(received_token.encode("utf-8"), expected_token.encode("utf-8")):
         return False, _json_error("Token invalide ou manquant.", status=403)
 
     return True, None
@@ -330,10 +331,18 @@ def private_api_event_detail(request, event_id):
     except Event.DoesNotExist:
         return _json_error("Événement introuvable.", status=404)
 
-    return JsonResponse(
+    from app.views.private_api_data import event_data
+
+    event_dict = _event_to_dict(event)
+    event_dict["details_complets"] = event_data(event)
+
+    response = JsonResponse(
         {
             "status": "ok",
-            "event": _event_to_dict(event),
+            "event": event_dict,
         },
         json_dumps_params={"ensure_ascii": False},
     )
+    response["Cache-Control"] = "no-store"
+    return response
+

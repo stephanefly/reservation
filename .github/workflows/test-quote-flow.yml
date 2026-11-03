@@ -44,7 +44,7 @@ jobs:
           sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
           python -m pip install -r tests_e2e/requirements.txt mysqlclient
           python -m playwright install --with-deps chromium
-      - name: Vérifier prix et acomptes
+      - name: Vérifier l'API privée en lecture\n        run: python -m tests_api.run\n      - name: Vérifier prix et acomptes
         run: python -m unittest app.tests.test_event_pricing app.tests.test_panneaux_xxl app.tests.test_acompte_devis
       - name: Tester le formulaire jusqu'au mail et au PDF
         env:
@@ -58,3 +58,4 @@ jobs:
           path: test-results/quote-flow/
           if-no-files-found: warn
           retention-days: 7
+
