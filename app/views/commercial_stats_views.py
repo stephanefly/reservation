@@ -3,10 +3,14 @@ from statistics import mean
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
 from app.models import EmailTracking, Event, EventRelance
+from app.module.lib_graph.commercial_alerts import (
+    MAIL_ISSUE_STATES, MAIL_TOUCH_STATES, prepare_commercial_alerts,
+)
 from app.module.lib_graph.commercial_insights import (
     SUBMITTED_STATES, is_quote_tracking, prepare_commercial_insights,
 )
@@ -75,10 +79,14 @@ def commercial_report(request):
     # A subquery avoids a large IN parameter list with historical CRM data.
     tracked_statuses = {}
     mail_signals = {}
-    for event_id, status, mail_type, delivery_status, opened, opening_tracked in (
+    latest_quotes = {}
+    # A stable sort identifies the most recent non-preparing quote email
+    # and the latest successful submission without extra database queries.
+    for event_id, status, mail_type, delivery_status, opened, opening_tracked, sent_at in (
         EmailTracking.objects.filter(event_traced__in=queryset.values("id"))
+        .order_by("event_traced", "-sent_at", "-id")
         .values_list("event_traced", "status_devis", "mail_type",
-                     "delivery_status", "opened", "opening_tracked")
+                     "delivery_status", "opened", "opening_tracked", "sent_at")
     ):
         if delivery_status not in {"preparing", "error", "refused"}:
             tracked_statuses.setdefault(event_id, set()).add(status)
@@ -87,16 +95,28 @@ def commercial_report(request):
         signal = mail_signals.setdefault(
             event_id, {"sent": False, "opened": False, "mail_issue": False},
         )
+        if delivery_status != "preparing":
+            latest = latest_quotes.setdefault(
+                event_id,
+                {"delivery_status": delivery_status,
+                 "sent_at": sent_at, "last_valid_sent": None},
+            )
+            if (delivery_status in MAIL_TOUCH_STATES
+                    and latest["last_valid_sent"] is None):
+                latest["last_valid_sent"] = sent_at
         if delivery_status in SUBMITTED_STATES:
             signal["sent"] = True
             if opened and opening_tracked:
                 signal["opened"] = True
-        if delivery_status in {"refused", "error", "unknown", "delayed", "bounced"}:
-            signal["mail_issue"] = True
+    for event_id, latest in latest_quotes.items():
+        mail_signals[event_id]["mail_issue"] = (
+            latest["delivery_status"] in MAIL_ISSUE_STATES
+        )
     last_contacts = {}
     for event_id, qualification, contact_date in (
         EventRelance.objects.filter(event_id__in=queryset.values("id"),
-                                    date_relance__isnull=False)
+                                    date_relance__isnull=False,
+                                    date_relance__lte=timezone.now())
         .order_by("event_id", "-date_relance", "-id")
         .values_list("event_id", "qualification", "date_relance")
     ):
@@ -112,6 +132,10 @@ def commercial_report(request):
         histories[event.id] = statuses
         if event.signer_at is not None or event.id in tracked_statuses or statuses & SENT_STATUS:
             processed_ids.add(event.id)
+    alerts = prepare_commercial_alerts(
+        events, processed_ids, latest_quotes, last_contacts, amount,
+        selected=request.GET.get("alert", "all"),
+    )
     totals = summarise(events, processed_ids)
     statuses = []
     for status in sorted({event.status or "" for event in events}):
@@ -134,6 +158,7 @@ def commercial_report(request):
     totals["outstanding_count"] = len(outstanding)
     totals["outstanding_amount"] = sum(event.event_acompte.montant_restant for event in outstanding)
     return {
+        **alerts,
         **prepare_quote_graphs(events, processed_ids, amount),
         **prepare_commercial_insights(events, processed_ids, mail_signals,
                                       last_contacts, amount),
@@ -150,7 +175,8 @@ def commercial_report(request):
 def graph_commercial_stats(request):
     context = {"start_date": request.GET.get("start_date", ""),
                "end_date": request.GET.get("end_date", ""),
-               "segment": request.GET.get("segment", "all")}
+               "segment": request.GET.get("segment", "all"),
+               "alert": request.GET.get("alert", "all")}
     try:
         context.update(commercial_report(request))
     except ValueError as exc:
