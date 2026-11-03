@@ -163,21 +163,25 @@ def rate(result):
     return {**result, "not_opened": total - opened, "opening_rate_percent": round(100 * opened / total, 2) if total else None}
 
 
-@private_read
-def private_api_email_stats(request):
+def email_report(request):
     queryset = filtered(request, "email-tracking")
     # The rate denominator must include unopened records too.
     if "opened" in request.GET:
         raise ValueError("Le filtre opened est réservé à la liste, pas aux statistiques.")
     by_status = queryset.values("status_devis").annotate(tracked=Count("id"), opened=Count("id", filter=Q(opened=True))).order_by("status_devis")
     monthly = queryset.annotate(month=TruncMonth("sent_at", tzinfo=PARIS_TIME_ZONE)).values("month").annotate(tracked=Count("id"), opened=Count("id", filter=Q(opened=True))).order_by("month")
-    return JsonResponse({
+    return {
         "status": "ok", "timezone": "Europe/Paris", "totals": email_counts(queryset),
         "by_status": [rate(row) for row in by_status],
         "by_month": [rate(row) for row in monthly],
         "definition": "Une ouverture au moins par enregistrement de suivi, regroupé selon la date d'envoi.",
         "limitations": "Suivi par image des devis et relances : chargement automatique ou images bloquées possibles. Un suivi est créé avant l'envoi SMTP : il ne prouve pas la livraison. opened_at est le dernier chargement enregistré. Les réponses client ne sont pas détectées.",
-    })
+    }
+
+
+@private_read
+def private_api_email_stats(request):
+    return JsonResponse(email_report(request))
 
 
 def event_data(event):

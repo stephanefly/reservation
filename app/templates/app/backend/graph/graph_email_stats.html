@@ -1,0 +1,67 @@
+{% extends 'app/backend/base.html' %}
+{% load l10n %}
+{% block title %}Ouverture des mails{% endblock title %}
+{% block extra_css %}
+<style>
+.email-stats {display:grid;gap:22px}
+.email-stats .backend-chart-card {padding:24px;min-width:0}
+.email-stats h2 {font-size:1.15rem;margin:0 0 20px}
+.email-filters {display:flex;flex-wrap:wrap;align-items:end;gap:14px}
+.email-filters label {display:grid;gap:7px;font-size:.85rem;font-weight:600}
+.email-filters input {padding:10px;border:1px solid #cbd0d9;border-radius:8px;background:white;max-width:100%}
+.email-overview {display:grid;grid-template-columns:minmax(280px,1fr) 2fr;gap:24px}
+.email-ring {width:190px;height:190px;border-radius:50%;margin:8px auto 20px;display:grid;place-items:center;background:#e7e9ee}
+.email-ring__center {width:148px;height:148px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.email-ring__center strong {font-size:2rem;color:#211747}
+.email-ring__center span {font-size:.8rem;color:#596274}
+.email-totals {display:flex;justify-content:center;flex-wrap:wrap;gap:20px;text-align:center}
+.email-totals strong {display:block;font-size:1.3rem;color:#211747}
+.email-totals span,.email-note {color:#596274;font-size:.85rem;line-height:1.6}
+.email-table {width:100%;border-collapse:collapse;font-size:.9rem}
+.email-table th,.email-table td {padding:12px 10px;border-bottom:1px solid #e7e9ee;text-align:left;white-space:nowrap}
+.email-table th {color:#596274;font-size:.8rem}
+.email-table-wrap {overflow-x:auto}
+.email-rate {min-width:130px}
+.email-bar {height:7px;border-radius:10px;background:#e7e9ee;margin-top:7px;overflow:hidden}
+.email-bar span {display:block;height:100%;background:#b48b37;border-radius:10px}
+.email-months {display:grid;gap:16px}
+.email-month {display:grid;grid-template-columns:100px 1fr 150px;gap:18px;align-items:center;font-size:.9rem}
+.email-month .email-bar {height:12px;margin:0}
+.email-month small {color:#596274}
+.email-alert {padding:16px;border:1px solid #b42318;border-radius:10px;color:#b42318;background:#fff4f2}
+.email-empty {padding:24px 0;color:#596274}
+@media(max-width:850px){.email-overview{grid-template-columns:1fr}.email-month{grid-template-columns:80px 1fr}.email-month small{grid-column:2}.email-stats .backend-chart-card{padding:18px}}
+</style>
+{% endblock extra_css %}
+{% block content %}
+<div class="backend-page email-stats">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses · Statistiques</p><h1>Ouverture des mails</h1><p class="backend-page-header__description">Visualisez l'ouverture de vos devis et relances, par statut et par mois.</p></div></header>
+    <form method="get" class="backend-chart-card email-filters">
+        <label for="email-start">Envoyés depuis le<input id="email-start" type="date" name="start_date" value="{{ start_date }}"></label>
+        <label for="email-end">Jusqu'au<input id="email-end" type="date" name="end_date" value="{{ end_date }}"></label>
+        <button class="backend-button backend-button--primary" type="submit">Afficher</button>
+        <a class="backend-button backend-button--secondary" href="{% url 'graph_email_stats' %}">Tout l'historique</a>
+    </form>
+    {% if error %}<p class="email-alert" role="alert">{{ error }}</p>{% else %}
+    <div class="email-overview">
+        <section class="backend-chart-card" aria-label="Taux d'ouverture global">
+            <h2>Taux d'ouverture</h2>
+            <div class="email-ring" {% if totals.tracked %}style="background:conic-gradient(#b48b37 0% {{ totals.opening_rate_percent|unlocalize }}%,#e7e9ee {{ totals.opening_rate_percent|unlocalize }}% 100%)"{% endif %}>
+                <div class="email-ring__center"><strong>{% if totals.tracked %}{{ totals.opening_rate_percent|floatformat:1 }} %{% else %}—{% endif %}</strong><span>{% if totals.tracked %}ouverts au moins une fois{% else %}Aucun mail suivi{% endif %}</span></div>
+            </div>
+            <div class="email-totals"><div><strong>{{ totals.tracked }}</strong><span>Mails suivis</span></div><div><strong>{{ totals.opened }}</strong><span>Ouverts</span></div><div><strong>{{ totals.not_opened }}</strong><span>Sans ouverture détectée</span></div></div>
+        </section>
+        <section class="backend-chart-card">
+            <h2>Ouverture par statut lors de l'envoi</h2>
+            <div class="email-table-wrap"><table class="email-table"><thead><tr><th scope="col">Statut</th><th scope="col">Suivis</th><th scope="col">Ouverts</th><th scope="col">Taux d'ouverture</th></tr></thead><tbody>
+                {% for row in by_status %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.tracked }}</td><td>{{ row.opened }}</td><td class="email-rate">{{ row.opening_rate_percent|floatformat:1 }} %<div class="email-bar" aria-hidden="true"><span style="width:{{ row.opening_rate_percent|unlocalize }}%"></span></div></td></tr>{% empty %}<tr><td colspan="4" class="email-empty">Aucun mail suivi sur cette période.</td></tr>{% endfor %}
+            </tbody></table></div>
+        </section>
+    </div>
+    <section class="backend-chart-card"><h2>Évolution par mois d'envoi</h2><div class="email-months">
+        {% for row in by_month %}<div class="email-month"><span>{{ row.month|date:'m/Y' }}</span><div class="email-bar" aria-hidden="true"><span style="width:{{ row.opening_rate_percent|unlocalize }}%"></span></div><small><strong>{{ row.opening_rate_percent|floatformat:1 }} %</strong> · {{ row.opened }}/{{ row.tracked }} ouverts</small></div>{% empty %}<p class="email-empty">Les graphiques apparaîtront dès qu'un mail suivi sera disponible.</p>{% endfor %}
+    </div></section>
+    <p class="email-note">Une ouverture est comptée une seule fois par mail suivi. Les images bloquées ou chargées automatiquement peuvent influencer le résultat. Le suivi est créé avant l'envoi : il ne confirme pas la livraison. Ces statistiques concernent les devis et relances suivis, pas les réponses des clients.</p>
+    {% endif %}
+</div>
+{% endblock content %}

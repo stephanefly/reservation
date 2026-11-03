@@ -83,6 +83,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="graphMenu">
                         <li><a class="dropdown-item" href="{% url 'graph' %}"><i class="fas fa-chart-area"></i> Vue globale</a></li>
+                        <li><a class="dropdown-item" href="{% url 'graph_email_stats' %}"><i class="fas fa-envelope-open-text"></i> Ouverture des mails</a></li>
                         <li><a class="dropdown-item" href="{% url 'graph_cost' %}"><i class="fas fa-balance-scale"></i> Rentabilité</a></li>
                         <li><a class="dropdown-item" href="{% url 'graph_cost_pie' %}"><i class="fas fa-chart-pie"></i> Vue annuelle</a></li>
                         <li><a class="dropdown-item" href="{% url 'graph_potentiel' %}"><i class="fas fa-seedling"></i> Potentiel</a></li>
@@ -113,3 +114,4 @@
 {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>
+

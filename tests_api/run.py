@@ -19,15 +19,20 @@ def main():
         sys.modules[name] = package
     settings.configure(
         SECRET_KEY="isolated-tests-only", PRIVATE_API_TOKEN="test-private-token",
-        INSTALLED_APPS=["app"], DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
+        INSTALLED_APPS=["django.contrib.auth", "django.contrib.contenttypes", "app"], DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
+        LANGUAGE_CODE="fr-fr",
         ROOT_URLCONF="app.urls.private_api_urls", USE_TZ=True, TIME_ZONE="Europe/Paris",
         DEFAULT_AUTO_FIELD="django.db.models.AutoField", MIGRATION_MODULES={"app": None},
         ALLOWED_HOSTS=["testserver"],
+        TEMPLATES=[{"BACKEND": "django.template.backends.django.DjangoTemplates", "OPTIONS": {"loaders": [
+            ("django.template.loaders.locmem.Loader", {"app/backend/base.html": "{% block extra_css %}{% endblock %}{% block content %}{% endblock %}"}),
+            ("django.template.loaders.filesystem.Loader", [str(root / "app/templates")]),
+        ]}}],
     )
     import django
     django.setup()
     from django.test.runner import DiscoverRunner
-    failures = DiscoverRunner(verbosity=2).run_tests(["app.tests.test_private_api"])
+    failures = DiscoverRunner(verbosity=2).run_tests(["app.tests.test_private_api", "app.tests.test_email_stats"])
     raise SystemExit(bool(failures))
 
 

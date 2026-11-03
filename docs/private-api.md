@@ -7,6 +7,12 @@ Aucune migration ni nouvelle dépendance n'est nécessaire.
 
 ## Routes
 
+Le CRM propose aussi la page **Analyses → Ouverture des mails**
+(`/backend/graph/emails/`) : anneau du taux global, compteurs, barres par statut
+lors de l'envoi et évolution mensuelle, avec filtre de dates inclusives.
+Cette page utilise la session administrateur, sans transmettre de token API au navigateur.
+L'API et la page partagent les mêmes calculs. Le rendu HTML fonctionne sans JavaScript.
+
 | Route | Résultat |
 | --- | --- |
 | `schema/` | Ressources et liste explicite des champs disponibles |
