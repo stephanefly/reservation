@@ -123,10 +123,12 @@ def prepare_quote_graphs(events, processed_ids, amount, today=None):
     return {
         "quote_periods": [
             {"title": "Évolution annuelle des devis traités",
+             "rate_title": "Taux de signature par année",
              "subtitle": "Comparaison par année civile",
              "rows": annual, "hidden": max(0, len(years) - len(annual)),
              "hidden_label": "années"},
             {"title": "Évolution semestrielle des devis traités",
+             "rate_title": "Taux de signature par semestre",
              "subtitle": "S1 : janvier–juin · S2 : juillet–décembre",
              "rows": half_year, "hidden": max(0, len(semesters) - len(half_year)),
              "hidden_label": "semestres"},
