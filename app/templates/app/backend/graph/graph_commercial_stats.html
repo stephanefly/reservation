@@ -1,0 +1,73 @@
+{% extends 'app/backend/base.html' %}
+{% load l10n %}
+{% block title %}Performance commerciale{% endblock title %}
+{% block extra_css %}
+<style>
+.commercial-stats {display:grid;gap:22px}
+.commercial-stats .backend-chart-card {padding:24px;min-width:0}
+.commercial-stats h2 {font-size:1.15rem;margin:0 0 18px}
+.commercial-filters {display:flex;gap:14px;flex-wrap:wrap;align-items:end}
+.commercial-filters label {display:grid;gap:6px;font-size:.85rem;font-weight:600}
+.commercial-filters input,.commercial-filters select {padding:10px;border:1px solid #cbd0d9;border-radius:8px;background:white;max-width:100%}
+.commercial-kpis {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.commercial-kpi strong {display:block;font-size:1.8rem;color:#211747;margin:10px 0}
+.commercial-kpi span,.commercial-note {color:#596274;font-size:.85rem;line-height:1.6}
+.commercial-row {display:grid;grid-template-columns:minmax(270px,1fr) 2fr;gap:22px}
+.commercial-ring {width:180px;height:180px;border-radius:50%;display:grid;place-items:center;margin:10px auto 18px;background:#e7e9ee}
+.commercial-ring div {width:142px;height:142px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.commercial-ring strong {font-size:2rem;color:#211747}
+.commercial-ring span {font-size:.8rem;color:#596274}
+.commercial-table-wrap {overflow-x:auto}
+.commercial-table {width:100%;border-collapse:collapse;font-size:.9rem}
+.commercial-table td,.commercial-table th {padding:12px 10px;border-bottom:1px solid #e7e9ee;text-align:left;white-space:nowrap}
+.commercial-table thead th {color:#596274;font-size:.8rem}
+.commercial-bar {height:7px;background:#e7e9ee;border-radius:10px;margin-top:6px;overflow:hidden;min-width:85px}
+.commercial-bar span {display:block;background:#b48b37;height:100%;border-radius:10px}
+.commercial-warning {padding:16px;border:1px solid #dfc488;background:#fff9ec;border-radius:10px;color:#795414;line-height:1.6}
+.commercial-error {padding:16px;border:1px solid #b42318;border-radius:10px;color:#b42318;background:#fff4f2}
+@media(max-width:850px){.commercial-row{grid-template-columns:1fr}.commercial-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.commercial-stats .backend-chart-card{padding:18px}}
+@media(max-width:480px){.commercial-kpis{grid-template-columns:1fr}}
+</style>
+{% endblock extra_css %}
+{% block content %}
+<div class="backend-page commercial-stats">
+    <header class="backend-page-header"><div><p class="backend-page-header__eyebrow">Analyses · Statistiques</p><h1>Performance commerciale</h1><p class="backend-page-header__description">Demandes, signatures, devis en attente et soldes à récupérer.</p></div></header>
+    <form method="get" class="backend-chart-card commercial-filters">
+        <label for="commercial-start">Demandes créées depuis le<input id="commercial-start" type="date" name="start_date" value="{{ start_date }}"></label>
+        <label for="commercial-end">Jusqu'au<input id="commercial-end" type="date" name="end_date" value="{{ end_date }}"></label>
+        <label for="commercial-segment">Clients<select id="commercial-segment" name="segment"><option value="all" {% if segment == 'all' %}selected{% endif %}>Tous les clients</option><option value="individual" {% if segment == 'individual' %}selected{% endif %}>Particuliers</option><option value="business" {% if segment == 'business' %}selected{% endif %}>Entreprises</option></select></label>
+        <button class="backend-button backend-button--primary" type="submit">Afficher</button><a class="backend-button backend-button--secondary" href="{% url 'graph_commercial_stats' %}">Tout l'historique</a>
+    </form>
+    {% if error %}<p role="alert" class="commercial-error">{{ error }}</p>{% else %}
+    <p class="commercial-note">La période porte sur la création des demandes. Les statuts et signatures reflètent leur situation actuelle. Les devis encore en attente peuvent donc faire évoluer le taux.</p>
+    {% if unsigned_confirmed or missing_amounts or totals.invalid_delays %}<div class="commercial-warning">Données à compléter : {{ unsigned_confirmed }} dossier(s) confirmé(s) ou terminé(s) sans date de signature, {{ missing_amounts }} dossier(s) sans montant exploitable, {{ totals.invalid_delays }} signature(s) antérieure(s) à la demande. Les dates incohérentes sont exclues du délai moyen ; les montants manquants comptent pour 0 €.</div>{% endif %}
+    <div class="commercial-kpis">
+        <section class="backend-chart-card commercial-kpi"><h2>Demandes reçues</h2><strong>{{ totals.requests }}</strong><span>{{ totals.processed }} devis traités · {{ totals.signed }} signés</span></section>
+        <section class="backend-chart-card commercial-kpi"><h2>Montant signé</h2><strong>{{ totals.signed_amount|floatformat:0 }} €</strong><span>Panier moyen : {{ totals.average_signed|floatformat:0|default:'—' }} €</span></section>
+        <section class="backend-chart-card commercial-kpi"><h2>Devis sans signature</h2><strong>{{ totals.pending_amount|floatformat:0 }} €</strong><span>{{ totals.pending }} dossier(s) traité(s), non refusé(s)</span></section>
+        <section class="backend-chart-card commercial-kpi"><h2>Devis refusés</h2><strong>{{ totals.refused_amount|floatformat:0 }} €</strong><span>{{ totals.refused }} devis refusés sans signature</span></section>
+        <section class="backend-chart-card commercial-kpi"><h2>Délai avant signature</h2><strong>{{ totals.average_delay|floatformat:1|default:'—' }} j</strong><span>De la demande à la signature · {{ totals.delay_count }} dossier(s)</span></section>
+        <section class="backend-chart-card commercial-kpi"><h2>Soldes à récupérer</h2><strong>{{ totals.outstanding_amount|floatformat:0 }} €</strong><span>{{ totals.outstanding_count }} prestation(s) terminée(s)</span></section>
+    </div>
+    <div class="commercial-row">
+        <section class="backend-chart-card"><h2>Taux de signature</h2>
+            <div class="commercial-ring" {% if totals.processed %}style="background:conic-gradient(#b48b37 0% {{ totals.conversion|unlocalize }}%,#e7e9ee {{ totals.conversion|unlocalize }}% 100%)"{% endif %}><div><strong>{% if totals.processed %}{{ totals.conversion|floatformat:1 }} %{% else %}—{% endif %}</strong><span>{{ totals.signed }} / {{ totals.processed }} devis traités</span></div></div>
+            <p class="commercial-note">Sur les décisions connues (signés + refusés) : <strong>{{ totals.conversion_decided|floatformat:1|default:'—' }} %</strong>.</p>
+        </section>
+        <section class="backend-chart-card"><h2>Répartition par statut actuel</h2><div class="commercial-table-wrap"><table class="commercial-table"><thead><tr><th scope="col">Statut</th><th scope="col">Dossiers</th><th scope="col">Part</th><th scope="col">Montant</th></tr></thead><tbody>
+            {% for row in statuses %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{{ row.share|floatformat:1 }} %<div class="commercial-bar" aria-hidden="true"><span style="width:{{ row.share|unlocalize }}%"></span></div></td><td>{{ row.amount|floatformat:0 }} €</td></tr>{% empty %}<tr><td colspan="4">Aucune demande sur cette période.</td></tr>{% endfor %}
+        </tbody></table></div></section>
+    </div>
+    <section class="backend-chart-card"><h2>Particuliers et entreprises</h2><div class="commercial-table-wrap"><table class="commercial-table"><thead><tr><th scope="col">Clients</th><th scope="col">Demandes</th><th scope="col">Devis traités</th><th scope="col">Signés</th><th scope="col">Taux</th><th scope="col">Montant signé</th><th scope="col">Panier moyen</th></tr></thead><tbody>
+        {% for row in segments %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.requests }}</td><td>{{ row.processed }}</td><td>{{ row.signed }}</td><td>{{ row.conversion|floatformat:1|default:'—' }} %</td><td>{{ row.signed_amount|floatformat:0 }} €</td><td>{{ row.average_signed|floatformat:0|default:'—' }} €</td></tr>{% endfor %}
+    </tbody></table></div></section>
+    <section class="backend-chart-card"><h2>Signatures des dossiers avec relance enregistrée</h2><div class="commercial-table-wrap"><table class="commercial-table"><thead><tr><th scope="col">Relance</th><th scope="col">Dossiers concernés</th><th scope="col">Dont signés</th><th scope="col">Part signée</th></tr></thead><tbody>
+        {% for row in relances %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{{ row.signed }}</td><td>{{ row.conversion|floatformat:1|default:'—' }} %{% if row.count %}<div class="commercial-bar" aria-hidden="true"><span style="width:{{ row.conversion|unlocalize }}%"></span></div>{% endif %}</td></tr>{% endfor %}
+    </tbody></table></div><p class="commercial-note">Un dossier peut apparaître dans plusieurs relances ; chaque dossier est compté une seule fois par ligne. Source : historique des statuts et suivi des mails. Ces chiffres indiquent une association avec la signature, sans prouver que cette relance l'a déclenchée.</p></section>
+    <section class="backend-chart-card"><h2>Prestations terminées avec un solde restant</h2><div class="commercial-table-wrap"><table class="commercial-table"><thead><tr><th scope="col">Client</th><th scope="col">Prestation</th><th scope="col">Ville</th><th scope="col">Solde restant</th></tr></thead><tbody>
+        {% for event in outstanding %}<tr><th scope="row"><a href="{% url 'info_event' event.id %}">{{ event.client.nom }}</a></th><td>{{ event.event_details.date_evenement|date:'d/m/Y' }}</td><td>{{ event.event_details.ville_evenement }}</td><td>{{ event.event_acompte.montant_restant }} €</td></tr>{% empty %}<tr><td colspan="4">Aucun solde à récupérer sur les prestations terminées de cette sélection.</td></tr>{% endfor %}
+    </tbody></table></div>{% if outstanding_more %}<p class="commercial-note">30 premiers dossiers affichés, {{ outstanding_more }} autre(s). Le total inclut tous les dossiers concernés.</p>{% endif %}</section>
+    <p class="commercial-note">Une signature est reconnue par sa date enregistrée. Les devis traités ont une signature, un suivi mail ou un statut d'envoi, relance, refus ou confirmation dans leur historique. Les montants signés utilisent le prix validé, sinon le prix proposé ; les autres montants utilisent le prix proposé. Le montant signé ne représente pas les encaissements. Les soldes affichés ne présument pas d'un retard contractuel.</p>
+    {% endif %}
+</div>
+{% endblock content %}
