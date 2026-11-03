@@ -27,6 +27,37 @@
 .commercial-error {padding:16px;border:1px solid #b42318;border-radius:10px;color:#b42318;background:#fff4f2}
 @media(max-width:850px){.commercial-row{grid-template-columns:1fr}.commercial-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.commercial-stats .backend-chart-card{padding:18px}}
 @media(max-width:480px){.commercial-kpis{grid-template-columns:1fr}}
+
+/* Graphiques de devis : rendu natif HTML/CSS, sans dépendance JS. */
+.commercial-graph-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.commercial-graph-grid>.backend-chart-card {min-width:0}
+.commercial-graph-wide {grid-column:1/-1}
+.commercial-legend {display:flex;gap:18px;flex-wrap:wrap;color:#596274;font-size:.83rem;margin-bottom:16px}
+.commercial-legend i {display:inline-block;vertical-align:middle;width:11px;height:11px;margin-right:6px;border-radius:3px}
+.commercial-signed {background:#b48b37}
+.commercial-pending {background:#211747}
+.commercial-refused {background:#b4bcc9}
+.commercial-month-scroll {max-width:100%;overflow-x:auto;padding-bottom:6px}
+.commercial-month-columns {display:flex;min-width:760px;gap:13px;padding:0 4px}
+.commercial-month-column {display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;gap:8px;font-size:.75rem;color:#596274}
+.commercial-month-bars {display:flex;align-items:end;justify-content:center;width:100%;height:180px;gap:5px;border-bottom:1px solid #ccd0d8;background:repeating-linear-gradient(to top,#edf0f4 0 1px,transparent 1px 45px)}
+.commercial-month-bars span {width:23%;border-radius:4px 4px 0 0;display:block;min-height:0}
+.commercial-month-column strong {font-size:.74rem;color:#252c3b}
+.commercial-graph-line {margin:0 0 18px}
+.commercial-graph-line-header {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px;font-size:.85rem}
+.commercial-graph-line-header strong {font-weight:700;color:#252c3b}
+.commercial-graph-track {height:12px;border-radius:8px;background:#ecedf1;overflow:hidden}
+.commercial-graph-track span {height:100%;display:block;border-radius:8px;background:#b48b37}
+.commercial-graph-line small {display:block;margin-top:4px;color:#70798a;font-size:.74rem}
+.commercial-graph-pipeline {display:flex;height:26px;border-radius:8px;overflow:hidden;background:#ecedf1;margin:16px 0}
+.commercial-graph-pipeline span {display:block;min-width:0}
+.commercial-portfolio-legend {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.commercial-portfolio-legend strong {display:block;margin-top:5px;font-size:1.2rem}
+.commercial-portfolio-legend small {display:block;color:#70798a}
+.commercial-portfolio-legend i {display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.commercial-graph-empty {font-size:.9rem;color:#596274;margin:0}
+@media(max-width:1000px){.commercial-graph-grid{grid-template-columns:1fr}.commercial-graph-wide{grid-column:auto}}
+@media(max-width:600px){.commercial-portfolio-legend{grid-template-columns:1fr}.commercial-graph-grid>.backend-chart-card{padding:18px}}
 </style>
 {% endblock extra_css %}
 {% block content %}
@@ -49,6 +80,105 @@
         <section class="backend-chart-card commercial-kpi"><h2>Délai avant signature</h2><strong>{{ totals.average_delay|floatformat:1|default:'—' }} j</strong><span>De la demande à la signature · {{ totals.delay_count }} dossier(s)</span></section>
         <section class="backend-chart-card commercial-kpi"><h2>Soldes à récupérer</h2><strong>{{ totals.outstanding_amount|floatformat:0 }} €</strong><span>{{ totals.outstanding_count }} prestation(s) terminée(s)</span></section>
     </div>
+
+    <div class="commercial-graph-grid" aria-label="Graphiques des devis">
+        <section class="backend-chart-card commercial-graph-wide">
+            <h2>Évolution mensuelle des devis traités</h2>
+            <div class="commercial-legend" aria-label="Légende">
+                <span><i class="commercial-signed"></i>Signés</span>
+                <span><i class="commercial-pending"></i>Non signés, en attente</span>
+                <span><i class="commercial-refused"></i>Refusés</span>
+            </div>
+            {% if quote_months %}
+            <div class="commercial-month-scroll" tabindex="0" aria-label="Histogramme mensuel, défilement horizontal possible">
+                <div class="commercial-month-columns">
+                    {% for row in quote_months %}
+                    <div class="commercial-month-column">
+                        <div class="commercial-month-bars" role="img" aria-label="{{ row.label }} : {{ row.signed }} signés, {{ row.pending }} en attente, {{ row.refused }} refusés">
+                            <span class="commercial-signed" title="{{ row.label }} : {{ row.signed }} signés" style="height:{{ row.signed_height|unlocalize }}%"></span>
+                            <span class="commercial-pending" title="{{ row.label }} : {{ row.pending }} en attente" style="height:{{ row.pending_height|unlocalize }}%"></span>
+                            <span class="commercial-refused" title="{{ row.label }} : {{ row.refused }} refusés" style="height:{{ row.refused_height|unlocalize }}%"></span>
+                        </div>
+                        <strong>{{ row.label }}</strong><span>{{ row.processed }} traités</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <p class="commercial-note">Barres à échelle commune (nombre de devis). Les 12 derniers mois présents dans la sélection sont affichés.{% if quote_months_hidden %} {{ quote_months_hidden }} mois plus anciens ne sont pas représentés.{% endif %}</p>
+            {% else %}<p class="commercial-graph-empty">Aucun devis traité sur cette sélection.</p>{% endif %}
+        </section>
+
+        <section class="backend-chart-card">
+            <h2>Ancienneté des devis en attente</h2>
+            {% for row in quote_ages %}
+            <div class="commercial-graph-line">
+                <div class="commercial-graph-line-header"><strong>{{ row.label }}</strong><span>{{ row.amount|floatformat:0 }} €</span></div>
+                <div class="commercial-graph-track" role="img" aria-label="{{ row.count }} devis en attente depuis {{ row.label }}, pour {{ row.amount|floatformat:0 }} euros"><span style="width:{{ row.width|unlocalize }}%"></span></div>
+                <small>{{ row.count }} devis</small>
+            </div>
+            {% endfor %}
+            <p class="commercial-note">Ancienneté calculée depuis la création de la demande, et non depuis l'envoi du devis.</p>
+        </section>
+
+        <section class="backend-chart-card">
+            <h2>Potentiel non signé par clientèle</h2>
+            {% for row in quote_clients %}
+            <div class="commercial-graph-line">
+                <div class="commercial-graph-line-header"><strong>{{ row.label }}</strong><span>{{ row.amount|floatformat:0 }} €</span></div>
+                <div class="commercial-graph-track" role="img" aria-label="{{ row.label }} : {{ row.count }} devis en attente, {{ row.amount|floatformat:0 }} euros"><span style="width:{{ row.width|unlocalize }}%"></span></div>
+                <small>{{ row.count }} devis en attente</small>
+            </div>
+            {% endfor %}
+            <p class="commercial-note">Montants proposés aux clients, pas un chiffre d'affaires acquis.</p>
+        </section>
+
+        <section class="backend-chart-card">
+            <h2>Taux de signature par mois</h2>
+            {% for row in quote_months %}
+            <div class="commercial-graph-line">
+                <div class="commercial-graph-line-header"><strong>{{ row.label }}</strong><span>{{ row.conversion|floatformat:1 }} %</span></div>
+                <div class="commercial-graph-track" role="img" aria-label="{{ row.signed }} signatures sur {{ row.processed }} devis traités en {{ row.label }}"><span style="width:{{ row.conversion|unlocalize }}%"></span></div>
+                <small>{{ row.signed }} signés / {{ row.processed }} traités</small>
+            </div>
+            {% empty %}<p class="commercial-graph-empty">Aucun devis traité sur cette sélection.</p>{% endfor %}
+            <p class="commercial-note">Comparaison des cohortes par date de demande : une signature ultérieure peut modifier un mois passé.</p>
+        </section>
+
+        <section class="backend-chart-card">
+            <h2>Répartition des montants de devis</h2>
+            <div class="commercial-graph-pipeline" role="img" aria-label="Montants des devis signés, en attente et refusés">
+                {% for row in quote_portfolio %}
+                <span class="commercial-{{ row.class_name }}" style="width:{{ row.width|unlocalize }}%" title="{{ row.label }} : {{ row.amount|floatformat:0 }} €"></span>
+                {% endfor %}
+            </div>
+            <div class="commercial-portfolio-legend">
+                {% for row in quote_portfolio %}
+                <div><small><i class="commercial-{{ row.class_name }}"></i>{{ row.label }}</small><strong>{{ row.amount|floatformat:0 }} €</strong><small>{{ row.count }} devis</small></div>
+                {% endfor %}
+            </div>
+            <p class="commercial-note">Valeurs basées sur le prix validé pour les signatures et le prix proposé pour les devis non signés.</p>
+        </section>
+
+        <section class="backend-chart-card commercial-graph-wide">
+            <h2>10 plus gros devis en attente à relancer</h2>
+            <div class="commercial-table-wrap"><table class="commercial-table">
+                <thead><tr><th scope="col">Client</th><th scope="col">Date de prestation</th><th scope="col">Statut</th><th scope="col">Âge de la demande</th><th scope="col">Potentiel</th></tr></thead>
+                <tbody>
+                {% for row in quote_top_pending %}
+                <tr>
+                    <th scope="row"><a href="{% url 'info_event' row.event.id %}">{{ row.event.client.nom }}</a></th>
+                    <td>{{ row.event.event_details.date_evenement|date:'d/m/Y' }}</td>
+                    <td>{{ row.event.get_status_display }}</td>
+                    <td>{{ row.days }} j</td>
+                    <td><strong>{{ row.amount|floatformat:0 }} €</strong></td>
+                </tr>
+                {% empty %}<tr><td colspan="5">Aucun devis non signé en attente.</td></tr>{% endfor %}
+                </tbody>
+            </table></div>
+            {% if quote_pending_more %}<p class="commercial-note">10 premiers affichés, {{ quote_pending_more }} devis supplémentaires en attente.</p>{% endif %}
+        </section>
+    </div>
+
     <div class="commercial-row">
         <section class="backend-chart-card"><h2>Taux de signature</h2>
             <div class="commercial-ring" {% if totals.processed %}style="background:conic-gradient(#b48b37 0% {{ totals.conversion|unlocalize }}%,#e7e9ee {{ totals.conversion|unlocalize }}% 100%)"{% endif %}><div><strong>{% if totals.processed %}{{ totals.conversion|floatformat:1 }} %{% else %}—{% endif %}</strong><span>{{ totals.signed }} / {{ totals.processed }} devis traités</span></div></div>
