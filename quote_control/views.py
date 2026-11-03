@@ -68,7 +68,7 @@ def admin_quotes(request):
     })
 
 
-@staff_member_required
+@staff_member_required(login_url="/login/")
 @require_GET
 def preview_pdf(request, event_id):
     config = get_object_or_404(AutoQuoteSettings, pk=1)
