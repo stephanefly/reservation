@@ -163,7 +163,7 @@ class QuoteControlViewTests(TestCase):
         fields.update({"pack_" + k: v for k, v in default_pack_prices().items()})
         response = self.client.post(self.url, fields)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Sélectionnez un choix valide")
+        self.assertIn("sources", response.context["form"].errors)
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
     def test_simulation_is_read_only_and_pdf_is_private(self):
