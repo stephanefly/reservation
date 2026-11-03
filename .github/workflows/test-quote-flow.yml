@@ -52,7 +52,7 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: tests_e2e.settings
           CRM_E2E_SQLITE_PATH: ":memory:"
-        run: python -m django test quote_control.tests --verbosity 1
+        run: python -m tests_e2e.run_quote_control
       - name: Vérifier le tableau post-prestation
         run: python -m tests_post_presta.run
       - name: Tester le formulaire jusqu'au mail et au PDF
