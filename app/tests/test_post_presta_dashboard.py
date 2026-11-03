@@ -2,22 +2,23 @@
 
 from types import SimpleNamespace
 from unittest.mock import patch
+import importlib
 
 from django.http import HttpRequest
 from django.template.loader import get_template
 from django.test import SimpleTestCase
 
-from app.views.post_presta_views import post_presta
+post_views = importlib.import_module("app.views.post_presta_views")
 
 
 class PostPrestaDashboardTests(SimpleTestCase):
     def _context_for(self, events):
         with (
-            patch("app.views.post_presta_views.Event.objects.filter") as filter_events,
-            patch("app.views.post_presta_views.render") as render,
+            patch.object(post_views.Event.objects, "filter") as filter_events,
+            patch.object(post_views, "render") as render,
         ):
             filter_events.return_value.select_related.return_value.prefetch_related.return_value.order_by.return_value = events
-            post_presta(HttpRequest())
+            post_views.post_presta(HttpRequest())
             return render.call_args.args[2]
 
     def test_overview_counts_only_open_events(self):
