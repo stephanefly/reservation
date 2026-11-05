@@ -83,3 +83,27 @@ Dans Simulation, sélectionner directement une ou plusieurs machines (exemple : 
 Le moteur indique le prix TTC lorsque la demande est éligible et le motif lorsque le dossier doit être traité manuellement. **Aucun e-mail et aucun PDF client ne sont créés.** L'ancien aperçu d'un véritable dossier reste accessible aux tests internes et à son URL privée, sans être présenté comme la simulation principale.
 
 Une simulation ne contourne pas les règles : le mode catalogue, l'éligibilité des produits/packs, le seuil minimum de 350 €, les entreprises et recommandations restent pris en compte. Elle n'active pas l'envoi réel.
+
+
+## Navigation depuis le Catalogue
+
+La page Devis auto n'a plus de lien propre dans le menu. Toutes ses
+fonctions sont accessibles depuis **Catalogue > Paramètres et simulation**,
+sur /backend/catalogue/?tab=automation.
+
+La configuration des envois et la simulation restent dans deux sections
+simples ; les réglages avancés et les logs sont dépliables. Le Catalogue
+conserve l'onglet **Offres et tarifs** pour l'édition des machines, options,
+packs et remises.
+
+L'ancienne URL /backend/devis-auto/ redirige vers le Catalogue, en
+préservant les paramètres de simulation. L'ancienne URL d'aperçu PDF
+privée et les POST historiques restent compatibles.
+
+Le nom de client ou d'entreprise dans la simulation est facultatif,
+n'est pas sauvegardé, et le nom d'entreprise fait passer le résultat
+en traitement manuel conformément aux règles existantes.
+
+Le passage en production implique toujours sauvegarde MySQL
+vérifiée et restauration testée en environnement isolé ; la fusion
+GitHub ne constitue pas un déploiement PythonAnywhere.
