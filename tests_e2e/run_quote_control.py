@@ -14,4 +14,4 @@ install_boundaries()
 from django.core.management import call_command
 
 if __name__ == "__main__":
-    call_command("test", "quote_control.tests", "quote_control.test_catalog", "quote_control.test_public_pricing", "quote_control.test_ui_clarity", "quote_control.test_preview_choices", "quote_control.test_price_breakdown", "quote_control.test_catalog_consolidation", verbosity=1)
+    call_command("test", "quote_control.tests", "quote_control.test_catalog", "quote_control.test_public_pricing", "quote_control.test_ui_clarity", "quote_control.test_preview_choices", "quote_control.test_price_breakdown", "quote_control.test_catalog_consolidation", "quote_control.test_quote_history", verbosity=1)
