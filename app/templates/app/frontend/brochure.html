@@ -846,6 +846,8 @@
     }
     .brochure-commercial-price { color: #b48a37; font-size: 1rem; font-weight: 700; margin: 10px 0 14px; }
     .brochure-commercial-price strong { font-size: 1.18rem; }
+    .brochure-discount-inline { display:block; color:#d8b45a; font-size:.84rem; font-weight:700; margin-top:4px; line-height:1.4; }
+    .brochure-discount-inline del { color:#c4b7a8; font-weight:400; }
 </style>
 
 <main class="brochure-page">
@@ -908,6 +910,7 @@
                     <h3>Photobooth</h3>
                     <p class="brochure-short">La valeur sûre pour offrir des tirages photo personnalisés aux invités.</p>
                     <p class="brochure-commercial-price">5h : <strong>{{ data_price.photobooth }} € TTC</strong></p>
+                    {% if product_breakdowns.photobooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.photobooth.reference }} €</del> · Remise −{{ product_breakdowns.photobooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions selon formule</li>
                         <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
@@ -929,6 +932,7 @@
                     <h3>Miroirbooth</h3>
                     <p class="brochure-short">Grand miroir interactif, élégant et très visible dans la salle.</p>
                     <p class="brochure-commercial-price">5h : <strong>{{ data_price.miroirbooth }} € TTC</strong></p>
+                    {% if product_breakdowns.miroirbooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.miroirbooth.reference }} €</del> · Remise −{{ product_breakdowns.miroirbooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/impression.ico' %}" alt=""> Impressions selon formule</li>
                         <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
@@ -950,6 +954,7 @@
                     <h3>360 Booth</h3>
                     <p class="brochure-short">Animation vidéo dynamique avec rendu moderne et partage facile.</p>
                     <p class="brochure-commercial-price">5h : <strong>{{ data_price.videobooth }} € TTC</strong></p>
+                    {% if product_breakdowns.videobooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.videobooth.reference }} €</del> · Remise −{{ product_breakdowns.videobooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/video.ico' %}" alt=""> Vidéos 4K</li>
                         <li><img class="brochure-icon" src="{% static 'icone/personnes.ico' %}" alt=""> Jusqu’à 5 personnes</li>
@@ -971,6 +976,7 @@
                     <h3>Air360 Booth</h3>
                     <p class="brochure-short">Version grand format du 360 Booth pour un rendu plus spectaculaire.</p>
                     <p class="brochure-commercial-price">5h : <strong>{{ data_price.airbooth }} € TTC</strong></p>
+                    {% if product_breakdowns.airbooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.airbooth.reference }} €</del> · Remise −{{ product_breakdowns.airbooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/video.ico' %}" alt=""> Vidéos 4K</li>
                         <li><img class="brochure-icon" src="{% static 'icone/personnes.ico' %}" alt=""> Jusqu’à 10 personnes</li>
@@ -992,6 +998,7 @@
                     <h3>Ipad Booth</h3>
                     <p class="brochure-short">Borne digitale compacte, idéale pour les petits espaces et événements pro.</p>
                     <p class="brochure-commercial-price">24h à 48h : <strong>{{ data_price.ipadbooth }} € TTC</strong></p>
+                    {% if product_breakdowns.ipadbooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.ipadbooth.reference }} €</del> · Remise −{{ product_breakdowns.ipadbooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/montage.ico' %}" alt=""> Installation rapide</li>
                         <li><img class="brochure-icon" src="{% static 'icone/numerique.ico' %}" alt=""> Photos numériques enregistrées</li>
@@ -1012,6 +1019,7 @@
                     <h3>Vogue Booth</h3>
                     <p class="brochure-short">Décor lumineux effet magazine pour des photos très premium.</p>
                     <p class="brochure-commercial-price">5h : <strong>{{ data_price.voguebooth }} € TTC</strong></p>
+                    {% if product_breakdowns.voguebooth.discount %}<p class="brochure-discount-inline">Avant : <del>{{ product_breakdowns.voguebooth.reference }} €</del> · Remise −{{ product_breakdowns.voguebooth.discount }} €</p>{% endif %}
                     <ul class="brochure-included">
                         <li><img class="brochure-icon" src="{% static 'icone/camion.ico' %}" alt=""> Livraison et installation</li>
                         <li><img class="brochure-icon" src="{% static 'icone/personnalisation.ico' %}" alt=""> Personnalisation du visuel</li>
@@ -1234,6 +1242,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.souvenirs }} €</strong>
+                        {% if pack_breakdowns.souvenirs.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.souvenirs.reference }} €</del> · Remise −{{ pack_breakdowns.souvenirs.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Photobooth&amp;options=Phonebooth&amp;portecles=100" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
@@ -1255,6 +1264,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.immersion_360 }} €</strong>
+                        {% if pack_breakdowns.immersion_360.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.immersion_360.reference }} €</del> · Remise −{{ pack_breakdowns.immersion_360.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Booth&amp;options=VideoLivreOr,Fond360" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
@@ -1276,6 +1286,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.signature }} €</strong>
+                        {% if pack_breakdowns.signature.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.signature.reference }} €</del> · Remise −{{ pack_breakdowns.signature.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth&amp;options=VideoLivreOr,PanneauFontaine" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
@@ -1297,6 +1308,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.duo_vip }} €</strong>
+                        {% if pack_breakdowns.duo_vip.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.duo_vip.reference }} €</del> · Remise −{{ pack_breakdowns.duo_vip.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth&amp;options=Phonebooth,MurFloral" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
@@ -1318,6 +1330,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.vogue_premium }} €</strong>
+                        {% if pack_breakdowns.vogue_premium.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.vogue_premium.reference }} €</del> · Remise −{{ pack_breakdowns.vogue_premium.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Voguebooth&amp;options=PhotographeVoguebooth,ImpressionVoguebooth" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
@@ -1340,6 +1353,7 @@
                     <div class="brochure-pack-pricing">
                         <span class="brochure-pack-old-price">Tarif du pack TTC</span>
                         <strong>{{ pack_prices.mariage_prestige }} €</strong>
+                        {% if pack_breakdowns.mariage_prestige.discount %}<span class="brochure-discount-inline">Éléments séparés : <del>{{ pack_breakdowns.mariage_prestige.reference }} €</del> · Remise −{{ pack_breakdowns.mariage_prestige.discount }} €</span>{% endif %}
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth,Voguebooth&amp;options=Fond360,MurFloral" class="brochure-button brochure-button-primary">Demander ce pack</a>
                 </div>
