@@ -137,8 +137,11 @@ changer les modeles ou les calculs de devis :
 - Si le prix final depasse le prix de reference, **aucune fausse remise**
   n'est presentee. Un code de machine ou d'option inconnu masque le calcul
   de remise plutot que d'afficher un prix invente.
-- Les pages Tarifs et Brochure utilisent les memes remises dynamiques :
-  si le prix du catalogue change, la remise change avec lui.
+- Les pages Tarifs et Brochure continuent d'afficher les prix finaux
+  du catalogue, mais pas les remises ou prix barres automatiques.
+  Une annonce publique de reduction de prix ne doit etre ajoutee qu'avec
+  un prix de reference reel et justifiable selon la reglementation.
+  Les remises calculees ici restent visibles uniquement dans le CRM.
 - Le simulateur affiche le prix avant remise, la remise reellement
   appliquee par le moteur et le prix final TTC. Les frais et options
   additionnels eventuels sont inclus dans le prix avant remise du devis.
