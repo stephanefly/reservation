@@ -6,6 +6,7 @@ from .catalog import (
 
 class QuoteControlForm(forms.Form):
     enabled = forms.BooleanField(required=False, label="Activer les devis automatiques")
+    catalog_enabled = forms.BooleanField(required=False, label="Utiliser les prix des machines et packs du catalogue")
     sources = forms.MultipleChoiceField(
         choices=SOURCES, required=False, widget=forms.CheckboxSelectMultiple,
     )
@@ -35,6 +36,7 @@ class QuoteControlForm(forms.Form):
         if config and not self.is_bound:
             self.initial = {
                 "enabled": config.enabled,
+                "catalog_enabled": config.catalog_enabled,
                 "sources": config.sources,
                 "products": config.products,
                 "packs": config.packs,
@@ -46,7 +48,7 @@ class QuoteControlForm(forms.Form):
 
     def clean(self):
         data = super().clean()
-        if data.get("enabled") and not data.get("confirm_activation"):
+        if (data.get("enabled") or data.get("catalog_enabled")) and not data.get("confirm_activation"):
             self.add_error(
                 "confirm_activation",
                 "Confirmez que les prix et l'envoi des e-mails ont été testés.",
@@ -57,6 +59,7 @@ class QuoteControlForm(forms.Form):
         if not self.is_valid():
             raise ValueError("La configuration contient des erreurs.")
         config.enabled = self.cleaned_data["enabled"]
+        config.catalog_enabled = self.cleaned_data["catalog_enabled"]
         config.sources = self.cleaned_data["sources"]
         config.products = self.cleaned_data["products"]
         config.packs = self.cleaned_data["packs"]
