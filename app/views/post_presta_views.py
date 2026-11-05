@@ -174,6 +174,14 @@ def post_presta(request):
             ))
             for event in events
         ),
+        # Une photo OU un montage publié compte comme un dossier posté.
+        # Compter les dossiers, pas le nombre de médias, pour correspondre au filtre.
+        'media_posted': sum(
+            bool(event.event_post_presta and (
+                event.event_post_presta.post_photo or event.event_post_presta.post_montage
+            ))
+            for event in events
+        ),
     }
     return render(request, 'app/backend/post_presta.html', {
         'lst_post_event': events,
