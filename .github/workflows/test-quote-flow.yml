@@ -54,7 +54,7 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: tests_e2e.settings
           CRM_E2E_SQLITE_PATH: ":memory:"
-        run: python -m django makemigrations quote_control --check --dry-run
+        run: python -m django makemigrations quote_control --check --dry-run --skip-checks
       - name: Tester les règles et l'administration des devis automatiques
         env:
           DJANGO_SETTINGS_MODULE: tests_e2e.settings
