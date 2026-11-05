@@ -61,6 +61,68 @@ class EmailTrackingTests(TestCase):
         self.assertEqual(message["Message-ID"], delivery.message_id)
         self.assertIsNotNone(message["Date"])
 
+
+    @override_settings(MAIL_ADMIN_CC="faure@example.invalid")
+    def test_global_cc_is_visible_and_receives_the_message(self):
+        delivery = self.delivery()
+        server = self.smtp()
+        msg = MIMEText("Publication")
+        msg["To"] = delivery.recipient
+        with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
+            self.assertTrue(submit(delivery, msg, ["archive@example.invalid"]))
+        self.assertEqual(
+            set(server.sendmail.call_args.args[1]),
+            {"client@example.invalid", "archive@example.invalid", "faure@example.invalid"},
+        )
+        parsed = message_from_string(server.sendmail.call_args.args[2])
+        self.assertEqual(parsed["Cc"], "faure@example.invalid")
+        self.assertNotIn("archive@example.invalid", str(parsed["Cc"]))
+
+    @override_settings(MAIL_ADMIN_CC="faure@example.invalid")
+    def test_global_cc_does_not_duplicate_an_existing_cc(self):
+        delivery = self.delivery()
+        server = self.smtp()
+        msg = MIMEText("Test")
+        msg["Cc"] = "djordan@example.invalid, faure@example.invalid"
+        with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
+            submit(delivery, msg, ["faure@example.invalid", "djordan@example.invalid"])
+        parsed = message_from_string(server.sendmail.call_args.args[2])
+        self.assertEqual(parsed["Cc"].count("faure@example.invalid"), 1)
+        self.assertEqual(server.sendmail.call_args.args[1].count("faure@example.invalid"), 1)
+
+    @override_settings(MAIL_ADMIN_CC="client@example.invalid")
+    def test_global_cc_skips_primary_recipient(self):
+        delivery = self.delivery()
+        server = self.smtp()
+        with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
+            submit(delivery, MIMEText("Test"))
+        self.assertEqual(server.sendmail.call_args.args[1], ["client@example.invalid"])
+        self.assertNotIn("Cc:", server.sendmail.call_args.args[2])
+
+    @override_settings(MAIL_ADMIN_CC="Stéphan.four@sfubot-repairy.fr")
+    def test_invalid_global_cc_does_not_expose_customer_mail(self):
+        delivery = self.delivery()
+        server = self.smtp()
+        with (
+            patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server),
+            self.assertLogs("app.module.mail.delivery", "ERROR"),
+        ):
+            submit(delivery, MIMEText("Test"))
+        self.assertEqual(server.sendmail.call_args.args[1], ["client@example.invalid"])
+        self.assertNotIn("Cc:", server.sendmail.call_args.args[2])
+
+    @override_settings(MAIL_ADMIN_CC="")
+    def test_disabled_cc_keeps_original_recipients(self):
+        delivery = self.delivery()
+        server = self.smtp()
+        with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
+            submit(delivery, MIMEText("Test"), ["archive@example.invalid"])
+        self.assertEqual(
+            set(server.sendmail.call_args.args[1]),
+            {"client@example.invalid", "archive@example.invalid"},
+        )
+        self.assertNotIn("Cc:", server.sendmail.call_args.args[2])
+
     def test_refused_client_is_not_hidden_by_successful_bcc(self):
         delivery = self.delivery()
         server = self.smtp({"client@example.invalid": (550, b"Unknown recipient")})

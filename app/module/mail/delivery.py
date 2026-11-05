@@ -1,11 +1,17 @@
 """Recorded SMTP submission. This module performs no automatic retries."""
 import smtplib
-from email.utils import make_msgid, formatdate
+import logging
+from email.utils import make_msgid, formatdate, getaddresses
+
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 from django.conf import settings
 from django.utils import timezone
 
 from app.models import EmailTracking
+
+logger = logging.getLogger(__name__)
 
 
 def begin_delivery(event, mail_type):
@@ -24,11 +30,48 @@ def finish(delivery, status, code=None, diagnostic=""):
     delivery.save(update_fields=["delivery_status", "smtp_code", "diagnostic", "accepted_at", "copy_refused"])
 
 
+def add_admin_cc(message, primary_recipient):
+    """Ajoute la copie interne configurée en Cc, sans bloquer l'envoi client.
+
+    Aucune adresse n'est choisie par défaut : confirmer l'adresse personnelle
+    avant de configurer MAIL_ADMIN_CC dans settings.yaml.
+    """
+    email = str(getattr(settings, "MAIL_ADMIN_CC", "") or "").strip()
+    if not email:
+        return None
+    try:
+        if not email.isascii():
+            raise ValidationError("Adresse non ASCII")
+        validate_email(email)
+    except ValidationError:
+        logger.error("MAIL_ADMIN_CC invalide : copie ignorée.")
+        return None
+
+    if email.casefold() == str(primary_recipient).strip().casefold():
+        return None
+
+    existing = {
+        address.casefold()
+        for _, address in getaddresses(message.get_all("Cc", []))
+    }
+    if email.casefold() not in existing:
+        if message.get("Cc"):
+            message.replace_header("Cc", message["Cc"] + ", " + email)
+        else:
+            message["Cc"] = email
+    return email
+
+
 def submit(delivery, message, copies=()):
     server = None
     submitting = False
     sender = settings.MAIL_MYSELFIEBOOTH
-    recipients = list(dict.fromkeys([delivery.recipient] + [value.strip() for value in copies if value and value.strip()]))
+    admin_cc = add_admin_cc(message, delivery.recipient)
+    extra_recipients = [delivery.recipient] + [value.strip() for value in copies if value and value.strip()]
+    if admin_cc:
+        extra_recipients.append(admin_cc)
+    # Dédupliquer aussi les adresses déjà dans un BCC ou Cc existant.
+    recipients = list(dict.fromkeys(extra_recipients))
     message["Message-ID"] = delivery.message_id
     if "Date" not in message:
         message["Date"] = formatdate(localtime=True)
