@@ -4,6 +4,7 @@ Un seul réglage : cocher l'éligibilité sur une machine ou un pack.
 Les anciens formulaires de paramétrage ne peuvent plus changer les envois.
 """
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -33,7 +34,7 @@ def admin_catalog(request):
         or request.GET.get("tab") in ("simulation", "automation")
         or request.GET.get("simulate") == "1"
         or request.GET.get("event", "").isdigit()
-    ) else "offres"
+    ) else "historique" if request.GET.get("tab") == "historique" else "offres"
 
     # Les anciens POST de réglages ne réactivent jamais un système parallèle.
     if legacy_settings_post:
@@ -85,10 +86,27 @@ def admin_catalog(request):
             {"available": False},
         )
 
-    logs = (
-        list(AutoQuoteLog.objects.order_by("-created_at")[:40])
-        if active_tab == "simulation" else []
-    )
+    # Ne montrer que les devis réellement signalés comme envoyés
+    # par le moteur auto. Les cas manuels et erreurs ne sont pas des envois.
+    history = None
+    sent_total = 0
+    if active_tab == "historique":
+        sent_logs = AutoQuoteLog.objects.filter(outcome="sent").order_by(
+            "-created_at", "-pk"
+        )
+        history = Paginator(sent_logs, 25).get_page(request.GET.get("page"))
+        sent_total = history.paginator.count
+        if history.object_list:
+            from app.models import Event
+
+            events = {
+                event.pk: event
+                for event in Event.objects.select_related("client").filter(
+                    pk__in=[record.event_id for record in history.object_list]
+                )
+            }
+            for record in history.object_list:
+                record.related_event = events.get(record.event_id)
     return render(request, "quote_control/catalogue.html", {
         "form": form, "editing": entry,
         "product_rows": [x for x in all_entries if x.kind == "product"],
@@ -106,11 +124,6 @@ def admin_catalog(request):
         "simulation": simulation,
         "preview": preview,
         "preview_event": preview_event,
-        "logs": logs,
-        "sent_count": AutoQuoteLog.objects.filter(outcome="sent").count()
-            if active_tab == "simulation" else 0,
-        "manual_count": AutoQuoteLog.objects.filter(outcome="manual").count()
-            if active_tab == "simulation" else 0,
-        "error_count": AutoQuoteLog.objects.filter(outcome="error").count()
-            if active_tab == "simulation" else 0,
+        "history": history,
+        "sent_total": sent_total,
     })

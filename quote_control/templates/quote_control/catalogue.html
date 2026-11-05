@@ -78,6 +78,15 @@
 .com-catalog .catalog-auto-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px}
 .com-catalog .catalog-auto-table th,.com-catalog .catalog-auto-table td{text-align:left;border-bottom:1px solid #ece8e1;padding:8px}
 @media(max-width:740px){.com-catalog .catalog-auto-form-grid{grid-template-columns:1fr}}
+.com-catalog .history-table-wrap{overflow-x:auto}
+.com-catalog .history-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.com-catalog .history-table th,.com-catalog .history-table td{text-align:left;padding:12px 9px;vertical-align:top;border-bottom:1px solid #ede7dd}
+.com-catalog .history-table th{color:#605965;font-weight:800;white-space:nowrap}
+.com-catalog .history-table a{font-weight:750;color:#604521}
+.com-catalog .history-sub{display:block;color:#736d75;font-size:.8rem;margin-top:3px}
+.com-catalog .history-pager{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:17px;font-size:.88rem}
+.com-catalog .history-pager a{font-weight:750;color:#604521}
+.com-catalog .history-number{font-size:1.4rem;font-weight:800;margin:7px 0}
 </style>
 {% endblock %}
 {% block content %}
@@ -90,6 +99,7 @@
   <nav class="catalog-tabs" aria-label="Sections du catalogue">
     <a href="{% url 'admin_catalog' %}?tab=offres" {% if active_tab == 'offres' %}aria-current="page"{% endif %}>Offres et tarifs</a>
     <a href="{% url 'admin_catalog' %}?tab=simulation" {% if active_tab == 'simulation' %}aria-current="page"{% endif %}>Simulation</a>
+    <a href="{% url 'admin_catalog' %}?tab=historique" {% if active_tab == 'historique' %}aria-current="page"{% endif %}>Historique des envois</a>
   </nav>
 
   {% if active_tab == 'offres' %}
@@ -255,8 +265,10 @@
       </div>
     </section>
   </div>
-  {% else %}
+  {% elif active_tab == 'simulation' %}
     {% include 'quote_control/_catalogue_automation.html' %}
+  {% elif active_tab == 'historique' %}
+    {% include 'quote_control/_catalogue_history.html' %}
   {% endif %}
 </div>
 {% endblock %}

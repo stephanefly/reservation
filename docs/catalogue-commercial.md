@@ -197,3 +197,30 @@ et enregistrée peut déclencher un véritable envoi sur une nouvelle
 demande compatible. En cas de doute, commencer avec toutes les offres
 décochées, vérifier la simulation, puis activer celles souhaitées.
 Aucune demande ancienne n'est envoyée rétroactivement.
+
+
+## Historique des envois automatiques
+
+Dans **Catalogue > Historique des envois**, le CRM affiche les
+**devis PDF envoyés automatiquement** par le moteur de devis.
+L'écran est réservé aux membres de l'équipe ayant accès au Catalogue.
+
+Chaque ligne comprend : date et heure, nom du client et adresse e-mail
+de sa fiche actuelle, offre concernée, source, montant TTC et lien vers
+le dossier CRM. Les dossiers supprimés restent visibles dans
+l'historique sans générer de lien invalide.
+
+Le tableau est classé du plus récent au plus ancien, paginé
+à 25 envois. Seules les entrées `AutoQuoteLog` avec `outcome="sent"`
+sont affichées : les dossiers manuels et les erreurs d'envoi ne sont
+pas présentés comme des e-mails envoyés.
+
+La mention « envoyé » atteste de l'acceptation de l'envoi par le
+processus applicatif, pas de la réception ou de l'ouverture effective
+dans la boîte du destinataire. Le journal n'enregistre pas un instantané
+de l'adresse e-mail au moment de l'envoi ; l'adresse affichée est
+celle de la fiche client aujourd'hui. Les envois antérieurs à la mise
+en service de `AutoQuoteLog` ne sont pas reconstituables.
+
+L'onglet est uniquement en lecture, sans changement de tarif,
+de devis, d'e-mail, de modèle ou de schéma SQL.

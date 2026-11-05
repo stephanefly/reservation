@@ -1,0 +1,66 @@
+{# Envois confirmes par le moteur de devis ; pas l'historique general des e-mails. #}
+<section class="panel" id="historique" aria-labelledby="historique-title">
+  <h2 id="historique-title">Historique des devis envoyés automatiquement</h2>
+  <p class="meta">Retrouvez les envois automatiques enregistrés par le CRM, du plus récent au plus ancien.</p>
+  <p class="history-number">{{ sent_total }} envoi{{ sent_total|pluralize }}</p>
+  <p class="meta">« Envoyé » signifie que le système d'envoi a accepté la demande. Cela ne confirme pas que le destinataire a reçu ou ouvert le message.</p>
+
+  {% if history and history.object_list %}
+    <div class="history-table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th scope="col">Envoyé le</th>
+            <th scope="col">Client et e-mail</th>
+            <th scope="col">Offre / devis</th>
+            <th scope="col">Montant</th>
+            <th scope="col">Dossier</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in history %}
+            <tr>
+              <td>{{ record.created_at|date:"d/m/Y à H:i" }}</td>
+              <td>
+                {% if record.related_event %}
+                  <strong>{{ record.related_event.client.nom|default:"Client inconnu" }}</strong>
+                  <span class="history-sub">{{ record.related_event.client.mail|default:"E-mail non renseigné" }}</span>
+                {% else %}
+                  <span class="muted">Dossier supprimé ou indisponible</span>
+                {% endif %}
+              </td>
+              <td>
+                <strong>Devis automatique</strong>
+                <span class="history-sub">{{ record.reason|default:"Offre non précisée" }}</span>
+                {% if record.source %}<span class="history-sub">Source : {{ record.source }}</span>{% endif %}
+              </td>
+              <td>{% if record.amount is not None %}{{ record.amount }} € TTC{% else %}—{% endif %}</td>
+              <td>
+                {% if record.related_event %}
+                  <a href="{% url 'info_event' record.event_id %}">Voir le dossier #{{ record.event_id }}</a>
+                {% else %}
+                  #{{ record.event_id }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if history.has_other_pages %}
+      <nav class="history-pager" aria-label="Pages de l'historique">
+        {% if history.has_previous %}
+          <a href="{% url 'admin_catalog' %}?tab=historique&amp;page={{ history.previous_page_number }}">Précédent</a>
+        {% endif %}
+        <span>Page {{ history.number }} sur {{ history.paginator.num_pages }}</span>
+        {% if history.has_next %}
+          <a href="{% url 'admin_catalog' %}?tab=historique&amp;page={{ history.next_page_number }}">Suivant</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p>Aucun devis envoyé automatiquement pour le moment. Les prochains envois acceptés apparaîtront ici.</p>
+  {% endif %}
+  <p class="meta">L'adresse e-mail affichée est celle de la fiche client actuelle. L'historique commence à la mise en place du suivi des devis automatiques.</p>
+</section>
