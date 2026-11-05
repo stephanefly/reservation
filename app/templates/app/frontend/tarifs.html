@@ -975,7 +975,8 @@
         </div>
 
         <div class="tarifs-grid">
-            <article class="tarif-card tarif-card-featured">
+            {% if public_active.photobooth %}
+<article class="tarif-card tarif-card-featured">
                 <div class="tarif-label">Best seller</div>
                 <img class="tarif-image" src="{% static 'img/photobooth.jpg' %}" alt="Photobooth">
                 <div class="tarif-content">
@@ -988,11 +989,7 @@
                         </div>
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.photobooth|default:"600" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.photobooth|default:"600"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <strong>{{ data_price.photobooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1005,8 +1002,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Photobooth" class="tarifs-button tarifs-button-primary">Choisir le Photobooth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card tarif-card-featured">
+            {% if public_active.miroirbooth %}
+<article class="tarif-card tarif-card-featured">
                 <div class="tarif-label">Premium</div>
                 <img class="tarif-image" src="{% static 'img/miroirbooth.jpg' %}" alt="Miroirbooth">
                 <div class="tarif-content">
@@ -1019,11 +1018,7 @@
                         </div>
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.miroirbooth|default:"700" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.miroirbooth|default:"700"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <strong>{{ data_price.miroirbooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1036,8 +1031,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth" class="tarifs-button tarifs-button-primary">Choisir le Miroirbooth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card">
+            {% if public_active.videobooth %}
+<article class="tarif-card">
                 <div class="tarif-label">Vidéo 4K</div>
                 <img class="tarif-image" src="{% static 'img/360booth.jpg' %}" alt="360 Booth">
                 <div class="tarif-content">
@@ -1050,11 +1047,7 @@
                         </div>
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.videobooth|default:"600" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.videobooth|default:"600"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <strong>{{ data_price.videobooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1067,8 +1060,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Booth" class="tarifs-button tarifs-button-primary">Choisir le 360 Booth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card">
+            {% if public_active.airbooth %}
+<article class="tarif-card">
                 <div class="tarif-label">Grand format</div>
                 <img class="tarif-image" src="{% static 'img/airbooth.jpg' %}" alt="Air360 Booth">
                 <div class="tarif-content">
@@ -1081,11 +1076,7 @@
                         </div>
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.airbooth|default:"750" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.airbooth|default:"750"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <strong>{{ data_price.airbooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1098,8 +1089,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Airbooth" class="tarifs-button tarifs-button-primary">Choisir le Air360 Booth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card">
+            {% if public_active.ipadbooth %}
+<article class="tarif-card">
                 <div class="tarif-label">Autonome</div>
                 <img class="tarif-image" src="{% static 'img/ipadbooth.jpg' %}" alt="Ipad Booth">
                 <div class="tarif-content">
@@ -1108,7 +1101,7 @@
                     <div class="tarif-price-row one-price">
                         <div class="tarif-price">
                             <small>24h à 48h</small>
-                            <strong>{{ data_price.ipadbooth|default:"250" }}€</strong>
+                            <strong>{{ data_price.ipadbooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1121,8 +1114,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Ipadbooth" class="tarifs-button tarifs-button-primary">Choisir le Ipad Booth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card">
+            {% if public_active.voguebooth %}
+<article class="tarif-card">
                 <div class="tarif-label">Studio effet magazine</div>
                 <img class="tarif-image" src="{% static 'img/voguebooth.jpg' %}" alt="Vogue Booth">
                 <div class="tarif-content">
@@ -1131,11 +1126,7 @@
                     <div class="tarif-price-row one-price">
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.voguebooth|default:"550" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.voguebooth|default:"550"|add:"-50" }}€</span>
-                                <span class="tarif-promo-label">-50€</span>
-                            </strong>
+                            <strong>{{ data_price.voguebooth }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1147,8 +1138,10 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Voguebooth" class="tarifs-button tarifs-button-primary">Choisir le Vogue Booth</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarif-card tarif-card-featured">
+            {% if public_active.duo_vip %}
+<article class="tarif-card tarif-card-featured">
                 <div class="tarif-label">Pack conseillé</div>
                 <img class="tarif-image" src="{% static 'img/pack.jpg' %}" alt="Pack Miroirbooth et 360 Booth">
                 <div class="tarif-content">
@@ -1157,11 +1150,7 @@
                     <div class="tarif-price-row one-price">
                         <div class="tarif-price">
                             <small>5h</small>
-                            <strong>
-                                <span class="tarif-old-price">{{ data_price.pack|default:"850" }}€</span>
-                                <span class="tarif-new-price">{{ data_price.pack|default:"850"|add:"-100" }}€</span>
-                                <span class="tarif-promo-label">-100€</span>
-                            </strong>
+                            <strong>{{ data_price.pack }}€</strong>
                         </div>
                     </div>
                     <ul class="tarif-included">
@@ -1174,6 +1163,7 @@
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth" class="tarifs-button tarifs-button-primary">Choisir le Pack VIP</a>
                 </div>
             </article>
+{% endif %}
 
             <article class="tarif-card tarif-card-featured">
                 <div class="tarif-label">Sur mesure</div>
@@ -1359,7 +1349,8 @@
 
         <div class="tarifs-pack-grid">
 
-            <article class="tarifs-pack-card">
+            {% if public_active.souvenirs %}
+<article class="tarifs-pack-card">
                 <div class="tarifs-pack-badge">Souvenirs invités</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-souvenirs.svg' %}" alt="Pack Souvenirs" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1371,15 +1362,16 @@
                         <li>100 porte-clés photo</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
-                        <strong>600 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.souvenirs }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Photobooth&amp;options=Phonebooth&amp;portecles=100" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarifs-pack-card">
+            {% if public_active.immersion_360 %}
+<article class="tarifs-pack-card">
                 <div class="tarifs-pack-badge">Expérience vidéo</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-immersion-360.svg' %}" alt="Pack Immersion 360" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1391,15 +1383,16 @@
                         <li>Fond LED 360 offert</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 800 €</span>
-                        <strong>700 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.immersion_360 }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=360Booth&amp;options=VideoLivreOr,Fond360" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarifs-pack-card">
+            {% if public_active.signature %}
+<article class="tarifs-pack-card">
                 <div class="tarifs-pack-badge">Élégance</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-signature.svg' %}" alt="Pack Signature" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1411,15 +1404,16 @@
                         <li>Panneau fontaine</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 950 €</span>
-                        <strong>800 €</strong>
-                        <span class="tarifs-pack-saving">150 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.signature }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth&amp;options=VideoLivreOr,PanneauFontaine" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarifs-pack-card tarifs-pack-card-featured">
+            {% if public_active.duo_vip %}
+<article class="tarifs-pack-card tarifs-pack-card-featured">
                 <div class="tarifs-pack-badge">Le plus demandé</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-duo-vip.svg' %}" alt="Pack Duo VIP" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1431,15 +1425,16 @@
                         <li>Mur floral offert</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 1 150 €</span>
-                        <strong>850 €</strong>
-                        <span class="tarifs-pack-saving">300 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.duo_vip }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth&amp;options=Phonebooth,MurFloral" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarifs-pack-card">
+            {% if public_active.vogue_premium %}
+<article class="tarifs-pack-card">
                 <div class="tarifs-pack-badge">Effet magazine</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-vogue-premium.svg' %}" alt="Pack Vogue Premium" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1451,15 +1446,16 @@
                         <li>Impressions instantanées</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 700 €</span>
-                        <strong>600 €</strong>
-                        <span class="tarifs-pack-saving">100 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.vogue_premium }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Voguebooth&amp;options=PhotographeVoguebooth,ImpressionVoguebooth" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
 
-            <article class="tarifs-pack-card tarifs-pack-card-prestige">
+            {% if public_active.mariage_prestige %}
+<article class="tarifs-pack-card tarifs-pack-card-prestige">
                 <div class="tarifs-pack-badge">Expérience totale</div>
                 <img class="tarifs-pack-image" src="{% static 'img/packs/pack-mariage-prestige.svg' %}" alt="Pack Mariage Prestige" loading="lazy">
                 <div class="tarifs-pack-body">
@@ -1472,13 +1468,13 @@
                         <li>Mur floral offert</li>
                     </ul>
                     <div class="tarifs-pack-pricing">
-                        <span class="tarifs-pack-old-price">Pris séparément : 1 750 €</span>
-                        <strong>1 200 €</strong>
-                        <span class="tarifs-pack-saving">550 € économisés</span>
+                        <span class="tarifs-pack-old-price">Tarif du pack TTC</span>
+                        <strong>{{ pack_prices.mariage_prestige }} €</strong>
                     </div>
                     <a href="https://reservation.myselfiebooth-paris.fr/?prestations=Miroirbooth,360Booth,Voguebooth&amp;options=Fond360,MurFloral" class="tarifs-button tarifs-button-primary">Demander ce pack</a>
                 </div>
             </article>
+{% endif %}
         </div>
 
         <div class="tarifs-pack-note">
