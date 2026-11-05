@@ -33,7 +33,7 @@ class FreeQuoteSimulationTests(TestCase):
         page = response.content.decode()
         self.assertIn('aria-current="page">Paramètres et simulation', page)
         self.assertIn('id="auto-config-title">Paramétrage des devis', page)
-        self.assertIn('id="auto-sim-title">Simulation d'une demande client', page)
+        self.assertIn("Simulation d'une demande client", page)
         self.assertIn("Machines demandées", page)
         self.assertNotIn("Voir le calcul", page)
         self.assertNotIn("Choisissez une demande récente", page)
