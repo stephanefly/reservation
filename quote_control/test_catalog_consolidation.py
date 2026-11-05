@@ -84,11 +84,10 @@ class UnifiedCatalogueTests(TestCase):
         original = (Client.objects.count(), Event.objects.count(),
                     EventDetails.objects.count(), EventOption.objects.count(),
                     EventProduct.objects.count())
-        response = self.client.get(self.url, {
-            "tab": "automation", "simulate": "1",
-            "products": ["photobooth"], "duration": "5", "postal_code": "75001",
-            "source": "INSTAGRAM", "client_name": "Martin",
-            "company_name": "Entreprise Exemple",
+        response = self.client.post(self.url + "?tab=automation", {
+            "operation": "simulate", "products": ["photobooth"],
+            "duration": "5", "postal_code": "75001", "source": "INSTAGRAM",
+            "client_name": "Martin", "company_name": "Entreprise Exemple",
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Martin")
@@ -99,6 +98,22 @@ class UnifiedCatalogueTests(TestCase):
                           EventDetails.objects.count(), EventOption.objects.count(),
                           EventProduct.objects.count()), original)
         self.assertFalse(AutoQuoteLog.objects.exists())
+        self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
+
+    def test_post_simulation_uses_catalogue_prices_without_saving_config(self):
+        offer = CatalogEntry.objects.get(code="photobooth")
+        original_price = offer.price
+        response = self.client.post(self.url, {
+            "operation": "simulate", "products": ["photobooth"],
+            "duration": "5", "postal_code": "75001",
+            "source": "INSTAGRAM", "client_name": "Test sans stockage",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_tab"], "automation")
+        self.assertEqual(response.context["simulation"]["analysis"]["amount"], 400)
+        self.assertContains(response, "Test sans stockage")
+        self.assertEqual(CatalogEntry.objects.get(pk=offer.pk).price, original_price)
+        self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
     def test_old_get_redirects_to_catalogue_without_losing_query(self):
         response = self.client.get(self.legacy, {
