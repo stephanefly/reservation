@@ -46,6 +46,10 @@ BIC_B = config.get('BIC_B')
 MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
 MAIL_BCC = config.get('MAIL_BCC')
 MP = config.get('MP')
+# Adresse du responsable contenu recevant les demandes « À poster ».
+POST_PRESTA_PUBLICATION_EMAIL = config.get(
+    "POST_PRESTA_PUBLICATION_EMAIL", "djordan.cartier@myselfiebooth-paris.fr"
+)
 
 API_PCLOUD_URL = config.get("API_PCLOUD_URL")
 ACCESS_TOKEN = config.get("ACCESS_TOKEN")  # Remplacez par le token obtenu
