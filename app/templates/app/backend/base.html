@@ -63,12 +63,7 @@
                 </li>
                 {% if request.user.is_staff %}
                 <li class="nav-item">
-                    <a class="nav-link {% if '/backend/devis-auto/' in request.path %}active{% endif %}" href="{% url 'admin_auto_quotes' %}">
-                        <i class="fas fa-magic" aria-hidden="true"></i> Devis auto
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/backend/catalogue/' in request.path %}active{% endif %}" href="{% url 'admin_catalog' %}">
+                    <a class="nav-link {% if '/backend/catalogue/' in request.path or '/backend/devis-auto/' in request.path %}active{% endif %}" href="{% url 'admin_catalog' %}">
                         <i class="fas fa-tags" aria-hidden="true"></i> Catalogue
                     </a>
                 </li>

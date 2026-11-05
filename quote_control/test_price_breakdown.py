@@ -94,7 +94,7 @@ class DiscountBreakdownTests(TestCase):
         AutoQuoteSettings.objects.create(pk=1)
         staff = User.objects.create_user("discount-sim", password="test", is_staff=True)
         self.client.force_login(staff)
-        result = self.client.get(reverse("admin_auto_quotes"), {
+        result = self.client.get(reverse("admin_catalog"), {
             "simulate": "1", "products": ["photobooth"], "duration": "5",
             "postal_code": "75001", "source": "INSTAGRAM",
         })
@@ -111,7 +111,7 @@ class DiscountBreakdownTests(TestCase):
         config.save(update_fields=["packs"])
         staff = User.objects.create_user("pack-discount-sim", password="test", is_staff=True)
         self.client.force_login(staff)
-        result = self.client.get(reverse("admin_auto_quotes"), {
+        result = self.client.get(reverse("admin_catalog"), {
             "simulate": "1", "products": ["voguebooth"], "duration": "5",
             "options": ["PhotographeVoguebooth", "ImpressionVoguebooth"],
             "postal_code": "75001", "source": "INSTAGRAM",

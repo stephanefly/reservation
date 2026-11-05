@@ -149,3 +149,26 @@ changer les modeles ou les calculs de devis :
 Cela n'harmonise toujours pas les prix d'options ou les tarifs de devis
 manuels qui ne passent pas par le moteur automatique. Les devis existants
 ne sont pas recalcules et l'envoi automatique reste independant.
+
+
+## Écran unique Catalogue
+
+Le menu du CRM propose maintenant **Catalogue** comme point d'entrée pour
+administrer les prix et les devis automatiques.
+
+À l'intérieur, deux onglets seulement :
+- **Offres et tarifs** : machines, options, packs, remises calculées, édition.
+- **Paramètres et simulation** : activation des envois, usage des prix du
+  catalogue, sources et offres autorisées (avancées), historique et simulation
+  fictive d'une demande client, incluant le nom du client ou de l'entreprise
+  si souhaité.
+
+L'ancienne adresse /backend/devis-auto/ redirige vers l'onglet
+Paramètres et simulation. Les anciens POST de configuration restent
+acceptés pour ne pas perdre les données d'un formulaire déjà ouvert, et
+la route privée d'aperçu PDF historique est conservée.
+
+Le mode simulation n'enregistre aucune information du client, et le
+nom d'entreprise (ou la case entreprise) déclenche le traitement manuel
+prévu. Aucune migration ni basculement des envois n'est effectué
+par cette refonte d'interface.

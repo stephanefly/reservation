@@ -124,8 +124,10 @@ class QuoteControlViewTests(TestCase):
         self.assertEqual(self.client.get(self.url).status_code, 302)
         self.client.force_login(self.staff)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Devis automatiques")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/backend/catalogue/", response["Location"])
+        canonical = self.client.get(response["Location"])
+        self.assertContains(canonical, "Paramétrage des devis")
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
     def test_save_prices_sources_and_activation_requires_confirmation(self):
@@ -163,7 +165,7 @@ class QuoteControlViewTests(TestCase):
         fields.update({"pack_" + k: v for k, v in default_pack_prices().items()})
         response = self.client.post(self.url, fields)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("sources", response.context["form"].errors)
+        self.assertIn("sources", response.context["settings_form"].errors)
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
     def test_simulation_is_read_only_and_pdf_is_private(self):
@@ -180,7 +182,7 @@ class QuoteControlViewTests(TestCase):
             client=client, event_details=details, event_product=product,
             event_option=option, prix_brut=0, num_devis=100,
         )
-        response = self.client.get(self.url, {"event": event.pk})
+        response = self.client.get(self.url, {"event": event.pk}, follow=True)
         self.assertContains(response, "400")
         self.assertFalse(AutoQuoteLog.objects.exists())
         event.refresh_from_db()

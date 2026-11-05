@@ -1,0 +1,169 @@
+{# Contenu unique du second onglet Catalogue. Pas de menu Devis auto séparé. #}
+<div class="catalog-auto" id="automation">
+  <section class="panel" aria-labelledby="auto-config-title">
+    <div class="catalog-auto-title">
+      <h2 id="auto-config-title">Paramétrage des devis</h2>
+      <span class="catalog-auto-status {% if config.enabled %}on{% endif %}">
+        Envoi {% if config.enabled %}activé{% else %}désactivé{% endif %}
+      </span>
+    </div>
+    <p class="meta">Définissez les règles de calcul et d'envoi. Entreprises et recommandations restent toujours manuelles.</p>
+    {% if saved_settings %}<p class="success" role="status"><strong>Paramètres enregistrés.</strong> Aucun devis existant n'est modifié.</p>{% endif %}
+    <form method="post" action="{% url 'admin_catalog' %}?tab=automation#automation">
+      {% csrf_token %}
+      <input type="hidden" name="operation" value="settings">
+      <label class="catalog-auto-switch">
+        {{ settings_form.enabled }}
+        <span><strong>Envoi automatique des devis</strong><small>Un PDF est envoyé uniquement si la demande répond aux règles du CRM.</small></span>
+      </label>
+      <label class="catalog-auto-switch">
+        {{ settings_form.catalog_enabled }}
+        <span><strong>Utiliser les prix du catalogue</strong><small>Machines et packs compatibles. <a href="{% url 'admin_catalog' %}?tab=offres">Modifier les offres</a>.</small></span>
+      </label>
+      <label class="catalog-auto-switch">
+        {{ settings_form.confirm_activation }}
+        <span><strong>Je confirme les tarifs et les règles d'envoi</strong><small>Confirmation nécessaire avant toute activation.</small></span>
+      </label>
+      {% for error in settings_form.confirm_activation.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+      {% for error in settings_form.non_field_errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+
+      <details class="catalog-auto-more" {% if settings_form.errors %}open{% endif %}>
+        <summary>Réglages avancés : sources et offres autorisées</summary>
+        <div class="catalog-auto-form-grid">
+          <div>
+            <h3>Origine des demandes</h3>
+            <p class="meta">Sélectionnez les sources pouvant recevoir un devis auto.</p>
+            <div class="catalog-auto-checks">{{ settings_form.sources }}</div>
+            {% for error in settings_form.sources.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <h3>Ancien mode : machines et packs</h3>
+            <p class="meta">Utilisés uniquement si les prix du catalogue sont désactivés.</p>
+            <div class="catalog-auto-checks">{{ settings_form.products }}</div>
+            <div class="catalog-auto-checks">{{ settings_form.packs }}</div>
+            {% for error in settings_form.products.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+            {% for error in settings_form.packs.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+        <details class="catalog-auto-more">
+          <summary>Prix historiques de l'ancien mode</summary>
+          <p class="meta">Ces montants ne modifient pas les tarifs enregistrés dans le Catalogue.</p>
+          <div class="catalog-auto-form-grid">
+            <div>
+              <h3>Machines (5 h)</h3>
+              {% for item in auto_product_rows %}
+              <div class="catalog-auto-price-row"><label for="{{ item.field.id_for_label }}">{{ item.label }}</label>{{ item.field }}</div>
+              {% for error in item.field.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+              {% endfor %}
+            </div>
+            <div>
+              <h3>Packs</h3>
+              {% for item in auto_pack_rows %}
+              <div class="catalog-auto-price-row"><label for="{{ item.field.id_for_label }}">{{ item.label }}</label>{{ item.field }}</div>
+              {% for error in item.field.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+        </details>
+      </details>
+      <button type="submit">Enregistrer les paramètres</button>
+    </form>
+    <details class="catalog-auto-more">
+      <summary>Historique et alertes — {{ sent_count }} envoyés, {{ manual_count }} manuels, {{ error_count }} erreurs</summary>
+      <div class="catalog-auto-table-wrap">
+        <table class="catalog-auto-table">
+          <thead><tr><th>Date</th><th>Dossier</th><th>Résultat</th><th>Montant</th><th>Motif</th></tr></thead>
+          <tbody>
+            {% for row in logs %}
+            <tr>
+              <td>{{ row.created_at|date:"d/m/Y H:i" }}</td>
+              <td>#{{ row.event_id }}</td>
+              <td>{{ row.get_outcome_display }}</td>
+              <td>{% if row.amount %}{{ row.amount }} €{% else %}—{% endif %}</td>
+              <td>{{ row.reason }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="5">Aucun envoi enregistré.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section class="panel" id="simulation" aria-labelledby="auto-sim-title">
+    <h2 id="auto-sim-title">Simulation d'une demande client</h2>
+    <p class="meta">Sélectionnez une machine ou un pack comme si vous étiez un client. Rien n'est enregistré ni envoyé.</p>
+    <form method="post" action="{% url 'admin_catalog' %}?tab=automation#simulation">
+      {% csrf_token %}
+      <input type="hidden" name="operation" value="simulate">
+      <div class="catalog-auto-form-grid">
+        <div>
+          <h3>Machines demandées</h3>
+          <div class="catalog-auto-checks">{{ simulation_form.products }}</div>
+          {% for error in simulation_form.products.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+          <details class="catalog-auto-more" {% if simulation_form.is_bound %}open{% endif %}>
+            <summary>Ajouter des options</summary>
+            <div class="catalog-auto-checks">{{ simulation_form.options }}</div>
+            <label class="catalog-auto-field" for="{{ simulation_form.portecles.id_for_label }}">Porte-clés (quantité) {{ simulation_form.portecles }}</label>
+            {% for error in simulation_form.options.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+            {% for error in simulation_form.portecles.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+          </details>
+        </div>
+        <div>
+          <h3>Informations de la demande</h3>
+          <div class="catalog-auto-input-grid">
+            <label class="catalog-auto-field" for="{{ simulation_form.duration.id_for_label }}">Durée {{ simulation_form.duration }}</label>
+            <label class="catalog-auto-field" for="{{ simulation_form.postal_code.id_for_label }}">Code postal {{ simulation_form.postal_code }}</label>
+            <label class="catalog-auto-field" for="{{ simulation_form.source.id_for_label }}">Origine {{ simulation_form.source }}</label>
+          </div>
+          {% for error in simulation_form.duration.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+          {% for error in simulation_form.postal_code.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+          {% for error in simulation_form.source.errors %}<p class="field-errors">{{ error }}</p>{% endfor %}
+          <details class="catalog-auto-more" {% if simulation_form.is_bound %}open{% endif %}>
+            <summary>Nom du client ou de l'entreprise (facultatif)</summary>
+            <div class="catalog-auto-input-grid">
+              <label class="catalog-auto-field" for="{{ simulation_form.client_name.id_for_label }}">Nom du client {{ simulation_form.client_name }}</label>
+              <label class="catalog-auto-field" for="{{ simulation_form.company_name.id_for_label }}">Nom de l'entreprise {{ simulation_form.company_name }}</label>
+            </div>
+            <label class="catalog-auto-switch">{{ simulation_form.business }} <span>Client entreprise</span></label>
+            <p class="meta">Les entreprises sont toujours dirigées vers un devis manuel.</p>
+          </details>
+          <button type="submit">Simuler le devis</button>
+        </div>
+      </div>
+    </form>
+
+    {% if simulation %}
+    <div class="catalog-auto-result" role="status">
+      <h3>Résultat de la simulation{% if simulation.client_name %} — {{ simulation.client_name }}{% endif %}</h3>
+      <p class="meta">{{ simulation.products|join:" + " }} · {{ simulation.duration }} h · {{ simulation.postal_code }}</p>
+      {% if simulation.company_name %}<p class="meta">Entreprise : {{ simulation.company_name }}</p>{% endif %}
+      {% if simulation.options %}<p class="meta">Options : {{ simulation.options|join:", " }}{% if simulation.quantity %} · {{ simulation.quantity }} porte-clés{% endif %}</p>{% elif simulation.quantity %}<p class="meta">{{ simulation.quantity }} porte-clés</p>{% endif %}
+      {% if simulation.analysis.eligible %}
+        <strong>{{ simulation.analysis.label }}</strong>
+        {% if simulation.price_detail %}
+        <div class="catalog-auto-price-row"><span>Prix avant remise</span><strong>{{ simulation.price_detail.reference }} €</strong></div>
+        {% if simulation.price_detail.product_discount %}<div class="catalog-auto-price-row"><span>Remise machine</span><strong>−{{ simulation.price_detail.product_discount }} €</strong></div>{% endif %}
+        {% if simulation.price_detail.pack_discount %}<div class="catalog-auto-price-row"><span>Remise pack</span><strong>−{{ simulation.price_detail.pack_discount }} €</strong></div>{% endif %}
+        {% endif %}
+        <div class="catalog-auto-price-row catalog-auto-total"><span>Prix final TTC</span><strong>{{ simulation.analysis.amount }} € TTC</strong></div>
+      {% else %}
+        <strong>Devis à traiter manuellement</strong>
+        <p>{{ simulation.analysis.reason }}</p>
+      {% endif %}
+      <p class="meta">Simulation uniquement : aucun e-mail, aucun PDF et aucune fiche client ne sont créés.</p>
+    </div>
+    {% elif simulation_form.is_bound %}
+      <p class="field-errors" role="alert">Vérifiez les champs indiqués, puis relancez le calcul.</p>
+    {% endif %}
+
+    {% if preview %}
+    <details class="catalog-auto-more">
+      <summary>Aperçu d'un ancien dossier CRM</summary>
+      {% if preview.eligible %}
+        <p>{{ preview.label }} : {{ preview.amount }} €</p>
+        <a href="{% url 'admin_auto_quotes_preview_pdf' preview_event.id %}" target="_blank" rel="noopener">Voir le PDF de test</a>
+      {% else %}<p>{{ preview.reason }}</p>{% endif %}
+    </details>
+    {% endif %}
+  </section>
+</div>

@@ -70,6 +70,12 @@ class QuoteSimulationForm(forms.Form):
         required=False, min_value=0, max_value=1000,
         initial=0, label="Porte-cles (quantite)",
     )
+    client_name = forms.CharField(
+        required=False, max_length=120, label="Nom du client",
+    )
+    company_name = forms.CharField(
+        required=False, max_length=120, label="Nom de l'entreprise",
+    )
     business = forms.BooleanField(
         required=False, label="Demande d'entreprise (traitement manuel)",
     )
@@ -86,8 +92,9 @@ class QuoteSimulationForm(forms.Form):
         # Ces objets n'ont pas de PK ; aucune operation save n'est appelee.
         event = type("SimulatedEvent", (), {})()
         event.client = Client(
-            nom="Simulation", how_find=data["source"],
-            raison_sociale=data["business"],
+            nom=data.get("client_name") or "Simulation",
+            how_find=data["source"],
+            raison_sociale=data.get("company_name") or data["business"],
         )
         event.event_product = EventProduct(**{
             key: key in selection for key, _ in PRODUITS
@@ -120,6 +127,8 @@ class QuoteSimulationForm(forms.Form):
             }
         return {
             "analysis": result,
+            "client_name": data.get("client_name") or "",
+            "company_name": data.get("company_name") or "",
             "price_detail": price_detail,
             "products": [label for key, label in PRODUITS if key in selection],
             "options": [label for key, label in SIM_OPTIONS if key in selected_options],

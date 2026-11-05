@@ -13,7 +13,7 @@ class FreeQuoteSimulationTests(TestCase):
     def setUp(self):
         self.staff = User.objects.create_user("simulation-staff", password="test-only", is_staff=True)
         self.client.force_login(self.staff)
-        self.url = reverse("admin_auto_quotes")
+        self.url = reverse("admin_catalog")
         self.config = AutoQuoteSettings.objects.create(pk=1)
 
     def scenario(self, **changes):
@@ -28,13 +28,13 @@ class FreeQuoteSimulationTests(TestCase):
         return self.client.get(self.url, query)
 
     def test_dashboard_has_only_two_primary_panels(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, {"tab": "automation"})
         self.assertEqual(response.status_code, 200)
         page = response.content.decode()
-        self.assertEqual(page.count('class="auto-panel"'), 2)
-        self.assertIn('id="settings-title">Paramétrage', page)
-        self.assertIn('id="simulation-title">Simulation', page)
-        self.assertIn("Choisissez les machines", page)
+        self.assertIn('aria-current="page">Paramètres et simulation', page)
+        self.assertIn('id="auto-config-title">Paramétrage des devis', page)
+        self.assertIn("Simulation d'une demande client", page)
+        self.assertIn("Machines demandées", page)
         self.assertNotIn("Voir le calcul", page)
         self.assertNotIn("Choisissez une demande récente", page)
 

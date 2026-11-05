@@ -4,17 +4,14 @@ from copy import copy
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from app.models import Event
 from app.module.devis_pdf.generate_pdf import generate_pdf_devis
-from .catalog import PACKS, PRODUITS
 from .engine import analyse_quote
-from .forms import QuoteControlForm
-from .models import AutoQuoteSettings, AutoQuoteLog
-from .simulation import QuoteSimulationForm
+from .models import AutoQuoteSettings
 
 
 def event_queryset():
@@ -26,57 +23,20 @@ def event_queryset():
 @staff_member_required(login_url="/login/")
 @require_http_methods(["GET", "POST"])
 def admin_quotes(request):
-    config, _ = AutoQuoteSettings.objects.get_or_create(pk=1)
-    form = QuoteControlForm(
-        request.POST if request.method == "POST" else None,
-        config=config,
-    )
-    if request.method == "POST" and form.is_valid():
-        form.save_to_config(config)
-        return redirect(reverse("admin_auto_quotes") + "?saved=1")
+    """Ancienne URL : retour au Catalogue unique.
 
-    preview = None
-    event = None
-    event_id = (request.GET.get("event") or "").strip()
-    if event_id.isdigit():
-        event = event_queryset().filter(pk=int(event_id)).first()
-        if event is None:
-            preview = {"eligible": False, "reason": "Devis introuvable"}
-        else:
-            preview = analyse_quote(event, config, preview=True)
+    Les POST de l'ancien formulaire sont encore pris en charge pour ne pas
+    perdre de reglages lors d'un deploiement avec un onglet deja ouvert.
+    """
+    from .catalog_views import admin_catalog
 
-    # Simulation libre, sans dossier, sans ecriture et sans envoi d'e-mail.
-    simulation_form = QuoteSimulationForm(
-        request.GET if request.GET.get("simulate") == "1" else None,
-    )
-    simulation = None
-    if request.GET.get("simulate") == "1" and simulation_form.is_valid():
-        simulation = simulation_form.simulate(config)
+    if request.method == "POST":
+        return admin_catalog(request)
 
-    logs = list(AutoQuoteLog.objects.order_by("-created_at")[:40])
-    product_rows = [
-        {"key": key, "label": label, "field": form["product_" + key]}
-        for key, label in PRODUITS
-    ]
-    pack_rows = [
-        {"key": pack[0], "label": pack[1], "field": form["pack_" + pack[0]]}
-        for pack in PACKS
-    ]
-    return render(request, "quote_control/dashboard.html", {
-        "config": config,
-        "form": form,
-        "product_rows": product_rows,
-        "pack_rows": pack_rows,
-        "logs": logs,
-        "error_count": AutoQuoteLog.objects.filter(outcome="error").count(),
-        "sent_count": AutoQuoteLog.objects.filter(outcome="sent").count(),
-        "manual_count": AutoQuoteLog.objects.filter(outcome="manual").count(),
-        "preview": preview,
-        "preview_event": event,
-        "simulation_form": simulation_form,
-        "simulation": simulation,
-        "saved": request.GET.get("saved") == "1",
-    })
+    target = reverse("admin_catalog")
+    query = request.GET.copy()
+    query["tab"] = "automation"
+    return redirect(target + "?" + query.urlencode() + "#automation")
 
 
 @staff_member_required(login_url="/login/")
