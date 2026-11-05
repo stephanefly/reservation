@@ -5,6 +5,7 @@ import logging
 from django.db import DatabaseError
 
 from .engine import analyse_quote
+from .auto_policy import effective_quote_config, has_automatic_offers
 from .models import AutoQuoteSettings, AutoQuoteLog
 
 logger = logging.getLogger(__name__)
@@ -13,17 +14,18 @@ logger = logging.getLogger(__name__)
 def process_instant_quote(event, send_mail):
     """Traitement sécurisé d'une nouvelle demande.
 
-    La fonction n'intervient pas lorsque la configuration est absente ou OFF.
+    La fonction n'intervient pas si aucune offre du catalogue n'est eligible.
     Aucun statut de réservation, paiement ou signature n'est validé.
     """
     try:
-        config = AutoQuoteSettings.objects.filter(pk=1).first()
+        # La case du Catalogue pilote les envois : aucun autre interrupteur.
+        # Si la table n'est pas installee, les envois restent suspendus.
+        if not has_automatic_offers():
+            return False
+        stored_config = AutoQuoteSettings.objects.filter(pk=1).first()
+        config = effective_quote_config(stored_config, automatic_offers=True)
     except DatabaseError:
-        # Le code peut être déployé avant l'installation des nouvelles tables.
-        logger.warning("Tables devis automatiques non installées ; envois suspendus.")
-        return False
-
-    if not config or not config.enabled:
+        logger.warning("Catalogue des devis indisponible ; envois suspendus.")
         return False
 
     source = (event.client.how_find or "").strip()
