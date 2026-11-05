@@ -67,6 +67,11 @@
                         <i class="fas fa-magic" aria-hidden="true"></i> Devis auto
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/backend/catalogue/' in request.path %}active{% endif %}" href="{% url 'admin_catalog' %}">
+                        <i class="fas fa-tags" aria-hidden="true"></i> Catalogue
+                    </a>
+                </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'unopened_leads' %}active{% endif %}" href="{% url 'unopened_leads' %}"><i class="fas fa-phone-alt" aria-hidden="true"></i> À relancer</a>
