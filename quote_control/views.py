@@ -25,19 +25,17 @@ def event_queryset():
 def admin_quotes(request):
     """Ancienne URL : retour au Catalogue unique.
 
-    Les POST de l'ancien formulaire sont encore pris en charge pour ne pas
-    perdre de reglages lors d'un deploiement avec un onglet deja ouvert.
+    Les POST de l'ancien formulaire sont redirigés sans changer les règles
+    de calcul ou d'envoi, désormais pilotées par le catalogue.
     """
-    from .catalog_views import admin_catalog
-
-    if request.method == "POST":
+     if request.method == "POST":
         # Ancien formulaire retiré : ne jamais réactiver une configuration cachée.
         return redirect(reverse("admin_catalog") + "?tab=simulation")
 
     target = reverse("admin_catalog")
     query = request.GET.copy()
     query["tab"] = "simulation"
-    return redirect(target + "?" + query.urlencode() + "#automation")
+    return redirect(target + "?" + query.urlencode() + "#simulation")
 
 
 @staff_member_required(login_url="/login/")
