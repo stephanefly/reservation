@@ -45,6 +45,9 @@ BIC_B = config.get('BIC_B')
 
 MAIL_MYSELFIEBOOTH = config.get('MAIL_MYSELFIEBOOTH')
 MAIL_BCC = config.get('MAIL_BCC')
+# Copie visible Cc de tous les e-mails du CRM. Vide tant que l'adresse
+# de destination n'a pas été explicitement confirmée.
+MAIL_ADMIN_CC = config.get('MAIL_ADMIN_CC', '')
 MP = config.get('MP')
 # Adresse du responsable contenu recevant les demandes « À poster ».
 POST_PRESTA_PUBLICATION_EMAIL = config.get(
