@@ -1,7 +1,7 @@
-"""Administration unique du Catalogue : offres, regles et simulation.
+"""Catalogue commercial : choix des offres automatisables et simulation fidèle.
 
-Le chemin historique /backend/devis-auto/ reste une route de compatibilite,
-mais aucun second ecran ni second menu ne sont necessaires.
+Un seul réglage : cocher l'éligibilité sur une machine ou un pack.
+Les anciens formulaires de paramétrage ne peuvent plus changer les envois.
 """
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404
@@ -9,9 +9,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .catalog import PACKS, PRODUITS
+from .auto_policy import effective_quote_config
 from .catalog_forms import CatalogEntryForm
-from .forms import QuoteControlForm
 from .models import AutoQuoteLog, AutoQuoteSettings, CatalogEntry
 from .price_breakdown import decorate_offers
 from .simulation import QuoteSimulationForm
@@ -20,65 +19,64 @@ from .simulation import QuoteSimulationForm
 @staff_member_required(login_url="/login/")
 @require_http_methods(["GET", "POST"])
 def admin_catalog(request):
-    """Une seule page, deux onglets internes. Aucune ecriture pour simuler."""
+    """Edition catalogue et simulation : aucune autre activation requise."""
     config, _ = AutoQuoteSettings.objects.get_or_create(pk=1)
-    legacy_settings_post = request.path.rstrip("/").endswith("/devis-auto")
-    settings_post = request.method == "POST" and (
-        request.POST.get("operation") == "settings" or legacy_settings_post
+    simulation_post = (
+        request.method == "POST" and request.POST.get("operation") == "simulate"
     )
-    simulation_post = request.method == "POST" and request.POST.get("operation") == "simulate"
-    active_tab = "automation" if (
-        settings_post or simulation_post or request.GET.get("tab") == "automation"
+    legacy_settings_post = request.method == "POST" and (
+        request.POST.get("operation") == "settings"
+        or request.path.rstrip("/").endswith("/devis-auto")
+    )
+    active_tab = "simulation" if (
+        simulation_post or legacy_settings_post
+        or request.GET.get("tab") in ("simulation", "automation")
         or request.GET.get("simulate") == "1"
         or request.GET.get("event", "").isdigit()
     ) else "offres"
 
-    # Ne jamais valider une offre lorsque l'utilisateur enregistre les regles
-    # d'envoi ; les deux formulaires restent entierement independants.
-    identifier = (request.POST.get("entry") if request.method == "POST" and not (settings_post or simulation_post)
-                  else request.GET.get("edit")) or ""
+    # Les anciens POST de réglages ne réactivent jamais un système parallèle.
+    if legacy_settings_post:
+        return redirect(reverse("admin_catalog") + "?tab=simulation")
+
+    identifier = (
+        request.POST.get("entry") if request.method == "POST" and not simulation_post
+        else request.GET.get("edit")
+    ) or ""
     identifier = identifier.strip()
     if identifier and not identifier.isdigit():
         raise Http404("Identifiant de catalogue invalide")
     entry = get_object_or_404(CatalogEntry, pk=int(identifier)) if identifier else None
-
     form = CatalogEntryForm(
-        request.POST if request.method == "POST" and not (settings_post or simulation_post) else None,
+        request.POST if request.method == "POST" and not simulation_post else None,
         instance=entry,
     )
-    settings_form = QuoteControlForm(
-        request.POST if settings_post else None,
-        config=config,
-    )
+    if request.method == "POST" and not simulation_post and form.is_valid():
+        saved = form.save()
+        return redirect(reverse("admin_catalog") + f"?tab=offres&saved={saved.pk}#edition")
 
-    if request.method == "POST":
-        if settings_post and settings_form.is_valid():
-            settings_form.save_to_config(config)
-            return redirect(reverse("admin_catalog") + "?tab=automation&saved_settings=1#automation")
-        if not settings_post and not simulation_post and form.is_valid():
-            saved = form.save()
-            return redirect(reverse("admin_catalog") + f"?tab=offres&saved={saved.pk}#edition")
-
-    simulation_requested = simulation_post or request.GET.get("simulate") == "1"
+    effective = effective_quote_config(config)
     simulation_form = QuoteSimulationForm(
         request.POST if simulation_post
         else request.GET if request.GET.get("simulate") == "1"
         else None,
     )
     simulation = None
-    if simulation_requested and simulation_form.is_valid():
-        simulation = simulation_form.simulate(config)
+    if simulation_form.is_bound and simulation_form.is_valid():
+        simulation = simulation_form.simulate(effective)
 
-    # Conserver l'aperçu prive des anciens dossiers en lecture seule.
     preview = None
     preview_event = None
     event_id = (request.GET.get("event") or "").strip()
     if event_id.isdigit():
         from .engine import analyse_quote
         from .views import event_queryset
+
         preview_event = event_queryset().filter(pk=int(event_id)).first()
-        preview = (analyse_quote(preview_event, config, preview=True)
-                   if preview_event else {"eligible": False, "reason": "Devis introuvable"})
+        preview = (
+            analyse_quote(preview_event, effective, preview=True)
+            if preview_event else {"eligible": False, "reason": "Devis introuvable"}
+        )
 
     all_entries = decorate_offers(CatalogEntry.objects.all())
     if entry is not None:
@@ -87,36 +85,32 @@ def admin_catalog(request):
             {"available": False},
         )
 
-    logs = list(AutoQuoteLog.objects.order_by("-created_at")[:40]) if active_tab == "automation" else []
+    logs = (
+        list(AutoQuoteLog.objects.order_by("-created_at")[:40])
+        if active_tab == "simulation" else []
+    )
     return render(request, "quote_control/catalogue.html", {
         "form": form, "editing": entry,
         "product_rows": [x for x in all_entries if x.kind == "product"],
         "option_rows": [x for x in all_entries if x.kind == "option"],
         "pack_rows": [x for x in all_entries if x.kind == "pack"],
         "saved": request.GET.get("saved", "").isdigit(),
-        "saved_settings": request.GET.get("saved_settings") == "1",
-        "catalog_enabled": config.catalog_enabled,
-        "auto_enabled": config.enabled,
         "active_tab": active_tab,
-        "config": config,
-        "settings_form": settings_form,
-        "auto_product_rows": [
-            {"label": label, "field": settings_form["product_" + key]}
-            for key, label in PRODUITS
-        ],
-        "auto_pack_rows": [
-            {"label": pack[1], "field": settings_form["pack_" + pack[0]]}
-            for pack in PACKS
-        ],
+        "auto_enabled": effective.enabled,
+        "auto_offers_count": sum(
+            1 for x in all_entries if x.kind in ("product", "pack")
+            and x.active and x.auto_enabled
+        ),
+        "config": effective,
         "simulation_form": simulation_form,
         "simulation": simulation,
         "preview": preview,
         "preview_event": preview_event,
         "logs": logs,
         "sent_count": AutoQuoteLog.objects.filter(outcome="sent").count()
-            if active_tab == "automation" else 0,
+            if active_tab == "simulation" else 0,
         "manual_count": AutoQuoteLog.objects.filter(outcome="manual").count()
-            if active_tab == "automation" else 0,
+            if active_tab == "simulation" else 0,
         "error_count": AutoQuoteLog.objects.filter(outcome="error").count()
-            if active_tab == "automation" else 0,
+            if active_tab == "simulation" else 0,
     })

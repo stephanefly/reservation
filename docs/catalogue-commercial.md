@@ -172,3 +172,28 @@ Le mode simulation n'enregistre aucune information du client, et le
 nom d'entreprise (ou la case entreprise) déclenche le traitement manuel
 prévu. Aucune migration ni basculement des envois n'est effectué
 par cette refonte d'interface.
+
+
+## Fonctionnement simplifié (novembre 2026)
+
+L'automatisation est maintenant entièrement pilotée par le Catalogue.
+**Cocher « Activer les devis automatiques pour cette offre » puis enregistrer**
+suffit pour les nouvelles demandes éligibles. Il n'existe plus de second
+interrupteur à activer. Si aucune machine ni aucun pack n'est coché et actif,
+aucun devis n'est envoyé automatiquement.
+
+L'onglet **Simulation** reproduit les règles utilisées lors d'une
+vraie nouvelle demande : origine autorisée (Instagram, LinkedIn, site web
+ou Leboncoin), machine/pack actif et compatible, durée, options, contrôle
+du PDF et seuil minimum. Entreprises et recommandations sont toujours
+traitées manuellement. La simulation ne crée ni client ni e-mail.
+
+Les anciens paramètres restent dans la base pour compatibilité avec
+l'historique du code, mais ils sont ignorés pour les nouveaux envois.
+Les anciens formulaires d'activation ne changent plus ce comportement.
+
+**Important :** dès le déploiement sur PythonAnywhere, une offre cochée
+et enregistrée peut déclencher un véritable envoi sur une nouvelle
+demande compatible. En cas de doute, commencer avec toutes les offres
+décochées, vérifier la simulation, puis activer celles souhaitées.
+Aucune demande ancienne n'est envoyée rétroactivement.

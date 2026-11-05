@@ -11,7 +11,7 @@ from django.urls import reverse
 from app.models import Client, Event, EventDetails, EventOption, EventProduct
 from .catalog import default_pack_prices, default_product_prices, default_products, default_sources, PACKS
 from .engine import analyse_quote
-from .models import AutoQuoteLog, AutoQuoteSettings
+from .models import AutoQuoteLog, AutoQuoteSettings, CatalogEntry
 from .service import process_instant_quote
 
 
@@ -127,50 +127,39 @@ class QuoteControlViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/backend/catalogue/", response["Location"])
         canonical = self.client.get(response["Location"])
-        self.assertContains(canonical, "Paramétrage des devis")
+        self.assertContains(canonical, "Simulation de devis")
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
-    def test_save_prices_sources_and_activation_requires_confirmation(self):
+    def test_old_settings_post_no_longer_activates_quotes(self):
         self.client.force_login(self.staff)
         self.client.get(self.url)
-        fields = {
-            "enabled": "on",
-            "sources": ["INSTAGRAM"],
-            "products": ["photobooth"],
-            "packs": ["vogue-premium"],
-        }
-        fields.update({"product_" + k: v for k, v in default_product_prices().items()})
-        fields.update({"pack_" + k: v for k, v in default_pack_prices().items()})
-        fields["pack_vogue-premium"] = 700
-        response = self.client.post(self.url, fields)
-        self.assertContains(response, "Confirmez que les prix")
-        self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
-        fields["confirm_activation"] = "on"
-        response = self.client.post(self.url, fields)
+        response = self.client.post(self.url, {
+            "enabled": "on", "catalog_enabled": "on",
+            "confirm_activation": "on", "sources": ["INSTAGRAM"],
+        })
         self.assertEqual(response.status_code, 302)
-        config = AutoQuoteSettings.objects.get(pk=1)
-        self.assertTrue(config.enabled)
-        self.assertEqual(config.sources, ["INSTAGRAM"])
-        self.assertEqual(config.packs, ["vogue-premium"])
-        self.assertEqual(config.pack_prices["vogue-premium"], 700)
+        self.assertIn("tab=simulation", response["Location"])
+        self.assertFalse(AutoQuoteSettings.objects.filter(pk=1, enabled=True).exists())
 
-    def test_recommendation_cannot_be_authorized_by_form(self):
-        self.client.force_login(self.staff)
-        fields = {
-            "sources": ["RECOMMANDATION"],
-            "products": [],
-            "packs": [],
-        }
-        fields.update({"product_" + k: v for k, v in default_product_prices().items()})
-        fields.update({"pack_" + k: v for k, v in default_pack_prices().items()})
-        response = self.client.post(self.url, fields)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("sources", response.context["settings_form"].errors)
-        self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
+    def test_only_catalogue_selection_can_enable_automation(self):
+        from .auto_policy import effective_quote_config
+
+        config = AutoQuoteSettings.objects.create(
+            pk=1, enabled=True, catalog_enabled=False
+        )
+        self.assertFalse(effective_quote_config(config).enabled)
+        entry = CatalogEntry.objects.get(code="photobooth")
+        entry.auto_enabled = True
+        entry.save(update_fields=["auto_enabled"])
+        self.assertTrue(effective_quote_config(config).enabled)
+        self.assertTrue(effective_quote_config(config).catalog_enabled)
 
     def test_simulation_is_read_only_and_pdf_is_private(self):
         self.client.force_login(self.staff)
         config = AutoQuoteSettings.objects.create(id=1)
+        offer = CatalogEntry.objects.get(code="photobooth")
+        offer.auto_enabled = True
+        offer.save(update_fields=["auto_enabled"])
         client = Client.objects.create(nom="Test", mail="test@example.invalid",
                        numero_telephone="0100000000", how_find="INSTAGRAM")
         details = EventDetails.objects.create(date_evenement=date(2027, 3, 12),

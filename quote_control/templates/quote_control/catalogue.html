@@ -85,11 +85,11 @@
   <header>
     <p class="subtitle">CRM / Administration</p>
     <h1>Catalogue commercial</h1>
-    <p class="subtitle">Modifiez les offres et leurs prix au même endroit.</p>
+    <p class="subtitle">Prix, remises et envoi automatique : tout se règle sur chaque offre.</p>
   </header>
   <nav class="catalog-tabs" aria-label="Sections du catalogue">
     <a href="{% url 'admin_catalog' %}?tab=offres" {% if active_tab == 'offres' %}aria-current="page"{% endif %}>Offres et tarifs</a>
-    <a href="{% url 'admin_catalog' %}?tab=automation" {% if active_tab == 'automation' %}aria-current="page"{% endif %}>Paramètres et simulation</a>
+    <a href="{% url 'admin_catalog' %}?tab=simulation" {% if active_tab == 'simulation' %}aria-current="page"{% endif %}>Simulation</a>
   </nav>
 
   {% if active_tab == 'offres' %}
@@ -102,13 +102,13 @@
       <span><strong>Options :</strong> prix indicatifs, devis manuels.</span>
     </div>
     <div class="status-row">
-      <span><strong>Devis auto :</strong> {% if auto_enabled %}envois activés{% else %}envois désactivés{% endif %}.</span>
-      <span><strong>Prix du catalogue pour devis auto :</strong> {% if catalog_enabled %}activés{% else %}désactivés{% endif %}.</span>
+      <span><strong>Devis automatiques :</strong> {{ auto_offers_count }} offre(s) activée(s).</span>
+      <span><strong>Un seul réglage :</strong> cocher « Devis automatique » sur l'offre concernée.</span>
     </div>
     <details class="help-toggle">
       <summary>Ce qui ne change pas automatiquement</summary>
-      <p>Les anciens devis et PDF, les tarifs 3 h, les calculs des options et le formulaire client restent indépendants. Ajouter un nouveau produit ou pack ne crée pas sa carte sur le site.</p>
-      <p>Enregistrer un prix ici n'envoie pas de devis au client.</p>
+      <p>Les anciens devis, les tarifs 3 h, les prix des options et les nouveaux produits non pris en charge restent indépendants. Les demandes non sécurisées sont traitées manuellement.</p>
+      <p>Si « Devis automatique » est coché, les nouvelles demandes compatibles pourront recevoir un PDF dès l'enregistrement. Aucune demande passée n'est envoyée.</p>
     </details>
   </div>
 
@@ -126,7 +126,7 @@
           {% elif item.pricing.above_reference %}<span>Tarif supérieur à la base</span>
           {% else %}<span>Sans remise</span>{% endif %}</p>
           {% endif %}
-          {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
+          {% if item.auto_enabled %}<span class="tag">Envoi auto actif</span>{% endif %}
           {% if not item.active %}<span class="tag">Désactivée</span>{% endif %}
           <p class="meta">{{ item.code }}</p>
         </div>
@@ -163,7 +163,7 @@
           {% else %}
           <p class="meta">Prix de base non calculable : vérifier la composition du pack.</p>
           {% endif %}
-          {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
+          {% if item.auto_enabled %}<span class="tag">Envoi auto actif</span>{% endif %}
           {% if not item.active %}<span class="tag">Désactivé</span>{% endif %}
           <p class="meta">
             Machines : {{ item.product_codes|join:", " }}
@@ -249,7 +249,7 @@
         <details class="help-toggle">
           <summary>Besoin d'aide pour une offre ?</summary>
           <p><strong>Visible et disponible :</strong> désactiver une offre existante masque sa carte publique si elle est prise en charge.</p>
-          <p><strong>Éligible aux devis automatiques :</strong> ce choix seul ne déclenche aucun envoi. L'activation se gère dans « Paramètres et simulation ».</p>
+          <p><strong>Devis automatique :</strong> cocher cette case et enregistrer suffit pour automatiser les nouvelles demandes éligibles. Les entreprises et recommandations restent manuelles.</p>
           <p><strong>Code :</strong> identifiant technique utilisé par le CRM ; il ne peut pas être modifié après création.</p>
         </details>
       </div>

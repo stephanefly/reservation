@@ -35,7 +35,7 @@ class CatalogEntryForm(forms.ModelForm):
         labels = {
             "kind": "Type d'offre", "code": "Code unique", "name": "Nom commercial",
             "description": "Description", "price": "Prix TTC (€)",
-            "active": "Visible et disponible", "auto_enabled": "Éligible aux devis automatiques",
+            "active": "Visible et disponible", "auto_enabled": "Activer les devis automatiques pour cette offre",
         }
         help_texts = {
             "kind": "Machine, option ou pack.",
@@ -44,7 +44,7 @@ class CatalogEntryForm(forms.ModelForm):
             "description": "Facultative. Décrivez l'offre en une phrase.",
             "price": "Machines et packs déjà présents : affiché sur Tarifs et Brochure.",
             "active": "Décochez pour retirer l'offre de la vente. Les anciens devis restent intacts.",
-            "auto_enabled": "N'envoie aucun e-mail seul. Nécessite les autorisations dans Catalogue > Paramètres et simulation.",
+            "auto_enabled": "Une fois l'offre enregistrée, les nouvelles demandes compatibles peuvent être traitées automatiquement. Entreprises et recommandations restent manuelles.",
         }
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 
