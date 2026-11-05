@@ -1,6 +1,7 @@
 """Décision et calcul de devis : aucune écriture DB ni envoi de mail ici."""
 
 from app.module.data_bdd.event_pricing import calculate_option_total
+from django.db import DatabaseError
 from app.module.data_bdd.price import PRIX_PRODUITS
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from .catalog import PACKS, PACK_BY_KEY, PRODUCT_KEYS, SOURCE_KEYS
@@ -73,6 +74,16 @@ def analyse_quote(event, config, preview=False):
         delivery, _ = calcul_prix_distance(event)
     except (ValueError, TypeError, KeyError, AttributeError):
         return {"eligible": False, "reason": "Tarification à vérifier"}
+
+    # Bascule volontaire. Tant qu'elle est OFF, le calcul existant est inchange.
+    if getattr(config, "catalog_enabled", False):
+        try:
+            from .catalog_engine import analyse_catalog_quote
+            return analyse_catalog_quote(
+                event, selection, duration, product_list, total_options, delivery,
+            )
+        except (DatabaseError, ValueError, TypeError, AttributeError):
+            return {"eligible": False, "reason": "Catalogue indisponible : devis manuel"}
 
     pack_key = match_pack(event, selection) if duration == 5 else None
     discount_product = 0
