@@ -36,6 +36,11 @@
 .auto-field{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .auto-field input[type=number]{width:110px;border:1px solid #dcd7d0;border-radius:9px;padding:9px}
 .auto-input{border:1px solid #d8d4cf;padding:10px;border-radius:9px;max-width:210px;width:100%}
+.auto-legacy{background:#fff;border:1px solid #e8e2d7;border-radius:13px;padding:14px 18px;margin:0 0 18px}
+.auto-legacy summary{cursor:pointer;color:#4f3b21;font-weight:800;padding:5px 0}
+.auto-legacy > p{color:#64606a;font-size:.9rem;margin-top:10px}
+.auto-help{font-size:.88rem;line-height:1.5;color:#68616b}
+.auto-small-link{font-weight:700;white-space:nowrap}
 @media(max-width:660px){.auto-dashboard{padding:16px 10px}.auto-card{padding:16px}.auto-table{font-size:.8rem}}
 </style>
 {% endblock %}
@@ -44,7 +49,7 @@
 <div class="auto-dashboard">
     <header class="auto-head">
         <div><p class="auto-sub">CRM · Administration</p><h1>Devis automatiques</h1>
-            <p class="auto-sub">Pilotez les offres, les exceptions et les envois depuis une seule page.</p>
+            <p class="auto-sub">Choisissez les règles d'envoi et testez vos devis avant activation.</p>
         </div>
         <span class="auto-pill {% if config.enabled %}on{% endif %}">
             {% if config.enabled %}Envoi automatique actif{% else %}Envoi automatique désactivé{% endif %}
@@ -52,9 +57,12 @@
     </header>
 
     {% if saved %}<div class="auto-success" role="status">Configuration enregistrée.</div>{% endif %}
-    <div class="auto-note"><strong>Recommandation et entreprises : toujours manuelles.</strong>
-        Aucun envoi automatique ne valide une réservation ni ne facture un acompte.
-        Le contrôle des stocks et des déplacements reste organisé par l'équipe.
+    <div class="auto-note">
+      <strong>Deux réglages différents.</strong> Modifier un prix dans le
+      <a href="{% url 'admin_catalog' %}" class="auto-small-link">Catalogue commercial</a>
+      met à jour les tarifs des machines et packs existants sur Tarifs/Brochure.
+      Les interrupteurs ci-dessous pilotent seulement le calcul et l'envoi des <strong>devis automatiques</strong>.
+      <br>Recommandations et entreprises : traitement manuel.
     </div>
 
     <div class="auto-grid">
@@ -69,30 +77,31 @@
     <form method="post" action="{% url 'admin_auto_quotes' %}">
         {% csrf_token %}
         <div class="auto-card">
-            <h2>Activation générale</h2>
+            <h2>1. Activer les devis automatiques</h2>
             <label class="auto-label" for="{{ form.enabled.id_for_label }}">{{ form.enabled }} <strong>Autoriser l'envoi automatique de devis PDF</strong></label>
-            <p>Au départ, le module est désactivé. Les modifications sont enregistrées sans envoi immédiat.</p>
-            <label class="auto-label" for="{{ form.catalog_enabled.id_for_label }}">{{ form.catalog_enabled }} <strong>Utiliser les tarifs des machines et packs du catalogue commercial</strong></label>
-            <p>Le mode catalogue est désactivé par défaut. Les options conservent les tarifs historiques du PDF. <a href="{% url 'admin_catalog' %}">Administrer le catalogue</a></p>
-            <label class="auto-label" for="{{ form.confirm_activation.id_for_label }}">{{ form.confirm_activation }} Je confirme avoir vérifié les prix, les packs et les e-mails avant l'activation.</label>
+            <p class="auto-help">Si cette case est décochée, aucun devis n'est envoyé automatiquement. Enregistrer ici ne déclenche pas d'envoi immédiat.</p>
+            <label class="auto-label" for="{{ form.catalog_enabled.id_for_label }}">{{ form.catalog_enabled }} <strong>Utiliser les prix du catalogue pour les devis auto</strong></label>
+            <p class="auto-help">Cochez pour calculer avec les prix des <strong>machines et packs</strong> du catalogue. Les options et tarifs 3 h gardent leurs règles actuelles. <a href="{% url 'admin_catalog' %}">Modifier les offres</a></p>
+            <label class="auto-label" for="{{ form.confirm_activation.id_for_label }}">{{ form.confirm_activation }} Je confirme avoir vérifié les tarifs, PDF et e-mails.</label>
             {% for err in form.confirm_activation.errors %}<div class="auto-error">{{ err }}</div>{% endfor %}
         </div>
 
         <div class="auto-grid">
             <section class="auto-card">
-                <h2>Sources autorisées</h2><p>Recommandation reste exclue, sans possibilité de la réactiver.</p>
+                <h2>2. Origine des demandes</h2><p class="auto-help">Cochez les sources pouvant recevoir un devis automatique. Recommandation et entreprises restent manuelles.</p>
                 <div class="auto-choice-list">{{ form.sources }}</div>
                 <div class="auto-note">Recommandation : manuel · Entreprises : manuel</div>
             </section>
             <section class="auto-card">
-                <h2>Prestations seules</h2>
-                <p>Une seule machine et durée 3 h ou 5 h. Les prix de 3 h restent ceux du catalogue CRM.</p>
+                <h2>3. Machines seules (ancien mode)</h2>
+                <p class="auto-help">Utilisé uniquement lorsque le calcul avec le catalogue est désactivé. Les durées 3 h suivent toujours leurs tarifs historiques.</p>
                 <div class="auto-choice-list">{{ form.products }}</div>
             </section>
         </div>
 
-        {% if config.catalog_enabled %}<div class="auto-note"><strong>Mode catalogue actif.</strong> Les cases produits/packs et leurs prix affichés ci-dessous sont les réglages historiques, ignorés pour le calcul en mode catalogue. Gérez les offres éligibles et les tarifs dans <a href="{% url 'admin_catalog' %}">Catalogue commercial</a>. Les tarifs des options restent ceux du PDF existant.</div>{% endif %}
-
+        <details class="auto-legacy" {% if not config.catalog_enabled %}open{% endif %}>
+          <summary>Tarifs et packs de l'ancien mode {% if config.catalog_enabled %}(non utilisés){% else %}(utilisés){% endif %}</summary>
+          <p class="auto-help">Dans le nouveau mode catalogue, modifiez les offres depuis <a href="{% url 'admin_catalog' %}">Catalogue commercial</a>. Les champs ci-dessous sont conservés pour l'ancien mode uniquement.</p>
         <section class="auto-card">
             <h2>Tarifs des machines (5 h, TTC)</h2>
             <p>Le montant final est calculé côté serveur, avec les options et le déplacement éventuel.</p>
@@ -119,19 +128,20 @@
             </div>
         </section>
 
+        </details>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px">
             <button class="auto-btn" type="submit">Enregistrer la configuration</button>
-            <span class="auto-sub">Les modifications s'appliqueront aux nouveaux devis, pas aux devis déjà signés.</span>
+            <span class="auto-sub">Les devis déjà établis ne sont pas recalculés.</span>
         </div>
     </form>
 
     <section class="auto-card">
-        <h2>Simuler un devis existant</h2>
-        <p>Vérification sans envoyer d'e-mail ni modifier les montants enregistrés.</p>
+        <h2>4. Tester sans envoyer</h2>
+        <p class="auto-help">Indiquez le numéro interne du dossier CRM. Vous verrez le tarif calculé et pourrez ouvrir son PDF de test, sans e-mail ni modification du devis enregistré.</p>
         <form class="auto-field" method="get" action="{% url 'admin_auto_quotes' %}">
             <label for="preview-id">Numéro de dossier CRM</label>
             <input class="auto-input" type="number" id="preview-id" name="event" min="1" required value="{% if preview_event %}{{ preview_event.id }}{% endif %}">
-            <button class="auto-btn alt" type="submit">Simuler</button>
+            <button class="auto-btn alt" type="submit">Vérifier le devis</button>
         </form>
         {% if preview %}
             <hr>

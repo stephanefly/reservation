@@ -2,109 +2,207 @@
 {% block title %}Catalogue commercial{% endblock %}
 {% block extra_css %}
 <style>
-.com-catalog{max-width:1360px;margin:auto;padding:25px 18px;color:#252127}
-.com-catalog h1{font-weight:800;font-size:1.9rem}.com-catalog h2{font-size:1.18rem;font-weight:750}
-.com-catalog .subtitle{color:#66616a}.com-catalog .cols{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:20px}
-.com-catalog .panel{background:white;border:1px solid #e4dcc9;border-radius:15px;padding:22px;margin-bottom:18px;box-shadow:0 4px 16px #00000008}
+.com-catalog{max-width:1360px;margin:0 auto;padding:25px 18px 50px;color:#252127}
+.com-catalog h1{font-weight:800;font-size:1.9rem;margin:4px 0}
+.com-catalog h2{font-size:1.14rem;font-weight:750;margin-bottom:12px}
+.com-catalog .subtitle,.com-catalog .muted{color:#66616a}
+.com-catalog .subtitle{margin:5px 0}
+.com-catalog .cols{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:20px;align-items:start}
+.com-catalog .panel{background:#fff;border:1px solid #e4dcc9;border-radius:15px;padding:21px;margin-bottom:18px;box-shadow:0 4px 16px #00000008}
 .com-catalog .item{padding:11px 0;border-bottom:1px solid #eee}.com-catalog .item:last-child{border:0}
-.com-catalog .item a{font-weight:750;color:#574023}.com-catalog .meta{color:#777;font-size:.85rem}
-.com-catalog .tag{font-size:.77rem;background:#f0e8d5;color:#594315;padding:3px 8px;border-radius:5px}
-.com-catalog .off{opacity:.55}.com-catalog .alert-note{background:#fff8eb;border-left:4px solid #ba9245;padding:15px;margin:16px 0}
-.com-catalog label{font-weight:600;display:block;margin-top:12px}
-.com-catalog input[type=text],.com-catalog input[type=number],.com-catalog select,.com-catalog textarea{
-width:100%;border:1px solid #c9c5bd;border-radius:8px;padding:9px;background:white}
-.com-catalog input[type=checkbox]{accent-color:#937134;margin-right:7px}
-.com-catalog ul{padding-left:0;list-style:none}.com-catalog ul li label{font-weight:400;margin:5px 0}
-.com-catalog .field-errors{color:#9b1934;font-size:.9rem}
+.com-catalog .item a{font-weight:750;color:#574023}
+.com-catalog .item-title{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.com-catalog .item-price{font-weight:800;white-space:nowrap}
+.com-catalog .meta{color:#6c6670;font-size:.85rem;margin:4px 0}
+.com-catalog .tag{display:inline-block;font-size:.77rem;background:#f0e8d5;color:#594315;padding:3px 8px;border-radius:5px}
+.com-catalog .off{opacity:.55}
+.com-catalog .notice{background:#fff8eb;border-left:4px solid #ba9245;padding:13px 16px;margin:17px 0;border-radius:5px}
+.com-catalog .success{background:#eaf8ee;border-left:4px solid #2c9162;padding:12px 16px;margin:13px 0;border-radius:5px}
+.com-catalog .status-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px}
+.com-catalog .status-row span{font-size:.85rem}
+.com-catalog .help-toggle{margin:12px 0;color:#51402c}
+.com-catalog .help-toggle summary{cursor:pointer;font-weight:650}
+.com-catalog .help-toggle p{margin:7px 0;font-size:.89rem;line-height:1.45;color:#5d5960}
+.com-catalog fieldset{min-width:0;border:1px solid #e7dfcf;border-radius:12px;padding:14px 16px;margin:17px 0}
+.com-catalog legend{font-weight:800;font-size:.95rem;float:none;width:auto;padding:0 6px}
+.com-catalog .form-field{margin:12px 0}
+.com-catalog .form-field > label{font-weight:650;display:block;margin-bottom:5px}
+.com-catalog .form-field input[type=text],.com-catalog .form-field input[type=number],
+.com-catalog .form-field select,.com-catalog .form-field textarea{width:100%;border:1px solid #c9c5bd;border-radius:8px;padding:9px;background:#fff}
+.com-catalog input[type=checkbox]{accent-color:#937134;margin-right:6px}
+.com-catalog .form-field ul{padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:3px 12px;margin:8px 0}
+.com-catalog .form-field ul label{font-weight:400;margin:3px 0}
+.com-catalog .field-errors{color:#9b1934;font-size:.88rem;margin:5px 0}
 .com-catalog button,.com-catalog .new{border:0;border-radius:8px;background:#17151a;color:white;padding:11px 17px;font-weight:750;text-decoration:none;display:inline-block}
 .com-catalog button:hover,.com-catalog .new:hover{background:#504027;color:white}
-.com-catalog .group{display:grid;grid-template-columns:repeat(3,minmax(90px,1fr));gap:10px}
+.com-catalog .edit-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .com-catalog .compact{font-size:.85rem}
-@media(max-width:850px){.com-catalog .cols{grid-template-columns:1fr}.com-catalog .group{grid-template-columns:1fr}}
+.com-catalog .form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media(max-width:850px){.com-catalog .cols{grid-template-columns:1fr}.com-catalog .panel{padding:17px}}
 </style>
 {% endblock %}
 {% block content %}
-<main class="com-catalog">
-<header>
-<p class="subtitle">CRM / Administration</p>
-<h1>Catalogue commercial</h1>
-<p class="subtitle">Gérez les machines, les options et la composition des packs, sans modifier les devis déjà enregistrés.</p>
-<a href="{% url 'admin_auto_quotes' %}">Paramètres des devis automatiques</a>
-</header>
-{% if saved %}<p role="status" class="alert-note">Modification du catalogue enregistrée.</p>{% endif %}
-<div class="alert-note">
-<strong>Tarification sécurisée.</strong>
-Les prix des options restent indicatifs : les devis historiques et le PDF utilisent encore leur calcul existant.
-Les nouveaux produits et options sans champ CRM sont destinés aux devis manuels.
-La tarification des machines et packs par ce catalogue est
-{% if catalog_enabled %}<strong>activée</strong>{% else %}<strong>désactivée</strong>{% endif %}
-dans les paramètres des devis automatiques ; les envois sont
-{% if auto_enabled %}autorisés{% else %}désactivés{% endif %}.
-Aucune modification de cette page n'envoie un e-mail.
-</div>
-<div class="cols">
-<section>
-  <div class="panel">
-    <h2>Machines et prestations ({{ product_rows|length }})</h2>
-    {% for item in product_rows %}
-    <div class="item {% if not item.active %}off{% endif %}">
-      <a href="?edit={{ item.pk }}">{{ item.name }}</a>
-      <span class="meta">— {{ item.price }} € TTC</span>
-      {% if item.auto_enabled %}<span class="tag">Eligible auto</span>{% endif %}
-      {% if not item.active %}<span class="tag">Désactivé</span>{% endif %}
-      <p class="meta">{{ item.code }}</p>
+<div class="com-catalog">
+  <header>
+    <p class="subtitle">CRM / Administration</p>
+    <h1>Catalogue commercial</h1>
+    <p class="subtitle">Modifiez les offres et leurs prix au même endroit.</p>
+    <a href="{% url 'admin_auto_quotes' %}">Configurer les devis automatiques</a>
+  </header>
+
+  {% if saved %}<div role="status" class="success"><strong>Enregistré.</strong> L'offre a été mise à jour.</div>{% endif %}
+
+  <div class="notice" aria-label="Comprendre les changements de prix">
+    <strong>Où vont vos modifications ?</strong>
+    <div class="status-row">
+      <span><strong>Machines et packs existants :</strong> prix sur Tarifs et Brochure.</span>
+      <span><strong>Options :</strong> prix indicatifs, devis manuels.</span>
     </div>
-    {% empty %}<p>Aucune prestation.</p>{% endfor %}
-  </div>
-  <div class="panel">
-    <h2>Options ({{ option_rows|length }})</h2>
-    {% for item in option_rows %}
-    <div class="item {% if not item.active %}off{% endif %}">
-      <a href="?edit={{ item.pk }}">{{ item.name }}</a>
-      <span class="meta">— {{ item.price }} € TTC{% if item.code == 'PorteCles' or item.code == 'magnets' or item.code == 'MagnetsSimple' %} / unité{% endif %}</span>
-      {% if not item.active %}<span class="tag">Désactivée</span>{% endif %}
+    <div class="status-row">
+      <span><strong>Devis auto :</strong> {% if auto_enabled %}envois activés{% else %}envois désactivés{% endif %}.</span>
+      <span><strong>Prix du catalogue pour devis auto :</strong> {% if catalog_enabled %}activés{% else %}désactivés{% endif %}.</span>
     </div>
-    {% empty %}<p>Aucune option.</p>{% endfor %}
+    <details class="help-toggle">
+      <summary>Ce qui ne change pas automatiquement</summary>
+      <p>Les anciens devis et PDF, les tarifs 3 h, les calculs des options et le formulaire client restent indépendants. Ajouter un nouveau produit ou pack ne crée pas sa carte sur le site.</p>
+      <p>Enregistrer un prix ici n'envoie pas de devis au client.</p>
+    </details>
   </div>
-  <div class="panel">
-    <h2>Packs ({{ pack_rows|length }})</h2>
-    {% for item in pack_rows %}
-    <div class="item {% if not item.active %}off{% endif %}">
-      <a href="?edit={{ item.pk }}">{{ item.name }}</a>
-      <span class="meta">— {{ item.price }} € TTC</span>
-      {% if item.auto_enabled %}<span class="tag">Eligible auto</span>{% endif %}
-      {% if not item.active %}<span class="tag">Désactivé</span>{% endif %}
-      <p class="meta">
-        Machines : {{ item.product_codes|join:", " }}
-        {% if item.option_codes %} · Options : {{ item.option_codes|join:", " }}{% endif %}
-        {% if item.quantities %} · Quantités : {{ item.quantities }}{% endif %}
-      </p>
-    </div>
-    {% empty %}<p>Aucun pack.</p>{% endfor %}
-  </div>
-</section>
-<section>
-  <div class="panel" id="edition">
-    <h2>{% if editing %}Modifier {{ editing.name }}{% else %}Créer une nouvelle offre{% endif %}</h2>
-    {% if editing %}<a href="{% url 'admin_catalog' %}" class="new compact">Nouvelle offre</a>{% endif %}
-    <form method="post" action="{% url 'admin_catalog' %}">
-      {% csrf_token %}
-      {% if editing %}<input type="hidden" name="entry" value="{{ editing.pk }}">{% endif %}
-      {% for field in form.visible_fields %}
-        <div>
-          {{ field.label_tag }}
-          {{ field }}
-          {% if field.help_text %}<p class="meta">{{ field.help_text }}</p>{% endif %}
-          {% for error in field.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+
+  <div class="cols">
+    <section aria-label="Offres du catalogue">
+      <div class="panel">
+        <h2>Machines et prestations ({{ product_rows|length }})</h2>
+        <p class="meta">Cliquez sur une offre pour modifier son prix.</p>
+        {% for item in product_rows %}
+        <div class="item {% if not item.active %}off{% endif %}">
+          <div class="item-title"><a href="?edit={{ item.pk }}#edition">{{ item.name }}</a><span class="item-price">{{ item.price }} € TTC</span></div>
+          {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
+          {% if not item.active %}<span class="tag">Désactivée</span>{% endif %}
+          <p class="meta">{{ item.code }}</p>
         </div>
-      {% endfor %}
-      {% for error in form.non_field_errors %}<p role="alert" class="field-errors">{{ error }}</p>{% endfor %}
-      <p class="meta">La composition n'est utilisée que pour les packs. Pour inclure des porte-clés ou magnets, indiquer leur quantité.</p>
-      <p class="meta">Le type et le code d'une offre existante ne peuvent pas être modifiés. Pour retirer une offre, décocher « Visible et disponible ».</p>
-      <button type="submit">Enregistrer le catalogue</button>
-    </form>
+        {% empty %}<p>Aucune prestation.</p>{% endfor %}
+      </div>
+
+      <div class="panel">
+        <h2>Options ({{ option_rows|length }})</h2>
+        <p class="meta">Prix de référence pour préparer un devis manuel.</p>
+        {% for item in option_rows %}
+        <div class="item {% if not item.active %}off{% endif %}">
+          <div class="item-title"><a href="?edit={{ item.pk }}#edition">{{ item.name }}</a><span class="item-price">{{ item.price }} € TTC{% if item.code == 'PorteCles' or item.code == 'magnets' or item.code == 'MagnetsSimple' %} / unité{% endif %}</span></div>
+          {% if not item.active %}<span class="tag">Désactivée</span>{% endif %}
+        </div>
+        {% empty %}<p>Aucune option.</p>{% endfor %}
+      </div>
+
+      <div class="panel">
+        <h2>Packs ({{ pack_rows|length }})</h2>
+        <p class="meta">Modifiez le prix et les éléments inclus.</p>
+        {% for item in pack_rows %}
+        <div class="item {% if not item.active %}off{% endif %}">
+          <div class="item-title"><a href="?edit={{ item.pk }}#edition">{{ item.name }}</a><span class="item-price">{{ item.price }} € TTC</span></div>
+          {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
+          {% if not item.active %}<span class="tag">Désactivé</span>{% endif %}
+          <p class="meta">
+            Machines : {{ item.product_codes|join:", " }}
+            {% if item.option_codes %} · Options : {{ item.option_codes|join:", " }}{% endif %}
+            {% if item.quantities %} · Quantités : {{ item.quantities }}{% endif %}
+          </p>
+        </div>
+        {% empty %}<p>Aucun pack.</p>{% endfor %}
+      </div>
+    </section>
+
+    <section aria-label="Modifier une offre">
+      <div class="panel" id="edition">
+        <div class="edit-actions">
+          <h2>{% if editing %}Modifier {{ editing.name }}{% else %}Créer une offre{% endif %}</h2>
+          {% if editing %}<a href="{% url 'admin_catalog' %}#edition" class="new compact">Nouvelle offre</a>{% endif %}
+        </div>
+        {% if editing %}
+          <p class="meta">Modifiez les champs puis enregistrez en bas de page.</p>
+        {% else %}
+          <p class="meta">Choisissez un type, un nom et un prix. Le code unique ne pourra plus changer.</p>
+        {% endif %}
+        <form method="post" action="{% url 'admin_catalog' %}">
+          {% csrf_token %}
+          {% if editing %}<input type="hidden" name="entry" value="{{ editing.pk }}">{% endif %}
+
+          <fieldset>
+            <legend>1. Informations sur l'offre</legend>
+            {% for field in form.visible_fields %}
+              {% if field.name == 'kind' or field.name == 'code' or field.name == 'name' or field.name == 'description' or field.name == 'price' %}
+                <div class="form-field">
+                  {{ field.label_tag }}
+                  {{ field }}
+                  {% if field.help_text %}<p class="meta">{{ field.help_text }}</p>{% endif %}
+                  {% for error in field.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Visibilité et devis</legend>
+            {% for field in form.visible_fields %}
+              {% if field.name == 'active' or field.name == 'auto_enabled' %}
+                <div class="form-field">
+                  {{ field }} {{ field.label_tag }}
+                  {% if field.help_text %}<p class="meta">{{ field.help_text }}</p>{% endif %}
+                  {% for error in field.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </fieldset>
+
+          <fieldset id="pack-composition">
+            <legend>3. Composition du pack</legend>
+            <p class="meta">À remplir seulement pour les packs. Exemple : Photobooth + Phonebooth + 100 porte-clés.</p>
+            {% for field in form.visible_fields %}
+              {% if field.name == 'product_codes' or field.name == 'option_codes' or field.name == 'quantity_PorteCles' or field.name == 'quantity_magnets' or field.name == 'quantity_MagnetsSimple' %}
+                <div class="form-field">
+                  {{ field.label_tag }}
+                  {{ field }}
+                  {% if field.help_text %}<p class="meta">{{ field.help_text }}</p>{% endif %}
+                  {% for error in field.errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </fieldset>
+
+          {% for error in form.non_field_errors %}<p class="field-errors" role="alert">{{ error }}</p>{% endfor %}
+          <div class="form-actions">
+            <button type="submit">Enregistrer l'offre</button>
+            <span class="meta">Les devis déjà établis ne changent pas.</span>
+          </div>
+        </form>
+        <details class="help-toggle">
+          <summary>Besoin d'aide pour une offre ?</summary>
+          <p><strong>Visible et disponible :</strong> désactiver une offre existante masque sa carte publique si elle est prise en charge.</p>
+          <p><strong>Éligible aux devis automatiques :</strong> ce choix seul ne déclenche aucun envoi. L'activation se gère dans « Devis automatiques ».</p>
+          <p><strong>Code :</strong> identifiant technique utilisé par le CRM ; il ne peut pas être modifié après création.</p>
+        </details>
+      </div>
+    </section>
   </div>
-</section>
 </div>
-</main>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+    const kind = document.getElementById("id_kind");
+    const composition = document.getElementById("pack-composition");
+    if (!kind || !composition) return;
+    const refresh = function () {
+        const isPack = kind.value === "pack";
+        composition.hidden = !isPack;
+        // Le formulaire ignore les champs d'un pack lorsqu'on cree une machine.
+        composition.querySelectorAll("input, select, textarea").forEach(function (field) {
+            field.disabled = !isPack;
+        });
+    };
+    kind.addEventListener("change", refresh);
+    refresh();
+})();
+</script>
 {% endblock %}
