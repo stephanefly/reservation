@@ -28,12 +28,12 @@ class FreeQuoteSimulationTests(TestCase):
         return self.client.get(self.url, query)
 
     def test_dashboard_has_only_two_primary_panels(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, {"tab": "automation"})
         self.assertEqual(response.status_code, 200)
         page = response.content.decode()
         self.assertIn('aria-current="page">Paramètres et simulation', page)
         self.assertIn('id="auto-config-title">Paramétrage des devis', page)
-        self.assertIn('id="auto-sim-title">Simulation d&#x27;une demande client', page)
+        self.assertIn('id="auto-sim-title">Simulation d'une demande client', page)
         self.assertIn("Machines demandées", page)
         self.assertNotIn("Voir le calcul", page)
         self.assertNotIn("Choisissez une demande récente", page)
