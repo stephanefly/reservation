@@ -35,7 +35,7 @@ class CatalogEntryForm(forms.ModelForm):
         labels = {
             "kind": "Type d'offre", "code": "Code unique", "name": "Nom commercial",
             "description": "Description", "price": "Prix TTC (€)",
-            "active": "Visible et disponible", "auto_enabled": "Éligible aux devis automatiques",
+            "active": "Visible et disponible", "auto_enabled": "Activer les devis automatiques pour cette offre",
         }
         help_texts = {
             "kind": "Machine, option ou pack.",
