@@ -127,7 +127,7 @@ class QuoteControlViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/backend/catalogue/", response["Location"])
         canonical = self.client.get(response["Location"])
-        self.assertContains(canonical, "Paramétrage des devis")
+        self.assertContains(canonical, "Simulation de devis")
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
     def test_old_settings_post_no_longer_activates_quotes(self):
