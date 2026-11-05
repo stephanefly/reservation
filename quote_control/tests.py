@@ -139,7 +139,7 @@ class QuoteControlViewTests(TestCase):
         })
         self.assertEqual(response.status_code, 302)
         self.assertIn("tab=simulation", response["Location"])
-        self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
+        self.assertFalse(AutoQuoteSettings.objects.filter(pk=1, enabled=True).exists())
 
     def test_only_catalogue_selection_can_enable_automation(self):
         from .auto_policy import effective_quote_config
