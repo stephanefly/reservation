@@ -13,6 +13,15 @@
 .com-catalog .item a{font-weight:750;color:#574023}
 .com-catalog .item-title{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .com-catalog .item-price{font-weight:800;white-space:nowrap}
+.com-catalog .price-detail{font-size:.85rem;color:#645c63;margin:5px 0}
+.com-catalog .price-detail del{color:#766f75}
+.com-catalog .saving{font-weight:800;color:#805d1b;margin-left:8px}
+.com-catalog .price-contents{margin:5px 0 8px;font-size:.83rem;color:#625a62}
+.com-catalog .price-contents summary{cursor:pointer;color:#6e5124;font-weight:650}
+.com-catalog .price-contents ul{list-style:none;padding:5px 0;margin:0}
+.com-catalog .price-contents li{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+.com-catalog .price-contents li span:last-child{white-space:nowrap}
+
 .com-catalog .meta{color:#6c6670;font-size:.85rem;margin:4px 0}
 .com-catalog .tag{display:inline-block;font-size:.77rem;background:#f0e8d5;color:#594315;padding:3px 8px;border-radius:5px}
 .com-catalog .off{opacity:.55}
@@ -77,6 +86,12 @@
         {% for item in product_rows %}
         <div class="item {% if not item.active %}off{% endif %}">
           <div class="item-title"><a href="?edit={{ item.pk }}#edition">{{ item.name }}</a><span class="item-price">{{ item.price }} € TTC</span></div>
+          {% if item.pricing.available %}
+          <p class="price-detail">Prix de base : <del>{{ item.pricing.reference }} €</del>
+          {% if item.pricing.discount %}<span class="saving">Remise −{{ item.pricing.discount }} €</span>
+          {% elif item.pricing.above_reference %}<span>Tarif supérieur à la base</span>
+          {% else %}<span>Sans remise</span>{% endif %}</p>
+          {% endif %}
           {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
           {% if not item.active %}<span class="tag">Désactivée</span>{% endif %}
           <p class="meta">{{ item.code }}</p>
@@ -101,6 +116,19 @@
         {% for item in pack_rows %}
         <div class="item {% if not item.active %}off{% endif %}">
           <div class="item-title"><a href="?edit={{ item.pk }}#edition">{{ item.name }}</a><span class="item-price">{{ item.price }} € TTC</span></div>
+          {% if item.pricing.available %}
+          <p class="price-detail">Éléments séparés : <del>{{ item.pricing.reference }} €</del>
+          {% if item.pricing.discount %}<span class="saving">Remise pack −{{ item.pricing.discount }} €</span>
+          {% elif item.pricing.above_reference %}<span>Tarif supérieur aux éléments séparés</span>
+          {% else %}<span>Sans remise</span>{% endif %}</p>
+          <details class="price-contents"><summary>Voir le détail des éléments</summary>
+            <ul>{% for part in item.pricing.components %}
+              <li><span>{{ part.name }}{% if part.quantity != 1 %} × {{ part.quantity }}{% endif %}</span><span>{{ part.total }} €</span></li>
+            {% endfor %}</ul>
+          </details>
+          {% else %}
+          <p class="meta">Prix de base non calculable : vérifier la composition du pack.</p>
+          {% endif %}
           {% if item.auto_enabled %}<span class="tag">Auto possible</span>{% endif %}
           {% if not item.active %}<span class="tag">Désactivé</span>{% endif %}
           <p class="meta">
@@ -121,6 +149,14 @@
         </div>
         {% if editing %}
           <p class="meta">Modifiez les champs puis enregistrez en bas de page.</p>
+          {% if editing.pricing.available %}
+          <p class="price-detail">
+            Prix de base : <strong>{{ editing.pricing.reference }} €</strong> ·
+            Remise actuelle :
+            <strong>{% if editing.pricing.discount %}−{{ editing.pricing.discount }} €{% else %}0 €{% endif %}</strong>.
+            La remise est recalculée après l'enregistrement du nouveau prix.
+          </p>
+          {% endif %}
         {% else %}
           <p class="meta">Choisissez un type, un nom et un prix. Le code unique ne pourra plus changer.</p>
         {% endif %}

@@ -121,3 +121,31 @@ conservent leurs garde-fous et leur activation separee.
 Cette synchronisation n'exige aucune migration supplementaire, uniquement
 un rechargement du code apres la mise en production et les sauvegardes
 prealables si les migrations originales restent en attente.
+
+## Affichage des prix de base et des remises
+
+Une seule valeur reste modifiable dans chaque offre du catalogue :
+**le prix final TTC**. La remise est calculee a l'affichage, sans
+changer les modeles ou les calculs de devis :
+
+- Machine : ancien prix brut utilise par le PDF (PRIX_PRODUITS) moins
+  le prix final du catalogue. Exemple : Photobooth 450 - 50 = 400 EUR.
+- Pack : somme des **prix bruts** des machines et des options incluses
+  (y compris les quantites de porte-cles et magnets), moins le prix final
+  du pack. Exemple : Pack Duo VIP (550 + 500 + 50 + 50) - 300 = 850 EUR.
+- Le detail des elements du pack est consultable dans le Catalogue.
+- Si le prix final depasse le prix de reference, **aucune fausse remise**
+  n'est presentee. Un code de machine ou d'option inconnu masque le calcul
+  de remise plutot que d'afficher un prix invente.
+- Les pages Tarifs et Brochure continuent d'afficher les prix finaux
+  du catalogue, mais pas les remises ou prix barres automatiques.
+  Une annonce publique de reduction de prix ne doit etre ajoutee qu'avec
+  un prix de reference reel et justifiable selon la reglementation.
+  Les remises calculees ici restent visibles uniquement dans le CRM.
+- Le simulateur affiche le prix avant remise, la remise reellement
+  appliquee par le moteur et le prix final TTC. Les frais et options
+  additionnels eventuels sont inclus dans le prix avant remise du devis.
+
+Cela n'harmonise toujours pas les prix d'options ou les tarifs de devis
+manuels qui ne passent pas par le moteur automatique. Les devis existants
+ne sont pas recalcules et l'envoi automatique reste independant.

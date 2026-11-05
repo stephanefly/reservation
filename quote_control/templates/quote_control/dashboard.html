@@ -38,6 +38,12 @@
 .auto-result{background:#fcf8f0;border:1px solid #dfd0b3;padding:16px;border-radius:12px;margin-top:16px}
 .auto-result strong{font-weight:800}
 .auto-total{font-size:2rem;font-weight:850;color:#624218;line-height:1.35}
+.auto-price-lines{max-width:410px;margin:12px 0}
+.auto-price-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.94rem}
+.auto-price-row strong{white-space:nowrap}
+.auto-price-row.discount{color:#8b6124;font-weight:750}
+.auto-price-row.total{border-top:1px solid #d8c6a3;margin-top:7px;padding-top:11px;font-weight:800}
+
 .auto-result-title{font-size:1.05rem;font-weight:800;margin:0 0 7px}
 .auto-review{color:#794a27;font-weight:750}
 .auto-table{width:100%;border-collapse:collapse;font-size:.85rem}
@@ -221,7 +227,23 @@
       {% if simulation.options %}<p class="auto-muted">Options : {{ simulation.options|join:", " }}{% if simulation.quantity %} · {{ simulation.quantity }} porte-clés{% endif %}</p>{% elif simulation.quantity %}<p class="auto-muted">{{ simulation.quantity }} porte-clés</p>{% endif %}
       {% if simulation.analysis.eligible %}
         <p class="auto-result-title">{{ simulation.analysis.label }}</p>
+        {% if simulation.price_detail %}
+        <div class="auto-price-lines" aria-label="Détail du tarif et des remises">
+          <div class="auto-price-row"><span>Prix avant remise</span><strong>{{ simulation.price_detail.reference }} €</strong></div>
+          {% if simulation.price_detail.product_discount %}
+          <div class="auto-price-row discount"><span>Remise machine</span><strong>−{{ simulation.price_detail.product_discount }} €</strong></div>
+          {% endif %}
+          {% if simulation.price_detail.pack_discount %}
+          <div class="auto-price-row discount"><span>Remise pack</span><strong>−{{ simulation.price_detail.pack_discount }} €</strong></div>
+          {% endif %}
+          {% if not simulation.price_detail.discount %}
+          <div class="auto-price-row"><span>Remise</span><strong>0 €</strong></div>
+          {% endif %}
+          <div class="auto-price-row total"><span>Prix final TTC</span><span class="auto-total">{{ simulation.price_detail.final }} € TTC</span></div>
+        </div>
+        {% else %}
         <p class="auto-total">{{ simulation.analysis.amount }} € TTC</p>
+        {% endif %}
         <p class="auto-mini">Estimation selon les règles actuelles, à confirmer avant tout envoi.</p>
       {% else %}
         <p class="auto-review">Devis à traiter manuellement</p>

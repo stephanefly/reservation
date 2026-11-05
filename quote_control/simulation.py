@@ -104,8 +104,23 @@ class QuoteSimulationForm(forms.Form):
         )
 
         result = analyse_quote(event, settings, preview=True)
+        # Utiliser les remises exactement calculees par le moteur de devis.
+        # Le total avant remise inclut options et deplacement eventuels.
+        price_detail = None
+        if result.get("eligible"):
+            calculation = result["calculation"]
+            product_discount = max(0, int(calculation.get("reduc_product") or 0))
+            pack_discount = max(0, int(calculation.get("reduc_all") or 0))
+            price_detail = {
+                "reference": result["amount"] + product_discount + pack_discount,
+                "product_discount": product_discount,
+                "pack_discount": pack_discount,
+                "discount": product_discount + pack_discount,
+                "final": result["amount"],
+            }
         return {
             "analysis": result,
+            "price_detail": price_detail,
             "products": [label for key, label in PRODUITS if key in selection],
             "options": [label for key, label in SIM_OPTIONS if key in selected_options],
             "duration": data["duration"],
