@@ -92,9 +92,9 @@
   <section class="panel" id="simulation" aria-labelledby="auto-sim-title">
     <h2 id="auto-sim-title">Simulation d'une demande client</h2>
     <p class="meta">Sélectionnez une machine ou un pack comme si vous étiez un client. Rien n'est enregistré ni envoyé.</p>
-    <form method="get" action="{% url 'admin_catalog' %}#simulation">
-      <input type="hidden" name="tab" value="automation">
-      <input type="hidden" name="simulate" value="1">
+    <form method="post" action="{% url 'admin_catalog' %}?tab=automation#simulation">
+      {% csrf_token %}
+      <input type="hidden" name="operation" value="simulate">
       <div class="catalog-auto-form-grid">
         <div>
           <h3>Machines demandées</h3>
