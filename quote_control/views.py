@@ -28,7 +28,7 @@ def admin_quotes(request):
     Les POST de l'ancien formulaire sont redirigés sans changer les règles
     de calcul ou d'envoi, désormais pilotées par le catalogue.
     """
-     if request.method == "POST":
+    if request.method == "POST":
         # Ancien formulaire retiré : ne jamais réactiver une configuration cachée.
         return redirect(reverse("admin_catalog") + "?tab=simulation")
 
