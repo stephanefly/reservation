@@ -92,6 +92,9 @@ class DiscountBreakdownTests(TestCase):
 
     def test_simulated_quote_uses_exact_engine_discounts(self):
         AutoQuoteSettings.objects.create(pk=1)
+        photo = CatalogEntry.objects.get(code="photobooth")
+        photo.auto_enabled = True
+        photo.save(update_fields=["auto_enabled"])
         staff = User.objects.create_user("discount-sim", password="test", is_staff=True)
         self.client.force_login(staff)
         result = self.client.get(reverse("admin_catalog"), {
@@ -107,8 +110,9 @@ class DiscountBreakdownTests(TestCase):
 
     def test_pack_simulation_shows_pack_discount(self):
         config = AutoQuoteSettings.objects.create(pk=1)
-        config.packs = ["vogue-premium"]
-        config.save(update_fields=["packs"])
+        pack = CatalogEntry.objects.get(code="vogue-premium")
+        pack.auto_enabled = True
+        pack.save(update_fields=["auto_enabled"])
         staff = User.objects.create_user("pack-discount-sim", password="test", is_staff=True)
         self.client.force_login(staff)
         result = self.client.get(reverse("admin_catalog"), {
