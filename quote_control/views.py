@@ -44,6 +44,11 @@ def admin_quotes(request):
         else:
             preview = analyse_quote(event, config, preview=True)
 
+    # Apercu : presenter des dossiers reels et recents, sans demander
+    # a l'equipe de retrouver un identifiant technique.
+    # Lecture seule : aucun calcul n'est stocke et aucun e-mail n'est envoye.
+    recent_events = list(event_queryset().order_by("-created_at", "-pk")[:8])
+
     logs = list(AutoQuoteLog.objects.order_by("-created_at")[:40])
     product_rows = [
         {"key": key, "label": label, "field": form["product_" + key]}
@@ -64,6 +69,7 @@ def admin_quotes(request):
         "manual_count": AutoQuoteLog.objects.filter(outcome="manual").count(),
         "preview": preview,
         "preview_event": event,
+        "recent_events": recent_events,
         "saved": request.GET.get("saved") == "1",
     })
 
