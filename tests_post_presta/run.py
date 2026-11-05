@@ -26,6 +26,13 @@ def main():
         setattr(module, function_name, lambda *args, **kwargs: None)
         sys.modules[module_name] = module
 
+    # Neutraliser aussi le client pCloud : son module normal lit settings.yaml
+    # directement et n'est pas chargé dans le runner isolé.
+    fake_cloud = types.ModuleType("app.module.cloud.get_pcloud_data")
+    fake_cloud.get_pcloud_event_folder_data = lambda *args, **kwargs: None
+    fake_cloud.get_pcloud_link_event_folder = lambda *args, **kwargs: ""
+    sys.modules[fake_cloud.__name__] = fake_cloud
+
     settings.configure(
         SECRET_KEY="post-presta-tests-only",
         INSTALLED_APPS=[
@@ -43,6 +50,17 @@ def main():
         MIGRATION_MODULES={"app": None},
         STATIC_URL="/static/",
         ALLOWED_HOSTS=["testserver"],
+        # Paramètres factices : tests sans connexion IONOS/pCloud.
+        MAIL_MYSELFIEBOOTH="test@myselfiebooth-paris.fr",
+        POST_PRESTA_PUBLICATION_EMAIL="djordan.cartier@myselfiebooth-paris.fr",
+        MAIL_BCC="",
+        MP="",
+        API_PCLOUD_URL="https://api.pcloud.com",
+        ACCESS_TOKEN="fake-test-token",
+        ROOT_FOLDER_ID=1,
+        ROOT_FOLDER_PREPA_ID=2,
+        ROOT_FOLDER_MONTAGE_2025=3,
+        ROOT_FOLDER_MONTAGE_2026=4,
         TEMPLATES=[{
             "BACKEND": "django.template.backends.django.DjangoTemplates",
             "OPTIONS": {"loaders": [
@@ -58,7 +76,10 @@ def main():
 
     from django.test.runner import DiscoverRunner
 
-    failures = DiscoverRunner(verbosity=2).run_tests(["app.tests.test_post_presta_dashboard"])
+    failures = DiscoverRunner(verbosity=2).run_tests([
+        "app.tests.test_post_presta_dashboard",
+        "app.tests.test_publication_notification",
+    ])
     raise SystemExit(bool(failures))
 
 

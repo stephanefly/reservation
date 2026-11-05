@@ -6,7 +6,6 @@ import requests
 MAX_DOWNLOADS = 100  # Nombre maximal de téléchargements
 MAX_TRAFFIC = 100000 * 1024 * 1024  # 100000 Mo en octets
 EXPIRE_DAYS = 45 # Nombre de jours avant expiration
-expire_datetime = datetime.utcnow() + timedelta(days=EXPIRE_DAYS)
 
 def get_pcloud_event_folder_data(event_name, prepa: bool = False):
     """
@@ -115,7 +114,7 @@ def get_pcloud_link_event_folder(folder_data: dict) -> str:
     params = {
         'access_token': ACCESS_TOKEN,
         'folderid': folder_data["folderid"],
-        'expire': expire_datetime,
+        'expire': datetime.utcnow() + timedelta(days=EXPIRE_DAYS),
         'maxdownloads': MAX_DOWNLOADS,
         'maxtraffic': MAX_TRAFFIC,
     }

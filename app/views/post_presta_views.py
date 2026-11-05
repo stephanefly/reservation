@@ -3,10 +3,13 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods, require_POST
 from django.utils import timezone
+from django.db import transaction
+import logging
 import json
 from typing import Optional
 from ..models import Event, EventPostPrestation
 from app.module.mail.send_mail_event import send_mail_event
+from app.module.mail.post_presta_publication import send_post_presta_publication_mail
 from ..module.cloud.send_media import send_media_logic
 
 # ------------------- Actions email / statut d’event -------------------
@@ -40,13 +43,15 @@ ALLOWED_FLAGS_UPDATE = {
     'sent': 'sent',
 }
 
+logger = logging.getLogger(__name__)
+
 TRISTATE_FIELDS = {'go_post_photo'}               # ✅ valeurs texte
 TRISTATE_ALLOWED = {'oui', 'non', 'à définir'}    # ✅ valeurs autorisées
 
 
 @require_http_methods(["POST"])
+@login_required
 def update_post_presta_status(request, post_presta_id, action):
-    post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
     field = ALLOWED_FLAGS_UPDATE.get(action)
     if not field:
         return JsonResponse({'ok': False, 'message': 'Action inconnue.'}, status=400)
@@ -72,22 +77,68 @@ def update_post_presta_status(request, post_presta_id, action):
         # ✅ Garde ton comportement précédent pour TOUT LE RESTE :
         value = bool(raw_value)
 
-    prev = getattr(post_presta, field, None)
-    setattr(post_presta, field, value)
+    # Verrouiller le changement d'état : deux sauvegardes de « Oui »
+    # ne doivent pas déclencher deux e-mails.
+    with transaction.atomic():
+        post_presta = get_object_or_404(
+            EventPostPrestation.objects.select_for_update(), pk=post_presta_id
+        )
+        prev = getattr(post_presta, field, None)
+        setattr(post_presta, field, value)
 
-    # ✅ Cas spécial que tu avais déjà
-    if field == 'sent' and value:
-        post_presta.date_media_sent = timezone.now()
-        post_presta.save(update_fields=[field, 'date_media_sent'])
-    else:
-        post_presta.save(update_fields=[field])
+        if field == 'sent' and value:
+            post_presta.date_media_sent = timezone.now()
+            post_presta.save(update_fields=[field, 'date_media_sent'])
+        else:
+            post_presta.save(update_fields=[field])
 
+    result = {
+        'ok': True, 'action': action, 'field': field,
+        'value': value, 'prev': prev,
+    }
+    if field == 'go_post_photo' and value == 'oui' and prev != 'oui':
+        try:
+            event = get_object_or_404(
+                Event.objects.select_related('client', 'event_details', 'event_template'),
+                event_post_presta=post_presta,
+            )
+            send_post_presta_publication_mail(event)
+        except Exception:
+            logger.exception("Notification publication non envoyée : post-presta %s", post_presta_id)
+            # Le choix « Oui » reste enregistré ; le renvoi peut être tenté
+            # via le bouton dédié une fois la cause corrigée.
+            result['notification_sent'] = False
+            result['notification_message'] = "Enregistré, mais le mail à Djordan n'a pas été envoyé."
+        else:
+            result['notification_sent'] = True
+            result['notification_message'] = "Enregistré. Envoi accepté par IONOS pour Djordan."
+    return JsonResponse(result)
+
+
+@require_POST
+@login_required
+def resend_publication_notification(request, post_presta_id):
+    """Renvoi explicite, uniquement pour les prestations marquées « Oui »."""
+    post_presta = get_object_or_404(EventPostPrestation, pk=post_presta_id)
+    if post_presta.go_post_photo != 'oui':
+        return JsonResponse(
+            {'ok': False, 'message': 'La prestation doit être marquée À poster : Oui.'},
+            status=400,
+        )
+    try:
+        event = get_object_or_404(
+            Event.objects.select_related('client', 'event_details', 'event_template'),
+            event_post_presta=post_presta,
+        )
+        send_post_presta_publication_mail(event)
+    except Exception:
+        logger.exception("Renvoi publication non envoyé : post-presta %s", post_presta_id)
+        return JsonResponse(
+            {'ok': False, 'message': "Mail non envoyé. Vérifier pCloud et le journal e-mail."},
+            status=503,
+        )
     return JsonResponse({
-        'ok': True,
-        'action': action,
-        'field': field,
-        'value': value,
-        'prev': prev
+        'ok': True, 'message': 'Envoi accepté par IONOS pour Djordan.',
     })
 
 
