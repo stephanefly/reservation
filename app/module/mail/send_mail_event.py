@@ -96,7 +96,15 @@ def send_mail_system_token_missing():
 
     msg.attach(MIMEText(html_message, 'html'))
 
-    server.sendmail(settings.MAIL_MYSELFIEBOOTH, [msg['To']] + [settings.MAIL_BCC], msg.as_string())
+    from app.module.mail.delivery import add_admin_cc
+
+    admin_cc = add_admin_cc(msg, msg['To'])
+    recipients = [msg['To']]
+    if settings.MAIL_BCC:
+        recipients.append(settings.MAIL_BCC)
+    if admin_cc:
+        recipients.append(admin_cc)
+    server.sendmail(settings.MAIL_MYSELFIEBOOTH, list(dict.fromkeys(recipients)), msg.as_string())
     server.quit()
 
     return True
