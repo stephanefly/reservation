@@ -78,24 +78,6 @@
     </details>
     {% endif %}
 
-    <details class="catalog-auto-more">
-      <summary>Historique des devis automatiques — {{ sent_count }} envoyés · {{ manual_count }} manuels · {{ error_count }} erreurs</summary>
-      <div class="catalog-auto-table-wrap">
-        <table class="catalog-auto-table">
-          <thead><tr><th>Date</th><th>Dossier</th><th>Résultat</th><th>Montant</th><th>Motif</th></tr></thead>
-          <tbody>
-            {% for row in logs %}
-            <tr>
-              <td>{{ row.created_at|date:"d/m/Y H:i" }}</td>
-              <td>#{{ row.event_id }}</td>
-              <td>{{ row.get_outcome_display }}</td>
-              <td>{% if row.amount %}{{ row.amount }} €{% else %}—{% endif %}</td>
-              <td>{{ row.reason }}</td>
-            </tr>
-            {% empty %}<tr><td colspan="5">Aucun envoi enregistré.</td></tr>{% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </details>
+
   </section>
 </div>
