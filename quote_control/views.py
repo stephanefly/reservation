@@ -14,6 +14,7 @@ from .catalog import PACKS, PRODUITS
 from .engine import analyse_quote
 from .forms import QuoteControlForm
 from .models import AutoQuoteSettings, AutoQuoteLog
+from .simulation import QuoteSimulationForm
 
 
 def event_queryset():
@@ -44,10 +45,13 @@ def admin_quotes(request):
         else:
             preview = analyse_quote(event, config, preview=True)
 
-    # Apercu : presenter des dossiers reels et recents, sans demander
-    # a l'equipe de retrouver un identifiant technique.
-    # Lecture seule : aucun calcul n'est stocke et aucun e-mail n'est envoye.
-    recent_events = list(event_queryset().order_by("-created_at", "-pk")[:8])
+    # Simulation libre, sans dossier, sans ecriture et sans envoi d'e-mail.
+    simulation_form = QuoteSimulationForm(
+        request.GET if request.GET.get("simulate") == "1" else None,
+    )
+    simulation = None
+    if request.GET.get("simulate") == "1" and simulation_form.is_valid():
+        simulation = simulation_form.simulate(config)
 
     logs = list(AutoQuoteLog.objects.order_by("-created_at")[:40])
     product_rows = [
@@ -69,7 +73,8 @@ def admin_quotes(request):
         "manual_count": AutoQuoteLog.objects.filter(outcome="manual").count(),
         "preview": preview,
         "preview_event": event,
-        "recent_events": recent_events,
+        "simulation_form": simulation_form,
+        "simulation": simulation,
         "saved": request.GET.get("saved") == "1",
     })
 
