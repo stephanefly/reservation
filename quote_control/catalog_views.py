@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from .catalog_forms import CatalogEntryForm
 from .models import CatalogEntry, AutoQuoteSettings
+from .price_breakdown import decorate_offers
 
 
 @staff_member_required(login_url="/login/")
@@ -23,7 +24,9 @@ def admin_catalog(request):
         saved = form.save()
         return redirect(reverse("admin_catalog") + f"?saved={saved.pk}")
 
-    all_entries = CatalogEntry.objects.all()
+    all_entries = decorate_offers(CatalogEntry.objects.all())
+    if entry is not None:
+        entry.pricing = next((x.pricing for x in all_entries if x.pk == entry.pk), {"available": False})
     config = AutoQuoteSettings.objects.filter(pk=1).first()
     return render(request, "quote_control/catalogue.html", {
         "form": form, "editing": entry,
