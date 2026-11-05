@@ -44,7 +44,7 @@ class CatalogEntryForm(forms.ModelForm):
             "description": "Facultative. Décrivez l'offre en une phrase.",
             "price": "Machines et packs déjà présents : affiché sur Tarifs et Brochure.",
             "active": "Décochez pour retirer l'offre de la vente. Les anciens devis restent intacts.",
-            "auto_enabled": "N'envoie aucun e-mail seul. Nécessite les autorisations dans Catalogue > Paramètres et simulation.",
+            "auto_enabled": "Une fois l'offre enregistrée, les nouvelles demandes compatibles peuvent être traitées automatiquement. Entreprises et recommandations restent manuelles.",
         }
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 
