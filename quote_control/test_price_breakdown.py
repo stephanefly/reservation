@@ -68,29 +68,27 @@ class DiscountBreakdownTests(TestCase):
         self.assertContains(response, "Remise pack −300 €")
         self.assertContains(response, "Voir le détail des éléments")
 
-    def test_public_tarifs_and_brochure_show_actual_discounts(self):
+    def test_public_prices_remain_current_without_unverified_promotion(self):
         prices = get_public_catalogue()
-        self.assertEqual(prices["product_breakdowns"]["photobooth"]["reference"], 450)
-        self.assertEqual(prices["product_breakdowns"]["photobooth"]["discount"], 50)
-        self.assertEqual(prices["pack_breakdowns"]["duo_vip"]["reference"], 1150)
-        self.assertEqual(prices["pack_breakdowns"]["duo_vip"]["discount"], 300)
+        self.assertEqual(prices["data_price"]["photobooth"], 400)
+        self.assertEqual(prices["pack_prices"]["duo_vip"], 850)
         for page in ("tarifs", "brochure"):
             response = self.client.get(reverse(page))
             with self.subTest(page=page):
                 self.assertEqual(response.status_code, 200)
-                self.assertContains(response, "Remise −50 €")
-                self.assertContains(response, "Remise −300 €")
-                self.assertContains(response, "1150 €")
+                self.assertNotContains(response, "Remise −50 €")
+                self.assertNotContains(response, "Remise −300 €")
 
-    def test_public_promo_follows_custom_catalogue_price(self):
+    def test_public_price_follows_catalogue_without_promo_claim(self):
         offer = CatalogEntry.objects.get(code="photobooth")
         offer.price = 420
         offer.save(update_fields=["price"])
-        offers = get_public_catalogue()
-        self.assertEqual(offers["product_breakdowns"]["photobooth"]["discount"], 30)
+        prices = get_public_catalogue()
+        self.assertEqual(prices["data_price"]["photobooth"], 420)
         for page in ("tarifs", "brochure"):
             response = self.client.get(reverse(page))
-            self.assertContains(response, "Remise −30 €")
+            self.assertContains(response, "420")
+            self.assertNotContains(response, "Remise −30 €")
 
     def test_simulated_quote_uses_exact_engine_discounts(self):
         AutoQuoteSettings.objects.create(pk=1)
