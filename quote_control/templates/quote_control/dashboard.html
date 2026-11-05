@@ -41,6 +41,19 @@
 .auto-legacy > p{color:#64606a;font-size:.9rem;margin-top:10px}
 .auto-help{font-size:.88rem;line-height:1.5;color:#68616b}
 .auto-small-link{font-weight:700;white-space:nowrap}
+.auto-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.auto-preview-item{border:1px solid #e6dfd1;border-radius:12px;padding:14px;background:#fff}
+.auto-preview-item.selected{border-color:#b98b38;background:#fffaf0}
+.auto-preview-item strong{display:block;line-height:1.35}
+.auto-preview-item .auto-preview-date{font-size:.84rem;color:#655c63;margin:5px 0 8px}
+.auto-preview-item .auto-preview-product{font-size:.88rem;color:#333;min-height:2.6em}
+.auto-preview-item a{display:inline-block;margin-top:8px;font-weight:800;color:#684c22;text-decoration:underline}
+.auto-preview-result{border:1px solid #d9d2c7;border-radius:12px;padding:15px 18px;margin-top:18px;background:#fcfaf6}
+.auto-preview-result h3{font-weight:800;font-size:1.05rem;margin:0 0 8px}
+.auto-preview-result .auto-preview-total{font-size:1.6rem;font-weight:800;color:#614417}
+.auto-preview-result .auto-preview-status{font-size:.88rem;color:#57535b}
+.auto-preview-safe{font-size:.85rem;color:#63606a;margin:12px 0 0}
+
 @media(max-width:660px){.auto-dashboard{padding:16px 10px}.auto-card{padding:16px}.auto-table{font-size:.8rem}}
 </style>
 {% endblock %}
@@ -135,22 +148,46 @@
         </div>
     </form>
 
-    <section class="auto-card">
-        <h2>4. Tester sans envoyer</h2>
-        <p class="auto-help">Indiquez le numéro interne du dossier CRM. Vous verrez le tarif calculé et pourrez ouvrir son PDF de test, sans e-mail ni modification du devis enregistré.</p>
-        <form class="auto-field" method="get" action="{% url 'admin_auto_quotes' %}">
-            <label for="preview-id">Numéro de dossier CRM</label>
-            <input class="auto-input" type="number" id="preview-id" name="event" min="1" required value="{% if preview_event %}{{ preview_event.id }}{% endif %}">
-            <button class="auto-btn alt" type="submit">Vérifier le devis</button>
-        </form>
+    <section class="auto-card" id="apercu" aria-labelledby="apercu-title">
+        <h2 id="apercu-title">Aperçu rapide des devis</h2>
+        <p class="auto-help">Choisissez une demande récente pour voir son montant calculé et son PDF. Aucun e-mail n'est envoyé.</p>
+        {% if recent_events %}
+            <div class="auto-preview-grid">
+                {% for dossier in recent_events %}
+                <article class="auto-preview-item {% if preview_event.pk == dossier.pk %}selected{% endif %}">
+                    <strong>{{ dossier.client.nom|truncatechars:35 }}</strong>
+                    <p class="auto-preview-date">
+                        {{ dossier.event_details.date_evenement|date:"d/m/Y" }} ·
+                        {{ dossier.event_details.ville_evenement }}
+                    </p>
+                    <div class="auto-preview-product">{{ dossier.event_product.get_selected_booths|default:"Prestation à préciser" }}</div>
+                    <a href="{% url 'admin_auto_quotes' %}?event={{ dossier.pk }}#apercu"
+                       {% if preview_event.pk == dossier.pk %}aria-current="true"{% endif %}>
+                        {% if preview_event.pk == dossier.pk %}Aperçu affiché{% else %}Voir le calcul{% endif %}
+                    </a>
+                </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="auto-help">Aucune demande enregistrée pour le moment.</p>
+        {% endif %}
         {% if preview %}
-            <hr>
-            {% if preview.eligible %}
-                <p><strong>Offre :</strong> {{ preview.label }} · <strong>Tarif calculé :</strong> {{ preview.amount }} €</p>
-                <a class="auto-btn" target="_blank" rel="noopener" href="{% url 'admin_auto_quotes_preview_pdf' preview_event.id %}">Aperçu PDF non enregistré</a>
-            {% else %}
-                <p><strong>Traitement manuel :</strong> {{ preview.reason }}</p>
-            {% endif %}
+            <div class="auto-preview-result" role="status">
+                {% if preview_event %}
+                    <h3>Résultat pour {{ preview_event.client.nom }}</h3>
+                {% else %}
+                    <h3>Dossier introuvable</h3>
+                {% endif %}
+                {% if preview.eligible %}
+                    <p><strong>{{ preview.label }}</strong></p>
+                    <p class="auto-preview-total">{{ preview.amount }} € TTC</p>
+                    <a class="auto-btn" target="_blank" rel="noopener noreferrer"
+                       href="{% url 'admin_auto_quotes_preview_pdf' preview_event.id %}">Ouvrir l'aperçu PDF</a>
+                {% else %}
+                    <p class="auto-preview-status"><strong>Devis à traiter manuellement :</strong> {{ preview.reason }}</p>
+                {% endif %}
+                <p class="auto-preview-safe">Aperçu uniquement : le devis enregistré reste inchangé et aucun e-mail n'est envoyé.</p>
+            </div>
         {% endif %}
     </section>
 
