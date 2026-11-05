@@ -48,6 +48,36 @@
 .com-catalog .compact{font-size:.85rem}
 .com-catalog .form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 @media(max-width:850px){.com-catalog .cols{grid-template-columns:1fr}.com-catalog .panel{padding:17px}}
+.com-catalog .catalog-tabs{display:flex;gap:7px;margin:19px 0 18px;padding:5px;background:#f6f2eb;border:1px solid #e8dfd0;border-radius:11px;flex-wrap:wrap}
+.com-catalog .catalog-tabs a{padding:10px 16px;font-weight:750;color:#5c5351;text-decoration:none;border-radius:8px}
+.com-catalog .catalog-tabs a[aria-current=page]{background:#201b20;color:#fff}
+.com-catalog .catalog-auto{max-width:1040px}
+.com-catalog .catalog-auto-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.com-catalog .catalog-auto-title h2{margin:0}
+.com-catalog .catalog-auto-status{font-size:.8rem;font-weight:800;background:#fff3db;padding:6px 10px;border-radius:20px;color:#765318}
+.com-catalog .catalog-auto-status.on{background:#e5f5ea;color:#246344}
+.com-catalog .catalog-auto-switch{display:flex;align-items:start;gap:9px;margin:15px 0;cursor:pointer}
+.com-catalog .catalog-auto-switch input[type=checkbox]{width:18px;height:18px;margin:3px 0 0;flex:0 0 18px}
+.com-catalog .catalog-auto-switch strong{font-weight:750}
+.com-catalog .catalog-auto-switch small{display:block;color:#655f68;margin:3px 0;line-height:1.35}
+.com-catalog .catalog-auto-more{border-top:1px solid #ece6dd;padding:12px 0 3px;margin-top:12px}
+.com-catalog .catalog-auto-more summary{cursor:pointer;font-weight:750;color:#624923}
+.com-catalog .catalog-auto-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:13px 0}
+.com-catalog .catalog-auto-form-grid h3{font-size:.96rem;font-weight:800;margin:9px 0}
+.com-catalog .catalog-auto-checks ul{list-style:none;margin:8px 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:6px}
+.com-catalog .catalog-auto-checks li label{border:1px solid #e8dfd4;padding:7px 8px;border-radius:7px;display:flex;gap:7px;align-items:center;font-size:.85rem;font-weight:500}
+.com-catalog .catalog-auto-input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0}
+.com-catalog .catalog-auto-field{display:flex;flex-direction:column;gap:5px;font-size:.87rem;font-weight:700}
+.com-catalog .catalog-auto-field input,.com-catalog .catalog-auto-field select{border:1px solid #cfc7bb;border-radius:8px;padding:8px;width:100%;background:#fff}
+.com-catalog .catalog-auto-price-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #e7e1d7;padding:7px 0;font-size:.9rem}
+.com-catalog .catalog-auto-price-row input{width:110px;border:1px solid #cfc7bb;border-radius:7px;padding:7px}
+.com-catalog .catalog-auto-result{border:1px solid #e4d6bd;background:#fdfaf3;border-radius:10px;padding:16px;margin-top:17px}
+.com-catalog .catalog-auto-result h3{font-size:1.03rem;font-weight:800}
+.com-catalog .catalog-auto-total{font-size:1.13rem;color:#5c411e;font-weight:800}
+.com-catalog .catalog-auto-table-wrap{overflow-x:auto}
+.com-catalog .catalog-auto-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px}
+.com-catalog .catalog-auto-table th,.com-catalog .catalog-auto-table td{text-align:left;border-bottom:1px solid #ece8e1;padding:8px}
+@media(max-width:740px){.com-catalog .catalog-auto-form-grid{grid-template-columns:1fr}}
 </style>
 {% endblock %}
 {% block content %}
@@ -56,9 +86,13 @@
     <p class="subtitle">CRM / Administration</p>
     <h1>Catalogue commercial</h1>
     <p class="subtitle">Modifiez les offres et leurs prix au même endroit.</p>
-    <a href="{% url 'admin_auto_quotes' %}">Configurer les devis automatiques</a>
   </header>
+  <nav class="catalog-tabs" aria-label="Sections du catalogue">
+    <a href="{% url 'admin_catalog' %}?tab=offres" {% if active_tab == 'offres' %}aria-current="page"{% endif %}>Offres et tarifs</a>
+    <a href="{% url 'admin_catalog' %}?tab=automation" {% if active_tab == 'automation' %}aria-current="page"{% endif %}>Paramètres et simulation</a>
+  </nav>
 
+  {% if active_tab == 'offres' %}
   {% if saved %}<div role="status" class="success"><strong>Enregistré.</strong> L'offre a été mise à jour.</div>{% endif %}
 
   <div class="notice" aria-label="Comprendre les changements de prix">
@@ -215,12 +249,15 @@
         <details class="help-toggle">
           <summary>Besoin d'aide pour une offre ?</summary>
           <p><strong>Visible et disponible :</strong> désactiver une offre existante masque sa carte publique si elle est prise en charge.</p>
-          <p><strong>Éligible aux devis automatiques :</strong> ce choix seul ne déclenche aucun envoi. L'activation se gère dans « Devis automatiques ».</p>
+          <p><strong>Éligible aux devis automatiques :</strong> ce choix seul ne déclenche aucun envoi. L'activation se gère dans « Paramètres et simulation ».</p>
           <p><strong>Code :</strong> identifiant technique utilisé par le CRM ; il ne peut pas être modifié après création.</p>
         </details>
       </div>
     </section>
   </div>
+  {% else %}
+    {% include 'quote_control/_catalogue_automation.html' %}
+  {% endif %}
 </div>
 {% endblock %}
 {% block extra_js %}
