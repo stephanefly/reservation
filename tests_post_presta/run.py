@@ -26,6 +26,13 @@ def main():
         setattr(module, function_name, lambda *args, **kwargs: None)
         sys.modules[module_name] = module
 
+    # Neutraliser aussi le client pCloud : son module normal lit settings.yaml
+    # directement et n'est pas chargé dans le runner isolé.
+    fake_cloud = types.ModuleType("app.module.cloud.get_pcloud_data")
+    fake_cloud.get_pcloud_event_folder_data = lambda *args, **kwargs: None
+    fake_cloud.get_pcloud_link_event_folder = lambda *args, **kwargs: ""
+    sys.modules[fake_cloud.__name__] = fake_cloud
+
     settings.configure(
         SECRET_KEY="post-presta-tests-only",
         INSTALLED_APPS=[
