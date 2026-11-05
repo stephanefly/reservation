@@ -19,6 +19,7 @@ urlpatterns = [
     path("", include("app.urls.frontend_urls")),
     path("backend/info-event/", include("app.urls.info_event_urls")),
     path("backend/devis-auto/", include("quote_control.urls")),
+    path("backend/catalogue/", include("quote_control.catalog_urls")),
     path("tarifs/", include("app.urls.pricing_urls")),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.BASE_DIR / "app/static"}),
 ]
@@ -29,11 +30,11 @@ def outside_scenario(request, **kwargs):
 
 
 from app.urls import frontend_urls, info_event_urls, pricing_urls
-from quote_control import urls as quote_control_urls
+from quote_control import urls as quote_control_urls, catalog_urls as catalog_control_urls
 
 known_names = {
     route.name
-    for module in (frontend_urls, info_event_urls, pricing_urls, quote_control_urls)
+    for module in (frontend_urls, info_event_urls, pricing_urls, quote_control_urls, catalog_control_urls)
     for route in module.urlpatterns
 }
 # Neutraliser uniquement les liens de navigation qui sortent du parcours commercial.
