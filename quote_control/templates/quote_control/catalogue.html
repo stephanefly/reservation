@@ -194,7 +194,12 @@
     const composition = document.getElementById("pack-composition");
     if (!kind || !composition) return;
     const refresh = function () {
-        composition.hidden = kind.value !== "pack";
+        const isPack = kind.value === "pack";
+        composition.hidden = !isPack;
+        // Le formulaire ignore les champs d'un pack lorsqu'on cree une machine.
+        composition.querySelectorAll("input, select, textarea").forEach(function (field) {
+            field.disabled = !isPack;
+        });
     };
     kind.addEventListener("change", refresh);
     refresh();
