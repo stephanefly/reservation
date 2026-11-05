@@ -250,6 +250,11 @@
     <option value="à définir" {% if event.event_post_presta.go_post_photo == 'à définir' %}selected{% endif %}>À définir</option>
   </select>
   <button type="submit" class="save-btn">Enregistrer</button>
+  <button type="button" class="resend-publication-btn"
+          data-url="{% url 'resend_publication_notification' event.event_post_presta.id %}"
+          {% if event.event_post_presta.go_post_photo != 'oui' %}hidden{% endif %}>
+    Renvoyer l'e-mail à Djordan
+  </button>
   <span class="save-status" aria-live="polite"></span>
 </form>
 </td>
@@ -571,8 +576,12 @@ async function saveGoPostPhoto(form){
     if(goControllers.get(form) !== ctrl) return;
 
     if(data && (data.ok || data.success)){
-      status.textContent = "Enregistré";
-      setTimeout(()=>{ status.textContent = ""; },1200);
+      const resend = form.querySelector('.resend-publication-btn');
+      if(resend) resend.hidden = select.value !== 'oui';
+      status.textContent = data.notification_message || "Enregistré";
+      if(!data.notification_message){
+        setTimeout(()=>{ if(status.textContent === "Enregistré") status.textContent = ""; },1200);
+      }
     } else {
       throw new Error(data?.message || "Erreur");
     }
@@ -605,6 +614,32 @@ document.addEventListener('change', e=>{
   const form = select.closest('.ajax-form-go_post_photo');
   form.querySelector('.save-status').textContent = "Modification détectée...";
   debouncedGoAuto(form);
+});
+
+// Renvoi volontaire si la notification automatique échoue ou doit être répétée.
+document.addEventListener('click', async e=>{
+  const btn = e.target.closest('.resend-publication-btn');
+  if(!btn) return;
+  const form = btn.closest('.ajax-form-go_post_photo');
+  const status = form.querySelector('.save-status');
+  btn.disabled = true;
+  status.textContent = "Envoi à Djordan...";
+  try{
+    const response = await fetch(btn.dataset.url,{
+      method:'POST',
+      headers:{
+        'X-CSRFToken': CSRFTOKEN,
+        'X-Requested-With':'XMLHttpRequest'
+      }
+    });
+    const data = await response.json();
+    status.textContent = data.message || "Erreur d'envoi";
+    if(!response.ok || !data.ok) status.textContent = "Échec : " + status.textContent;
+  }catch(err){
+    status.textContent = "Impossible de contacter le CRM.";
+  }finally{
+    btn.disabled = false;
+  }
 });
 </script>
 
