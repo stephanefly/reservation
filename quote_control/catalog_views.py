@@ -26,15 +26,16 @@ def admin_catalog(request):
     settings_post = request.method == "POST" and (
         request.POST.get("operation") == "settings" or legacy_settings_post
     )
+    simulation_post = request.method == "POST" and request.POST.get("operation") == "simulate"
     active_tab = "automation" if (
-        settings_post or request.GET.get("tab") == "automation"
+        settings_post or simulation_post or request.GET.get("tab") == "automation"
         or request.GET.get("simulate") == "1"
         or request.GET.get("event", "").isdigit()
     ) else "offres"
 
     # Ne jamais valider une offre lorsque l'utilisateur enregistre les regles
     # d'envoi ; les deux formulaires restent entierement independants.
-    identifier = (request.POST.get("entry") if request.method == "POST" and not settings_post
+    identifier = (request.POST.get("entry") if request.method == "POST" and not (settings_post or simulation_post)
                   else request.GET.get("edit")) or ""
     identifier = identifier.strip()
     if identifier and not identifier.isdigit():
@@ -42,7 +43,7 @@ def admin_catalog(request):
     entry = get_object_or_404(CatalogEntry, pk=int(identifier)) if identifier else None
 
     form = CatalogEntryForm(
-        request.POST if request.method == "POST" and not settings_post else None,
+        request.POST if request.method == "POST" and not (settings_post or simulation_post) else None,
         instance=entry,
     )
     settings_form = QuoteControlForm(
@@ -54,15 +55,18 @@ def admin_catalog(request):
         if settings_post and settings_form.is_valid():
             settings_form.save_to_config(config)
             return redirect(reverse("admin_catalog") + "?tab=automation&saved_settings=1#automation")
-        if not settings_post and form.is_valid():
+        if not settings_post and not simulation_post and form.is_valid():
             saved = form.save()
             return redirect(reverse("admin_catalog") + f"?tab=offres&saved={saved.pk}#edition")
 
+    simulation_requested = simulation_post or request.GET.get("simulate") == "1"
     simulation_form = QuoteSimulationForm(
-        request.GET if request.GET.get("simulate") == "1" else None,
+        request.POST if simulation_post
+        else request.GET if request.GET.get("simulate") == "1"
+        else None,
     )
     simulation = None
-    if request.GET.get("simulate") == "1" and simulation_form.is_valid():
+    if simulation_requested and simulation_form.is_valid():
         simulation = simulation_form.simulate(config)
 
     # Conserver l'aperçu prive des anciens dossiers en lecture seule.
