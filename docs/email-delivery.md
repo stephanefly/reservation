@@ -73,20 +73,21 @@ La première conserve `status` comme filtre de `status_devis`.
 
 ## Copie visible (Cc) des e-mails de MySelfieBooth
 
-Le paramètre facultatif `MAIL_ADMIN_CC` de `myselfiebooth/settings.yaml`
-ajoute une adresse e-mail **en copie visible (Cc)** sur tous les messages
-envoyés par le système SMTP IONOS du CRM, y compris les messages internes
-de post-prestation et les alertes de maintenance. Il est chargé dans
-`myselfiebooth/settings.py` et reste **vide par défaut**.
+La copie visible (Cc) par défaut est `contact@myselfiebooth-paris.fr`,
+confirmée par le propriétaire du compte. Elle s'applique à tous les messages
+envoyés par le système SMTP IONOS du CRM, y compris les notifications internes
+de post-prestation et les alertes système.
 
-Après vérification auprès du propriétaire du compte, configurer par exemple :
+Le paramètre facultatif `MAIL_ADMIN_CC` dans `myselfiebooth/settings.yaml`
+peut remplacer cette valeur ou la désactiver (chaîne vide) :
 
 ```yaml
-MAIL_ADMIN_CC: "adresse-confirmee@example.com"
+MAIL_ADMIN_CC: "contact@myselfiebooth-paris.fr"
 ```
 
-Puis recharger le site PythonAnywhere. Aucun mot de passe ni changement de
-configuration pCloud n'est nécessaire.
+Cette valeur est chargée par `myselfiebooth/settings.py` au démarrage :
+recharger le site PythonAnywhere après l'installation. Aucun mot de passe
+ni changement de configuration pCloud n'est nécessaire.
 
 Une adresse invalide (notamment une adresse dictée avec des caractères
 non ASCII) est ignorée avec une erreur journalisée pour éviter tout envoi
