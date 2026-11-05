@@ -85,3 +85,39 @@ elles contiennent des offres deja saisies.
   champ existant.
 - Pas de recalcul des devis precedents.
 - Pas de sauvegarde de fichiers media (uniquement MySQL via la PR #121).
+
+
+## Synchronisation de l'affichage public
+
+Les pages /tarifs/ et /tarifs/brochure/ lisent maintenant directement
+les prix des offres actives du catalogue commercial, a chaque requete.
+Changer le prix d'une machine ou d'un pack dans /backend/catalogue/
+met a jour ses montants publics, sans devoir activer les devis automatiques.
+Exemple : iPad Booth a 200 EUR => 200 EUR sur les deux pages.
+
+Une offre desactivee est masquee sur les pages publiques pour les machines
+et packs qui y ont deja une carte. Les formules entierement nouvelles creees
+dans le catalogue ne creent pas automatiquement une nouvelle carte publique.
+Les tarifs 3 h restent les tarifs historiques (le catalogue administre les
+prix standards/5 h des machines).
+
+Pour eviter des montants trompeurs, les anciennes promotions soustraites
+en dur (-50 EUR et -100 EUR) ainsi que les economies des packs calculees
+en dur ont ete retirees des cartes publiques. Le prix affiche est
+directement celui de l'offre active. Les packs VIP et Duo VIP partagent
+le meme tarif. Si les tables quote_control ne sont pas encore installees
+ou si la lecture de catalogue echoue, un prix commercial de repli est
+utilise pour ne pas faire tomber la vitrine.
+
+**Attention a la separation existante entre vitrine et devis :** ceci
+ne change PAS automatiquement le calcul d'un devis manuel, la grille de
+prix 3 h, les lignes PDF, ni le modele de devis deja enregistre. Les tarifs
+des options sont toujours indicatifs dans le catalogue. Avant de promettre
+un nouveau prix public, harmoniser le processus de devis manuel si necessaire.
+En particulier, la grille historique iPad dans PRIX_PRODUITS reste a 250 EUR
+meme si son prix public est modifie a 200 EUR. Les envois automatiques
+conservent leurs garde-fous et leur activation separee.
+
+Cette synchronisation n'exige aucune migration supplementaire, uniquement
+un rechargement du code apres la mise en production et les sauvegardes
+prealables si les migrations originales restent en attente.
