@@ -44,6 +44,8 @@ jobs:
           sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
           python -m pip install -r tests_e2e/requirements.txt mysqlclient
           python -m playwright install --with-deps chromium
+      - name: Tester les sauvegardes MySQL sans connexion production
+        run: python -m unittest discover -s scripts -p 'test_*.py'
       - name: Vérifier l'API privée en lecture
         run: python -m tests_api.run
       - name: Vérifier prix et acomptes
