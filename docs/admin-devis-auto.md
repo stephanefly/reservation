@@ -107,3 +107,23 @@ en traitement manuel conformément aux règles existantes.
 Le passage en production implique toujours sauvegarde MySQL
 vérifiée et restauration testée en environnement isolé ; la fusion
 GitHub ne constitue pas un déploiement PythonAnywhere.
+
+
+## Règle actuelle : une case dans le Catalogue
+
+Le paramétrage indépendant des devis automatiques a été retiré de
+l'interface. Dans **Catalogue > Offres et tarifs**, cocher
+« Activer les devis automatiques pour cette offre » et enregistrer suffit
+pour automatiser les nouvelles demandes compatibles.
+Décocher toutes les machines et tous les packs arrête les envois.
+
+L'onglet **Simulation** permet de tester machine, pack, durée, code
+postal et options sans créer de client, de PDF ni de message. Il utilise
+la même configuration effective que le moteur des nouveaux devis.
+
+Les configurations historiques persistantes ne permettent plus
+d'activer des devis sans qu'une offre soit cochée dans le catalogue.
+Les règles de sécurité (entreprises/recommandations = manuel,
+tarifs PDF cohérents, packs non ambigus, durée et montant) restent actives.
+Les anciennes URLs de configuration redirigent vers Simulation sans
+écriture. Prévoir une sauvegarde MySQL vérifiée avant le déploiement.
