@@ -91,6 +91,8 @@
             </section>
         </div>
 
+        {% if config.catalog_enabled %}<div class="auto-note"><strong>Mode catalogue actif.</strong> Les cases produits/packs et leurs prix affichés ci-dessous sont les réglages historiques, ignorés pour le calcul en mode catalogue. Gérez les offres éligibles et les tarifs dans <a href="{% url 'admin_catalog' %}">Catalogue commercial</a>. Les tarifs des options restent ceux du PDF existant.</div>{% endif %}
+
         <section class="auto-card">
             <h2>Tarifs des machines (5 h, TTC)</h2>
             <p>Le montant final est calculé côté serveur, avec les options et le déplacement éventuel.</p>
