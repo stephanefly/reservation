@@ -10,9 +10,9 @@ from datetime import timedelta, datetime
 from ..models import Event
 from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
 from quote_control.service import process_instant_quote
+from quote_control.public_pricing import get_public_catalogue
 from app.module.mail.send_mail_event import send_mail_event
 
-from ..module.data_bdd.price import PRIX_PRODUITS
 from ..module.google.contact import create_google_contact
 from ..module.trello.create_card import create_card
 
@@ -99,7 +99,11 @@ def remerciement(request):
     return render(request, 'app/frontend/remerciement.html')
 
 def tarifs(request):
-    return render(request, 'app/frontend/tarifs.html', {'data_price': PRIX_PRODUITS, 'tarifs_panneaux': TARIFS_PANNEAUX.items()})
+    context = get_public_catalogue()
+    context["tarifs_panneaux"] = TARIFS_PANNEAUX.items()
+    return render(request, 'app/frontend/tarifs.html', context)
 
 def brochure(request):
-    return render(request, 'app/frontend/brochure.html', {'tarifs_panneaux': TARIFS_PANNEAUX.items()})
+    context = get_public_catalogue()
+    context["tarifs_panneaux"] = TARIFS_PANNEAUX.items()
+    return render(request, 'app/frontend/brochure.html', context)
