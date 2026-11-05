@@ -19,6 +19,9 @@
     <button class="post-overview__item post-filter" type="button" data-post-filter="media" aria-pressed="false">
       <span>Médias à traiter</span><strong>{{ post_stats.media_pending }}</strong><small>Collecte ou envoi</small>
     </button>
+    <button class="post-overview__item post-filter" type="button" data-post-filter="posted" aria-pressed="false">
+      <span>Médias postés</span><strong id="post-media-posted-count">{{ post_stats.media_posted }}</strong><small>Photos ou montages publiés</small>
+    </button>
     <button class="post-overview__item post-filter" type="button" data-post-filter="payment" aria-pressed="false">
       <span>Paiements à vérifier</span><strong>{{ post_stats.payment_pending }}</strong><small>Client ou équipe</small>
     </button>
@@ -48,6 +51,7 @@
           {% for event in lst_post_event %}
           <tr data-event-id="{{ event.id }}"
               data-post-media="{% if event.event_post_presta.collected and event.event_post_presta.sent %}ok{% else %}todo{% endif %}"
+              data-post-published="{% if event.event_post_presta.post_photo or event.event_post_presta.post_montage %}ok{% else %}todo{% endif %}"
               data-post-payment="{% if event.event_post_presta.client_paid and event.event_post_presta.members_paid %}ok{% else %}todo{% endif %}"
               data-post-review="{% if event.event_post_presta.feedback_message or event.event_post_presta.feedback_google %}ok{% else %}todo{% endif %}">
             <td class="post-summary-table__client">{{ event.client.nom }}</td>
@@ -263,7 +267,7 @@
           <td>
             {% if not event.event_post_presta.post_photo %}
               {% csrf_token %}
-              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_photo' %}">
+              <button class="ajax-btn" data-post-publication="photo" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_photo' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -290,7 +294,7 @@
           <td>
             {% if not event.event_post_presta.post_montage %}
               {% csrf_token %}
-              <button class="ajax-btn" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_montage' %}">
+              <button class="ajax-btn" data-post-publication="montage" data-url="{% url 'update_post_presta_status' event.event_post_presta.id 'post_montage' %}">
                 Oui
               </button>
             {% else %}Fait{% endif %}
@@ -452,6 +456,7 @@ $(document).ready(function(){
     const row = settings.aoData[index].nTr;
     if (!row || activeFilter === 'all') return true;
     if (activeFilter === 'media') return row.dataset.postMedia === 'todo';
+    if (activeFilter === 'posted') return row.dataset.postPublished === 'ok';
     if (activeFilter === 'payment') return row.dataset.postPayment === 'todo';
     if (activeFilter === 'review') return row.dataset.postReview === 'todo';
     return true;
@@ -519,6 +524,19 @@ document.addEventListener('click', async e=>{
     if(!res.ok) throw new Error('HTTP '+res.status+' — '+raw);
 
     if(data && (data.ok || data.success)){
+      // Mettre à jour immédiatement le filtre après « Posté » sans recharger.
+      if(btn.dataset.postPublication){
+        const card = btn.closest('.post-event-detail');
+        const row = card && document.querySelector(
+          '#table-haut tbody tr[data-event-id="' + card.dataset.eventId + '"]'
+        );
+        if(row && row.dataset.postPublished !== 'ok'){
+          row.dataset.postPublished = 'ok';
+          const count = document.getElementById('post-media-posted-count');
+          count.textContent = String(Number(count.textContent) + 1);
+        }
+        $('#table-haut').DataTable().draw();
+      }
       btn.outerHTML = '<span>Fait</span>';
     }else{
       throw new Error(data?.message || 'Erreur');
