@@ -16,8 +16,10 @@ QUANTITY_OPTIONS = ("PorteCles", "magnets", "MagnetsSimple")
 
 class CatalogEntryForm(forms.ModelForm):
     product_codes = forms.MultipleChoiceField(required=False, label="Machines incluses",
+                                               help_text="Cochez les machines de ce pack.",
                                                widget=forms.CheckboxSelectMultiple)
     option_codes = forms.MultipleChoiceField(required=False, label="Options incluses",
+                                              help_text="Cochez les options comprises dans le tarif.",
                                               widget=forms.CheckboxSelectMultiple)
     quantity_PorteCles = forms.IntegerField(min_value=0, max_value=10000, required=False, initial=0,
                                             label="Porte-cles inclus")
@@ -31,9 +33,18 @@ class CatalogEntryForm(forms.ModelForm):
         fields = ("kind", "code", "name", "description", "price",
                   "active", "auto_enabled")
         labels = {
-            "kind": "Type", "code": "Code unique", "name": "Nom commercial",
+            "kind": "Type d'offre", "code": "Code unique", "name": "Nom commercial",
             "description": "Description", "price": "Prix TTC (€)",
-            "active": "Visible et disponible", "auto_enabled": "Eligible aux devis automatiques",
+            "active": "Visible et disponible", "auto_enabled": "Éligible aux devis automatiques",
+        }
+        help_texts = {
+            "kind": "Machine, option ou pack.",
+            "code": "Identifiant sans espace, par exemple ipadbooth. Non modifiable ensuite.",
+            "name": "Nom utilisé dans le catalogue CRM.",
+            "description": "Facultative. Décrivez l'offre en une phrase.",
+            "price": "Machines et packs déjà présents : affiché sur Tarifs et Brochure.",
+            "active": "Décochez pour retirer l'offre de la vente. Les anciens devis restent intacts.",
+            "auto_enabled": "N'envoie aucun e-mail seul. Nécessite les autorisations dans Devis automatiques.",
         }
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 
