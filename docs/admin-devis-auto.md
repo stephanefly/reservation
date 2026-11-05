@@ -47,11 +47,11 @@ Les tarifs à 3 h restent gérés par le code existant du CRM.
 1. Vérifier que les tests de la PR sont tous verts.
 2. Depuis la console PythonAnywhere, dans l'environnement virtuel du site, mettre à jour le dépôt :
    `cd /home/stephanefly/reservation && git pull --ff-only`
-3. Créer les **deux nouvelles tables uniquement** :
+3. **Avant toute migration**, créer une sauvegarde MySQL réelle, vérifier son intégrité, conserver une copie chiffrée hors site et tester une restauration isolée (voir `docs/sauvegarde-mysql-pythonanywhere.md`). Ensuite, appliquer les migrations `quote_control` nécessaires :
    `python manage.py migrate quote_control`
 4. Recharger l'application `reservation.myselfiebooth-paris.fr` depuis l'onglet Web.
 5. Ouvrir `https://reservation.myselfiebooth-paris.fr/backend/devis-auto/`, connecté avec un compte administrateur.
-6. Vérifier les tarifs, simuler plusieurs devis et prévisualiser leurs PDF **avant activation**.
+6. Vérifier les tarifs et simuler des demandes fictives (machines, options, durée, code postal) **avant activation**. Le simulateur affiche le montant ou le motif de traitement manuel, sans générer de PDF ni enregistrer de client.
 7. Activer l'envoi seulement après validation de la facturation, des frais de déplacement et de la réception des e-mails.
 
 Le module est **OFF par défaut**, avec uniquement le Photobooth pré-sélectionné ; tous les packs sont **OFF** jusqu'à activation explicite.
@@ -63,7 +63,7 @@ En cas de doute : décocher « Activer les devis automatiques » dans le CRM et 
 
 - Les routes de paramétrage et d'aperçu PDF exigent `is_staff`.
 - Le formulaire POST est protégé par CSRF, et ses prix sont validés côté serveur.
-- La simulation n'envoie aucun e-mail et n'écrit aucun montant sur le dossier client.
+- Le nouveau simulateur n'envoie aucun e-mail, ne crée ni dossier client ni PDF et n'écrit aucun montant en base. Il utilise le même moteur d'éligibilité que les demandes réelles, en mode aperçu.
 - L'historique des tentatives envoyées, manuelles et des erreurs est visible sur la page.
 - Les incidents d'envoi SMTP nécessitent encore une intervention manuelle ; aucun réenvoi automatique pour éviter les doublons.
 
@@ -73,3 +73,13 @@ Le workflow GitHub vérifie le parcours du formulaire et :
 `python -m django test quote_control.tests` en base isolée de test.
 
 **Limites avant mise en service** : le système ne vérifie pas les stocks ou les équipes (choix commercial explicite), ne gère pas Stripe et ne réserve pas de matériel. Les formulaires soumis deux fois peuvent toujours créer deux demandes distinctes ; l'envoi de chaque demande reste traité séparément.
+
+## Nouvelle interface simplifiée
+
+Deux blocs seulement : **Paramétrage** et **Simulation**.
+Les sources, les packs de l'ancien mode, les anciens prix et l'historique sont accessibles via des sections repliées à l'intérieur de Paramétrage.
+
+Dans Simulation, sélectionner directement une ou plusieurs machines (exemple : Photobooth + Miroirbooth), la durée 3 h ou 5 h, un code postal, les options éventuelles et la source de la demande, puis cliquer sur **Calculer le devis**.
+Le moteur indique le prix TTC lorsque la demande est éligible et le motif lorsque le dossier doit être traité manuellement. **Aucun e-mail et aucun PDF client ne sont créés.** L'ancien aperçu d'un véritable dossier reste accessible aux tests internes et à son URL privée, sans être présenté comme la simulation principale.
+
+Une simulation ne contourne pas les règles : le mode catalogue, l'éligibilité des produits/packs, le seuil minimum de 350 €, les entreprises et recommandations restent pris en compte. Elle n'active pas l'envoi réel.
