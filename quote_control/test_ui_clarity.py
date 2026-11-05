@@ -42,7 +42,8 @@ class CatalogueClarityTests(TestCase):
         self.assertContains(result, "Deux réglages différents.")
         self.assertContains(result, "Tarifs/Brochure")
         self.assertContains(result, "Autoriser l'envoi automatique de devis PDF")
-        self.assertContains(result, "Tester sans envoyer")
+        self.assertContains(result, "Aperçu rapide des devis")
+        self.assertNotContains(result, "Numéro de dossier CRM")
         self.assertContains(result, "Tarifs et packs de l'ancien mode")
         self.assertFalse(AutoQuoteSettings.objects.get(pk=1).enabled)
 
