@@ -115,7 +115,7 @@ def get_pcloud_link_event_folder(folder_data: dict) -> str:
     params = {
         'access_token': ACCESS_TOKEN,
         'folderid': folder_data["folderid"],
-        'expire': expire_datetime,
+        'expire': datetime.utcnow() + timedelta(days=EXPIRE_DAYS),
         'maxdownloads': MAX_DOWNLOADS,
         'maxtraffic': MAX_TRAFFIC,
     }
