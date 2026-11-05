@@ -72,6 +72,8 @@
             <h2>Activation générale</h2>
             <label class="auto-label" for="{{ form.enabled.id_for_label }}">{{ form.enabled }} <strong>Autoriser l'envoi automatique de devis PDF</strong></label>
             <p>Au départ, le module est désactivé. Les modifications sont enregistrées sans envoi immédiat.</p>
+            <label class="auto-label" for="{{ form.catalog_enabled.id_for_label }}">{{ form.catalog_enabled }} <strong>Utiliser les tarifs des machines et packs du catalogue commercial</strong></label>
+            <p>Le mode catalogue est désactivé par défaut. Les options conservent les tarifs historiques du PDF. <a href="{% url 'admin_catalog' %}">Administrer le catalogue</a></p>
             <label class="auto-label" for="{{ form.confirm_activation.id_for_label }}">{{ form.confirm_activation }} Je confirme avoir vérifié les prix, les packs et les e-mails avant l'activation.</label>
             {% for err in form.confirm_activation.errors %}<div class="auto-error">{{ err }}</div>{% endfor %}
         </div>
