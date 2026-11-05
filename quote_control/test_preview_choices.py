@@ -67,6 +67,8 @@ class FreeQuoteSimulationTests(TestCase):
         self.assertContains(result, "Combinaison sans pack")
 
     def test_simulate_known_vogue_pack(self):
+        self.config.packs = ["vogue-premium"]
+        self.config.save(update_fields=["packs"])
         result = self.scenario(
             products=["voguebooth"],
             options=["PhotographeVoguebooth", "ImpressionVoguebooth"],
