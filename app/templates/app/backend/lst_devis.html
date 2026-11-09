@@ -393,6 +393,8 @@
             <p role="alert" style="margin:0;color:#9a3412;">Contrôle IONOS non démarré : les retours d'échec peuvent être invisibles.</p>
         {% elif not mailbox_check.success %}
             <p role="alert" style="margin:0;color:#9a3412;">Contrôle IONOS en échec : {{ mailbox_check.diagnostic }}</p>
+        {% elif mailbox_stale %}
+            <p role="alert" style="margin:0;color:#9a3412;">Contrôle IONOS non actualisé depuis plus de 3 h : vérifier la tâche planifiée PythonAnywhere.</p>
         {% endif %}
     </section>
 
