@@ -383,6 +383,19 @@
         </div>
     </header>
 
+    <section class="backend-table-card" aria-label="Alertes commerciales" style="margin:16px 0;padding:16px 20px;">
+        <h2 style="margin:0 0 12px;">Surveillance des prospects</h2>
+        <p style="margin:0 0 10px;"><strong>{{ pending_count }}</strong> demande(s) non confirmée(s).
+            <a href="{% url 'lst_devis' %}?pending=1">Voir les dossiers à rappeler</a></p>
+        <p style="margin:0 0 10px;"><strong>{{ delivery_incidents_count }}</strong> incident(s) de livraison des 30 derniers jours.
+            <a href="{% url 'graph_email_delivery' %}">Voir les refus, rebonds et erreurs SMTP</a></p>
+        {% if not mailbox_check %}
+            <p role="alert" style="margin:0;color:#9a3412;">Contrôle IONOS non démarré : les retours d'échec peuvent être invisibles.</p>
+        {% elif not mailbox_check.success %}
+            <p role="alert" style="margin:0;color:#9a3412;">Contrôle IONOS en échec : {{ mailbox_check.diagnostic }}</p>
+        {% endif %}
+    </section>
+
     <details class="backend-filter-disclosure" {% if filters.nom or filters.tel or filters.date_event or filters.prix_min or filters.prix_max or filters.status %}open{% endif %}>
         <summary>
             <span class="backend-filter-disclosure__title"><i class="fas fa-sliders-h"></i> Filtres de recherche</span>
@@ -476,7 +489,7 @@
                             {% elif event.status == 'Sended' or event.status == 'Resended' %}backend-status--info
                             {% elif event.status == 'Post Presta' %}backend-status--purple
                             {% elif event.status == 'Refused' or event.status == 'ANNULER' %}backend-status--danger{% endif %}">
-                            {{ event.get_status_display|default:event.status }}
+                            {% if event.status == 'Initied' and 'Formulaire : confirmation non terminée' in event.history_status %}À confirmer{% else %}{{ event.get_status_display|default:event.status }}{% endif %}
                         </span>
                     </span>
                     <i class="fas fa-chevron-down quote-row-summary__chevron" aria-hidden="true"></i>
