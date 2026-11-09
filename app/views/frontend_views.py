@@ -75,7 +75,7 @@ def demande_devis(request):
             data['panneaux_xxl'] = quantite
             previous_id = request.session.get('draft_event_id')
             draft = Event.objects.filter(pk=previous_id, status='Initied',
-                                         history_status=FORM_PENDING, event_token__isnull=True).first() if previous_id else None
+                                         history_status__startswith=FORM_PENDING, event_token__isnull=True).first() if previous_id else None
             event = initialize_event(data, existing=draft)
             event.history_status = FORM_PENDING
             event.save(update_fields=['history_status'])
@@ -120,7 +120,7 @@ def confirmation(request):
         draft_id = request.session.get('draft_event_id')
         if draft_id:
             event = Event.objects.filter(pk=draft_id, status='Initied',
-                                         history_status=FORM_PENDING,
+                                         history_status__startswith=FORM_PENDING,
                                          event_token__isnull=True).first()
             if event is None:
                 return HttpResponseBadRequest('Cette demande a déjà été traitée ou a expiré.')
