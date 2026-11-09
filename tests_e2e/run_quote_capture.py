@@ -1,0 +1,16 @@
+"""Tester l'enregistrement des prospects en isolant les services externes."""
+import os
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests_e2e.settings")
+os.environ.setdefault("CRM_E2E_SQLITE_PATH", ":memory:")
+
+import django
+django.setup()
+
+from tests_e2e.boundaries import install_boundaries
+install_boundaries()
+
+from django.core.management import call_command
+
+if __name__ == "__main__":
+    call_command("test", "app.tests.test_quote_capture", verbosity=1)
