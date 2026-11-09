@@ -48,6 +48,8 @@ MAIL_BCC = config.get('MAIL_BCC')
 # Copie visible Cc de tous les e-mails du CRM (adresse confirmée).
 # Peut être remplacée ou désactivée (valeur vide) via settings.yaml.
 MAIL_ADMIN_CC = config.get('MAIL_ADMIN_CC', 'contact@myselfiebooth-paris.fr')
+# Destinataire des alertes CRM, configurable sans modifier l'adresse expéditeur.
+CRM_ALERT_EMAIL = config.get('CRM_ALERT_EMAIL', MAIL_ADMIN_CC)
 MP = config.get('MP')
 # Adresse du responsable contenu recevant les demandes « À poster ».
 POST_PRESTA_PUBLICATION_EMAIL = config.get(

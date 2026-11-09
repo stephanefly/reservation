@@ -201,6 +201,25 @@ class EmailTrackingTests(TestCase):
         delivery.refresh_from_db()
         self.assertEqual(delivery.delivery_status, "delivered")
 
+    def test_smtp_refusal_notifies_only_after_recorded_failure(self):
+        delivery = self.delivery()
+        server = self.smtp({"client@example.invalid": (550, b"Unknown recipient")})
+        with patch("app.module.mail.alerts.notify_failed_delivery") as notify:
+            with self.captureOnCommitCallbacks(execute=True):
+                with patch("app.module.mail.delivery.smtplib.SMTP_SSL", return_value=server):
+                    with self.assertRaises(smtplib.SMTPRecipientsRefused):
+                        submit(delivery, MIMEText("Test"))
+        notify.assert_called_once_with(delivery.pk)
+
+    def test_bounced_report_notifies_once_without_duplicate_email(self):
+        delivery = self.delivery()
+        EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="accepted")
+        with patch("app.module.mail.alerts.notify_failed_delivery") as notify:
+            with self.captureOnCommitCallbacks(execute=True):
+                apply_report(dsn(delivery.message_id, code="5.0.0"))
+                apply_report(dsn(delivery.message_id, code="5.0.0"))
+        notify.assert_called_once_with(delivery.pk)
+
     def test_mailbox_read_is_read_only_and_keeps_messages_unread(self):
         delivery = self.delivery()
         EmailTracking.objects.filter(pk=delivery.pk).update(delivery_status="accepted")

@@ -8,6 +8,7 @@ from django.core.validators import validate_email
 
 from django.conf import settings
 from django.utils import timezone
+from django.db import transaction
 
 from app.models import EmailTracking
 
@@ -24,10 +25,14 @@ def begin_delivery(event, mail_type):
 
 
 def finish(delivery, status, code=None, diagnostic=""):
+    previous = delivery.delivery_status
     delivery.delivery_status = status
     delivery.smtp_code = code if isinstance(code, int) and 0 <= code <= 999 else None
     delivery.diagnostic = diagnostic[:500]
     delivery.save(update_fields=["delivery_status", "smtp_code", "diagnostic", "accepted_at", "copy_refused"])
+    if status in {"refused", "error", "unknown"} and previous != status:
+        from app.module.mail.alerts import notify_failed_delivery
+        transaction.on_commit(lambda tracking_id=delivery.pk: notify_failed_delivery(tracking_id))
 
 
 def add_admin_cc(message, primary_recipient):

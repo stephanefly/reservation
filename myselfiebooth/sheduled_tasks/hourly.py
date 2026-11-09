@@ -23,6 +23,12 @@ try:
 except Exception:
     logging.getLogger(__name__).warning('Contrôle des retours mail indisponible : consulter la configuration IMAP et les migrations.')
 
+# Pré-demandes non confirmées depuis une heure : alerte distincte des relances clients.
+try:
+    call_command('notify_pending_quotes')
+except Exception:
+    logging.getLogger(__name__).exception('Contrôle des formulaires abandonnés indisponible.')
+
 from app.models import Event
 from app.module.cloud.send_media import send_media_logic
 
