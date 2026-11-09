@@ -148,3 +148,50 @@ migration depuis les deux historiques possibles.
 Aucun mail réel n'est envoyé. Migration, connexion IMAP, tâche horaire et rendu
 navigateur en production restent à vérifier après activation. SPF/DKIM/DMARC et
 le classement réel Gmail/Outlook nécessitent une vérification séparée.
+
+## Alertes et conservation des prospects (correctif novembre 2026)
+
+- Dès le premier clic sur « Vérifier ma demande de devis », la demande est
+  enregistrée dans le CRM avec la mention
+  `Formulaire : confirmation non terminée`. La page finale de confirmation
+  réutilise ce dossier, même après correction du formulaire. Un double clic
+  final ne doit plus créer de second événement.
+- La liste des devis affiche le nombre de pré-demandes à confirmer et le nombre
+  d'erreurs de livraison enregistrées sur les 30 derniers jours. Elle prévient
+  si la dernière vérification IONOS est absente, a échoué ou date de plus de 3 h.
+- `python manage.py notify_pending_quotes` signale en un e-mail interne les
+  pré-demandes non confirmées depuis plus d'une heure et marque les dossiers
+  signalés afin de ne pas répéter la notification. Une panne d'alerte laisse les
+  dossiers non marqués pour le prochain passage.
+- Lors d'un premier refus SMTP (immédiat), ou lors d'un rapport IONOS structuré
+  de non-livraison / retard, un e-mail interne résume le dossier et le
+  destinataire. Aucune relance client n'est envoyée automatiquement.
+- `CRM_ALERT_EMAIL` est facultatif dans `settings.yaml`. Si absent, les
+  notifications vont à `MAIL_ADMIN_CC` (par défaut
+  `contact@myselfiebooth-paris.fr`). L'envoi d'alerte utilise SMTP IONOS,
+  sans le suivi client et sans copie visible au prospect. Une panne SMTP peut
+  aussi empêcher l'alerte e-mail : les incidents restent alors visibles
+  dans l'interface d'administration.
+
+### Activation sur PythonAnywhere
+
+Aucune migration de schéma supplémentaire n'est nécessaire pour ce correctif.
+Après sauvegarde et vérification de la version déployée :
+
+```bash
+python manage.py sync_email_bounces --days 14
+python manage.py notify_pending_quotes
+```
+
+Le script existant `myselfiebooth/sheduled_tasks/hourly.py` appelle les deux
+commandes, **uniquement s'il est réellement planifié sur PythonAnywhere**.
+Vérifier la tâche dans le panneau Tasks et la réception de l'adresse d'alerte.
+La synchronisation IMAP en lecture seule ne traite que les rapports
+`multipart/report` avec adresse et Message-ID exacts. Une capture d'écran ou
+un texte de rejet transféré par un client ne suffit pas à changer un statut.
+Un code 554 ne permet pas à lui seul d'identifier la cause d'un rejet iCloud :
+contrôler aussi SPF, DKIM, DMARC et les journaux IONOS.
+
+Le présent changement protège les demandes faites sur le formulaire **devis**
+du CRM. Le formulaire **Contact** du site vitrine utilise toujours Web3Forms :
+l'intégrer séparément au CRM avant de garantir une couverture de 100 %.
