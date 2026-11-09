@@ -5,6 +5,7 @@ from email.parser import Parser
 from email.utils import parseaddr
 
 from django.utils import timezone
+from django.db import transaction
 
 from app.models import EmailTracking
 
@@ -57,8 +58,11 @@ def apply_report(raw):
         eligible = ["accepted", "unknown", "delayed"]
         if status == "bounced":
             eligible += ["delivered"]
-        EmailTracking.objects.filter(pk=delivery.pk, delivery_status__in=eligible).update(
+        updated = EmailTracking.objects.filter(pk=delivery.pk, delivery_status__in=eligible).update(
             delivery_status=status, feedback_at=timezone.now(),
             diagnostic=f"Rapport technique reçu : {action}, code {code[:30]}.",
         )
+        if updated and status in {"bounced", "delayed"}:
+            from app.module.mail.alerts import notify_failed_delivery
+            transaction.on_commit(lambda tracking_id=delivery.pk: notify_failed_delivery(tracking_id))
     return matched, unmatched
