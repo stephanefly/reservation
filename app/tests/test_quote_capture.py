@@ -1,5 +1,6 @@
 """Régression : ne plus perdre les demandes à l'étape de confirmation."""
 import io
+import importlib
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -9,6 +10,8 @@ from django.utils import timezone
 
 from app.models import Event
 from app.views.frontend_views import FORM_PENDING, confirmation, demande_devis
+
+frontend_module = importlib.import_module('app.views.frontend_views')
 
 
 def payload():
@@ -38,9 +41,9 @@ class QuoteCaptureTests(TestCase):
     def final_step(self):
         request = self.factory.post("/confirmation/", {})
         request.session = self.session
-        with patch("app.views.frontend_views.create_google_contact"), \
-             patch("app.views.frontend_views.create_card", return_value="test-card"), \
-             patch("app.views.frontend_views.process_instant_quote", return_value=False):
+        with patch.object(frontend_module, "create_google_contact"), \
+             patch.object(frontend_module, "create_card", return_value="test-card"), \
+             patch.object(frontend_module, "process_instant_quote", return_value=False):
             return confirmation(request)
 
     def test_first_step_persists_single_lead_before_second_confirmation(self):
