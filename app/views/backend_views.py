@@ -18,6 +18,9 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from app.module.data_bdd.panneau_xxl import TARIFS_PANNEAUX, QUANTITE_PAR_DEFAUT, quantite_panneaux, appliquer_panneaux
 from django.shortcuts import render
 from django.db.models import Q
+from datetime import timedelta
+from django.utils import timezone
+from app.models import EmailMailboxCheck
 from myselfiebooth.settings import KEY_TRELLO, TOKEN_TRELLO
 logger = logging.getLogger(__name__)
 today_date = datetime.now().date()
@@ -118,6 +121,7 @@ def lst_devis(request):
     prix_min = request.GET.get('prix_min', '').strip()
     prix_max = request.GET.get('prix_max', '').strip()
     status = request.GET.get('status', '').strip()
+    pending = request.GET.get('pending') == '1'
 
     # Initialisation de la requête avec les 15 derniers événements
     event_queryset = Event.objects.select_related(
@@ -144,13 +148,25 @@ def lst_devis(request):
         filters &= Q(prix_proposed__lte=int(prix_max))
     if status:
         filters &= Q(status=status)  # Filtre exact sur le statut
+    if pending:
+        filters &= Q(status='Initied', history_status__startswith='Formulaire : confirmation non terminée')
 
     # Appliquer les filtres si spécifiés
     if filters:
         all_event = event_queryset.filter(filters)
 
-    # Renvoyer les résultats au template
+    # Signaux visibles dès l'ouverture, indépendants du statut commercial.
+    pending_count = Event.objects.filter(status='Initied', history_status__startswith='Formulaire : confirmation non terminée').count()
+    incidents_count = EmailTracking.objects.filter(
+        delivery_status__in=('refused', 'error', 'unknown', 'delayed', 'bounced'),
+        sent_at__gte=timezone.now() - timedelta(days=30),
+    ).count()
+    mailbox_check = EmailMailboxCheck.objects.filter(key='ionos').first()
     return render(request, 'app/backend/lst_devis.html', {
+        'pending': pending,
+        'pending_count': pending_count,
+        'delivery_incidents_count': incidents_count,
+        'mailbox_check': mailbox_check,
         'all_event': all_event,
         'filters': {
             'nom': nom,
