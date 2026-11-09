@@ -37,15 +37,19 @@ def get_confirmation_data(request):
     return post_data
 
 
-def initialize_event(post_data):
+def initialize_event(post_data, existing=None):
     Client = apps.get_model("app", "Client")
     EventDetails = apps.get_model("app", "EventDetails")
     EventProduct = apps.get_model("app", "EventProduct")
     EventOption = apps.get_model("app", "EventOption")
     Event = apps.get_model("app", "Event")
-    print("initialize_event : " +str(post_data))
-
     with transaction.atomic():
+        if existing is not None:
+            existing = Event.objects.select_for_update().select_related(
+                'client', 'event_details', 'event_product', 'event_option'
+            ).get(pk=existing.pk)
+            if existing.status != 'Initied' or existing.event_token:
+                raise ValueError('Ce dossier a déjà été confirmé et ne peut plus être modifié.')
         # -------------------------------------------------------------
         client_data = post_data['page_client']
         event_data = post_data['event']
@@ -53,22 +57,20 @@ def initialize_event(post_data):
         options_data = post_data['options']
         # -------------------------------------------------------------
         # Création et sauvegarde de l'objet Client
-        client = Client(
-            nom=client_data['nom'],
-            mail=client_data['mail'],
-            numero_telephone=client_data['telephone'].strip(),
-            how_find=client_data['how_find'],
-            raison_sociale=client_data['raison_sociale'],
-        )
+        client = existing.client if existing else Client()
+        client.nom = client_data['nom']
+        client.mail = client_data['mail']
+        client.numero_telephone = client_data['telephone'].strip()
+        client.how_find = client_data['how_find']
+        client.raison_sociale = client_data['raison_sociale']
         client.save()
         # -------------------------------------------------------------
         # Création et sauvegarde de l'objet EventDetails
-        event_details = EventDetails(
-            date_evenement=event_data['date'],
-            adresse_evenement=event_data['adresse'],
-            ville_evenement=event_data['ville'],
-            code_postal_evenement=event_data['code_postal']
-        )
+        event_details = existing.event_details if existing else EventDetails()
+        event_details.date_evenement = event_data['date']
+        event_details.adresse_evenement = event_data['adresse']
+        event_details.ville_evenement = event_data['ville']
+        event_details.code_postal_evenement = event_data['code_postal']
         event_details.save()
         # -------------------------------------------------------------
         # Initialisation des attributs du produit à False
@@ -96,7 +98,9 @@ def initialize_event(post_data):
             product_attrs['airbooth'] = True
 
         # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
-        event_product = EventProduct(**product_attrs)
+        event_product = existing.event_product if existing else EventProduct()
+        for field, value in product_attrs.items():
+            setattr(event_product, field, value)
         event_product.save()
         # -------------------------------------------------------------
         # Création et sauvegarde de l'objet EventOption
@@ -124,7 +128,9 @@ def initialize_event(post_data):
                 options_attrs[option] = True
 
         # Création et sauvegarde de l'objet EventProduct avec les attributs mis à jour
-        event_option = EventOption(**options_attrs)
+        event_option = existing.event_option if existing else EventOption()
+        for field, value in options_attrs.items():
+            setattr(event_option, field, value)
         appliquer_panneaux(event_option, post_data.get("panneaux_xxl", 0))
         event_option.magnets = post_data['magnets_range']
         event_option.PorteCles = post_data['PorteCles_range']
@@ -135,16 +141,14 @@ def initialize_event(post_data):
         # -------------------------------------------------------------
 
         # Création de l'objet Event
-        event = Event(
-            client=client,
-            event_details=event_details,
-            event_product=event_product,
-            event_option=event_option,
-            prix_brut=0,
-        )
-        event.save()
-
-        make_num_devis(event)
+        if existing:
+            event = existing
+        else:
+            event = Event(client=client, event_details=event_details,
+                          event_product=event_product, event_option=event_option, prix_brut=0)
+            event.save()
+            make_num_devis(event)
+        event.reduc_product = 0
         event.prix_brut = prix_brut_calculs(event)
         event.save()
 
