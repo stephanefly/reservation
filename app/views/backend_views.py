@@ -162,11 +162,13 @@ def lst_devis(request):
         sent_at__gte=timezone.now() - timedelta(days=30),
     ).count()
     mailbox_check = EmailMailboxCheck.objects.filter(key='ionos').first()
+    mailbox_stale = not mailbox_check or not mailbox_check.checked_at or mailbox_check.checked_at < timezone.now() - timedelta(hours=3)
     return render(request, 'app/backend/lst_devis.html', {
         'pending': pending,
         'pending_count': pending_count,
         'delivery_incidents_count': incidents_count,
         'mailbox_check': mailbox_check,
+        'mailbox_stale': mailbox_stale,
         'all_event': all_event,
         'filters': {
             'nom': nom,
