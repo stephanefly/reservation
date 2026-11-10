@@ -73,32 +73,13 @@ La première conserve `status` comme filtre de `status_devis`.
 
 ## Copie visible (Cc) des e-mails de MySelfieBooth
 
-La copie visible (Cc) par défaut est `contact@myselfiebooth-paris.fr`,
-confirmée par le propriétaire du compte. Elle s'applique à tous les messages
-envoyés par le système SMTP IONOS du CRM, y compris les notifications internes
-de post-prestation et les alertes système.
+La copie automatique est désactivée à la demande du propriétaire.
+`MAIL_ADMIN_CC` est fixé à une chaîne vide dans `settings.py`, même si une
+ancienne valeur existe dans `settings.yaml`. Recharger le site PythonAnywhere
+après la mise à jour. Les éventuelles copies BCC existantes restent inchangées.
 
-Le paramètre facultatif `MAIL_ADMIN_CC` dans `myselfiebooth/settings.yaml`
-peut remplacer cette valeur ou la désactiver (chaîne vide) :
-
-```yaml
-MAIL_ADMIN_CC: "contact@myselfiebooth-paris.fr"
-```
-
-Cette valeur est chargée par `myselfiebooth/settings.py` au démarrage :
-recharger le site PythonAnywhere après l'installation. Aucun mot de passe
-ni changement de configuration pCloud n'est nécessaire.
-
-Une adresse invalide (notamment une adresse dictée avec des caractères
-non ASCII) est ignorée avec une erreur journalisée pour éviter tout envoi
-accidentel à un tiers. L'adresse principale et l'éventuel BCC continuent
-de fonctionner normalement. La copie est dédupliquée avec les copies
-déjà demandées par le modèle de message.
-
-**Attention :** le champ Cc est visible par les destinataires clients.
-Pour une copie invisible, utiliser le paramètre `MAIL_BCC` déjà existant.
-Ne pas renseigner une adresse issue d'une transcription vocale sans
-confirmation explicite.
+Les alertes internes restent adressées à `CRM_ALERT_EMAIL`, avec
+`contact@myselfiebooth-paris.fr` comme valeur par défaut indépendante des copies.
 
 ## Lecture des retours IONOS
 
@@ -167,8 +148,8 @@ le classement réel Gmail/Outlook nécessitent une vérification séparée.
   de non-livraison / retard, un e-mail interne résume le dossier et le
   destinataire. Aucune relance client n'est envoyée automatiquement.
 - `CRM_ALERT_EMAIL` est facultatif dans `settings.yaml`. Si absent, les
-  notifications vont à `MAIL_ADMIN_CC` (par défaut
-  `contact@myselfiebooth-paris.fr`). L'envoi d'alerte utilise SMTP IONOS,
+  notifications vont à `contact@myselfiebooth-paris.fr` par défaut,
+  indépendamment de la désactivation des copies automatiques. L'envoi d'alerte utilise SMTP IONOS,
   sans le suivi client et sans copie visible au prospect. Une panne SMTP peut
   aussi empêcher l'alerte e-mail : les incidents restent alors visibles
   dans l'interface d'administration.
