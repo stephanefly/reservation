@@ -311,6 +311,7 @@
 
       <section class="info-block" aria-labelledby="design-title">
          <h5 id="design-title"><i class="bi bi-palette" aria-hidden="true"></i> Personnalisation</h5>
+         {% include 'app/partials/template_ai.html' %}
 
          {% if event.event_product.need_design %}
          <div class="info-row">
@@ -499,7 +500,7 @@
             {% csrf_token %}
             <div class="modal-body">
                <div class="alert alert-warning">
-                  <p><strong>Personnalisez votre tirage :</strong> choisissez un modèle dans l'une des boutiques Etsy ci-dessous, puis copiez l'URL du modèle précis. Nous adapterons sa mise en page à votre prestation.</p>
+                  <p><strong>Votre template sur mesure est inclus :</strong> décrivez vos envies par e-mail. Notre designer crée votre cadre photo à l’aide de notre IA spécialisée en templates. Vous pouvez aussi choisir une inspiration dans les boutiques Etsy ci-dessous et nous transmettre son lien.</p>
                   <ul class="mb-0">
                      <li><a href="https://www.etsy.com/shop/MyCreativeTemplateCo" target="_blank" rel="noopener">MyCreativeTemplateCo</a></li>
                      <li><a href="https://www.etsy.com/shop/YourCreativeTemplate" target="_blank" rel="noopener">YourCreativeTemplate</a></li>
@@ -508,10 +509,10 @@
                </div>
 
                <div class="form-group">
-                  <label for="url_modele">URL du modèle de tirage</label>
+                  <label for="url_modele">URL d’inspiration (facultatif)</label>
                   <input type="url" class="form-control" id="url_modele" name="url_modele"
                          value="{{ event.event_template.url_modele|default:'' }}"
-                         placeholder="Collez l'URL exacte du modèle choisi sur Etsy">
+                         placeholder="Lien d’un modèle si vous en avez un ; sinon, écrivez-nous">
                </div>
             </div>
             <div class="modal-footer">

@@ -16,6 +16,7 @@
             Choisissez vos animations, ajoutez vos options, puis recevez une proposition adaptée à votre événement.
         </p>
     </section>
+    {% include 'app/partials/template_ai.html' %}
 
     <section class="wizard-progress" aria-label="Progression du formulaire">
         <div class="progress-line">
@@ -1991,3 +1992,5 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 {% endblock %}
+
+{% block template_ai %}{% endblock %}

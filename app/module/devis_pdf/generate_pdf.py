@@ -30,6 +30,9 @@ def generate_pdf_devis(event):
 
     # ----------------------------------------------------------------------------------------
     # Ajouter des zones de texte pour les en-têtes
+    pdf.setFillColor(colors.black)
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(50, height - 95, "Template photo sur mesure inclus : notre designer utilise une IA spécialisée en templates.")
     pdf.setFont("Times-Bold", 20)
     pdf.drawString(50, height - 125, "DEVIS n°D" + str(event.num_devis))
     pdf.setFont("Helvetica", 12)
