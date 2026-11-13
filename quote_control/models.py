@@ -52,6 +52,8 @@ class CatalogEntry(models.Model):
     description = models.TextField(blank=True)
     price = models.PositiveIntegerField(default=0, help_text="Prix TTC en euros")
     active = models.BooleanField(default=True)
+    public_enabled = models.BooleanField(default=False)
+    image_url = models.CharField(max_length=500, blank=True)
     auto_enabled = models.BooleanField(
         default=False, help_text="Autoriser en devis auto, seulement si le mode catalogue est active"
     )
