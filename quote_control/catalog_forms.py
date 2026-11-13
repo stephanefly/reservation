@@ -31,10 +31,11 @@ class CatalogEntryForm(forms.ModelForm):
     class Meta:
         model = CatalogEntry
         fields = ("kind", "code", "name", "description", "price",
-                  "active", "auto_enabled")
+                  "public_enabled", "image_url", "active", "auto_enabled")
         labels = {
             "kind": "Type d'offre", "code": "Code unique", "name": "Nom commercial",
             "description": "Description", "price": "Prix TTC (€)",
+            "public_enabled": "Publier sur le site et la brochure", "image_url": "Image de l’option",
             "active": "Visible et disponible", "auto_enabled": "Activer les devis automatiques pour cette offre",
         }
         help_texts = {
@@ -42,11 +43,19 @@ class CatalogEntryForm(forms.ModelForm):
             "code": "Identifiant sans espace, par exemple ipadbooth. Non modifiable ensuite.",
             "name": "Nom utilisé dans le catalogue CRM.",
             "description": "Facultative. Décrivez l'offre en une phrase.",
-            "price": "Machines et packs déjà présents : affiché sur Tarifs et Brochure.",
+            "price": "Machines et packs déjà présents : affiché sur Tarifs et Brochure. Le prix des options reste indicatif.",
+            "public_enabled": "Options uniquement : publie cette carte dans les pages Tarifs et Brochure.",
+            "image_url": "Options uniquement : chemin /static/... ou URL HTTPS de la photo affichée sur les deux pages.",
             "active": "Décochez pour retirer l'offre de la vente. Les anciens devis restent intacts.",
             "auto_enabled": "Une fois l'offre enregistrée, les nouvelles demandes compatibles peuvent être traitées automatiquement. Entreprises et recommandations restent manuelles.",
         }
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
+
+    def clean_image_url(self):
+        value = (self.cleaned_data.get("image_url") or "").strip()
+        if value and not (value.startswith("/static/") or value.startswith("https://")):
+            raise forms.ValidationError("Utilisez un chemin /static/... ou une URL HTTPS.")
+        return value
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
