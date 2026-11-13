@@ -26,7 +26,7 @@ Une personne qui ouvre une page pour la première fois doit savoir en quelques s
 | Réglage | Explication courte |
 |---|---|
 | Prix TTC | Machines et packs déjà présents : affiché sur Tarifs et Brochure |
-| Option | Prix de référence ; le calcul des devis PDF est distinct |
+| Option | Prix indicatif ; devis manuel. La visibilité publique et l'image se règlent dans la fiche |
 | Éligible aux devis automatiques | Ce choix seul n'envoie aucun e-mail |
 | Composition du pack | Exemple : Photobooth + Phonebooth + 100 porte-clés |
 | Simuler / tester | Vérifier un devis sans envoi ni modification des montants |

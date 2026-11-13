@@ -373,6 +373,8 @@
         box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32);
     }
 
+    .public-option-placeholder { height: 190px; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, rgba(216,180,90,.3), #181818 68%); color: #fff1b8; font-size: 48px; }
+
     .brochure-option-card img {
         width: 100%;
         height: 190px;
@@ -384,6 +386,12 @@
 
     .brochure-option-body {
         padding: 16px;
+    }
+
+    .brochure-option-card .brochure-button {
+        width: 100%;
+        margin-top: 14px;
+        border-radius: 14px;
     }
 
     .brochure-option-body h3 {
@@ -1069,147 +1077,32 @@
 
     <section class="brochure-container" id="options">
         <div class="brochure-section-head">
-            <h2>Options</h2>
+            <h2>Personnalisez votre expérience</h2>
             <p>
-                Ajoutez des options utiles pour renforcer la décoration, l’expérience invité et les souvenirs physiques.
+                Décors, animations et souvenirs : découvrez les options disponibles pour rendre votre événement unique. Nous adaptons le devis à votre date, votre lieu et la formule choisie.
             </p>
         </div>
 
         <div class="brochure-options-grid">
+{% for option in public_options %}
             <article class="brochure-option-card">
-                <img src="{% static 'img/allmur.jpg' %}" alt="Mur floral">
+                {% if option.image_url %}
+                <img src="{{ option.image_url }}" alt="{{ option.name }}" loading="lazy">
+                {% else %}
+                <div class="public-option-placeholder" aria-hidden="true">✦</div>
+                {% endif %}
                 <div class="brochure-option-body">
-                    <h3>Mur floral</h3>
-                    <p>Décor photo premium pour obtenir un rendu plus chic sur les photos et vidéos.</p>
-                    <span class="brochure-option-tag">Décor premium</span>
+                    <h3>{{ option.name }}</h3>
+                    <p>{{ option.description|default:"Une option à personnaliser selon votre événement." }}</p>
+                    <span class="brochure-option-tag">Sur devis</span>
+                    <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Demander un devis</a>
                 </div>
             </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/phonebooth.jpg' %}" alt="Phonebooth audio">
-                <div class="brochure-option-body">
-                    <h3>Phonebooth audio</h3>
-                    <p>Livre d’or audio rétro pour enregistrer les messages vocaux des invités.</p>
-                    <span class="brochure-option-tag">Messages vocaux</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/PorteCles.png' %}" alt="Porte-clés photo">
-                <div class="brochure-option-body">
-                    <h3>Porte-clés photo</h3>
-                    <p>Photo personnalisée intégrée dans un porte-clés souvenir à offrir aux invités.</p>
-                    <span class="brochure-option-tag">Souvenir invité</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/magnets.png' %}" alt="Magnets premium">
-                <div class="brochure-option-body">
-                    <h3>Magnets premium</h3>
-                    <p>Support magnétique rigide 60 x 90 mm avec photo intégrée et protection plastifiée.</p>
-                    <span class="brochure-option-tag">Rendu premium</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/MagnetsSimple.png' %}" alt="Magnets simples">
-                <div class="brochure-option-body">
-                    <h3>Magnets simples</h3>
-                    <p>Tirage photo classique avec magnet collé au dos. Simple, efficace et économique.</p>
-                    <span class="brochure-option-tag">Option économique</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/panneaux-xxl-cinema-ville.webp' %}" alt="Deux panneaux photo XXL avec couple en tenues de soirée, encadrement blanc et prénoms" width="960" height="640" loading="lazy">
-                <div class="brochure-option-body">
-                    {% include "app/partials/panneaux_xxl_presentation.html" %}
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/Panneau-fontaine.jpg' %}" alt="Panneau fontaine">
-                <div class="brochure-option-body">
-                    <h3>Panneau fontaine</h3>
-                    <p>Accueil élégant et visible pour l’entrée de salle, les mariages et les grands événements.</p>
-                    <span class="brochure-option-tag">Accueil premium</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/livre-dor-video.jpg' %}" alt="Livre d’or vidéo">
-                <div class="brochure-option-body">
-                    <h3>Livre d’or vidéo</h3>
-                    <p>Messages vidéo des invités pour garder des souvenirs plus vivants.</p>
-                    <span class="brochure-option-tag">Messages vidéo</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/3dHolo.jpg' %}" alt="Holo 3D">
-                <div class="brochure-option-body">
-                    <h3>Holo 3D</h3>
-                    <p>Animation visuelle originale pour donner un effet moderne à votre événement.</p>
-                    <span class="brochure-option-tag">Effet visuel</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/Livre-dor.jpg' %}" alt="Livre d’or">
-                <div class="brochure-option-body">
-                    <h3>Livre d’or</h3>
-                    <p>Support physique pour coller les tirages et conserver les messages des invités.</p>
-                    <span class="brochure-option-tag">Souvenir papier</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/Welcomeboard.jpg' %}" alt="Panneau de bienvenue">
-                <div class="brochure-option-body">
-                    <h3>Panneau de bienvenue</h3>
-                    <p>Panneau personnalisé pour guider les invités et renforcer la décoration.</p>
-                    <span class="brochure-option-tag">Décoration</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/fond360.jpg' %}" alt="Fond LED 360">
-                <div class="brochure-option-body">
-                    <h3>Fond LED 360</h3>
-                    <p>Fond lumineux pour améliorer le rendu visuel des vidéos 360 Booth.</p>
-                    <span class="brochure-option-tag">Option 360 Booth</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/photographe-voguebooth.jpg' %}" alt="Photographe Vogue Booth">
-                <div class="brochure-option-body">
-                    <h3>Photographe Vogue Booth</h3>
-                    <p>Photographe dédié pour obtenir des clichés plus propres et mieux cadrés.</p>
-                    <span class="brochure-option-tag">Option Vogue Booth</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/impression-voguebooth.jpg' %}" alt="Impression Vogue Booth">
-                <div class="brochure-option-body">
-                    <h3>Impression Vogue Booth</h3>
-                    <p>Ajout d’impressions instantanées pour offrir un souvenir physique aux invités.</p>
-                    <span class="brochure-option-tag">Option impression</span>
-                </div>
-            </article>
-
-            <article class="brochure-option-card">
-                <img src="{% static 'img/decoration-voguebooth.jpg' %}" alt="Décoration Vogue Booth">
-                <div class="brochure-option-body">
-                    <h3>Décoration Vogue Booth</h3>
-                    <p>Décoration spécifique pour améliorer l’effet studio et l’expérience photo.</p>
-                    <span class="brochure-option-tag">Option décor</span>
-                </div>
-            </article>
+            {% empty %}
+            <p>Les options sont disponibles sur demande. Contactez-nous pour composer votre formule.</p>
+            {% endfor %}
         </div>
-    </section>
+</section>
         <section class="brochure-container" id="packs">
         <div class="brochure-section-head">
             <h2>Nos packs événementiels</h2>
