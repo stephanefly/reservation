@@ -94,7 +94,7 @@
   <header>
     <p class="subtitle">CRM / Administration</p>
     <h1>Catalogue commercial</h1>
-    <p class="subtitle">Prix, remises et envoi automatique : tout se règle sur chaque offre.</p>
+    <p class="subtitle">Prix, présentation publique et disponibilité : gérez les options au même endroit.</p>
   </header>
   <nav class="catalog-tabs" aria-label="Sections du catalogue">
     <a href="{% url 'admin_catalog' %}?tab=offres" {% if active_tab == 'offres' %}aria-current="page"{% endif %}>Offres et tarifs</a>
@@ -109,7 +109,7 @@
     <strong>Où vont vos modifications ?</strong>
     <div class="status-row">
       <span><strong>Machines et packs existants :</strong> prix sur Tarifs et Brochure.</span>
-      <span><strong>Options :</strong> prix indicatifs, devis manuels.</span>
+      <span><strong>Options :</strong> publication sur le site et la brochure depuis cette fiche ; prix chiffrés sur devis.</span>
     </div>
     <div class="status-row">
       <span><strong>Devis automatiques :</strong> {{ auto_offers_count }} offre(s) activée(s).</span>
@@ -225,7 +225,7 @@
           <fieldset>
             <legend>2. Visibilité et devis</legend>
             {% for field in form.visible_fields %}
-              {% if field.name == 'active' or field.name == 'auto_enabled' %}
+              {% if field.name == 'active' or field.name == 'auto_enabled' or field.name == 'public_enabled' or field.name == 'image_url' %}
                 <div class="form-field">
                   {{ field }} {{ field.label_tag }}
                   {% if field.help_text %}<p class="meta">{{ field.help_text }}</p>{% endif %}
