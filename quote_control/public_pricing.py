@@ -28,6 +28,7 @@ def get_public_catalogue():
     prices = dict(PRIX_PRODUITS)
     prices.update(PRIX_VENTE_PAR_DEFAUT)
     packs = dict(_PACK_DEFAULTS)
+    public_options = []
     visibility = {code: True for code in PRODUCT_KEYS}
     visibility.update({code.replace("-", "_"): True for code in _KNOWN_PACK_KEYS})
 
@@ -37,6 +38,11 @@ def get_public_catalogue():
             CatalogEntry.objects.filter(
                 kind__in=("product", "pack"),
             ).values_list("kind", "code", "price", "active")
+        )
+        public_options = list(
+            CatalogEntry.objects.filter(
+                kind="option", active=True, public_enabled=True,
+            ).order_by("name", "code").values("name", "description", "image_url")
         )
     except DatabaseError:
         logger.warning("Catalogue tarifaire indisponible : prix de repli affichés")
@@ -59,4 +65,5 @@ def get_public_catalogue():
         "data_price": prices,
         "pack_prices": packs,
         "public_active": visibility,
+        "public_options": public_options,
     }
