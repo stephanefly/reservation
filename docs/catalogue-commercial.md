@@ -224,3 +224,24 @@ en service de `AutoQuoteLog` ne sont pas reconstituables.
 
 L'onglet est uniquement en lecture, sans changement de tarif,
 de devis, d'e-mail, de modèle ou de schéma SQL.
+
+
+## Publication des options sur le site et la brochure
+
+Les cartes de la section Options des pages Tarifs et Brochure sont lues depuis
+les offres de type Option du Catalogue CRM. Une option apparaît sur les deux
+pages lorsque **Visible et disponible** et **Publier sur le site et la brochure**
+sont cochés. Les prix des options restent affichés « Sur devis » : le prix de
+référence du CRM ne devient pas un tarif public et ne change pas le calcul du
+devis PDF.
+
+Chaque option peut recevoir une description et une image. Le champ image accepte
+un chemin de fichier statique commençant par `/static/` ou une URL HTTPS. Les
+options existantes sont initialisées avec leurs images déjà utilisées sur la
+page Tarifs. Si aucune image n'est renseignée, une vignette neutre est affichée.
+
+La migration `0003_public_options` ajoute les champs de publication et prépare
+« Photobooth IA » et « Mosaïque participative » comme offres désactivées.
+Elles restent invisibles au public jusqu'à validation du contenu, du prix et de
+l'image dans le CRM. Ces deux options restent à devis manuel ; aucun envoi
+automatique ni calcul PDF nouveau n'est activé.
