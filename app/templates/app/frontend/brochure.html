@@ -388,6 +388,12 @@
         padding: 16px;
     }
 
+    .brochure-option-card .brochure-button {
+        width: 100%;
+        margin-top: 14px;
+        border-radius: 14px;
+    }
+
     .brochure-option-body h3 {
         margin: 0 0 8px;
         color: var(--brochure-gold-light);
@@ -1088,7 +1094,7 @@
                 <div class="brochure-option-body">
                     <h3>{{ option.name }}</h3>
                     <p>{{ option.description|default:"Une option à personnaliser selon votre événement." }}</p>
-                    <span class="option-price">Sur devis</span>
+                    <span class="brochure-option-tag">Sur devis</span>
                     <a href="https://reservation.myselfiebooth-paris.fr/" class="brochure-button brochure-button-primary">Demander un devis</a>
                 </div>
             </article>
