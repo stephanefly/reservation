@@ -87,3 +87,31 @@ class PublicCataloguePricingTests(TestCase):
         self.assertEqual(PRIX_PRODUITS["ipadbooth"], 250)
 
 
+
+    def test_options_render_with_photos_on_tarifs_and_brochure(self):
+        CatalogEntry.objects.filter(code="MurFloral").update(image_url="")
+        CatalogEntry.objects.filter(code="Fond360").update(public_enabled=False)
+        for page in ("tarifs", "brochure"):
+            with self.subTest(page=page):
+                response = self.client.get(reverse(page))
+                self.assertContains(response, 'src="/static/img/allmur.jpg"')
+                self.assertContains(response, 'src="/static/img/panneaux-xxl-cinema-duo.webp"')
+                self.assertNotContains(response, 'src="/static/img/fond360.jpg"')
+
+    def test_missing_publication_columns_keep_photos_and_existing_prices(self):
+        original_filter = CatalogEntry.objects.filter
+        CatalogEntry.objects.filter(code="MurFloral").update(active=False)
+        CatalogEntry.objects.filter(code="photobooth").update(price=390)
+
+        def filter_catalogue(**kwargs):
+            if "public_enabled" in kwargs:
+                raise DatabaseError("colonne absente")
+            return original_filter(**kwargs)
+
+        with patch("quote_control.public_pricing.CatalogEntry.objects.filter", side_effect=filter_catalogue):
+            data = get_public_catalogue()
+
+        self.assertEqual(data["data_price"]["photobooth"], 390)
+        images = {option["image_url"] for option in data["public_options"]}
+        self.assertIn("/static/img/phonebooth.jpg", images)
+        self.assertNotIn("/static/img/allmur.jpg", images)
