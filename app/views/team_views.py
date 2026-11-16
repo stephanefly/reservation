@@ -1,6 +1,6 @@
 from django.views.decorators.http import require_http_methods
 from ..models import EventTemplate, Event, EventRelance, TeamMember
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.shortcuts import redirect, get_object_or_404, render
 from django.http import HttpResponseRedirect
 import json
@@ -13,6 +13,7 @@ from ..module.team.team_calendar import get_event_statuses, build_event_data, ge
     group_events_by_date
 
 from django.utils.timezone import now
+from ..module.team.planning_schedule import get_team_planning_values
 
 
 TEAM_EVENT_RELATIONS = (
@@ -28,66 +29,6 @@ TEAM_EVENT_RELATIONS = (
 
 def _team_event_queryset():
     return Event.objects.select_related(*TEAM_EVENT_RELATIONS)
-
-TEAM_PLANNED_PRODUCT_FIELDS = (
-    'photobooth',
-    'miroirbooth',
-    'videobooth',
-    'voguebooth',
-    'ipadbooth',
-    'airbooth',
-)
-
-TEAM_PLANNED_OPTION_FIELDS = (
-    'MurFloral',
-    'Phonebooth',
-    'LivreOr',
-    'Fond360',
-    'PanneauBienvenue',
-    'PhotographeVoguebooth',
-    'ImpressionVoguebooth',
-    'DecorVoguebooth',
-    'Holo3D',
-    'PanneauFontaine',
-    'VideoLivreOr',
-    'panneaux_xxl',
-    'magnets',
-    'PorteCles',
-    'MagnetsSimple',
-    'livraison',
-)
-
-
-def _team_planning_values(event):
-    """Move the team start earlier and extend its duration per selected item."""
-    details = getattr(event, 'event_details', None)
-    option = getattr(event, 'event_option', None)
-    horaire = getattr(details, 'horaire', None)
-    duree = getattr(option, 'duree', None)
-    product = getattr(event, 'event_product', None)
-
-    item_count = sum(bool(getattr(product, field, False)) for field in TEAM_PLANNED_PRODUCT_FIELDS)
-    item_count += sum(bool(getattr(option, field, False)) for field in TEAM_PLANNED_OPTION_FIELDS)
-    extra_minutes = 30 * item_count
-
-    team_start = horaire
-    if horaire:
-        try:
-            start_time = datetime.strptime(str(horaire).strip()[:5], '%H:%M')
-            team_start = start_time - timedelta(minutes=extra_minutes)
-            team_start = team_start.strftime('%Hh%M') if team_start.minute else team_start.strftime('%Hh')
-        except (TypeError, ValueError):
-            pass
-
-    team_duration = None
-    if duree is not None:
-        total_minutes = int(duree * 60) + extra_minutes
-        team_duration = f'{total_minutes // 60}h'
-        if total_minutes % 60:
-            team_duration += f'{total_minutes % 60:02d}'
-
-    return team_start, team_duration
-
 
 def template_to_do(request):
     today_date = now().date()
@@ -160,7 +101,7 @@ def team_planning(request):
     ).prefetch_related('event_team_members').order_by('event_details__date_evenement')
 
     for event in lst_event_prio:
-        event.team_planned_time, event.team_planned_duration = _team_planning_values(event)
+        event.team_planned_time, event.team_planned_duration = get_team_planning_values(event)
 
     team_members = TeamMember.objects.all()
 
