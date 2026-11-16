@@ -29,8 +29,8 @@
 
                 <div class="team-card__body">
                     <div class="team-meta-grid">
-                        <div class="team-meta-item"><small>Horaire</small><strong>{% if event.event_details.horaire and event.event_details.horaire != 'None' %}{{ event.event_details.horaire }}{% else %}À confirmer{% endif %}</strong></div>
-                        <div class="team-meta-item"><small>Durée</small><strong>{{ event.event_option.duree|default:'—' }} h</strong></div>
+                        <div class="team-meta-item"><small>Début équipe</small><strong>{% if event.team_planned_time and event.team_planned_time != 'None' %}{{ event.team_planned_time }}{% else %}À confirmer{% endif %}</strong></div>
+                        <div class="team-meta-item"><small>Durée équipe</small><strong>{{ event.team_planned_duration|default:'—' }}</strong></div>
                         <div class="team-meta-item"><small>Adresse</small><span>{{ event.event_details.get_adresse }}</span></div>
                         <div class="team-meta-item"><small>Itinéraire</small><a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}" target="_blank" rel="noopener noreferrer"><i class="fas fa-route"></i> Ouvrir dans Waze</a></div>
                     </div>
