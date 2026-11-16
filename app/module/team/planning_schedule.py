@@ -26,7 +26,6 @@ PLANNED_OPTION_FIELDS = (
     'magnets',
     'PorteCles',
     'MagnetsSimple',
-    'livraison',
 )
 
 
