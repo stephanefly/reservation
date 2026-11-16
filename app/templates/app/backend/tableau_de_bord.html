@@ -47,7 +47,8 @@
             </div>
 
             <div class="backend-event-summary">
-                <div><span>Durée & horaire</span><strong>{{ event.event_option.duree|default:'—' }} h · {{ event.event_details.horaire|default:'À définir' }}</strong></div>
+                <div><span>Horaire prestation</span><strong>{{ event.event_option.duree|default:'—' }} h · {{ event.event_details.horaire|default:'À définir' }}</strong></div>
+                <div><span>Horaire équipe</span><strong>{{ event.team_planned_duration|default:'—' }} · {{ event.team_planned_start|default:'À définir' }}</strong></div>
                 <div><span>Adresse</span><strong>{{ event.event_details.get_adresse }}</strong><br><a href="https://waze.com/ul?q={{ event.event_details.get_adresse|urlencode }}" target="_blank" rel="noopener noreferrer"><i class="fas fa-route"></i> Ouvrir dans Waze</a></div>
                 <div><span>Équipe</span><div>{% include 'app/partials/members_choix_cell.html' %}</div></div>
             </div>
