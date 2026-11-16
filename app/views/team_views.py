@@ -1,6 +1,6 @@
 from django.views.decorators.http import require_http_methods
 from ..models import EventTemplate, Event, EventRelance, TeamMember
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.shortcuts import redirect, get_object_or_404, render
 from django.http import HttpResponseRedirect
 import json
@@ -28,6 +28,56 @@ TEAM_EVENT_RELATIONS = (
 
 def _team_event_queryset():
     return Event.objects.select_related(*TEAM_EVENT_RELATIONS)
+
+TEAM_PLANNED_PRODUCT_FIELDS = (
+    'photobooth',
+    'miroirbooth',
+    'videobooth',
+    'voguebooth',
+    'ipadbooth',
+    'airbooth',
+)
+
+TEAM_PLANNED_OPTION_FIELDS = (
+    'MurFloral',
+    'Phonebooth',
+    'LivreOr',
+    'Fond360',
+    'PanneauBienvenue',
+    'PhotographeVoguebooth',
+    'ImpressionVoguebooth',
+    'DecorVoguebooth',
+    'Holo3D',
+    'PanneauFontaine',
+    'VideoLivreOr',
+    'panneaux_xxl',
+    'magnets',
+    'PorteCles',
+    'MagnetsSimple',
+)
+
+
+def _team_planned_time(event):
+    """Return the event end time, moved earlier by 30 minutes per selected item."""
+    details = getattr(event, 'event_details', None)
+    option = getattr(event, 'event_option', None)
+    horaire = getattr(details, 'horaire', None)
+    duree = getattr(option, 'duree', None)
+    if not horaire or not duree:
+        return horaire
+
+    try:
+        start_time = datetime.strptime(str(horaire).strip()[:5], '%H:%M')
+        planned_time = start_time + timedelta(hours=duree)
+    except (TypeError, ValueError):
+        return horaire
+
+    product = getattr(event, 'event_product', None)
+    item_count = sum(bool(getattr(product, field, False)) for field in TEAM_PLANNED_PRODUCT_FIELDS)
+    item_count += sum(bool(getattr(option, field, False)) for field in TEAM_PLANNED_OPTION_FIELDS)
+    planned_time -= timedelta(minutes=30 * item_count)
+
+    return planned_time.strftime('%Hh%M') if planned_time.minute else planned_time.strftime('%Hh')
 
 
 def template_to_do(request):
@@ -99,6 +149,9 @@ def team_planning(request):
         signer_at__isnull=False,
         event_details__date_evenement__range=[today_minus_6h, end_week_date]
     ).prefetch_related('event_team_members').order_by('event_details__date_evenement')
+
+    for event in lst_event_prio:
+        event.team_planned_time = _team_planned_time(event)
 
     team_members = TeamMember.objects.all()
 
