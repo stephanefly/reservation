@@ -57,27 +57,35 @@ TEAM_PLANNED_OPTION_FIELDS = (
 )
 
 
-def _team_planned_time(event):
-    """Return the event end time, moved earlier by 30 minutes per selected item."""
+def _team_planning_values(event):
+    """Move the team start earlier and extend its duration per selected item."""
     details = getattr(event, 'event_details', None)
     option = getattr(event, 'event_option', None)
     horaire = getattr(details, 'horaire', None)
     duree = getattr(option, 'duree', None)
-    if not horaire or not duree:
-        return horaire
-
-    try:
-        start_time = datetime.strptime(str(horaire).strip()[:5], '%H:%M')
-        planned_time = start_time + timedelta(hours=duree)
-    except (TypeError, ValueError):
-        return horaire
-
     product = getattr(event, 'event_product', None)
+
     item_count = sum(bool(getattr(product, field, False)) for field in TEAM_PLANNED_PRODUCT_FIELDS)
     item_count += sum(bool(getattr(option, field, False)) for field in TEAM_PLANNED_OPTION_FIELDS)
-    planned_time -= timedelta(minutes=30 * item_count)
+    extra_minutes = 30 * item_count
 
-    return planned_time.strftime('%Hh%M') if planned_time.minute else planned_time.strftime('%Hh')
+    team_start = horaire
+    if horaire:
+        try:
+            start_time = datetime.strptime(str(horaire).strip()[:5], '%H:%M')
+            team_start = start_time - timedelta(minutes=extra_minutes)
+            team_start = team_start.strftime('%Hh%M') if team_start.minute else team_start.strftime('%Hh')
+        except (TypeError, ValueError):
+            pass
+
+    team_duration = None
+    if duree is not None:
+        total_minutes = int(duree * 60) + extra_minutes
+        team_duration = f'{total_minutes // 60}h'
+        if total_minutes % 60:
+            team_duration += f'{total_minutes % 60:02d}'
+
+    return team_start, team_duration
 
 
 def template_to_do(request):
@@ -151,7 +159,7 @@ def team_planning(request):
     ).prefetch_related('event_team_members').order_by('event_details__date_evenement')
 
     for event in lst_event_prio:
-        event.team_planned_time = _team_planned_time(event)
+        event.team_planned_time, event.team_planned_duration = _team_planning_values(event)
 
     team_members = TeamMember.objects.all()
 
