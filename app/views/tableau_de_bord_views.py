@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from ..models import Event, TeamMember
+from ..module.team.planning_schedule import get_team_planning_values
 from datetime import datetime, timedelta, timezone
 import json
 from django.http import HttpResponse, JsonResponse
@@ -13,11 +14,17 @@ def tableau_de_bord(request):
     end_week_date = today_date + timedelta(days=30)
     team_members = TeamMember.objects.all()
 
-    lst_event_prio = Event.objects.filter(
+    lst_event_prio = Event.objects.select_related(
+        'client', 'event_details', 'event_product', 'event_option',
+        'event_acompte', 'event_template', 'event_post_presta',
+    ).filter(
         signer_at__isnull=False,
         event_details__date_evenement__range=[today_minus_6h, end_week_date]
     ).order_by('event_details__date_evenement')
 
+
+    for event in lst_event_prio:
+        event.team_planned_start, event.team_planned_duration = get_team_planning_values(event)
 
     return render(request, 'app/backend/tableau_de_bord.html',
                   {
