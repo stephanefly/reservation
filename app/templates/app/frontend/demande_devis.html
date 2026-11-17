@@ -455,6 +455,11 @@
                 <div class="form-grid single">
                     <div class="field-block">
                         <label for="id_adresse_evenement" class="form-label">Adresse de l’événement</label>
+                        <div class="google-address-search" id="google-address-search" hidden data-api-key="{{ google_maps_api_key|escape }}">
+                            <label class="form-label" for="google-place-autocomplete">Rechercher une salle ou une adresse</label>
+                            <div id="google-place-autocomplete"></div>
+                            {% if google_maps_api_key %}<small class="form-hint">Choisissez un lieu dans la liste pour remplir automatiquement l’adresse, la ville et le code postal.</small>{% endif %}
+                        </div>
                         <input type="text" class="form-control" id="id_adresse_evenement" name="adresse_evenement" required value="{{ form.adresse_evenement }}" placeholder="Adresse complète, nom de la salle si possible" autocomplete="street-address">
                     </div>
                 </div>
@@ -1988,6 +1993,68 @@ document.addEventListener("DOMContentLoaded", function () {
     updateRelatedOptionsVisibility();
     updateSummary();
     setStep(0);
+});
+</script>
+
+<style>
+    #google-place-autocomplete { width: 100%; }
+    #google-place-autocomplete gmp-place-autocomplete { width: 100%; }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const search = document.getElementById("google-address-search");
+    const address = document.getElementById("id_adresse_evenement");
+    const city = document.getElementById("id_ville_evenement");
+    const postalCode = document.getElementById("id_code_postal_evenement");
+    const host = document.getElementById("google-place-autocomplete");
+    const apiKey = search && search.dataset.apiKey;
+
+    if (!apiKey || !address || !city || !postalCode || !host) return;
+
+    try {
+        await new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey) + "&v=weekly&loading=async";
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+        const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
+        const autocomplete = new PlaceAutocompleteElement({ includedRegionCodes: ["fr"] });
+        autocomplete.id = "google-place-autocomplete-field";
+        autocomplete.placeholder = "Ex. Manège du Parc Country Club";
+        autocomplete.setAttribute("aria-label", "Rechercher une salle ou une adresse");
+        host.appendChild(autocomplete);
+        search.hidden = false;
+
+        autocomplete.addEventListener("gmp-select", async function (event) {
+            const place = event.placePrediction.toPlace();
+            await place.fetchFields({ fields: ["addressComponents", "formattedAddress", "displayName"] });
+
+            const components = place.addressComponents || [];
+            function component(type) {
+                const item = components.find(function (part) { return part.types.includes(type); });
+                return item ? item.longText : "";
+            }
+
+            const street = [component("street_number"), component("route")].filter(Boolean).join(" ");
+            const placeName = place.displayName ? place.displayName.text : "";
+            const addressLine = street || place.formattedAddress || placeName;
+            address.value = placeName && addressLine && placeName.toLocaleLowerCase() !== addressLine.toLocaleLowerCase()
+                ? placeName + " — " + addressLine
+                : addressLine;
+            city.value = component("locality") || component("postal_town") || component("administrative_area_level_2");
+            postalCode.value = component("postal_code");
+            [address, city, postalCode].forEach(function (field) {
+                field.dispatchEvent(new Event("input", { bubbles: true }));
+                field.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+            address.style.display = "none";
+        });
+    } catch (error) {
+        console.error("Google Places address search could not be initialized.", error);
+    }
 });
 </script>
 
