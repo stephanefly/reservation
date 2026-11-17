@@ -1,5 +1,6 @@
 
 import logging
+import os
 import secrets
 from datetime import date
 from types import SimpleNamespace
@@ -98,7 +99,8 @@ def demande_devis(request):
         'date_dans_deux_ans': date_dans_deux_ans_str,
         'quantites_panneaux': TARIFS_PANNEAUX.items(),
         'panneaux_choisis': int(form_data.get('panneaux_xxl') or 0) or QUANTITE_PAR_DEFAUT,
-        'form': initial_data
+        'form': initial_data,
+        'google_maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY', '')
     })
 
 def confirmation(request):
