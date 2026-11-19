@@ -34,14 +34,24 @@
 
                 <div style="background-color:#f0f2f5; border-left:4px solid #000000; padding:15px; margin:20px 0;">
                   <p style="margin:0 0 10px 0; font-weight:bold; color:#111111;">
-                    Action requise :
+                    Étapes à effectuer sur le serveur :
                   </p>
                   <ol style="margin:0; padding-left:20px; color:#333333; font-size:14px; line-height:1.6;">
-                    <li>Lancer une seule fois le script <strong>generate_token.py</strong></li>
-                    <li>Vérifier que le fichier <strong>token.json</strong> est bien généré</li>
-                    <li>Relancer ensuite le script principal</li>
+                    <li>Ouvrir un terminal et se placer à la racine du projet (le dossier qui contient <strong>app/</strong>).</li>
+                    <li>Vérifier que le fichier d’identifiants Google est présent : <strong>app/module/google/client_secret.json</strong>. S’il manque, arrêter et le remettre en place de façon sécurisée.</li>
+                    <li>Lancer <strong>une seule fois</strong> le générateur avec la commande ci-dessous, puis suivre le lien Google et autoriser l’accès demandé.</li>
+                    <li>Vérifier que <strong>token.json</strong> a bien été créé, sans afficher ni copier son contenu.</li>
+                    <li>Relancer le script principal avec la commande ou le service habituellement utilisé.</li>
                   </ol>
+                  <pre style="white-space:pre-wrap; word-break:break-word; background-color:#ffffff; border:1px solid #dddddd; padding:12px; margin:15px 0 0 0; color:#222222; font-size:13px; line-height:1.5;"><code>cd /chemin/vers/le-projet
+ls -l app/module/google/client_secret.json
+python3 app/module/google/generate_token.py
+test -s app/module/google/token.json &amp;&amp; echo "token.json présent" || echo "token.json absent"</code></pre>
                 </div>
+
+                <p style="color:#666666; font-size:13px; line-height:1.6;">
+                  Le script demande une autorisation Google Contacts. Ne partagez pas <strong>token.json</strong> et ne l’ajoutez pas au dépôt GitHub.
+                </p>
 
                 <p style="color:#666666; font-size:13px;">
                   Date de détection : <strong>{{DATE}}</strong>
