@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods, require_POST
 from django.utils import timezone
 from django.db import transaction
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 import logging
 import json
 from typing import Optional
@@ -192,8 +194,23 @@ def post_presta(request):
 # ------------------- Envoi médias -------------------
 
 @require_POST
+@login_required
 def send_media(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
+    if "link_video_360" in request.POST:
+        link = request.POST.get("link_video_360", "").strip()
+        if link:
+            try:
+                URLValidator(schemes=["http", "https"])(link)
+                if len(link) > 1000:
+                    raise ValidationError("Lien trop long.")
+            except ValidationError:
+                return HttpResponseBadRequest("Lien vidéo 360 invalide.")
+        post = get_object_or_404(EventPostPrestation, pk=event.event_post_presta_id)
+        post.link_video_360 = link or None
+        post.save(update_fields=["link_video_360"])
+        if request.POST.get("save_link_only") == "1":
+            return redirect("post_presta")
     event.status = "Pending"
     event.save(update_fields=["status"])
     return redirect('post_presta')
