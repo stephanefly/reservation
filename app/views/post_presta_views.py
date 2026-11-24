@@ -197,20 +197,26 @@ def post_presta(request):
 @login_required
 def send_media(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    if "link_video_360" in request.POST:
-        link = request.POST.get("link_video_360", "").strip()
+    links = {}
+    for field in ("link_video_360", "link_guestbook"):
+        if field not in request.POST:
+            continue
+        link = request.POST.get(field, "").strip()
         if link:
             try:
                 URLValidator(schemes=["http", "https"])(link)
                 if len(link) > 1000:
                     raise ValidationError("Lien trop long.")
             except ValidationError:
-                return HttpResponseBadRequest("Lien vidéo 360 invalide.")
+                return HttpResponseBadRequest("Lien de galerie invalide.")
+        links[field] = link or None
+    if links:
         post = get_object_or_404(EventPostPrestation, pk=event.event_post_presta_id)
-        post.link_video_360 = link or None
-        post.save(update_fields=["link_video_360"])
-        if request.POST.get("save_link_only") == "1":
-            return redirect("post_presta")
+        for field, link in links.items():
+            setattr(post, field, link)
+        post.save(update_fields=list(links))
+    if request.POST.get("save_link_only") == "1":
+        return redirect("post_presta")
     event.status = "Pending"
     event.save(update_fields=["status"])
     return redirect('post_presta')
