@@ -89,6 +89,13 @@ def _handle_send_media(event, soup):
     soup.find('b', class_='client_nom').string = str(event.client.nom)
     a_tag = soup.find('a', class_='cta-button btn-download')
     a_tag['href'] = str(event.event_post_presta.link_media_shared)
+    video_tag = soup.find('a', class_='btn-video-360')
+    if video_tag:
+        link = getattr(event.event_post_presta, 'link_video_360', None)
+        if link:
+            video_tag['href'] = link
+        else:
+            video_tag.decompose()
 
 def _handle_relance_espace_client(event, soup):
     """Vérifie les éléments manquants dans l'espace client pour relance."""
