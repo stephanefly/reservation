@@ -96,6 +96,13 @@ def _handle_send_media(event, soup):
             video_tag['href'] = link
         else:
             video_tag.decompose()
+    guestbook_tag = soup.find('a', class_='btn-guestbook')
+    if guestbook_tag:
+        link = getattr(event.event_post_presta, 'link_guestbook', None)
+        if link:
+            guestbook_tag['href'] = link
+        else:
+            guestbook_tag.decompose()
 
 def _handle_relance_espace_client(event, soup):
     """Vérifie les éléments manquants dans l'espace client pour relance."""
