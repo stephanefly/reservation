@@ -14,7 +14,8 @@ def check_media_to_send(event):
             "miroirbooth" in event.event_product.get_selected_booths()):
         folder_to_send.append("Prints")
 
-    if ("videobooth" in event.event_product.get_selected_booths() or
+    if (("videobooth" in event.event_product.get_selected_booths() and
+            not event.event_post_presta.link_video_360) or
             "airbooth" in event.event_product.get_selected_booths()):
         folder_to_send.append("360")
 

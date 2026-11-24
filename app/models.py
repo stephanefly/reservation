@@ -272,6 +272,7 @@ class EventPostPrestation(models.Model):
     sent = models.BooleanField(default=False)
     date_media_sent = models.DateTimeField(null=True, blank=True)
     link_media_shared = models.URLField(null=True, blank=True)
+    link_video_360 = models.URLField(max_length=1000, null=True, blank=True, default=None)
     members_paid = models.BooleanField(default=False)
     client_paid = models.BooleanField(default=True)
     sold_ok = models.BooleanField(default=False)
