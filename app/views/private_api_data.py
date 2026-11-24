@@ -23,7 +23,7 @@ RESOURCES = {
     "options": (models.EventOption, "MurFloral mur_floral_style MurFloral_reduc_prix Phonebooth Phonebooth_reduc_prix LivreOr LivreOr_reduc_prix Fond360 Fond360_reduc_prix PanneauBienvenue PanneauBienvenue_reduc_prix PhotographeVoguebooth PhotographeVoguebooth_reduc_prix ImpressionVoguebooth ImpressionVoguebooth_reduc_prix DecorVoguebooth DecorVoguebooth_reduc_prix Holo3D Holo3D_reduc_prix PanneauFontaine PanneauFontaine_reduc_prix VideoLivreOr VideoLivreOr_reduc_prix panneaux_xxl panneaux_forfait panneaux_remise magnets magnets_reduc_prix PorteCles PorteCles_reduc_prix MagnetsSimple MagnetsSimple_reduc_prix livraison duree"),
     "payments": (models.EventAcompte, "montant_acompte mode_payement date_payement montant_restant"),
     "templates": (models.EventTemplate, "url_modele text_template statut directory_name image_name num_template url_pcloud_template_folder url_music_360"),
-    "post-prestation": (models.EventPostPrestation, "feedback_message feedback_google feedback_posted collected go_post_photo post_photo rush_collected sent date_media_sent link_media_shared members_paid client_paid sold_ok charge membre_salary go_montage post_montage commentaire"),
+    "post-prestation": (models.EventPostPrestation, "feedback_message feedback_google feedback_posted collected go_post_photo post_photo rush_collected sent date_media_sent link_media_shared link_video_360 link_guestbook members_paid client_paid sold_ok charge membre_salary go_montage post_montage commentaire"),
     "team": (models.TeamMember, "name email phone"),
     "cost-names": (models.NameCost, "name"),
     "costs": (models.Cost, "name_cost_id type_cost price_cost created_at frecency"),
