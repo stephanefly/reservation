@@ -25,7 +25,7 @@ def check_media_to_send(event):
     if "ipadbooth" in event.event_product.get_selected_booths():
         folder_to_send.append("IPADBOOTH")
 
-    if event.event_option.Phonebooth:
+    if event.event_option.Phonebooth and not getattr(event.event_post_presta, 'link_guestbook', None):
         folder_to_send.append("AUDIO PHONEBOOTH")
 
     return folder_to_send
