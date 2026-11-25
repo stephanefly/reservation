@@ -9,6 +9,9 @@
     <input type="hidden" id="selectedOption" name="selectedOption" value="{{ form.selectedOption }}">
     <input type="hidden" name="livraison" value="1">
 
+    {% if black_friday_active %}
+        {% include 'app/frontend/_black_friday.html' %}
+    {% else %}
     <section class="wizard-hero">
         <p class="hero-kicker">Demande de devis</p>
         <h1>Composez votre animation événementielle</h1>
@@ -16,6 +19,7 @@
             Choisissez vos animations, ajoutez vos options, puis recevez une proposition adaptée à votre événement.
         </p>
     </section>
+    {% endif %}
     {% include 'app/partials/template_ai.html' %}
 
     <section class="wizard-progress" aria-label="Progression du formulaire">
@@ -33,12 +37,12 @@
     </section>
 
     <div class="wizard-layout">
-        <main class="wizard-card">
+        <main class="wizard-card" id="animations" style="scroll-margin-top: 100px;">
 
             <section class="wizard-step active" data-title="Prestation">
                 <div class="step-header">
                     <p class="step-label">Étape 1</p>
-                    <h2>Quelle animation souhaitez-vous ?</h2>
+                    <h2 id="animation-choice-title" tabindex="-1">Quelle animation souhaitez-vous ?</h2>
                     <p>Sélectionnez une ou plusieurs prestations. Les combinaisons permettent d’obtenir une proposition plus avantageuse.</p>
                 </div>
 
@@ -487,6 +491,10 @@
         <aside class="summary-card" aria-live="polite">
             <p class="summary-kicker">Votre demande</p>
             <h3>Résumé</h3>
+            {% if black_friday_active %}
+                <p class="hero-kicker">Black Friday · jusqu’au 30 novembre</p>
+                <p>Envoyez votre demande : nous vous proposerons une offre personnalisée par e-mail.</p>
+            {% endif %}
 
             <div class="summary-row">
                 <span>Prestation</span>
@@ -1535,6 +1543,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const emptyRelatedOptions = document.getElementById("emptyRelatedOptions");
 
     let currentStep = 0;
+
+    const blackFridayStart = document.getElementById("blackFridayStart");
+    if (blackFridayStart) {
+        blackFridayStart.addEventListener("click", function () {
+            setStep(0);
+            document.getElementById("animation-choice-title").focus({preventScroll: true});
+            document.getElementById("animations").scrollIntoView({block: "start"});
+        });
+    }
 
     function getSelectedProducts() {
         return Array.from(document.querySelectorAll(".selectable-image.selected"));

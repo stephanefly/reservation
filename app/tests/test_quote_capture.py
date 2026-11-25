@@ -1,17 +1,40 @@
 """Régression : ne plus perdre les demandes à l'étape de confirmation."""
 import io
 import importlib
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone as datetime_timezone
 from unittest.mock import patch
 
 from django.core.management import call_command
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.utils import timezone
 
 from app.models import Event
 from app.views.frontend_views import FORM_PENDING, confirmation, demande_devis
 
 frontend_module = importlib.import_module('app.views.frontend_views')
+
+
+class BlackFridayBannerTests(SimpleTestCase):
+    def test_campaign_visibility_uses_paris_midnight_and_expires(self):
+        for instant, visible in [
+            (datetime(2026, 11, 24, 22, 59), False),
+            (datetime(2026, 11, 24, 23, 0), True),
+            (datetime(2026, 11, 30, 22, 59), True),
+            (datetime(2026, 11, 30, 23, 0), False),
+            (datetime(2027, 11, 26, 12, 0), False),
+        ]:
+            with self.subTest(instant=instant), patch.object(
+                frontend_module.timezone, 'now',
+                return_value=instant.replace(tzinfo=datetime_timezone.utc),
+            ):
+                request = RequestFactory().get('/')
+                request.session = {}
+                response = demande_devis(request)
+                self.assertEqual(response.status_code, 200)
+                html = response.content.decode()
+                self.assertEqual('id="black-friday-title"' in html, visible)
+                self.assertEqual('Composez votre animation événementielle' in html, not visible)
+                self.assertIn('id="monFormulaire"', html)
 
 
 def payload():

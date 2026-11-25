@@ -3,6 +3,7 @@ import logging
 import secrets
 from datetime import date
 from types import SimpleNamespace
+from zoneinfo import ZoneInfo
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils import timezone
@@ -59,6 +60,7 @@ def _validate_quote_fields(post):
 
 def demande_devis(request):
     today_date = timezone.localdate()
+    campaign_date = timezone.localdate(timezone=ZoneInfo('Europe/Paris'))
     date_dans_deux_ans = today_date + timedelta(days=365 * 2)
     today_date_str = today_date.strftime("%Y-%m-%d")
     date_dans_deux_ans_str = date_dans_deux_ans.strftime("%Y-%m-%d")
@@ -94,6 +96,7 @@ def demande_devis(request):
     initial_data['date_dans_deux_ans'] = date_dans_deux_ans_str
 
     return render(request, 'app/frontend/demande_devis.html', {
+        'black_friday_active': date(2026, 11, 25) <= campaign_date <= date(2026, 11, 30),
         'today_date': today_date_str,
         'date_dans_deux_ans': date_dans_deux_ans_str,
         'quantites_panneaux': TARIFS_PANNEAUX.items(),
