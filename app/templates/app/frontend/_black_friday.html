@@ -1,55 +1,136 @@
+{% load static %}
 <section class="black-friday-hero" aria-labelledby="black-friday-title">
+    <img class="black-friday-scene" src="{% static 'img/black-friday-2026.webp' %}" alt="" width="1860" height="846" fetchpriority="high">
     <div class="black-friday-copy">
-        <p class="black-friday-brand">MySelfieBooth Paris présente</p>
-        <p class="black-friday-date">Jusqu’au <time datetime="2026-11-30">30 novembre 2026</time></p>
+        <p class="black-friday-brand">MySelfieBooth Paris</p>
+        <p class="black-friday-date">Jusqu’au <time datetime="2026-11-30T23:59:59+01:00">30 novembre à 23h59</time></p>
         <h1 id="black-friday-title">BLACK <span>FRIDAY</span></h1>
-        <p class="black-friday-tagline">Votre offre Black Friday sur mesure.</p>
-        <p class="black-friday-description">Choisissez les animations et les options qui vous font envie, puis envoyez votre demande. Nous vous proposerons une offre Black Friday personnalisée par e-mail.</p>
-        <button type="button" class="black-friday-cta" id="blackFridayStart">Demander mon offre Black Friday <span aria-hidden="true">↗</span></button>
-        <p class="black-friday-occasions">Mariages · Anniversaires · Événements d’entreprise</p>
+        <p class="black-friday-ribbon">Offres exclusives<br>pour vos événements</p>
+        <p class="black-friday-description">Choisissez vos animations et vos options.<br>Nous vous proposerons une <strong>offre Black Friday personnalisée par e-mail.</strong></p>
+        <button type="button" class="black-friday-cta" id="blackFridayStart">Demander mon offre <span aria-hidden="true">➜</span></button>
+        <p class="black-friday-future">Également valable pour vos événements en 2027</p>
     </div>
-    <div class="black-friday-visual" aria-hidden="true">
-        <div class="black-friday-frame">
-            <span class="black-friday-frame-label">L’expérience MySelfieBooth</span>
-            <span class="black-friday-frame-title">VOTRE<br>ÉVÉNEMENT.<br><em>INOUBLIABLE.</em></span>
-            <span class="black-friday-frame-footer">PHOTO · VIDÉO · SOUVENIRS</span>
-        </div>
-    </div>
+    <p class="black-friday-signature" aria-hidden="true">PHOTOBOOTH <span>·</span> MIROIRBOOTH <span>·</span> 360 <span>·</span> VOGUEBOOTH</p>
 </section>
 <style>
     .black-friday-hero {
         position: relative;
-        display: grid;
-        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-        gap: 32px;
-        align-items: center;
+        isolation: isolate;
         overflow: hidden;
-        padding: clamp(26px, 5vw, 60px);
-        border: 1px solid #b99a4b;
+        min-height: 630px;
+        padding: 42px 48px 58px;
+        border: 1px solid #e5b34e;
         border-radius: 26px;
-        background: radial-gradient(ellipse at 90% 15%, #64502766, transparent 65%), #090909;
-        box-shadow: 0 24px 70px #0006;
+        background: #080604;
+        box-shadow: 0 0 32px #d8982026, 0 25px 70px #0008;
         color: #fff;
     }
-    .black-friday-brand { margin: 0 0 18px; color: #e4d6ac; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-    .black-friday-date { display: inline-block; margin: 0 0 20px; padding: 8px 12px; border: 1px solid #b99a4b99; border-radius: 100px; color: #f4dc7f; font-size: 12px; }
-    .black-friday-hero h1 { margin: 0; font-family: "Arial Black", Arial, sans-serif; font-size: clamp(54px, 7.5vw, 98px); font-weight: 900; line-height: .94; letter-spacing: -3px; }
-    .black-friday-hero h1 span { display: block; color: #f4dc7f; }
-    .black-friday-tagline { max-width: 450px; margin: 24px 0 12px; font-size: clamp(19px, 2.5vw, 25px); font-weight: 700; line-height: 1.3; }
-    .black-friday-description { max-width: 460px; margin: 0 0 24px; color: #d3d0c7; font-size: 15px; line-height: 1.6; }
-    .black-friday-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 25px; min-height: 50px; max-width: 100%; padding: 14px 20px; border: 0; border-radius: 10px; background: #f4dc7f; color: #101010; font: 700 15px Arial, sans-serif; cursor: pointer; }
-    .black-friday-cta:hover { background: #fff2b8; }
-    .black-friday-cta:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
-    .black-friday-occasions { margin: 18px 0 0; color: #bcb7a8; font-size: 11px; line-height: 1.6; }
-    .black-friday-visual { padding: 18px 8px; }
-    .black-friday-frame { display: flex; flex-direction: column; justify-content: space-between; gap: 50px; padding: 28px; border: 1px solid #cfb66c; outline: 1px solid #cfb66c55; outline-offset: 8px; transform: rotate(5deg); background: linear-gradient(145deg, #40372066, #101010); }
-    .black-friday-frame-label, .black-friday-frame-footer { color: #e4d6ac; font-size: 10px; letter-spacing: 2px; }
-    .black-friday-frame-title { font-size: clamp(24px, 3vw, 38px); font-weight: 900; line-height: 1.1; letter-spacing: -1px; }
-    .black-friday-frame-title em { color: #f4dc7f; font-family: Georgia, serif; font-weight: 400; }
-    @media (max-width: 767px) {
-        .black-friday-hero { grid-template-columns: minmax(0, 1fr); gap: 0; }
-        .black-friday-visual { display: none; }
-        .black-friday-hero h1 { font-size: clamp(50px, 14vw, 90px); letter-spacing: -2px; }
-        .black-friday-cta { width: 100%; }
+    .black-friday-scene {
+        position: absolute;
+        z-index: -3;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+    .black-friday-hero::before {
+        content: "";
+        position: absolute;
+        z-index: -2;
+        inset: 0;
+        background: linear-gradient(90deg, #080604fa 0%, #080604e0 30%, #08060466 46%, transparent 64%), linear-gradient(0deg, #080604d9, transparent 20%);
+        pointer-events: none;
+    }
+    .black-friday-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-top: 2px solid #ffe5a6;
+        border-bottom: 2px solid #9b601f;
+        border-radius: inherit;
+        pointer-events: none;
+    }
+    .black-friday-copy { position: relative; max-width: 490px; }
+    .black-friday-brand { margin: 0 0 18px; color: #f7dd9e; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+    .black-friday-date { display: inline-block; margin: 0 0 22px; padding: 8px 13px; border: 1px solid #e6b84c; border-radius: 100px; color: #ffe5a2; background: #181006cc; font-size: 12px; font-weight: 700; }
+    .black-friday-hero h1 {
+        width: fit-content;
+        margin: 0 0 20px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(64px, 8vw, 108px);
+        font-style: italic;
+        font-weight: 900;
+        line-height: .86;
+        letter-spacing: -5px;
+        color: #ffcf65;
+        background: linear-gradient(170deg, #fff9db 5%, #f4bc48 24%, #9b4c0e 37%, #fff0ac 48%, #ffc446 64%, #ab5d12 80%, #ffeeb4 94%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-text-stroke: .5px #ffd17c;
+        filter: drop-shadow(0 3px 0 #633004) drop-shadow(0 0 12px #f9ae2755);
+    }
+    .black-friday-hero h1 span { display: block; }
+    .black-friday-ribbon {
+        display: inline-block;
+        margin: 0 0 20px;
+        padding: 12px 24px;
+        color: #201205;
+        background: linear-gradient(110deg, #c77c1b, #fff1ab 22%, #efb335 55%, #ffda70 85%, #a66114);
+        box-shadow: 0 0 24px #ffb61c40;
+        border-top: 1px solid #fff0b5;
+        border-bottom: 1px solid #ab601b;
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1.12;
+        text-align: center;
+        text-transform: uppercase;
+        transform: rotate(-2deg);
+    }
+    .black-friday-description { max-width: 365px; margin: 0 0 22px; color: #f2e9dc; font-size: 15px; line-height: 1.6; text-shadow: 0 1px 6px #000; }
+    .black-friday-description strong { color: #fff5dc; }
+    .black-friday-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        min-height: 58px;
+        max-width: 100%;
+        padding: 8px 10px 8px 24px;
+        border: 1px solid #fff0ae;
+        border-radius: 100px;
+        background: linear-gradient(100deg, #e9a62a, #ffe9a3 38%, #f9c44d 75%, #db8b18);
+        box-shadow: 0 0 0 3px #97621c66, 0 0 28px #f2b13066, inset 0 2px 2px #fff8ce;
+        color: #1a1006;
+        font: 800 17px Arial, sans-serif;
+        cursor: pointer;
+    }
+    .black-friday-cta span { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: #261603; color: #ffe18b; font-size: 23px; }
+    .black-friday-cta:hover { filter: brightness(1.12); }
+    .black-friday-cta:focus-visible { outline: 3px solid #fff; outline-offset: 6px; }
+    .black-friday-future { max-width: 350px; margin: 20px 0 0; color: #f5dfb7; font-family: Georgia, serif; font-size: 15px; font-style: italic; }
+    .black-friday-signature { position: absolute; right: 24px; bottom: 18px; margin: 0; color: #fff0cd; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; }
+    .black-friday-signature span { margin: 0 6px; color: #ffd471; }
+    @media (max-width: 900px) and (min-width: 641px) {
+        .black-friday-hero { padding: 36px 30px 54px; }
+        .black-friday-hero::before { background: linear-gradient(90deg, #080604fa, #080604d9 40%, #08060422 75%); }
+        .black-friday-description { max-width: 310px; }
+    }
+    @media (max-width: 640px) {
+        .black-friday-hero { min-height: 0; padding: 28px 22px 270px; border-radius: 22px; }
+        .black-friday-copy { max-width: none; }
+        .black-friday-brand { font-size: 10px; letter-spacing: 2px; }
+        .black-friday-hero h1 { font-size: clamp(60px, 18vw, 100px); letter-spacing: -3px; }
+        .black-friday-date { font-size: 11px; padding: 8px 10px; }
+        .black-friday-ribbon { font-size: 16px; padding: 10px 15px; }
+        .black-friday-description { font-size: 14px; }
+        .black-friday-cta { width: 100%; gap: 8px; padding-left: 16px; font-size: 15px; }
+        .black-friday-future { font-size: 14px; }
+        .black-friday-scene { top: auto; bottom: 0; height: 300px; object-position: 75% center; }
+        .black-friday-hero::before { background: linear-gradient(180deg, #080604 0%, #080604 54%, #080604e6 62%, transparent 76%, #08060466 100%); }
+        .black-friday-signature { right: 10px; left: 10px; bottom: 12px; text-align: center; font-size: 7px; letter-spacing: .5px; }
+        .black-friday-signature span { margin: 0 3px; }
     }
 </style>
