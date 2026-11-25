@@ -31,8 +31,6 @@ def generate_pdf_devis(event):
     # ----------------------------------------------------------------------------------------
     # Ajouter des zones de texte pour les en-têtes
     pdf.setFillColor(colors.black)
-    pdf.setFont("Helvetica", 8)
-    pdf.drawString(50, height - 95, "Template photo sur mesure inclus : notre designer utilise une IA spécialisée en templates.")
     pdf.setFont("Times-Bold", 20)
     pdf.drawString(50, height - 125, "DEVIS n°D" + str(event.num_devis))
     pdf.setFont("Helvetica", 12)
@@ -72,6 +70,10 @@ def generate_pdf_devis(event):
 
     # Ajouter un tableau pour les articles
     data_tableau_devis, total_brut_devis, acompte = make_tableau(event)
+
+    for ligne in data_tableau_devis:
+        if ligne[0] == "Personnalisation":
+            ligne[0] = "Personnalisation\nCréation graphique sur mesure"
 
     table = Table(data_tableau_devis, colWidths=[210, 80, 70, 80, 95])
     table_style = [
