@@ -45,32 +45,6 @@
                     <p>Sélectionnez une ou plusieurs prestations. Les combinaisons permettent d’obtenir une proposition plus avantageuse.</p>
                 </div>
 
-                <div class="included-starter">
-                    <div class="included-title">Inclus dans votre prestation</div>
-
-                    <div class="included-pill-grid">
-                        <div class="included-pill">
-                            <strong>Livraison</strong>
-                            <span>Installation sur place</span>
-                        </div>
-
-                        <div class="included-pill">
-                            <strong>Animateur</strong>
-                            <span>Accompagnement des invités</span>
-                        </div>
-
-                        <div class="included-pill">
-                            <strong>Personnalisation</strong>
-                            <span>Modèle photo adapté à l’événement</span>
-                        </div>
-
-                        <div class="included-pill">
-                            <strong>Galerie photos / vidéos</strong>
-                            <span>Accès numérique après l’événement</span>
-                        </div>
-                    </div>
-                </div>
-
                 <p class="selection-helper">Cliquez sur une ou plusieurs cartes pour sélectionner vos prestations.</p>
 
                 <div class="choice-grid product-grid">
@@ -79,6 +53,7 @@
                         <div class="choice-content">
                             <strong>Photobooth</strong>
                             <span>Simple, efficace, idéal pour repartir avec des photos imprimées.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Impressions illimitées selon formule</li><li>Livraison et installation</li><li>Animateur sur place</li><li>Modèle photo personnalisé</li><li>Galerie web après événement</li></ul></div>
                         </div>
                     </article>
 
@@ -87,6 +62,7 @@
                         <div class="choice-content">
                             <strong>Miroirbooth</strong>
                             <span>Effet premium, grand miroir interactif, très visible dans la salle.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Impressions illimitées selon formule</li><li>Livraison et installation</li><li>Animateur sur place</li><li>Modèle photo personnalisé</li><li>Galerie web après événement</li></ul></div>
                         </div>
                     </article>
 
@@ -95,6 +71,7 @@
                         <div class="choice-content">
                             <strong>360 Booth</strong>
                             <span>Vidéo dynamique avec effet ralenti pour créer du contenu impactant.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Vidéos 4K illimitées</li><li>Jusqu’à 5 personnes</li><li>Livraison et installation</li><li>Animateur sur place</li><li>Galerie web après événement</li></ul></div>
                         </div>
                     </article>
 
@@ -103,6 +80,7 @@
                         <div class="choice-content">
                             <strong>Vogue Booth</strong>
                             <span>Style magazine, très fort visuellement pour mariages et soirées haut de gamme.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Livraison et installation</li><li>Personnalisation du visuel</li><li>Décor lumineux</li></ul><p class="product-extra">Photographe et impressions en option</p></div>
                         </div>
                     </article>
 
@@ -111,6 +89,7 @@
                         <div class="choice-content">
                             <strong>Ipad Booth</strong>
                             <span>Format compact, digital, parfait pour les petits espaces et événements pro.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Montage rapide</li><li>Photos numériques illimitées</li><li>Personnalisation du visuel</li><li>Galerie web après événement</li></ul><p class="product-extra">Livraison possible en option</p></div>
                         </div>
                     </article>
 
@@ -119,6 +98,7 @@
                         <div class="choice-content">
                             <strong>360 AirBooth</strong>
                             <span>Version spectaculaire pour accueillir plus de monde et marquer les invités.</span>
+                            <div class="product-inclusions"><b>Inclus dans votre prestation</b><ul><li>Vidéos 4K illimitées</li><li>Jusqu’à 10 personnes</li><li>Livraison et installation</li><li>Animateur sur place</li><li>Personnalisation vidéo</li></ul></div>
                         </div>
                     </article>
                 </div>
@@ -511,7 +491,7 @@
             </div>
 
             <div class="summary-footer">
-                <span>Livraison, installation, animateur, personnalisation et galerie inclus.</span>
+                <span>Services inclus selon la prestation et la formule sélectionnées.</span>
             </div>
         </aside>
     </div>
@@ -834,6 +814,12 @@
         line-height: 1.35;
     }
 
+    .product-inclusions { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(244,220,127,.35); font-size: 12px; line-height: 1.4; color: #eee; }
+    .product-inclusions b { color: #f4dc7f; font-size: 12px; }
+    .product-inclusions ul { list-style: none; padding: 0; margin: 6px 0 0; }
+    .product-inclusions li { position: relative; padding-left: 15px; margin: 4px 0; }
+    .product-inclusions li::before { content: "✓"; position: absolute; left: 0; color: #f4dc7f; }
+    .product-extra { margin: 8px 0 0; color: #f4dc7f; font-size: 12px; }
     .multi-offer-banner {
         margin: 20px 0 14px;
         padding: 22px;
