@@ -290,9 +290,11 @@ class CommercialStatsTests(TestCase):
     def test_insights_respect_business_and_date_filters(self):
         self.event(status="Refused", proposed=400)
         self.event(status="Sended", proposed=1500, business=True)
-        filtered = commercial_report(self.request(
-            segment="business", start_date="2026-11-03", end_date="2026-11-03",
-        ))
+        with patch("app.module.lib_graph.commercial_insights.timezone.now",
+                   return_value=self.created + timedelta(days=5)):
+            filtered = commercial_report(self.request(
+                segment="business", start_date="2026-11-03", end_date="2026-11-03",
+            ))
         self.assertEqual(filtered["insight_funnel"][0]["count"], 1)
         self.assertEqual(filtered["insight_loss_count"], 0)
         self.assertEqual(filtered["insight_leads_count"], 1)
