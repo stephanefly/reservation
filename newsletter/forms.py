@@ -1,17 +1,11 @@
 from django import forms
-from django.utils import timezone
 
 from .models import Campaign, Configuration, Template
 
 
-class AudienceForm(forms.ModelForm):
-    class Meta:
-        model = Campaign
-        fields = ["audience"]
-        labels = {"audience": "Destinataires"}
-
-
 class HTMLForm(forms.ModelForm):
+    requires_html = True
+
     html = forms.CharField(widget=forms.Textarea, required=False, label="Code HTML", max_length=500000)
     upload = forms.FileField(required=False, label="Fichier HTML")
 
@@ -29,23 +23,30 @@ class HTMLForm(forms.ModelForm):
                     self.add_error("upload", "Le fichier doit être encodé en UTF-8.")
         if not html and data.get("template"):
             html = data["template"].html
-        if not html or not html.strip():
+        if not html and self.requires_html:
             self.add_error("html", "Saisissez, importez ou sélectionnez un modèle HTML.")
         else:
-            data["html"] = html
+            data["html"] = html or ""
         return data
 
 
-class ContentForm(HTMLForm):
+class CampaignForm(HTMLForm):
+    requires_html = False
+
+    audience = forms.ChoiceField(choices=Campaign.Audience.choices, label="Destinataires", initial="all")
+    mode = forms.ChoiceField(choices=[("now", "Dès que possible"), ("later", "Planifié")], label="Envoi", initial="now")
+    at = forms.DateTimeField(required=False, widget=forms.DateTimeInput(
+        format="%Y-%m-%dT%H:%M", attrs={"type": "datetime-local"}
+    ), label="Date et heure (Paris)")
     template = forms.ModelChoiceField(
         queryset=Template.objects.order_by("name"), required=False, label="Modèle enregistré"
     )
-    name = forms.CharField(max_length=150, label="Nom interne")
-    subject = forms.CharField(max_length=200, label="Objet")
+    name = forms.CharField(max_length=150, label="Nom interne", required=False)
+    subject = forms.CharField(max_length=200, label="Objet", required=False)
 
     class Meta:
         model = Campaign
-        fields = ["name", "subject", "template", "html", "upload"]
+        fields = ["audience", "name", "subject", "template", "html", "upload", "mode", "at"]
 
     def clean_subject(self):
         subject = self.cleaned_data["subject"]
@@ -53,31 +54,24 @@ class ContentForm(HTMLForm):
             raise forms.ValidationError("L’objet doit tenir sur une ligne.")
         return subject
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.scheduled_at:
+            self.initial.update(mode="later", at=self.instance.scheduled_at)
+
+    def clean(self):
+        data = super().clean()
+        if data.get("mode") == "later" and not data.get("at") and not self.has_error("at"):
+            self.add_error("at", "Indiquez la date et l’heure de l’envoi.")
+        self.instance.scheduled_at = data.get("at") if data.get("mode") == "later" else None
+        return data
+
 
 class TemplateForm(HTMLForm):
     class Meta:
         model = Template
         fields = ["name", "html", "upload"]
         labels = {"name": "Nom"}
-
-
-class ScheduleForm(forms.Form):
-    mode = forms.ChoiceField(choices=[("now", "Dès que possible"), ("later", "Planifié")], label="Envoi")
-    at = forms.DateTimeField(required=False, widget=forms.DateTimeInput(
-        format="%Y-%m-%dT%H:%M", attrs={"type": "datetime-local"}
-    ), label="Date et heure (Paris)")
-
-    def clean(self):
-        data = super().clean()
-        if data.get("mode") == "now":
-            data["at"] = None
-        elif data.get("mode") == "later" and (not data.get("at") or data["at"] <= timezone.now()):
-            self.add_error("at", "Choisissez une date et une heure futures.")
-        return data
-
-
-class TestForm(forms.Form):
-    email = forms.EmailField(label="Adresse de test")
 
 
 class CampaignTestForm(forms.Form):

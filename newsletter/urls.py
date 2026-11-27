@@ -6,9 +6,10 @@ app_name = "newsletter"
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
     path("campagnes/", views.campaigns, name="campaigns"),
-    path("campagnes/nouvelle/", views.create, name="create"),
-    path("campagnes/<int:pk>/etape/<int:step>/", views.edit, name="edit"),
-    path("campagnes/<int:pk>/confirmer/", views.confirm, name="confirm"),
+    path("campagnes/nouvelle/", views.edit, name="create"),
+    path("campagnes/<int:pk>/", views.edit, name="edit"),
+    path("campagnes/<int:pk>/etape/<int:step>/", views.legacy_editor),
+    path("campagnes/<int:pk>/confirmer/", views.legacy_editor),
     path("campagnes/<int:pk>/apercu/", views.preview, name="preview"),
     path("modeles/", views.templates, name="templates"),
     path("modeles/<int:pk>/", views.templates, name="template"),

@@ -13,7 +13,7 @@
   <nav class="nl-tabs" aria-label="Newsletter">
     {% with tab=request.resolver_match.url_name %}
     <a href="{% url 'newsletter:dashboard' %}" {% if tab == 'dashboard' %}aria-current="page"{% endif %}><i class="fas fa-chart-pie" aria-hidden="true"></i>Dashboard</a>
-    <a href="{% url 'newsletter:campaigns' %}" {% if tab == 'campaigns' or tab == 'create' or tab == 'edit' or tab == 'confirm' %}aria-current="page"{% endif %}><i class="fas fa-paper-plane" aria-hidden="true"></i>Campagnes</a>
+    <a href="{% url 'newsletter:campaigns' %}" {% if tab == 'campaigns' or tab == 'create' or tab == 'edit' %}aria-current="page"{% endif %}><i class="fas fa-paper-plane" aria-hidden="true"></i>Campagnes</a>
     <a href="{% url 'newsletter:templates' %}" {% if tab == 'templates' or tab == 'template' %}aria-current="page"{% endif %}><i class="fas fa-file-code" aria-hidden="true"></i>Templates</a>
     <a href="{% url 'newsletter:history' %}" {% if tab == 'history' or tab == 'detail' %}aria-current="page"{% endif %}><i class="fas fa-history" aria-hidden="true"></i>Historique</a>
     <a href="{% url 'newsletter:test' %}" {% if tab == 'test' %}aria-current="page"{% endif %}><i class="fas fa-vial" aria-hidden="true"></i>Test</a>

@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core import signing
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.core.paginator import Paginator
@@ -13,7 +15,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms import AudienceForm, CampaignTestForm, ConfigurationForm, ContentForm, ScheduleForm, TemplateForm, TestForm
+from .forms import CampaignForm, CampaignTestForm, ConfigurationForm, TemplateForm
 from .models import Attribution, Campaign, Configuration, Delivery, Template, TestAttempt, Unsubscribe
 from .services import CLICK_SALT, build_message, eligible, has_capacity, http_url, smtp_settings
 
@@ -53,64 +55,75 @@ def campaigns(request):
 
 @staff
 @require_http_methods(["GET", "POST"])
-def create(request):
-    form = AudienceForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
+def edit(request, pk=None):
+    with timezone.override(ZoneInfo("Europe/Paris")):
+        if request.method == "POST":
+            return save_campaign(request, pk)
+        campaign = get_object_or_404(Campaign, pk=pk) if pk else None
+        if campaign and campaign.status != Campaign.Status.DRAFT:
+            return redirect("newsletter:detail", pk=pk)
+        form = CampaignForm(instance=campaign)
+        feedback = request.session.pop(f"newsletter_editor_{pk}", {})
+        return render_editor(request, form, campaign, feedback)
+
+
+def render_editor(request, form, campaign, feedback=None):
+    audience = form["audience"].value()
+    return render(request, "newsletter/editor.html", {
+        "form": form,
+        "campaign": campaign,
+        "count": len(eligible(audience)) if audience in Campaign.Audience.values else None,
+        **(feedback or {}),
+    })
+
+
+def save_campaign(request, pk):
+    with transaction.atomic():
+        campaign = get_object_or_404(Campaign.objects.select_for_update(), pk=pk) if pk else None
+        if campaign and campaign.status != Campaign.Status.DRAFT:
+            return redirect("newsletter:detail", pk=pk)
+        form = CampaignForm(request.POST, request.FILES, instance=campaign)
+        if not form.is_valid():
+            # Les champs fichier sont vidés par le navigateur après une soumission.
+            if form.cleaned_data.get("html"):
+                form.data = form.data.copy()
+                form.data["html"] = form.cleaned_data["html"]
+            return render_editor(request, form, campaign)
         campaign = form.save()
-        campaign.step = 2
-        campaign.save(update_fields=["step"])
-        return redirect("newsletter:edit", pk=campaign.pk, step=2)
-    return render(request, "newsletter/wizard.html", {"form": form, "step": 1})
+        action = request.POST.get("action")
+        if action == "confirm" and pk:
+            error = queue_campaign(campaign, request.POST.get("confirm") == "yes")
+            if not error:
+                return redirect("newsletter:detail", pk=campaign.pk)
+            feedback = {"error": error}
+        else:
+            feedback = {"notice": "Brouillon enregistré."}
+
+    if action == "test":
+        email = request.POST.get("email", "").strip()
+        feedback = {"test_email": email}
+        send_editor_test(campaign, email, feedback)
+
+    request.session[f"newsletter_editor_{campaign.pk}"] = feedback
+    return redirect("newsletter:edit", pk=campaign.pk)
+
+
+def send_editor_test(campaign, email, feedback):
+    try:
+        validate_email(email)
+    except ValidationError:
+        feedback["error"] = "Indiquez une adresse de test valide. Le brouillon a été enregistré."
+        return
+    if not campaign.subject or not campaign.html:
+        feedback["error"] = "Renseignez l’objet et le HTML avant d’envoyer un test."
+        return
+    send_test(campaign, email, feedback)
 
 
 @staff
 @require_http_methods(["GET", "POST"])
-def edit(request, pk, step):
-    if step not in (1, 2, 3, 4):
-        raise Http404
-    if request.method == "POST" and step < 4:
-        with transaction.atomic():
-            return edit_step(request, pk, step, lock=True)
-    return edit_step(request, pk, step)
-
-
-def edit_step(request, pk, step, lock=False):
-    campaigns = Campaign.objects.select_for_update() if lock else Campaign.objects
-    campaign = get_object_or_404(campaigns, pk=pk)
-    if campaign.status != Campaign.Status.DRAFT:
-        return redirect("newsletter:detail", pk=pk)
-    if step > campaign.step:
-        return redirect("newsletter:edit", pk=pk, step=campaign.step)
-    data = request.POST if request.method == "POST" else None
-    context = {"campaign": campaign, "step": step}
-    if step == 4:
-        context.update(form=TestForm(data), count=len(eligible(campaign.audience)))
-        if data is not None and context["form"].is_valid():
-            send_test(campaign, context["form"].cleaned_data["email"], context)
-    elif step == 1:
-        context["form"] = AudienceForm(data, instance=campaign)
-    elif step == 2:
-        context["form"] = ContentForm(data, request.FILES, instance=campaign)
-    else:
-        with timezone.override(ZoneInfo("Europe/Paris")):
-            initial = {"mode": "later" if campaign.scheduled_at else "now", "at": campaign.scheduled_at}
-            context["form"] = ScheduleForm(data, initial=initial)
-            if data is not None and context["form"].is_valid():
-                campaign.scheduled_at = context["form"].cleaned_data["at"]
-            return save_step(request, campaign, context)
-    return save_step(request, campaign, context)
-
-
-def save_step(request, campaign, context):
-    step = context["step"]
-    form = context["form"]
-    if request.method == "POST" and step < 4 and form.is_valid():
-        if step < 3:
-            campaign = form.save(commit=False)
-        campaign.step = step + 1
-        campaign.save()
-        return redirect("newsletter:edit", pk=campaign.pk, step=campaign.step)
-    return render(request, "newsletter/wizard.html", context)
+def legacy_editor(request, pk, step=None):
+    return redirect("newsletter:edit", pk=pk)
 
 
 @staff
@@ -162,43 +175,32 @@ def send_test(campaign, email, context):
         )
 
 
-@staff
-@require_POST
-def confirm(request, pk):
-    with transaction.atomic():
-        campaign = get_object_or_404(Campaign.objects.select_for_update(), pk=pk)
-        if campaign.status != Campaign.Status.DRAFT:
-            return redirect("newsletter:detail", pk=pk)
-        if campaign.step != 4:
-            return redirect("newsletter:edit", pk=pk, step=campaign.step)
-        emails = eligible(campaign.audience)
-        now = timezone.now()
-        error = None
-        if request.POST.get("confirm") != "yes":
-            error = "Cochez la confirmation pour mettre la campagne en file."
-        elif not emails:
-            error = "Aucun destinataire éligible."
-        elif campaign.scheduled_at and campaign.scheduled_at <= now:
-            error = "La date prévue est passée. Modifiez la programmation."
-        elif not Configuration.objects.filter(pk=1, enabled=True, sender__gt="").exists():
-            error = "Activez les envois et renseignez l’adresse d’expédition."
-        else:
-            try:
-                smtp_settings()
-            except ValueError as exc:
-                error = str(exc)
-        if error:
-            return render(request, "newsletter/wizard.html", {
-                "campaign": campaign, "step": 4, "count": len(emails), "form": TestForm(), "error": error,
-            }, status=400)
-        Delivery.objects.bulk_create([
-            Delivery(campaign=campaign, email=email) for email in sorted(emails)
-        ], batch_size=500)
-        campaign.confirmed_at = now
-        campaign.scheduled_at = campaign.scheduled_at or now
-        campaign.status = Campaign.Status.QUEUED
-        campaign.save(update_fields=["confirmed_at", "scheduled_at", "status"])
-    return redirect("newsletter:detail", pk=pk)
+def queue_campaign(campaign, confirmed):
+    if not confirmed:
+        return "Cochez la confirmation pour mettre la campagne en file."
+    if not (campaign.name and campaign.subject and campaign.html):
+        return "Renseignez le nom, l’objet et le HTML avant de confirmer l’envoi."
+    now = timezone.now()
+    if campaign.scheduled_at and campaign.scheduled_at <= now:
+        return "La date prévue est passée. Modifiez la programmation."
+    emails = eligible(campaign.audience)
+    if not emails:
+        return "Aucun destinataire éligible."
+    if not Configuration.objects.filter(pk=1, enabled=True, sender__gt="").exists():
+        return "Activez les envois et renseignez l’adresse d’expédition."
+    try:
+        smtp_settings()
+    except ValueError as exc:
+        return str(exc)
+
+    Delivery.objects.bulk_create([
+        Delivery(campaign=campaign, email=email) for email in sorted(emails)
+    ], batch_size=500)
+    campaign.confirmed_at = now
+    campaign.scheduled_at = campaign.scheduled_at or now
+    campaign.status = Campaign.Status.QUEUED
+    campaign.save(update_fields=["confirmed_at", "scheduled_at", "status"])
+    return None
 
 
 @staff
@@ -247,7 +249,7 @@ def history(request):
 def detail(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if campaign.status == Campaign.Status.DRAFT:
-        return redirect("newsletter:edit", pk=pk, step=campaign.step)
+        return redirect("newsletter:edit", pk=pk)
     deliveries = campaign.deliveries.order_by("pk")
     page = Paginator(deliveries, 100).get_page(request.GET.get("page"))
     return render(request, "newsletter/detail.html", {

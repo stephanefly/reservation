@@ -1,0 +1,85 @@
+{% extends 'newsletter/base.html' %}
+{% load bootstrap5 %}
+{% block newsletter %}
+<h2>{% if campaign %}Modifier la campagne{% else %}Nouvelle campagne{% endif %}</h2>
+{% if error %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endif %}
+{% if notice %}<p class="alert alert-success" role="status">{{ notice }}</p>{% endif %}
+<form method="post" enctype="multipart/form-data" id="newsletter-editor" data-unsaved="{% if form.is_bound %}1{% else %}0{% endif %}">
+  {% csrf_token %}
+  {% for error in form.non_field_errors %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endfor %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <fieldset class="mb-3">
+        <legend class="h5">Contenu</legend>
+        <div class="row">
+          <div class="col-md-6">{% bootstrap_field form.name %}</div>
+          <div class="col-md-6">{% bootstrap_field form.subject %}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">{% bootstrap_field form.template %}</div>
+          <div class="col-md-6">{% bootstrap_field form.upload %}</div>
+        </div>
+        {% bootstrap_field form.html %}
+        <p class="small text-muted">Le fichier importé est prioritaire. Pour appliquer un modèle, videz le champ HTML.</p>
+      </fieldset>
+      <button class="btn btn-outline-primary mb-4" type="submit" name="action" value="save">Enregistrer le brouillon et actualiser l’aperçu</button>
+    </div>
+
+    <div class="col-lg-4">
+      <fieldset class="mb-4">
+        <legend class="h5">Destinataires et programmation</legend>
+        {% bootstrap_field form.audience %}
+        {% if count != None %}<p class="small text-muted" id="newsletter-audience-count">{{ count }} destinataire{{ count|pluralize }} éligible{{ count|pluralize }}</p>{% endif %}
+        {% bootstrap_field form.mode %}
+        {% bootstrap_field form.at %}
+      </fieldset>
+      <fieldset class="mb-4">
+        <legend class="h5">Email de test</legend>
+        <label class="form-label" for="id_newsletter_test_email">Adresse de test</label>
+        <input class="form-control mb-2" id="id_newsletter_test_email" type="email" name="email" value="{{ test_email }}">
+        <button class="btn btn-outline-secondary" type="submit" name="action" value="test">Envoyer un email de test</button>
+      </fieldset>
+      <fieldset class="mb-4">
+        <legend class="h5">Confirmation d’envoi</legend>
+        <label class="form-check mb-2"><input class="form-check-input" type="checkbox" name="confirm" value="yes"> Je confirme l’envoi à cette audience.</label>
+        <button class="btn btn-primary" type="submit" name="action" value="confirm" {% if not campaign.pk %}disabled{% endif %}>Confirmer et mettre en file</button>
+        {% if not campaign.pk %}<p class="small text-muted mt-2">Enregistrez le brouillon avant de confirmer l’envoi.</p>{% endif %}
+      </fieldset>
+    </div>
+  </div>
+</form>
+{% if campaign.html %}
+<div class="row g-3 mt-2">
+  <section class="col-lg-8">
+    <h3 class="h5">Aperçu ordinateur</h3>
+    <iframe loading="lazy" title="Aperçu ordinateur" sandbox src="{% url 'newsletter:preview' campaign.pk %}" style="width:100%; height:480px"></iframe>
+  </section>
+  <section class="col-lg-4">
+    <h3 class="h5">Aperçu mobile</h3>
+    <iframe loading="lazy" title="Aperçu mobile" sandbox src="{% url 'newsletter:preview' campaign.pk %}" style="width:375px; max-width:100%; height:480px"></iframe>
+  </section>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+{{ block.super }}
+<script>
+  const newsletterEditor = document.getElementById("newsletter-editor");
+  let newsletterChanged = newsletterEditor.dataset.unsaved === "1";
+
+  newsletterEditor.addEventListener("input", (event) => {
+    if (!["confirm", "email"].includes(event.target.name)) newsletterChanged = true;
+    if (event.target.name === "audience") {
+      const count = document.getElementById("newsletter-audience-count");
+      if (count) count.hidden = true;
+    }
+  });
+  newsletterEditor.addEventListener("submit", () => { newsletterChanged = false; });
+  window.addEventListener("beforeunload", (event) => {
+    if (newsletterChanged) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+</script>
+{% endblock %}

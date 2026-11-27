@@ -83,7 +83,7 @@ class NewsletterTests(TestCase):
         Unsubscribe.objects.create(email="alice@example.invalid")
         self.assertEqual(eligible(), {bob.mail})
 
-    def test_staff_wizard_template_upload_test_and_manual_confirmation(self):
+    def test_campaign_editor_saves_tests_and_requires_manual_confirmation(self):
         anonymous = Browser()
         dashboard = reverse("newsletter:dashboard")
         self.assertEqual(anonymous.get(dashboard).status_code, 302)
@@ -96,37 +96,56 @@ class NewsletterTests(TestCase):
         self.assertEqual(Template.objects.count(), 2)
 
         self.contact("contact@example.invalid")
-        response = self.client.post(reverse("newsletter:create"), {"audience": "all"})
+        data = {"audience": "all", "mode": "now", "name": "Infos", "subject": "Bonjour"}
+        response = self.client.post(reverse("newsletter:create"), {
+            **data, "template": template.pk, "action": "save",
+        })
         campaign = Campaign.objects.get()
-        def edit(step):
-            return reverse("newsletter:edit", args=[campaign.pk, step])
-
-        self.assertRedirects(response, edit(2))
-        self.assertRedirects(self.client.post(edit(2), {
-            "name": "Infos", "subject": "Bonjour", "template": template.pk,
-        }), edit(3))
-        campaign.refresh_from_db()
+        edit = reverse("newsletter:edit", args=[campaign.pk])
+        self.assertRedirects(response, edit)
         self.assertEqual(campaign.html, template.html)
+        self.assertContains(self.client.get(edit), "Aperçu mobile")
         response = self.client.get(reverse("newsletter:preview", args=[campaign.pk]))
         self.assertContains(response, "Bonjour")
         self.assertIn("sandbox", response["Content-Security-Policy"])
-        self.assertRedirects(self.client.post(edit(3), {"mode": "now"}), edit(4))
-        response = self.client.post(edit(4), {"email": "equipe@example.invalid"})
+        data.update(html=campaign.html)
+        response = self.client.post(edit, {
+            **data, "action": "test", "email": "equipe@example.invalid",
+        }, follow=True)
         self.assertContains(response, "Email de test accepté")
         message = self.messages.call_args.args[0][0]
         self.assertEqual(message.to, ["equipe@example.invalid"])
         self.assertEqual(message.subject, "[TEST] Bonjour")
         self.assertFalse(message.extra_headers)
         self.assertFalse(Delivery.objects.exists())
-        confirm = reverse("newsletter:confirm", args=[campaign.pk])
-        self.assertEqual(self.client.post(confirm).status_code, 400)
+        response = self.client.post(edit, {**data, "action": "confirm"}, follow=True)
+        self.assertContains(response, "Cochez la confirmation")
+        self.assertFalse(Delivery.objects.exists())
         detail = reverse("newsletter:detail", args=[campaign.pk])
         for _ in range(2):
-            self.assertRedirects(self.client.post(confirm, {"confirm": "yes"}), detail)
+            self.assertRedirects(self.client.post(edit, {**data, "action": "confirm", "confirm": "yes"}), detail)
         self.assertEqual(Delivery.objects.get().email, "contact@example.invalid")
         self.run_worker()
         self.assertEqual(Delivery.objects.get().status, Delivery.Status.PENDING)
         self.messages.assert_called_once()
+
+    def test_existing_partial_draft_reopens_and_keeps_import_on_invalid_date(self):
+        campaign = Campaign.objects.create(audience="all", name="Ancien brouillon", step=2)
+        edit = reverse("newsletter:edit", args=[campaign.pk])
+        self.assertRedirects(self.client.get(f"/backend/newsletter/campagnes/{campaign.pk}/etape/2/"), edit)
+        data = {"audience": "all", "mode": "later", "name": campaign.name, "subject": "Sujet"}
+        html = "<h1>Contenu importé</h1>"
+        response = self.client.post(edit, {
+            **data, "upload": SimpleUploadedFile("mail.html", html.encode()),
+        })
+        self.assertContains(response, "Indiquez la date et l’heure")
+        retry = BeautifulSoup(response.content, "html.parser")
+        self.assertEqual(retry.find("textarea", {"name": "html"}).text.strip(), html)
+        response = self.client.post(edit, {**data, "html": html, "mode": "now", "action": "save"})
+        self.assertRedirects(response, edit)
+        campaign.refresh_from_db()
+        self.assertEqual(campaign.html, html)
+        self.assertEqual(campaign.status, Campaign.Status.DRAFT)
 
     def test_smtp_test_tab_sends_only_to_the_configured_recipient(self):
         url = reverse("newsletter:test")
