@@ -1,9 +1,32 @@
 {% extends 'newsletter/base.html' %}
-{% block newsletter %}
-<h2>Dashboard</h2>
-<dl class="row">
-  <dt class="col-sm-7">Contacts éligibles</dt><dd class="col-sm-5">{{ eligible }}</dd>
-  <dt class="col-sm-7">Campagnes envoyées</dt><dd class="col-sm-5">{{ sent_campaigns }}</dd>
-</dl>
-{% include 'newsletter/metrics.html' %}
+{% block newsletter_actions %}
+<a class="btn nl-create" href="{% url 'newsletter:create' %}"><i class="fas fa-plus" aria-hidden="true"></i> Nouvelle campagne</a>
+{% endblock %}
+{% block newsletter_panel %}
+<div class="nl-dashboard">
+  <section class="backend-card nl-panel" aria-labelledby="nl-overview">
+    <h2 id="nl-overview">Vue d’ensemble</h2>
+    <dl class="nl-grid">
+      <div class="nl-stat">
+        <dt>
+          <span class="nl-stat-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
+          Contacts éligibles
+        </dt><dd>{{ eligible }}</dd>
+      </div>
+      <div class="nl-stat">
+        <dt>
+          <span class="nl-stat-icon"><i class="fas fa-paper-plane" aria-hidden="true"></i></span>
+          Campagnes envoyées
+        </dt><dd>{{ sent_campaigns }}</dd>
+      </div>
+      <div class="nl-stat">
+        <dt>
+          <span class="nl-stat-icon"><i class="fas fa-envelope" aria-hidden="true"></i></span>
+          Emails acceptés par le SMTP
+        </dt><dd>{{ stats.sent }}</dd>
+      </div>
+    </dl>
+  </section>
+  {% include 'newsletter/metrics.html' with overview=True %}
+</div>
 {% endblock %}

@@ -1,9 +1,27 @@
-<dl class="row">
-  <dt class="col-sm-7">Emails acceptés par le SMTP</dt><dd class="col-sm-5">{{ stats.sent }}</dd>
-  <dt class="col-sm-7">Taux d’ouverture</dt><dd class="col-sm-5">{{ stats.opened_rate }} % ({{ stats.opened }})</dd>
-  <dt class="col-sm-7">Taux de clics</dt><dd class="col-sm-5">{{ stats.clicked_rate }} % ({{ stats.clicked }})</dd>
-  <dt class="col-sm-7">Désabonnements</dt><dd class="col-sm-5">{{ stats.unsubscribed }}</dd>
-  <dt class="col-sm-7">Demandes de devis attribuées</dt><dd class="col-sm-5">{{ stats.requests }}</dd>
-  <dt class="col-sm-7">Devis chiffrés attribués</dt><dd class="col-sm-5">{{ stats.quotes }}</dd>
-  <dt class="col-sm-7">Chiffre d’affaires signé attribué</dt><dd class="col-sm-5">{{ stats.revenue }} €</dd>
-</dl>
+<section class="{% if overview %}backend-card nl-panel{% else %}nl-detail-section{% endif %}" aria-labelledby="nl-engagement">
+  <h2 id="nl-engagement">Engagement</h2>
+  <dl class="nl-grid">
+    {% if not overview %}
+    <div class="nl-stat"><dt>Emails acceptés par le SMTP</dt><dd>{{ stats.sent }}</dd></div>
+    {% endif %}
+    <div class="nl-stat">
+      <dt>Taux d’ouverture</dt><dd>{{ stats.opened_rate }}<small> %</small></dd>
+      <dd class="nl-stat-note">{{ stats.opened }} destinataire{{ stats.opened|pluralize }}</dd>
+    </div>
+    <div class="nl-stat">
+      <dt>Taux de clics</dt><dd>{{ stats.clicked_rate }}<small> %</small></dd>
+      <dd class="nl-stat-note">{{ stats.clicked }} destinataire{{ stats.clicked|pluralize }}</dd>
+    </div>
+    <div class="nl-stat"><dt>Désabonnements</dt><dd>{{ stats.unsubscribed }}</dd></div>
+  </dl>
+</section>
+<section class="{% if overview %}backend-card nl-panel{% else %}nl-detail-section{% endif %}" aria-labelledby="nl-results">
+  <h2 id="nl-results">Résultats commerciaux</h2>
+  <dl class="nl-grid">
+    <div class="nl-stat"><dt>Demandes de devis attribuées</dt><dd>{{ stats.requests }}</dd></div>
+    <div class="nl-stat"><dt>Devis chiffrés attribués</dt><dd>{{ stats.quotes }}</dd></div>
+    <div class="nl-stat nl-stat-revenue">
+      <dt>Chiffre d’affaires signé attribué</dt><dd>{{ stats.revenue }}<small> €</small></dd>
+    </div>
+  </dl>
+</section>

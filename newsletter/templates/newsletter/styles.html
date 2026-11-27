@@ -1,0 +1,94 @@
+<style>
+  .nl-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: clamp(20px, 3vw, 36px);
+    border-radius: 22px;
+    color: #fff;
+    background: radial-gradient(ellipse at 100% 0, #533298, transparent 70%), #241945;
+    box-shadow: var(--admin-shadow);
+  }
+  .nl-brand { display: flex; align-items: center; gap: 16px; }
+  .nl-brand h1 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.65rem); font-weight: 850; }
+  .nl-brand-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    flex: 0 0 auto;
+    border: 1px solid #ffffff38;
+    border-radius: 16px;
+    background: #ffffff18;
+    font-size: 1.3rem;
+  }
+  .nl-header .nl-create { color: #392079; background: #fff; border-color: #fff; }
+  .nl-header .nl-create:hover { color: #2b165e; background: #f1ebff; }
+  .nl-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 6px;
+    border: 1px solid var(--admin-border);
+    border-radius: 15px;
+    background: var(--admin-surface);
+  }
+  .nl-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: var(--admin-ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .nl-tabs a:hover { background: var(--admin-soft); }
+  .nl-tabs a[aria-current="page"] { color: var(--admin-primary-dark); background: var(--admin-primary-soft); }
+  .nl-tabs a:focus-visible, .nl-header .nl-create:focus-visible {
+    outline: 3px solid #977aff;
+    outline-offset: 2px;
+  }
+  .nl-dashboard { display: grid; gap: 16px; }
+  .nl-panel { padding: clamp(16px, 2vw, 24px); }
+  .nl-panel h2 { margin: 0 0 15px; font-size: 1.18rem; font-weight: 820; }
+  .nl-detail-section { margin-block: 20px; }
+  .nl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+  .nl-stat {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    padding: 15px 17px;
+    border: 1px solid var(--admin-border);
+    border-radius: 13px;
+    background: var(--admin-soft);
+  }
+  .nl-stat-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    background: var(--admin-primary-soft);
+    color: var(--admin-primary-dark);
+  }
+  .nl-stat dt { color: var(--admin-muted); font-size: .87rem; font-weight: 700; }
+  .nl-stat dd { margin: 0; font-size: clamp(1.45rem, 3vw, 2rem); font-weight: 820; font-variant-numeric: tabular-nums; }
+  .nl-stat dd small { font-size: .66em; }
+  .nl-stat .nl-stat-note { color: var(--admin-muted); font-size: .82rem; font-weight: 500; }
+  .nl-stat-revenue { border-color: #d4e9df; background: var(--admin-success-soft); }
+  .nl-stat-revenue dd { color: var(--admin-success); }
+  @media (max-width: 540px) {
+    .nl-tabs a { flex: 1 1 125px; padding-inline: 11px; }
+    .nl-header .nl-create { width: 100%; justify-content: center; }
+  }
+</style>
