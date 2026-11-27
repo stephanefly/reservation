@@ -166,6 +166,33 @@ class NewsletterTests(TestCase):
         self.assertEqual(campaign.html, html)
         self.assertEqual(campaign.status, Campaign.Status.DRAFT)
 
+    def test_history_detail_only_shows_campaign_totals(self):
+        now = timezone.now()
+        campaign = self.campaign(queued=True)
+        sent = Delivery.objects.create(
+            campaign=campaign, email="visible-only-in-db@example.invalid", status=Delivery.Status.SENT,
+            attempted_at=now, sent_at=now, opened_at=now, clicked_at=now,
+        )
+        Unsubscribe.objects.create(email=sent.email, delivery=sent)
+        Delivery.objects.create(
+            campaign=campaign, email="failed@example.invalid", status=Delivery.Status.FAILED,
+            attempted_at=now, error="Internal SMTP diagnostic",
+        )
+        Delivery.objects.create(campaign=campaign, email="pending@example.invalid")
+
+        response = self.client.get(reverse("newsletter:detail", args=[campaign.pk]))
+        self.assertContains(response, "Résumé des envois")
+        self.assertContains(response, "Acceptés par le relais SMTP")
+        self.assertNotContains(response, "@example.invalid")
+        self.assertNotContains(response, "Internal SMTP diagnostic")
+        self.assertEqual(response.context["delivery_summary"], {
+            "recipients": 3, "attempted": 2, "pending": 1, "failed": 1, "uncertain": 0, "excluded": 0,
+        })
+        self.assertEqual(
+            [response.context["stats"][key] for key in ("sent", "opened", "clicked", "unsubscribed")],
+            [1, 1, 1, 1],
+        )
+
     def test_smtp_test_tab_sends_only_to_the_configured_recipient(self):
         url = reverse("newsletter:test")
         self.assertEqual(self.public.get(url).status_code, 302)

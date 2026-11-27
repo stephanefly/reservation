@@ -2,25 +2,35 @@
 {% load tz %}
 {% block newsletter %}
 <h2>{{ campaign.name }}</h2>
-<p>{{ campaign.get_status_display }} · {{ campaign.get_audience_display }}</p>
+<p class="mb-1">{{ campaign.subject }}</p>
+<p class="text-muted">
+  {{ campaign.get_status_display }} · {{ campaign.get_audience_display }}
+  {% if campaign.scheduled_at %} · {{ campaign.scheduled_at|timezone:"Europe/Paris"|date:"d/m/Y à H:i" }} (Paris){% endif %}
+</p>
+
+<section class="nl-detail-section" aria-labelledby="nl-delivery">
+  <h2 id="nl-delivery">Résumé des envois</h2>
+  <dl class="nl-grid">
+    <div class="nl-stat"><dt>Destinataires ciblés</dt><dd>{{ delivery_summary.recipients }}</dd></div>
+    <div class="nl-stat"><dt>Tentatives d’envoi</dt><dd>{{ delivery_summary.attempted }}</dd></div>
+    <div class="nl-stat">
+      <dt>Emails envoyés</dt><dd>{{ stats.sent }}</dd>
+      <dd class="nl-stat-note">Acceptés par le relais SMTP</dd>
+    </div>
+    {% if delivery_summary.pending %}
+    <div class="nl-stat"><dt>En attente ou en cours</dt><dd>{{ delivery_summary.pending }}</dd></div>
+    {% endif %}
+    {% if delivery_summary.failed %}
+    <div class="nl-stat"><dt>Échecs d’envoi</dt><dd>{{ delivery_summary.failed }}</dd></div>
+    {% endif %}
+    {% if delivery_summary.uncertain %}
+    <div class="nl-stat"><dt>Résultats incertains</dt><dd>{{ delivery_summary.uncertain }}</dd></div>
+    {% endif %}
+    {% if delivery_summary.excluded %}
+    <div class="nl-stat"><dt>Destinataires exclus</dt><dd>{{ delivery_summary.excluded }}</dd></div>
+    {% endif %}
+  </dl>
+</section>
+
 {% include 'newsletter/metrics.html' %}
-<h3>Destinataires</h3>
-<div class="table-responsive">
-<table class="table">
-  <thead><tr><th>Email</th><th>Statut</th><th>Tentative (Paris)</th><th>Détail</th></tr></thead>
-  <tbody>
-  {% for delivery in page_obj %}
-    <tr><td>{{ delivery.email }}</td><td>{{ delivery.get_status_display }}</td>
-      <td>{{ delivery.attempted_at|timezone:"Europe/Paris"|date:"d/m/Y H:i"|default:"—" }}</td>
-      <td>{{ delivery.error|default:"—" }}</td></tr>
-  {% empty %}<tr><td colspan="4">Aucun destinataire.</td></tr>{% endfor %}
-  </tbody>
-</table>
-</div>
-{% include 'newsletter/pagination.html' %}
-<h3>Désabonnements</h3>
-<ul>
-  {% for entry in unsubscribes %}<li>{{ entry.email }} · {{ entry.created_at|timezone:"Europe/Paris"|date:"d/m/Y H:i" }}</li>
-  {% empty %}<li>Aucun désabonnement.</li>{% endfor %}
-</ul>
 {% endblock %}

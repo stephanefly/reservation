@@ -1,9 +1,6 @@
 <section class="{% if overview %}backend-card nl-panel{% else %}nl-detail-section{% endif %}" aria-labelledby="nl-engagement">
   <h2 id="nl-engagement">Engagement</h2>
   <dl class="nl-grid">
-    {% if not overview %}
-    <div class="nl-stat"><dt>Emails acceptés par le SMTP</dt><dd>{{ stats.sent }}</dd></div>
-    {% endif %}
     <div class="nl-stat">
       <dt>Taux d’ouverture</dt><dd>{{ stats.opened_rate }}<small> %</small></dd>
       <dd class="nl-stat-note">{{ stats.opened }} destinataire{{ stats.opened|pluralize }}</dd>

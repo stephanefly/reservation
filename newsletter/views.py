@@ -250,11 +250,18 @@ def detail(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if campaign.status == Campaign.Status.DRAFT:
         return redirect("newsletter:edit", pk=pk)
-    deliveries = campaign.deliveries.order_by("pk")
-    page = Paginator(deliveries, 100).get_page(request.GET.get("page"))
+    deliveries = campaign.deliveries.all()
+    status = Delivery.Status
+    delivery_summary = deliveries.aggregate(
+        recipients=Count("pk"),
+        attempted=Count("attempted_at"),
+        pending=Count("pk", filter=Q(status__in=[status.PENDING, status.SENDING])),
+        failed=Count("pk", filter=Q(status=status.FAILED)),
+        uncertain=Count("pk", filter=Q(status=status.UNCERTAIN)),
+        excluded=Count("pk", filter=Q(status=status.EXCLUDED)),
+    )
     return render(request, "newsletter/detail.html", {
-        "campaign": campaign, "page_obj": page, "stats": metrics(deliveries),
-        "unsubscribes": Unsubscribe.objects.filter(delivery__campaign=campaign).order_by("-created_at"),
+        "campaign": campaign, "stats": metrics(deliveries), "delivery_summary": delivery_summary,
     })
 
 
