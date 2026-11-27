@@ -8,6 +8,7 @@ from app.module.data_bdd.price import PRIX_PRODUITS
 
 from .catalog_forms import QUANTITY_OPTIONS
 from .models import CatalogEntry
+from .engine import has_extra_options, OPTIONS_MANUAL_REASON
 
 
 def manual(reason):
@@ -70,6 +71,8 @@ def analyse_catalog_quote(event, selection, duration, product_list, total_option
         return manual("Plusieurs packs possibles : validation manuelle")
     if matches:
         pack = matches[0]
+        if has_extra_options(event, pack.option_codes, pack.quantities):
+            return manual(OPTIONS_MANUAL_REASON)
         if not pack.active or not pack.auto_enabled:
             return manual("Pack non active pour les devis automatiques")
         if any(not options.get(code) or not options[code].active for code in pack.option_codes):
@@ -90,6 +93,8 @@ def analyse_catalog_quote(event, selection, duration, product_list, total_option
         discount_product = 0
         discount_pack = discount
     elif len(selection) == 1:
+        if has_extra_options(event):
+            return manual(OPTIONS_MANUAL_REASON)
         code = next(iter(selection))
         product = products[code]
         if not product.auto_enabled:
