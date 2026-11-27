@@ -1,0 +1,21 @@
+{% extends 'newsletter/base.html' %}
+{% load bootstrap5 %}
+{% block newsletter %}
+<h2>Templates HTML</h2>
+<ul class="list-group mb-4">
+{% for template in templates %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="{% url 'newsletter:template' template.pk %}">{{ template.name }}</a>
+    <form method="post" action="{% url 'newsletter:duplicate' template.pk %}">
+      {% csrf_token %}<button class="btn btn-outline-secondary btn-sm">Dupliquer</button>
+    </form>
+  </li>
+{% empty %}<li class="list-group-item">Aucun modèle HTML.</li>{% endfor %}
+</ul>
+<h3>{% if form.instance.pk %}Modifier le modèle{% else %}Nouveau modèle{% endif %}</h3>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}{% bootstrap_form form %}
+  <button class="btn btn-primary">Enregistrer</button>
+  {% if form.instance.pk %}<a class="btn btn-outline-secondary" href="{% url 'newsletter:templates' %}">Nouveau modèle</a>{% endif %}
+</form>
+{% endblock %}

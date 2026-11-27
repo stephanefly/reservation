@@ -1,0 +1,10 @@
+{% extends 'newsletter/base.html' %}
+{% load bootstrap5 %}
+{% block newsletter %}
+<h2>Paramètres d’envoi</h2>
+<p>Le serveur et les identifiants SMTP marketing sont configurés dans les variables d’environnement PythonAnywhere.</p>
+<form method="post">
+  {% csrf_token %}{% bootstrap_form form %}
+  <button class="btn btn-primary">Enregistrer</button>
+</form>
+{% endblock %}

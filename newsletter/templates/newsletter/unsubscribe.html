@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Newsletter MySelfieBooth</title></head>
+<body>
+<main>
+<h1>Newsletter MySelfieBooth</h1>
+{% if finished %}<p>Votre désabonnement est enregistré.</p>
+{% else %}<form method="post"><button name="unsubscribe" value="yes">Confirmer mon désabonnement</button></form>{% endif %}
+</main>
+</body>
+</html>

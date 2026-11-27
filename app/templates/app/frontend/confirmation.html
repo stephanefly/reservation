@@ -654,6 +654,12 @@
                         Certaines options peuvent être proposées à tarif réduit ou offertes selon le combo retenu.
                     </div>
 
+                    {% url 'newsletter:dashboard' as newsletter_url %}
+                    {% if newsletter_url %}
+                        <p><label><input type="checkbox" name="newsletter_opt_in" value="yes">
+                            Je souhaite recevoir la Newsletter MySelfieBooth par email. Je pourrai me désabonner à tout moment.
+                        </label></p>
+                    {% endif %}
                     <div class="actions">
                         <button type="submit" id="btn-confirm" class="btn-confirm-custom">
                             <span id="spinner" class="btn-spinner" style="display: none;"></span>

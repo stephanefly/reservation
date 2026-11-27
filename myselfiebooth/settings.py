@@ -79,7 +79,11 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+# Activer l'interface après application de la migration Newsletter.
+NEWSLETTER_AVAILABLE = os.environ.get("NEWSLETTER_AVAILABLE") == "1"
+
 INSTALLED_APPS = [
+    'newsletter',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

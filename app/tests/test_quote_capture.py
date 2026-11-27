@@ -9,6 +9,7 @@ from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.utils import timezone
 
 from app.models import Event
+from newsletter.models import Consent
 from quote_control.models import AutoQuoteLog, CatalogEntry
 from app.views.frontend_views import FORM_PENDING, confirmation, demande_devis
 
@@ -62,8 +63,8 @@ class QuoteCaptureTests(TestCase):
         request.session = self.session
         return demande_devis(request)
 
-    def final_step(self):
-        request = self.factory.post("/confirmation/", {})
+    def final_step(self, data=None):
+        request = self.factory.post("/confirmation/", data or {})
         request.session = self.session
         with patch.object(frontend_module, "create_google_contact"), \
              patch.object(frontend_module, "create_card", return_value="test-card"), \
@@ -88,10 +89,18 @@ class QuoteCaptureTests(TestCase):
         self.assertTrue(event.event_token)
         self.assertEqual(event.history_status, "Formulaire : demande confirmée")
         self.assertNotIn("draft_event_id", self.session)
+        self.assertFalse(Consent.objects.exists())
 
         repeat = self.final_step()
         self.assertEqual(repeat.status_code, 302)
         self.assertEqual(Event.objects.count(), 1)
+
+    def test_optional_newsletter_consent_is_recorded_only_after_confirmation(self):
+        response = self.first_step()
+        self.assertContains(response, 'name="newsletter_opt_in"')
+        self.assertFalse(Consent.objects.exists())
+        self.assertEqual(self.final_step({"newsletter_opt_in": "yes"}).status_code, 302)
+        self.assertEqual(Consent.objects.get().client, Event.objects.get().client)
 
     def test_editing_previous_step_updates_same_lead(self):
         self.first_step()

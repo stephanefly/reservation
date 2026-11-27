@@ -4,6 +4,7 @@ import secrets
 from datetime import date
 from types import SimpleNamespace
 from zoneinfo import ZoneInfo
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
@@ -145,6 +146,14 @@ def confirmation(request):
             event.event_token = secrets.token_hex(32)
             event.history_status = 'Formulaire : demande confirmée'
             event.save(update_fields=['event_token', 'history_status'])
+
+        if getattr(settings, "NEWSLETTER_AVAILABLE", False):
+            from newsletter.services import record_quote
+
+            record_quote(
+                event, request.POST.get("newsletter_opt_in") == "yes",
+                request.session.pop("newsletter_click", None),
+            )
 
         try:
             create_google_contact(event)

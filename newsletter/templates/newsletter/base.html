@@ -1,0 +1,17 @@
+{% extends 'app/backend/base.html' %}
+{% block title %}Newsletter{% endblock %}
+{% block content %}
+<section class="backend-page">
+  <header class="backend-page-header"><h1>Newsletter</h1></header>
+  <nav class="nav nav-pills flex-wrap" aria-label="Newsletter">
+    <a class="nav-link" href="{% url 'newsletter:dashboard' %}">Dashboard</a>
+    <a class="nav-link" href="{% url 'newsletter:campaigns' %}">Campagnes</a>
+    <a class="nav-link" href="{% url 'newsletter:templates' %}">Templates</a>
+    <a class="nav-link" href="{% url 'newsletter:history' %}">Historique</a>
+    <a class="nav-link" href="{% url 'newsletter:settings' %}">Paramètres</a>
+  </nav>
+  <div class="backend-card">
+    {% block newsletter %}{% endblock %}
+  </div>
+</section>
+{% endblock %}

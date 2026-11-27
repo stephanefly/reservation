@@ -20,6 +20,8 @@ urlpatterns = [
     path("backend/info-event/", include("app.urls.info_event_urls")),
     path("backend/devis-auto/", include("quote_control.urls")),
     path("backend/catalogue/", include("quote_control.catalog_urls")),
+    path("backend/newsletter/", include("newsletter.urls")),
+    path("newsletter/", include("newsletter.public_urls")),
     path("tarifs/", include("app.urls.pricing_urls")),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.BASE_DIR / "app/static"}),
 ]

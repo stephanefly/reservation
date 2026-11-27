@@ -1,0 +1,21 @@
+{% extends 'newsletter/base.html' %}
+{% load tz %}
+{% block newsletter %}
+<h2>{% if history %}Historique{% else %}Campagnes{% endif %}</h2>
+{% if not history %}<p><a class="btn btn-primary" href="{% url 'newsletter:create' %}">Nouvelle campagne</a></p>{% endif %}
+<div class="table-responsive">
+<table class="table">
+  <thead><tr><th>Nom</th><th>Audience</th><th>État</th><th>Prévue (Paris)</th></tr></thead>
+  <tbody>
+  {% for campaign in page_obj %}
+    <tr>
+      <td><a href="{% url 'newsletter:detail' campaign.pk %}">{{ campaign.name|default:"Brouillon" }}</a></td>
+      <td>{{ campaign.get_audience_display }}</td><td>{{ campaign.get_status_display }}</td>
+      <td>{{ campaign.scheduled_at|timezone:"Europe/Paris"|date:"d/m/Y H:i"|default:"—" }}</td>
+    </tr>
+  {% empty %}<tr><td colspan="4">Aucune campagne.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% include 'newsletter/pagination.html' %}
+{% endblock %}

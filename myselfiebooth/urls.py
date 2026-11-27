@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
@@ -8,3 +9,9 @@ urlpatterns = [
     path('', include('app.urls')),
     path('admin/', admin.site.urls),
 ]
+if settings.NEWSLETTER_AVAILABLE:
+    urlpatterns = [
+        path('backend/newsletter/', include('newsletter.urls')),
+        path('newsletter/', include('newsletter.public_urls')),
+        *urlpatterns,
+    ]

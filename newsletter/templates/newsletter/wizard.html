@@ -1,0 +1,45 @@
+{% extends 'newsletter/base.html' %}
+{% load bootstrap5 %}
+{% load tz %}
+{% block newsletter %}
+<h2>Étape {{ step }} sur 4 · {% if step == 1 %}Destinataires{% elif step == 2 %}Contenu{% elif step == 3 %}Programmation{% else %}Validation{% endif %}</h2>
+{% if error %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endif %}
+{% if notice %}<p class="alert alert-success" role="status">{{ notice }}</p>{% endif %}
+{% if step == 4 %}
+  <dl>
+    <dt>Campagne</dt><dd>{{ campaign.name }}</dd>
+    <dt>Objet</dt><dd>{{ campaign.subject }}</dd>
+    <dt>Destinataires éligibles</dt><dd>{{ count }} · {{ campaign.get_audience_display }}</dd>
+    <dt>Envoi (Paris)</dt><dd>{{ campaign.scheduled_at|timezone:"Europe/Paris"|date:"d/m/Y H:i"|default:"Dès le prochain passage de la tâche" }}</dd>
+  </dl>
+  <form method="post" action="{% url 'newsletter:edit' campaign.pk 4 %}" class="mb-4">
+    {% csrf_token %}{% bootstrap_form form %}
+    <button class="btn btn-outline-secondary">Envoyer un email de test</button>
+  </form>
+  <form method="post" action="{% url 'newsletter:confirm' campaign.pk %}" class="mb-3">
+    {% csrf_token %}
+    <label class="d-block mb-2"><input type="checkbox" name="confirm" value="yes" required> Je confirme l’envoi à cette audience.</label>
+    <button class="btn btn-primary">Confirmer et mettre en file</button>
+  </form>
+{% else %}
+  <form method="post" enctype="multipart/form-data" class="mb-3">
+    {% csrf_token %}{% bootstrap_form form %}
+    {% if step == 2 %}<p>Le fichier importé est prioritaire. Pour appliquer un modèle enregistré, videz le champ de code HTML.</p>{% endif %}
+    <button class="btn btn-primary">Enregistrer et continuer</button>
+  </form>
+{% endif %}
+{% if step == 2 %}<p>L’aperçu est disponible après l’enregistrement du contenu.</p>{% endif %}
+{% if campaign.html %}
+  <div class="row">
+    <div class="col-lg-8">
+      <h3>Ordinateur</h3>
+      <iframe title="Aperçu ordinateur" sandbox src="{% url 'newsletter:preview' campaign.pk %}" style="width:100%; height:480px"></iframe>
+    </div>
+    <div class="col-lg-4">
+      <h3>Mobile</h3>
+      <iframe title="Aperçu mobile" sandbox src="{% url 'newsletter:preview' campaign.pk %}" style="width:375px; max-width:100%; height:480px"></iframe>
+    </div>
+  </div>
+{% endif %}
+{% if step > 1 %}<a class="btn btn-outline-secondary mt-3" href="{% url 'newsletter:edit' campaign.pk step|add:'-1' %}">Étape précédente</a>{% endif %}
+{% endblock %}

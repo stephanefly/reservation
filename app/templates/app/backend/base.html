@@ -103,6 +103,14 @@
                         <li><a class="dropdown-item" href="{% url 'cycle_strategique' %}"><i class="fas fa-project-diagram"></i> Cycle stratégique</a></li>
                     </ul>
                 </li>
+                {% url 'newsletter:dashboard' as newsletter_url %}
+                {% if newsletter_url %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.namespace == 'newsletter' %}active{% endif %}" href="{{ newsletter_url }}">
+                        <i class="fas fa-envelope" aria-hidden="true"></i> Newsletter
+                    </a>
+                </li>
+                {% endif %}
                 <li class="nav-item backend-nav__logout">
                     <a class="nav-link" href="{% url 'logout' %}" title="Déconnexion">
                         <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span class="d-xl-none"> Déconnexion</span>

@@ -1,0 +1,9 @@
+{% extends 'newsletter/base.html' %}
+{% block newsletter %}
+<h2>Dashboard</h2>
+<dl class="row">
+  <dt class="col-sm-7">Contacts éligibles</dt><dd class="col-sm-5">{{ eligible }}</dd>
+  <dt class="col-sm-7">Campagnes envoyées</dt><dd class="col-sm-5">{{ sent_campaigns }}</dd>
+</dl>
+{% include 'newsletter/metrics.html' %}
+{% endblock %}
