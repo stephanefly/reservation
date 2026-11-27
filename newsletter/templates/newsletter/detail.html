@@ -2,10 +2,13 @@
 {% load tz %}
 {% block newsletter %}
 <h2>{{ campaign.name }}</h2>
-<p class="mb-1">{{ campaign.subject }}</p>
+<p class="mb-2"><strong>Objet</strong> {{ campaign.subject }}</p>
 <p class="text-muted">
-  {{ campaign.get_status_display }} · {{ campaign.get_audience_display }}
-  {% if campaign.scheduled_at %} · {{ campaign.scheduled_at|timezone:"Europe/Paris"|date:"d/m/Y à H:i" }} (Paris){% endif %}
+  <strong>Statut</strong> {{ campaign.get_status_display }}
+  · <strong>Audience</strong> {{ campaign.get_audience_display }}
+  {% if campaign.scheduled_at %}
+  · <strong>Date d’envoi prévue</strong> {{ campaign.scheduled_at|timezone:"Europe/Paris"|date:"d/m/Y à H:i" }} (Paris)
+  {% endif %}
 </p>
 
 <section class="nl-detail-section" aria-labelledby="nl-delivery">

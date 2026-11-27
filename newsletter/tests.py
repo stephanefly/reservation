@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone as datetime_timezone
 from smtplib import SMTPDataError, SMTPServerDisconnected
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -168,7 +168,12 @@ class NewsletterTests(TestCase):
 
     def test_history_detail_only_shows_campaign_totals(self):
         now = timezone.now()
-        campaign = self.campaign(queued=True)
+        campaign = self.campaign(datetime(2026, 11, 27, 17, tzinfo=datetime_timezone.utc), queued=True)
+        campaign.audience = Campaign.Audience.CRM_ALLOWED
+        campaign.save(update_fields=["audience"])
+        history = self.client.get(reverse("newsletter:history"))
+        self.assertContains(history, campaign.subject)
+        self.assertContains(history, "27/11/2026 à 18:00")
         sent = Delivery.objects.create(
             campaign=campaign, email="visible-only-in-db@example.invalid", status=Delivery.Status.SENT,
             attempted_at=now, sent_at=now, opened_at=now, clicked_at=now,
@@ -182,6 +187,10 @@ class NewsletterTests(TestCase):
 
         response = self.client.get(reverse("newsletter:detail", args=[campaign.pk]))
         self.assertContains(response, "Résumé des envois")
+        self.assertContains(response, campaign.subject)
+        self.assertContains(response, "En file")
+        self.assertContains(response, "Particuliers autorisés (CRM)")
+        self.assertContains(response, "27/11/2026 à 18:00 (Paris)")
         self.assertContains(response, "Acceptés par le relais SMTP")
         self.assertNotContains(response, "@example.invalid")
         self.assertNotContains(response, "Internal SMTP diagnostic")
