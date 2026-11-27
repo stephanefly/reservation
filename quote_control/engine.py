@@ -1,12 +1,28 @@
 """Décision et calcul de devis : aucune écriture DB ni envoi de mail ici."""
 
-from app.module.data_bdd.event_pricing import calculate_option_total
+from app.module.data_bdd.event_pricing import calculate_option_total, OPTION_NAMES
 from django.db import DatabaseError
 from app.module.data_bdd.price import PRIX_PRODUITS
 from app.module.devis_pdf.make_table import calcul_prix_distance
 from .catalog import PACKS, PACK_BY_KEY, PRODUCT_KEYS, SOURCE_KEYS
 
 MANUAL_SOURCES = {"RECOMMANDATION", "RECOMMENDATION"}
+
+
+OPTION_QUANTITIES = ("PorteCles", "magnets", "MagnetsSimple")
+OPTIONS_MANUAL_REASON = "Présence d'options supplémentaires : devis manuel obligatoire"
+
+
+def has_extra_options(event, included_options=(), included_quantities=None):
+    option = event.event_option
+    quantities = included_quantities or {}
+    return (
+        bool(getattr(option, "panneaux_xxl", False))
+        or any(bool(getattr(option, code, False)) and code not in included_options
+               for code in OPTION_NAMES)
+        or any((getattr(option, code, 0) or 0) != quantities.get(code, 0)
+               for code in OPTION_QUANTITIES)
+    )
 
 
 def selected_products(event):
@@ -94,6 +110,8 @@ def analyse_quote(event, config, preview=False):
         if pack_key not in config.packs:
             return {"eligible": False, "reason": "Pack non activé pour l'envoi automatique"}
         pack = PACK_BY_KEY[pack_key]
+        if has_extra_options(event, pack[3], dict(pack[4])):
+            return {"eligible": False, "reason": OPTIONS_MANUAL_REASON}
         try:
             target_price = int(config.pack_prices.get(pack_key, pack[5]))
             discount_pack = product_list + included_option_price(event, pack) - target_price
@@ -103,6 +121,8 @@ def analyse_quote(event, config, preview=False):
             return {"eligible": False, "reason": "Prix du pack supérieur au tarif séparé"}
         label = pack[1]
     elif len(selection) == 1:
+        if has_extra_options(event):
+            return {"eligible": False, "reason": OPTIONS_MANUAL_REASON}
         key = next(iter(selection))
         if key not in config.products:
             return {"eligible": False, "reason": "Prestation non activée"}
