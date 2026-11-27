@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'quote_control',
+    'newsletter',
     'bootstrap5',
     "django_forms_bootstrap",
 ]

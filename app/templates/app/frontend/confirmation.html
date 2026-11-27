@@ -528,6 +528,18 @@
                         </div>
                     </div>
 
+                    <h2 class="section-title">Communications par e-mail</h2>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Envoi du devis et suivi</span>
+                            <p class="summary-value">{% if form_data.quote_email_consent == 'yes' %}Accepté{% else %}Non accepté{% endif %}</p>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Newsletter MySelfieBooth</span>
+                            <p class="summary-value">{% if form_data.newsletter_consent == 'yes' %}Acceptée{% else %}Non acceptée{% endif %}</p>
+                        </div>
+                    </div>
+
                     <h2 class="section-title">Événement</h2>
 
                     <div class="summary-grid">

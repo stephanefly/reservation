@@ -19,6 +19,7 @@ from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
 from app.module.data_bdd.event_pricing import OPTION_NAMES
 from quote_control.service import process_instant_quote
 from quote_control.public_pricing import get_public_catalogue
+from newsletter.models import record_quote_consent, subscribe_from_quote, unsubscribe_email
 from app.module.mail.send_mail_event import send_mail_event
 
 from ..module.google.contact import create_google_contact
@@ -31,6 +32,8 @@ FORM_PENDING = 'Formulaire : confirmation non terminée'
 
 def _validate_quote_fields(post):
     """Contrôle serveur : la première étape est désormais enregistrée en base."""
+    if post.get('quote_email_consent') != 'yes':
+        raise ValueError('Veuillez accepter de recevoir votre devis par e-mail.')
     required = ('mail', 'numero_telephone', 'date_evenement', 'ville_evenement',
                 'code_postal_evenement', 'adresse_evenement', 'selectedImages')
     if any(not str(post.get(field) or '').strip() for field in required):
@@ -76,6 +79,7 @@ def demande_devis(request):
 
     if request.method == 'POST':
         form_data = request.POST.dict()
+        form_data['newsletter_consent'] = 'yes' if form_data.get('newsletter_consent') == 'yes' else ''
         try:
             quantite = quantite_panneaux(request.POST)
             form_data["avec_panneaux"] = "on" if quantite else ""
@@ -87,9 +91,11 @@ def demande_devis(request):
             previous_id = request.session.get('draft_event_id')
             draft = Event.objects.filter(pk=previous_id, status='Initied',
                                          history_status__startswith=FORM_PENDING, event_token__isnull=True).first() if previous_id else None
-            event = initialize_event(data, existing=draft)
-            event.history_status = FORM_PENDING
-            event.save(update_fields=['history_status'])
+            with transaction.atomic():
+                event = initialize_event(data, existing=draft)
+                event.history_status = FORM_PENDING
+                event.save(update_fields=['history_status'])
+                record_quote_consent(event)
             request.session['draft_event_id'] = event.id
             request.session.pop('quote_confirmed_event_id', None)
         except (ValueError, TypeError, KeyError, ValidationError) as error:
@@ -121,6 +127,8 @@ def confirmation(request):
         form_data = request.session.get('demande_devis_data')
         if not form_data:
             return HttpResponseBadRequest('Session expirée : veuillez recommencer le formulaire.')
+        if form_data.get('quote_email_consent') != 'yes':
+            return redirect('demande_devis')
         try:
             _validate_quote_fields(form_data)
             panneaux = quantite_panneaux(form_data)
@@ -145,6 +153,9 @@ def confirmation(request):
             event.event_token = secrets.token_hex(32)
             event.history_status = 'Formulaire : demande confirmée'
             event.save(update_fields=['event_token', 'history_status'])
+            record_quote_consent(event)
+            if form_data.get('newsletter_consent') == 'yes':
+                subscribe_from_quote(event)
 
         try:
             create_google_contact(event)
@@ -168,6 +179,7 @@ def confirmation(request):
 
 def desabonner(request, token):
     event = Event.objects.get(event_token=token)
+    unsubscribe_email(event.client.mail)
     event.client.autorisation_mail = False
     if event.status not in ['Refused', 'Presta FINI']:
         event.status = 'Mail_Refused'

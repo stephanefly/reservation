@@ -132,12 +132,19 @@ def run_browser(base_url):
             }
             for name, value in fields.items():
                 page.locator("#id_" + name).fill(value)
+            assert not page.locator("#id_quote_email_consent").is_checked()
+            assert not page.locator("#id_newsletter_consent").is_checked()
+            page.locator("#submitStep").click()
+            assert "Veuillez accepter de recevoir votre devis" in page.locator("#formMessage").inner_text()
+            page.locator("#id_quote_email_consent").check()
             page.locator("#submitStep").click()
             page.locator("#btn-confirm").wait_for()
             assert "Panneau XXL × 4 — 400 €" in page.locator("body").inner_text()
 
             # Vérifier que le retour ne perd pas la quantité choisie.
             page.locator(".btn-edit-custom").click()
+            assert page.locator("#id_quote_email_consent").is_checked()
+            assert not page.locator("#id_newsletter_consent").is_checked()
             assert page.locator("#panneaux_xxl").input_value() == "4"
             assert page.locator("#avec_panneaux").is_checked()
             assert page.locator('.selectable-image[data-value="Photobooth"]').evaluate(

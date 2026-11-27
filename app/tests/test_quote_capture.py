@@ -9,6 +9,7 @@ from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.utils import timezone
 
 from app.models import Event
+from newsletter.models import NewsletterSubscriber, QuoteEmailConsent
 from quote_control.models import AutoQuoteLog, CatalogEntry
 from app.views.frontend_views import FORM_PENDING, confirmation, demande_devis
 
@@ -49,6 +50,7 @@ def payload():
         "magnets_range": "0", "PorteCles_range": "0",
         "MagnetsSimple_range": "0", "livraison": "1",
         "heure_range": "5",
+        "quote_email_consent": "yes",
     }
 
 
@@ -80,6 +82,8 @@ class QuoteCaptureTests(TestCase):
         self.assertEqual(event.client.mail, "client@example.invalid")
         self.assertEqual(event.event_product.photobooth, True)
         self.assertEqual(self.session["draft_event_id"], event.id)
+        self.assertTrue(QuoteEmailConsent.objects.filter(event_id=event.pk).exists())
+        self.assertFalse(NewsletterSubscriber.objects.exists())
 
         final = self.final_step()
         self.assertEqual(final.status_code, 302)
@@ -88,10 +92,66 @@ class QuoteCaptureTests(TestCase):
         self.assertTrue(event.event_token)
         self.assertEqual(event.history_status, "Formulaire : demande confirmée")
         self.assertNotIn("draft_event_id", self.session)
+        self.assertFalse(NewsletterSubscriber.objects.exists())
 
         repeat = self.final_step()
         self.assertEqual(repeat.status_code, 302)
         self.assertEqual(Event.objects.count(), 1)
+
+    def test_quote_consent_is_required(self):
+        for value in (None, "no", "false", "on"):
+            data = payload()
+            if value is None:
+                data.pop("quote_email_consent")
+            else:
+                data["quote_email_consent"] = value
+            self.assertEqual(self.first_step(data).status_code, 400)
+        self.assertFalse(Event.objects.exists())
+        self.assertFalse(QuoteEmailConsent.objects.exists())
+
+    def test_newsletter_opt_in_requires_confirmed_explicit_acceptance(self):
+        data = payload()
+        data["newsletter_consent"] = "yes"
+        self.assertEqual(self.first_step(data).status_code, 200)
+        self.assertFalse(NewsletterSubscriber.objects.exists())
+        self.assertEqual(self.final_step().status_code, 302)
+        subscriber = NewsletterSubscriber.subscribed().get()
+        self.assertEqual(subscriber.email, data["mail"])
+        self.assertEqual(subscriber.event_id, Event.objects.get().pk)
+        self.assertEqual(self.final_step().status_code, 302)
+        self.assertEqual(NewsletterSubscriber.objects.count(), 1)
+
+    def test_newsletter_unchecked_after_edit_does_not_subscribe(self):
+        data = payload()
+        data["newsletter_consent"] = "yes"
+        self.first_step(data)
+        self.first_step(payload())
+        self.assertEqual(self.final_step().status_code, 302)
+        self.assertFalse(NewsletterSubscriber.objects.exists())
+
+    def test_newsletter_opt_in_can_be_revoked(self):
+        data = payload()
+        data["newsletter_consent"] = "yes"
+        self.first_step(data)
+        self.final_step()
+        event = Event.objects.get()
+        frontend_module.desabonner(self.factory.get("/"), event.event_token)
+        self.assertFalse(NewsletterSubscriber.subscribed().exists())
+
+    def test_newsletter_deduplicates_emails_and_keeps_existing_subscriber(self):
+        data = payload()
+        data["newsletter_consent"] = "yes"
+        self.first_step(data)
+        self.final_step()
+        self.session = {}
+        data["mail"] = data["mail"].upper()
+        self.first_step(data)
+        self.final_step()
+        self.assertEqual(NewsletterSubscriber.subscribed().count(), 1)
+        self.session = {}
+        self.first_step(payload())
+        self.final_step()
+        self.assertEqual(NewsletterSubscriber.subscribed().count(), 1)
 
     def test_editing_previous_step_updates_same_lead(self):
         self.first_step()
