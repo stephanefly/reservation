@@ -1,4 +1,5 @@
 {% extends 'newsletter/base.html' %}
+{% block newsletter_page_class %}nl-summary-page{% endblock %}
 {% load bootstrap5 tz %}
 {% block newsletter %}
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
@@ -21,6 +22,7 @@
   {% endif %}
 </p>
 
+<div class="nl-summary">
 <section class="nl-detail-section" aria-labelledby="nl-delivery">
   <h2 id="nl-delivery">Résumé des envois</h2>
   <dl class="nl-grid">
@@ -46,4 +48,5 @@
 </section>
 
 {% include 'newsletter/metrics.html' %}
+</div>
 {% endblock %}

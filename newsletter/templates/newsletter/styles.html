@@ -52,41 +52,48 @@
     outline: 3px solid #977aff;
     outline-offset: 2px;
   }
-  .nl-dashboard { display: grid; gap: 16px; }
   .nl-panel { padding: clamp(16px, 2vw, 24px); }
   .nl-panel h2 { margin: 0 0 15px; font-size: 1.18rem; font-weight: 820; }
-  .nl-detail-section { margin-block: 20px; }
-  .nl-grid {
+  .nl-summary-page { gap: 10px; }
+  .nl-summary-page .nl-header { gap: 10px; padding: 10px 16px; border-radius: 14px; }
+  .nl-summary-page .nl-brand { gap: 10px; }
+  .nl-summary-page .nl-brand h1 { font-size: 1.4rem; }
+  .nl-summary-page .nl-brand-icon { width: 36px; height: 36px; border-radius: 9px; font-size: 1rem; }
+  .nl-summary-page .nl-tabs { padding: 4px; }
+  .nl-summary-page .nl-tabs a { min-height: 38px; padding-block: 5px; }
+  .nl-summary-page .nl-panel { padding: 12px 14px; }
+  .nl-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr));
-    gap: 12px;
-    margin: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 8px;
   }
+  .nl-summary > section {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    background: var(--admin-soft);
+    box-shadow: none;
+  }
+  .nl-summary h2 { margin: 0 0 4px; font-size: 1rem; }
+  .nl-grid { margin: 0; }
   .nl-stat {
     display: grid;
-    align-content: start;
-    gap: 5px;
-    padding: 15px 17px;
-    border: 1px solid var(--admin-border);
-    border-radius: 13px;
-    background: var(--admin-soft);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 8px;
+    padding: 5px 0;
   }
-  .nl-stat-icon {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    margin-bottom: 4px;
-    border-radius: 10px;
-    background: var(--admin-primary-soft);
-    color: var(--admin-primary-dark);
-  }
-  .nl-stat dt { color: var(--admin-muted); font-size: .87rem; font-weight: 700; }
-  .nl-stat dd { margin: 0; font-size: clamp(1.45rem, 3vw, 2rem); font-weight: 820; font-variant-numeric: tabular-nums; }
-  .nl-stat dd small { font-size: .66em; }
-  .nl-stat .nl-stat-note { color: var(--admin-muted); font-size: .82rem; font-weight: 500; }
-  .nl-stat-revenue { border-color: #d4e9df; background: var(--admin-success-soft); }
+  .nl-stat + .nl-stat { border-top: 1px solid var(--admin-border); }
+  .nl-stat dt { color: var(--admin-muted); font-size: .84rem; font-weight: 700; }
+  .nl-stat dd { margin: 0; font-size: 1rem; font-weight: 820; font-variant-numeric: tabular-nums; }
+  .nl-stat dd small { font-size: .8em; }
+  .nl-stat .nl-stat-note { grid-column: 1 / -1; color: var(--admin-muted); font-size: .76rem; font-weight: 500; }
   .nl-stat-revenue dd { color: var(--admin-success); }
+  @media (max-width: 800px) {
+    .nl-summary { grid-template-columns: minmax(0, 1fr); }
+  }
   @media (max-width: 540px) {
     .nl-tabs a { flex: 1 1 125px; padding-inline: 11px; }
     .nl-header .nl-create { width: 100%; justify-content: center; }

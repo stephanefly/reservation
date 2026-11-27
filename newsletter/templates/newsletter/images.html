@@ -1,0 +1,50 @@
+{% extends 'newsletter/base.html' %}
+{% load bootstrap5 %}
+{% block newsletter %}
+<h2>Images de campagne</h2>
+<form method="post" enctype="multipart/form-data" class="mb-3">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <button type="submit" class="btn btn-primary">Importer l’image</button>
+</form>
+<p class="small text-muted">JPEG, PNG, WebP ou GIF, jusqu’à 5 Mo. Copiez le lien public dans l’attribut <code>src</code> de votre image HTML.</p>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-3">
+  {% for image in images %}
+  <div class="col">
+    <div class="card h-100 overflow-hidden">
+      <img class="card-img-top" src="{{ image.url }}" alt="{{ image.name }}" loading="lazy" style="height:120px;object-fit:contain">
+      <div class="card-body p-2">
+        <p class="mb-2 text-break">{{ image.name }}</p>
+        <div class="input-group input-group-sm">
+          <input type="url" class="form-control" value="{{ image.url }}" readonly aria-label="Lien public de {{ image.name }}">
+          <button type="button" class="btn btn-sm btn-outline-primary" data-copy-image>Copier</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col w-100"><p>Aucune image importée.</p></div>
+  {% endfor %}
+</div>
+<p id="newsletter-image-feedback" class="small" role="status"></p>
+{% include 'newsletter/pagination.html' %}
+{% endblock %}
+{% block extra_js %}
+{{ block.super }}
+<script>
+  document.querySelectorAll("[data-copy-image]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const input = button.parentElement.querySelector("input");
+      const feedback = document.getElementById("newsletter-image-feedback");
+      try {
+        await navigator.clipboard.writeText(input.value);
+        feedback.textContent = "Lien copié.";
+      } catch {
+        input.focus();
+        input.select();
+        feedback.textContent = "Lien sélectionné. Vous pouvez le copier.";
+      }
+    });
+  });
+</script>
+{% endblock %}

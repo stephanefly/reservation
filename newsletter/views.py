@@ -1,4 +1,6 @@
 import base64
+import logging
+import os
 from datetime import timedelta
 from zoneinfo import ZoneInfo
 
@@ -9,16 +11,21 @@ from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms import CampaignForm, CampaignNameForm, CampaignTestForm, ConfigurationForm, TemplateForm
+from .forms import (
+    CampaignForm, CampaignImageForm, CampaignNameForm, CampaignTestForm, ConfigurationForm, TemplateForm,
+)
+from .image_storage import CONTENT_TYPES, image_storage, listed_images, store_image
 from .models import Attribution, Campaign, Configuration, Delivery, Template, TestAttempt, Unsubscribe
 from .services import CLICK_SALT, build_message, eligible, has_capacity, http_url, smtp_settings
 
+logger = logging.getLogger(__name__)
 staff = staff_member_required(login_url="login")
 PIXEL = base64.b64decode("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
 
@@ -213,6 +220,48 @@ def preview(request, pk):
     )
     response["X-Frame-Options"] = "SAMEORIGIN"
     response["Referrer-Policy"] = "no-referrer"
+    return response
+
+
+@staff
+@require_http_methods(["GET", "POST"])
+def images(request):
+    submitted = request.method == "POST"
+    form = CampaignImageForm(request.POST if submitted else None, request.FILES)
+    storage = image_storage()
+    if submitted and form.is_valid():
+        try:
+            store_image(storage, form.cleaned_data["image"])
+        except OSError:
+            logger.exception("Impossible d’enregistrer une image de newsletter.")
+            form.add_error("image", "Le dossier des images n’est pas accessible en écriture.")
+        else:
+            return redirect("newsletter:images")
+
+    page_obj = Paginator(listed_images(storage), 24).get_page(request.GET.get("page"))
+    origin = os.environ.get("NEWSLETTER_PUBLIC_URL", "").rstrip("/")
+    parsed = http_url(origin)
+    images = []
+    for filename in page_obj:
+        path = reverse("newsletter_public:image", args=[filename])
+        url = origin + path if parsed and parsed.scheme == "https" and not (
+            parsed.path or parsed.query or parsed.fragment
+        ) else request.build_absolute_uri(path)
+        images.append({"name": filename.split("-", 1)[1], "url": url})
+    return render(request, "newsletter/images.html", {
+        "form": form, "images": images, "page_obj": page_obj,
+    })
+
+
+@require_http_methods(["GET", "HEAD"])
+def public_image(request, filename):
+    try:
+        stream = image_storage().open(filename, "rb")
+    except FileNotFoundError as exc:
+        raise Http404 from exc
+    response = FileResponse(stream, content_type=CONTENT_TYPES[filename.rsplit(".", 1)[1]])
+    response["Cache-Control"] = "public, max-age=31536000, immutable"
+    response["X-Content-Type-Options"] = "nosniff"
     return response
 
 

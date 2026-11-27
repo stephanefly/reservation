@@ -16,6 +16,7 @@ urlpatterns = [
     path("modeles/<int:pk>/dupliquer/", views.duplicate, name="duplicate"),
     path("historique/", views.history, name="history"),
     path("historique/<int:pk>/", views.detail, name="detail"),
+    path("images/", views.images, name="images"),
     path("test/", views.smtp_test, name="test"),
     path("parametres/", views.configuration, name="settings"),
 ]

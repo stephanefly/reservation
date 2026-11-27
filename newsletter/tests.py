@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta, timezone as datetime_timezone
+from io import BytesIO
 from smtplib import SMTPDataError, SMTPServerDisconnected
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from bs4 import BeautifulSoup
+from PIL import Image
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
@@ -219,6 +221,29 @@ class NewsletterTests(TestCase):
             self.assertEqual(campaign.status, status)
             self.assertEqual(campaign.subject, "Infos")
             self.assertEqual(campaign.scheduled_at, now)
+
+    def test_staff_image_upload_has_a_public_immutable_url(self):
+        url = reverse("newsletter:images")
+        anonymous = Browser()
+        self.assertEqual(anonymous.get(url).status_code, 302)
+        with TemporaryDirectory() as directory, patch.dict("os.environ", {"NEWSLETTER_IMAGE_ROOT": directory}):
+            self.assertContains(self.client.get(url), "Aucune image importée")
+            invalid = SimpleUploadedFile("invalide.png", b"<svg />", content_type="image/png")
+            response = self.client.post(url, {"image": invalid})
+            self.assertContains(response, "Aucune image importée")
+            data = BytesIO()
+            Image.new("RGB", (2, 2)).save(data, "PNG")
+            upload = SimpleUploadedFile("Photo événement.png", data.getvalue(), content_type="image/png")
+            self.assertRedirects(self.client.post(url, {"image": upload}), url)
+            page = BeautifulSoup(self.client.get(url).content, "html.parser")
+            image_url = page.select_one("img.card-img-top")["src"]
+            self.assertTrue(image_url.startswith("https://crm.example.invalid/newsletter/image/"))
+            public = anonymous.get(image_url)
+            self.assertEqual(public.status_code, 200)
+            self.assertEqual(public["Content-Type"], "image/png")
+            self.assertEqual(public["X-Content-Type-Options"], "nosniff")
+            self.assertEqual(b"".join(public.streaming_content), data.getvalue())
+            public.close()
 
     def test_smtp_test_tab_sends_only_to_the_configured_recipient(self):
         url = reverse("newsletter:test")

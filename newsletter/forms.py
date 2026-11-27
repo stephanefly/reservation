@@ -1,5 +1,6 @@
 from django import forms
 
+from .image_storage import IMAGE_FORMATS
 from .models import Campaign, Configuration, Template
 
 
@@ -65,6 +66,23 @@ class CampaignForm(HTMLForm):
             self.add_error("at", "Indiquez la date et l’heure de l’envoi.")
         self.instance.scheduled_at = data.get("at") if data.get("mode") == "later" else None
         return data
+
+
+class CampaignImageForm(forms.Form):
+    image = forms.FileField(label="Fichier image", widget=forms.ClearableFileInput(
+        attrs={"accept": "image/jpeg,image/png,image/webp,image/gif"}
+    ))
+
+    def clean_image(self):
+        upload = self.cleaned_data["image"]
+        if upload.size > 5 * 1024 * 1024:
+            raise forms.ValidationError("L’image dépasse 5 Mo.")
+        image = forms.ImageField().to_python(upload)
+        if image.image.format not in IMAGE_FORMATS:
+            raise forms.ValidationError("Utilisez une image JPEG, PNG, WebP ou GIF.")
+        if image.image.width * image.image.height > 24_000_000:
+            raise forms.ValidationError("L’image dépasse 24 mégapixels.")
+        return image
 
 
 class TemplateForm(HTMLForm):
