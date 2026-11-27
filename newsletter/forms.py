@@ -74,6 +74,10 @@ class TemplateForm(HTMLForm):
         labels = {"name": "Nom"}
 
 
+class CampaignNameForm(forms.Form):
+    name = forms.CharField(label="Nom interne", max_length=Campaign._meta.get_field("name").max_length)
+
+
 class CampaignTestForm(forms.Form):
     campaign = forms.ModelChoiceField(
         queryset=Campaign.objects.exclude(subject="").exclude(html="").order_by("-pk"),

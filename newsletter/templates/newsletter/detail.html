@@ -1,7 +1,17 @@
 {% extends 'newsletter/base.html' %}
-{% load tz %}
+{% load bootstrap5 tz %}
 {% block newsletter %}
-<h2>{{ campaign.name }}</h2>
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+  <h2>{{ campaign.name }}</h2>
+  <details {% if rename_form.errors %}open{% endif %}>
+    <summary class="text-primary">Renommer la campagne</summary>
+    <form method="post" class="mt-2">
+      {% csrf_token %}
+      {% bootstrap_form rename_form %}
+      <button type="submit" class="btn btn-sm btn-outline-primary">Enregistrer le nom</button>
+    </form>
+  </details>
+</div>
 <p class="mb-2"><strong>Objet</strong> {{ campaign.subject }}</p>
 <p class="text-muted">
   <strong>Statut</strong> {{ campaign.get_status_display }}

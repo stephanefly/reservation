@@ -202,6 +202,24 @@ class NewsletterTests(TestCase):
             [1, 1, 1, 1],
         )
 
+    def test_staff_can_rename_campaign_from_history(self):
+        now = timezone.now()
+        campaign = self.campaign(now, queued=True)
+        url = reverse("newsletter:detail", args=[campaign.pk])
+        self.assertEqual(Browser().post(url, {"name": "Intrus"}).status_code, 302)
+        response = self.client.post(url, {"name": " "})
+        self.assertTrue(response.context["rename_form"].errors)
+        for status in (Campaign.Status.QUEUED, Campaign.Status.FINISHED):
+            Campaign.objects.filter(pk=campaign.pk).update(status=status)
+            self.assertRedirects(self.client.post(url, {
+                "name": f"Campagne {status}", "subject": "À ignorer",
+            }), url)
+            campaign.refresh_from_db()
+            self.assertEqual(campaign.name, f"Campagne {status}")
+            self.assertEqual(campaign.status, status)
+            self.assertEqual(campaign.subject, "Infos")
+            self.assertEqual(campaign.scheduled_at, now)
+
     def test_smtp_test_tab_sends_only_to_the_configured_recipient(self):
         url = reverse("newsletter:test")
         self.assertEqual(self.public.get(url).status_code, 302)

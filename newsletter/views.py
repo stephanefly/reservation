@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms import CampaignForm, CampaignTestForm, ConfigurationForm, TemplateForm
+from .forms import CampaignForm, CampaignNameForm, CampaignTestForm, ConfigurationForm, TemplateForm
 from .models import Attribution, Campaign, Configuration, Delivery, Template, TestAttempt, Unsubscribe
 from .services import CLICK_SALT, build_message, eligible, has_capacity, http_url, smtp_settings
 
@@ -246,10 +246,17 @@ def history(request):
 
 
 @staff
+@require_http_methods(["GET", "POST"])
 def detail(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if campaign.status == Campaign.Status.DRAFT:
         return redirect("newsletter:edit", pk=pk)
+    rename_form = CampaignNameForm(
+        request.POST if request.method == "POST" else None, initial={"name": campaign.name}
+    )
+    if request.method == "POST" and rename_form.is_valid():
+        Campaign.objects.filter(pk=pk).update(name=rename_form.cleaned_data["name"])
+        return redirect("newsletter:detail", pk=pk)
     deliveries = campaign.deliveries.all()
     status = Delivery.Status
     delivery_summary = deliveries.aggregate(
@@ -262,6 +269,7 @@ def detail(request, pk):
     )
     return render(request, "newsletter/detail.html", {
         "campaign": campaign, "stats": metrics(deliveries), "delivery_summary": delivery_summary,
+        "rename_form": rename_form,
     })
 
 
