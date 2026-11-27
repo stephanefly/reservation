@@ -66,17 +66,17 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: start;
-    gap: 8px;
+    gap: 12px;
   }
   .nl-summary > section {
     min-width: 0;
-    padding: 10px 12px;
+    padding: 13px 16px;
     border: 1px solid var(--admin-border);
     border-radius: 12px;
     background: var(--admin-soft);
     box-shadow: none;
   }
-  .nl-summary h2 { margin: 0 0 4px; font-size: 1rem; }
+  .nl-summary h2 { margin: 0 0 6px; font-size: 1.16rem; }
   .nl-grid { margin: 0; }
   .nl-stat {
     display: grid;
@@ -86,10 +86,10 @@
     padding: 5px 0;
   }
   .nl-stat + .nl-stat { border-top: 1px solid var(--admin-border); }
-  .nl-stat dt { color: var(--admin-muted); font-size: .84rem; font-weight: 700; }
-  .nl-stat dd { margin: 0; font-size: 1rem; font-weight: 820; font-variant-numeric: tabular-nums; }
+  .nl-stat dt { color: var(--admin-muted); font-size: .94rem; font-weight: 700; }
+  .nl-stat dd { margin: 0; font-size: 1.3rem; line-height: 1.2; font-weight: 820; font-variant-numeric: tabular-nums; }
   .nl-stat dd small { font-size: .8em; }
-  .nl-stat .nl-stat-note { grid-column: 1 / -1; color: var(--admin-muted); font-size: .76rem; font-weight: 500; }
+  .nl-stat .nl-stat-note { grid-column: 1 / -1; color: var(--admin-muted); font-size: .82rem; font-weight: 500; }
   .nl-stat-revenue dd { color: var(--admin-success); }
   @media (max-width: 800px) {
     .nl-summary { grid-template-columns: minmax(0, 1fr); }
