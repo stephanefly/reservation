@@ -29,6 +29,7 @@
       <fieldset class="mb-4">
         <legend class="h5">Destinataires et programmation</legend>
         {% bootstrap_field form.audience %}
+        <p class="small text-muted">L’audience « Particuliers autorisés (CRM) » utilise l’autorisation historique, activée par défaut sur les anciennes fiches.</p>
         {% if count != None %}<p class="small text-muted" id="newsletter-audience-count">{{ count }} destinataire{{ count|pluralize }} éligible{{ count|pluralize }}</p>{% endif %}
         {% bootstrap_field form.mode %}
         {% bootstrap_field form.at %}

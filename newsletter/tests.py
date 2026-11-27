@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from app.models import Client, Event, EventDetails
 from .models import Attribution, Campaign, Configuration, Consent, Delivery, Template, Unsubscribe
-from .services import build_message, eligible, record_quote, smtp_settings
+from .services import build_message, eligible, record_quote, smtp_settings, still_eligible
 from .views import metrics
 
 
@@ -82,6 +82,25 @@ class NewsletterTests(TestCase):
         self.assertEqual(eligible(Campaign.Audience.INDIVIDUAL), {bob.mail})
         Unsubscribe.objects.create(email="alice@example.invalid")
         self.assertEqual(eligible(), {bob.mail})
+
+    def test_crm_authorized_individuals_are_deduplicated_and_rechecked(self):
+        individual = self.contact("  ALICE@EXAMPLE.INVALID ", consent=False)
+        duplicate = self.contact("alice@example.invalid", consent=False)
+        self.contact("business@example.invalid", business=True, consent=False)
+        self.contact("refus@example.invalid", authorized=False, consent=False)
+        self.contact("adresse-invalide", consent=False)
+        self.contact("stop@example.invalid", consent=False)
+        Unsubscribe.objects.create(email="stop@example.invalid")
+        audience = Campaign.Audience.CRM_ALLOWED
+
+        self.assertEqual(eligible(audience), {"alice@example.invalid"})
+        self.assertEqual(eligible(), set())
+        self.assertTrue(still_eligible("alice@example.invalid", audience))
+        self.assertFalse(still_eligible("stop@example.invalid", audience))
+        duplicate.delete()
+        individual.autorisation_mail = False
+        individual.save(update_fields=["autorisation_mail"])
+        self.assertFalse(still_eligible("alice@example.invalid", audience))
 
     def test_campaign_editor_saves_tests_and_requires_manual_confirmation(self):
         anonymous = Browser()

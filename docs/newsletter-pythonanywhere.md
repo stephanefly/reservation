@@ -2,6 +2,8 @@
 
 Le CRM utilise les contacts existants. La case facultative de la page de confirmation du devis enregistre l’adresse et la date du consentement. La valeur historique `autorisation_mail` et une demande de devis seule ne valent pas consentement Newsletter. La population initiale est donc vide. Un contact doit avoir consenti pour son adresse actuelle, être autorisé dans le CRM et ne pas être désabonné de la Newsletter. Les doublons sont regroupés par adresse normalisée. Si le CRM contient plusieurs fiches consentantes pour la même adresse, la fiche consentante valide la plus récente détermine son segment.
 
+L’audience **Particuliers autorisés (CRM)** applique le filtre historique `autorisation_mail=True` et `raison_sociale=False`. Elle écarte les adresses invalides et désabonnées et regroupe les doublons. Comme `autorisation_mail` vaut `True` par défaut, cette audience peut inclure des fiches dont le consentement Newsletter n’a jamais été enregistré.
+
 ## Migration et configuration
 
 1. Déployer le code dans le checkout PythonAnywhere selon la procédure du dépôt. Le workflow existant recharge le code sans migrer. Avec `NEWSLETTER_AVAILABLE` absent, le menu et les routes de suivi restent inactifs.

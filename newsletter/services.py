@@ -10,8 +10,11 @@ from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.smtp import EmailBackend
 from django.core.validators import validate_email
+from django.db.models.functions import Lower, Trim
 from django.urls import reverse
 from django.utils import timezone
+
+from app.models import Client
 
 from .models import Attribution, Campaign, Consent, Delivery, TestAttempt, Unsubscribe
 
@@ -23,8 +26,26 @@ def normalize(email):
     return email.strip().lower()
 
 
+def authorized_individuals():
+    return Client.objects.filter(autorisation_mail=True, raison_sociale=False).annotate(
+        normalized_mail=Lower(Trim("mail"))
+    )
+
+
+def valid_address(email):
+    try:
+        validate_email(email)
+    except ValidationError:
+        return False
+    return True
+
+
 def eligible(audience=Campaign.Audience.ALL):
     blocked = set(Unsubscribe.objects.values_list("email", flat=True))
+    if audience == Campaign.Audience.CRM_ALLOWED:
+        addresses = authorized_individuals().values_list("normalized_mail", flat=True).iterator()
+        return {email for email in addresses if email not in blocked and valid_address(email)}
+
     clients = Consent.objects.select_related("client").order_by("-granted_at", "-pk")
     result = {}
     for consent in clients.iterator():
@@ -32,11 +53,8 @@ def eligible(audience=Campaign.Audience.ALL):
         email = normalize(client.mail)
         if email != consent.email or email in blocked or not client.autorisation_mail:
             continue
-        try:
-            validate_email(email)
-        except ValidationError:
-            continue
-        result.setdefault(email, client.raison_sociale)
+        if valid_address(email):
+            result.setdefault(email, client.raison_sociale)
     if audience == Campaign.Audience.ALL:
         return set(result)
     return {email for email, business in result.items()
@@ -46,6 +64,8 @@ def eligible(audience=Campaign.Audience.ALL):
 def still_eligible(email, audience):
     if Unsubscribe.objects.filter(email=email).exists():
         return False
+    if audience == Campaign.Audience.CRM_ALLOWED:
+        return valid_address(email) and authorized_individuals().filter(normalized_mail=email).exists()
     for consent in Consent.objects.filter(email=email, client__autorisation_mail=True
                                          ).select_related("client").order_by("-granted_at", "-pk"):
         if normalize(consent.client.mail) == email:

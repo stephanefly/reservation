@@ -37,6 +37,7 @@ class Campaign(models.Model):
         ALL = "all", "Tous les contacts éligibles"
         BUSINESS = "business", "Professionnels"
         INDIVIDUAL = "individual", "Particuliers"
+        CRM_ALLOWED = "crm_allowed", "Particuliers autorisés (CRM)"
 
     class Status(models.TextChoices):
         DRAFT = "draft", "Brouillon"
