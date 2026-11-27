@@ -18,11 +18,20 @@ def has_extra_options(event, included_options=(), included_quantities=None):
     quantities = included_quantities or {}
     return (
         bool(getattr(option, "panneaux_xxl", False))
-        or any(bool(getattr(option, code, False)) and code not in included_options
-               for code in OPTION_NAMES)
+        or set(included_options) != {code for code in OPTION_NAMES
+                                     if getattr(option, code, False)}
+        or not set(quantities).issubset(OPTION_QUANTITIES)
         or any((getattr(option, code, 0) or 0) != quantities.get(code, 0)
                for code in OPTION_QUANTITIES)
     )
+
+
+def selected_options_summary(event):
+    option = event.event_option
+    codes = [code for code in OPTION_NAMES if getattr(option, code, False)]
+    codes.extend(f"{code}={getattr(option, code)}" for code in
+                 (*OPTION_QUANTITIES, "panneaux_xxl") if getattr(option, code, 0))
+    return ",".join(codes)
 
 
 def selected_products(event):
@@ -38,10 +47,7 @@ def match_pack(event, selection):
         key, name, products, options, quantities, price = pack
         if selection != set(products):
             continue
-        if not all(bool(getattr(event.event_option, option, False)) for option in options):
-            continue
-        if not all((getattr(event.event_option, field, 0) or 0) >= required
-                   for field, required in quantities):
+        if has_extra_options(event, options, dict(quantities)):
             continue
         return key
     return None

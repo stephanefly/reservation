@@ -44,8 +44,11 @@ def calculer_devis_instantane(event):
         produit for attribut, produit in PRODUITS.items()
         if getattr(event.event_product, attribut, False)
     ]
-    if not selection:
-        raise ValueError("Aucune prestation sélectionnée.")
+    if len(selection) != 1:
+        raise ValueError("Combinaison à vérifier dans le catalogue.")
+    from quote_control.engine import has_extra_options
+    if has_extra_options(event):
+        raise ValueError("Options supplémentaires : devis manuel obligatoire.")
 
     # Base de prix du CRM : tarif 3 h si prévu, tarif standard sinon.
     prix_brut = 0
@@ -80,19 +83,6 @@ def preparer_et_envoyer_devis(event, envoyer_mail):
     True signifie que le mail a été accepté par l'outil d'envoi.
     False signifie que la demande reste à traiter manuellement.
     """
-    if not devis_automatique_autorise(event.client):
-        return False
-
-    montants = calculer_devis_instantane(event)
-    for nom, valeur in montants.items():
-        setattr(event, nom, valeur)
-
-    event.status = "Calculed"
-    event.save()
-
-    if not envoyer_mail(event, "devis"):
-        return False
-
-    event.status = "Sended"
-    event.save(update_fields=["status"])
-    return True
+    # Compatibilité des anciens appels : aucun second moteur d'envoi.
+    from quote_control.service import process_instant_quote
+    return process_instant_quote(event, envoyer_mail)

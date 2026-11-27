@@ -9,6 +9,7 @@ from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.utils import timezone
 
 from app.models import Event
+from quote_control.models import AutoQuoteLog, CatalogEntry
 from app.views.frontend_views import FORM_PENDING, confirmation, demande_devis
 
 frontend_module = importlib.import_module('app.views.frontend_views')
@@ -110,6 +111,69 @@ class QuoteCaptureTests(TestCase):
         self.assertTrue(previous.event_product.miroirbooth)
         self.assertFalse(previous.event_product.photobooth)
         self.assertEqual(previous.num_devis, number)
+
+    def test_confirmation_persists_options_and_blocks_automatic_mail(self):
+        CatalogEntry.objects.filter(kind="product", code="photobooth").update(auto_enabled=True)
+        data = payload()
+        data.update(selectedOption="Phonebooth, VideoLivreOr", magnets_range="50",
+                    PorteCles_range="100", MagnetsSimple_range="150",
+                    avec_panneaux="on", panneaux_xxl="4")
+        self.assertEqual(self.first_step(data).status_code, 200)
+        request = self.factory.get("/")
+        request.session = self.session
+        html = demande_devis(request).content.decode()
+        self.assertIn('value="50" name="magnets_range"', html)
+        self.assertIn('value="100" name="PorteCles_range"', html)
+        self.assertIn('value="150" name="MagnetsSimple_range"', html)
+        event = Event.objects.get()
+        # Une incohérence du brouillon ne doit jamais effacer la sélection confirmée.
+        event.event_option.Phonebooth = False
+        event.event_option.save()
+        request = self.factory.post("/confirmation/", {})
+        request.session = self.session
+        with patch.object(frontend_module, "create_google_contact"), \
+             patch.object(frontend_module, "create_card", return_value="test-card"), \
+             patch.object(frontend_module, "send_mail_event") as sender:
+            self.assertEqual(confirmation(request).status_code, 302)
+            sender.assert_not_called()
+        event.refresh_from_db()
+        option = event.event_option
+        self.assertTrue(option.Phonebooth and option.VideoLivreOr)
+        self.assertEqual((option.magnets, option.PorteCles, option.MagnetsSimple, option.panneaux_xxl), (50, 100, 150, 4))
+        self.assertEqual(event.status, "Initied")
+        log = AutoQuoteLog.objects.get(event_id=event.pk)
+        self.assertEqual(log.outcome, "manual")
+        for code in ("Phonebooth", "VideoLivreOr", "magnets=50", "PorteCles=100", "MagnetsSimple=150", "panneaux_xxl=4"):
+            self.assertIn(code, log.reason)
+
+    def test_final_guard_blocks_even_if_engine_returns_eligible(self):
+        from quote_control.service import process_instant_quote
+        from app.module.data_bdd.instant_quote import preparer_et_envoyer_devis
+        CatalogEntry.objects.filter(kind="product", code="photobooth").update(auto_enabled=True)
+        data = payload()
+        data.update(selectedOption="LivreOr")
+        self.first_step(data)
+        event = Event.objects.get()
+        fake_eligible = {"eligible": True, "pack": None, "amount": 400, "label": "Photobooth", "calculation": {}}
+        with patch("quote_control.service.analyse_quote", return_value=fake_eligible), \
+             patch.object(frontend_module, "send_mail_event") as sender:
+            self.assertFalse(process_instant_quote(event, sender))
+            self.assertFalse(preparer_et_envoyer_devis(event, sender))
+            sender.assert_not_called()
+        self.assertEqual(AutoQuoteLog.objects.filter(event_id=event.pk, outcome="manual").count(), 2)
+
+    def test_manual_mail_remains_available_for_request_with_options(self):
+        from app.views import backend_views
+        data = payload()
+        data.update(selectedOption="LivreOr")
+        self.first_step(data)
+        event = Event.objects.get()
+        with patch.object(backend_views, "send_mail_event", return_value=True) as sender:
+            response = backend_views.envoi_mail_devis(self.factory.post("/"), event.pk)
+            self.assertEqual(response.status_code, 200)
+            sender.assert_called_once()
+        event.refresh_from_db()
+        self.assertEqual(event.status, "Sended")
 
     def test_invalid_form_is_rejected_without_creating_ghosts(self):
         invalid = payload()

@@ -9,8 +9,9 @@ from django.test import TestCase
 from django.urls import reverse
 
 from app.models import Client, Event, EventDetails, EventOption, EventProduct
+from app.module.data_bdd.event_pricing import OPTION_NAMES
 from .catalog import default_pack_prices, default_product_prices, default_products, default_sources, PACKS
-from .engine import analyse_quote
+from .engine import analyse_quote, OPTION_QUANTITIES
 from .models import AutoQuoteLog, AutoQuoteSettings, CatalogEntry
 from .service import process_instant_quote
 
@@ -40,6 +41,54 @@ def settings_stub():
 
 
 class QuoteEngineTests(TestCase):
+    def test_every_option_blocks_both_engines_even_when_free(self):
+        CatalogEntry.objects.filter(kind="product", code="photobooth").update(auto_enabled=True)
+        for catalogue in (False, True):
+            config = settings_stub()
+            config.catalog_enabled = catalogue
+            for code in (*OPTION_NAMES, *OPTION_QUANTITIES, "panneaux_xxl"):
+                with self.subTest(catalogue=catalogue, option=code):
+                    event = fake_event(photobooth=True)
+                    option = event.event_option
+                    if code in OPTION_NAMES:
+                        setattr(option, code, True)
+                        setattr(option, code + "_reduc_prix", getattr(option, "prix_base_" + code)())
+                    elif code == "panneaux_xxl":
+                        option.panneaux_xxl = 1
+                        option.panneaux_forfait = option.panneaux_remise = 150
+                    else:
+                        setattr(option, code, 50)
+                        setattr(option, code + "_reduc_prix", 100)
+                    self.assertFalse(analyse_quote(event, config, preview=True)["eligible"])
+
+    def test_exact_pack_composition_and_quantity_both_engines(self):
+        CatalogEntry.objects.filter(kind__in=("product", "pack")).update(auto_enabled=True)
+        for catalogue in (False, True):
+            config = settings_stub()
+            config.catalog_enabled = catalogue
+            for key, _, products, options, quantities, price in PACKS:
+                flags = {code: True for code in (*products, *options)}
+                flags.update(dict(quantities))
+                with self.subTest(catalogue=catalogue, pack=key):
+                    event = fake_event(**flags)
+                    result = analyse_quote(event, config, preview=True)
+                    self.assertTrue(result["eligible"], result)
+                    self.assertEqual(result["amount"], price)
+                    for code in set(OPTION_NAMES) - set(options):
+                        setattr(event.event_option, code, True)
+                        self.assertFalse(analyse_quote(event, config, preview=True)["eligible"], code)
+                        setattr(event.event_option, code, False)
+                    for code in OPTION_QUANTITIES:
+                        expected = dict(quantities).get(code, 0)
+                        for count in {expected + 1, max(0, expected - 1)} - {expected}:
+                            setattr(event.event_option, code, count)
+                            self.assertFalse(analyse_quote(event, config, preview=True)["eligible"], (code, count))
+                        setattr(event.event_option, code, expected)
+                    for code in options:
+                        setattr(event.event_option, code, False)
+                        self.assertFalse(analyse_quote(event, config, preview=True)["eligible"], code)
+                        setattr(event.event_option, code, True)
+
     def test_recommendation_always_manual_even_if_selected_elsewhere(self):
         config = settings_stub()
         config.sources += ["RECOMMANDATION", "RECOMMENDATION"]
@@ -88,12 +137,14 @@ class QuoteEngineTests(TestCase):
                 self.assertEqual(result["amount"], price)
                 self.assertEqual(result["pack"], key)
 
-    def test_extra_option_and_delivery_added_to_pack(self):
+    def test_extra_option_blocks_pack_but_delivery_does_not(self):
         config = settings_stub()
         event = fake_event(voguebooth=True, PhotographeVoguebooth=True,
                            ImpressionVoguebooth=True, LivreOr=True, code_postal=62000)
         result = analyse_quote(event, config, preview=True)
-        self.assertEqual(result["amount"], 700 + 70 + 100)
+        self.assertFalse(result["eligible"])
+        event.event_option.LivreOr = False
+        self.assertEqual(analyse_quote(event, config, preview=True)["amount"], 700 + 100)
 
     def test_disabled_pack_does_not_become_full_price_quote(self):
         config = settings_stub()

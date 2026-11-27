@@ -16,16 +16,8 @@ def manual(reason):
 
 
 def matched_pack(event, selection, pack):
-    if set(pack.product_codes) != selection:
-        return False
-    if not all(bool(getattr(event.event_option, code, False)) for code in pack.option_codes):
-        return False
-    for code, quantity in pack.quantities.items():
-        if code not in QUANTITY_OPTIONS:
-            return False
-        if (getattr(event.event_option, code, 0) or 0) < quantity:
-            return False
-    return True
+    return (set(pack.product_codes) == selection
+            and not has_extra_options(event, pack.option_codes, pack.quantities))
 
 
 def sum_included_options(event, pack):

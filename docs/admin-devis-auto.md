@@ -32,7 +32,7 @@ Les nouvelles demandes sont conservées dans le CRM comme auparavant. Si le modu
 | Vogue Premium | Vogue Booth + Photographe + Impressions | 700 € |
 | Mariage Prestige | Miroirbooth + 360 Booth + Vogue Booth + Fond 360 + Mur Floral | 1 200 € |
 
-Les options supplémentaires et frais de déplacement sont ajoutés.
+Les frais de déplacement sont ajoutés. Toute option supplémentaire (même gratuite), option manquante ou quantité différente de la composition exacte du pack impose un devis manuel. Une machine seule est automatique seulement si elle est activée et sans option.
 Les prix des éléments sont calculés sur le serveur depuis le catalogue CRM.
 Les remises de pack apparaissent sur le PDF. Les prix peuvent être modifiés dans l'administration.
 

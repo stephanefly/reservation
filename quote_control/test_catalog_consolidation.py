@@ -110,6 +110,7 @@ class UnifiedCatalogueTests(TestCase):
         event = fake_event(photobooth=True)
         event.pk = 885
         event.save = Mock()
+        event.refresh_from_db = Mock()
         send = Mock(return_value=True)
         self.assertTrue(process_instant_quote(event, send))
         send.assert_called_once_with(event, "devis")
@@ -127,6 +128,7 @@ class UnifiedCatalogueTests(TestCase):
         ), start=1):
             event.pk = 900 + i
             event.save = Mock()
+            event.refresh_from_db = Mock()
             send = Mock(return_value=True)
             self.assertFalse(process_instant_quote(event, send))
             send.assert_not_called()

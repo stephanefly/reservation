@@ -27,10 +27,10 @@ def get_confirmation_data(request):
             "code_postal": request.POST.get('code_postal_evenement').strip(),
         },
         "product": request.POST.get('selectedImages'),
-        "options": request.POST.get('selectedOption'),
-        "magnets_range": int(request.POST.get('magnets_range')),
-        "PorteCles_range": int(request.POST.get('PorteCles_range')),
-        "MagnetsSimple_range": int(request.POST.get('MagnetsSimple_range')),
+        "options": ','.join(code.strip() for code in (request.POST.get('selectedOption') or '').split(',') if code.strip()),
+        "magnets_range": int(request.POST.get('magnets_range') or 0),
+        "PorteCles_range": int(request.POST.get('PorteCles_range') or 0),
+        "MagnetsSimple_range": int(request.POST.get('MagnetsSimple_range') or 0),
         "livraison": True if request.POST.get('livraison') else False,
         "heure_range": int(request.POST.get('heure_range')) if request.POST.get('heure_range') else None
     }

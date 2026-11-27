@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<form method="post" id="monFormulaire" class="quote-wizard" novalidate>
+<form method="post" id="monFormulaire" class="quote-wizard" data-auto-quote-policy="exact-composition-v1" novalidate>
     {% csrf_token %}
 
     <input type="hidden" id="selectedImages" name="selectedImages" value="{{ form.selectedImages }}">
@@ -160,7 +160,7 @@
                                 </small>
                             </div>
 
-                            <input type="hidden" value="0" name="magnets_range" id="MagnetsRange">
+                            <input type="hidden" value="{{ form.magnets_range|default:'0' }}" name="magnets_range" id="MagnetsRange">
 
                             <div class="quantity-line-actions magnet-line-actions" aria-label="Choix du nombre de magnets">
                                 <button type="button" class="quantity-choice magnet-choice selected" data-target="MagnetsRange" data-label="magnets" data-empty-label="Sans magnets" data-value="0">Sans</button>
@@ -183,7 +183,7 @@
                                 </small>
                             </div>
 
-                            <input type="hidden" value="0" name="PorteCles_range" id="PorteClesRange">
+                            <input type="hidden" value="{{ form.PorteCles_range|default:'0' }}" name="PorteCles_range" id="PorteClesRange">
 
                             <div class="quantity-line-actions portecles-line-actions" aria-label="Choix du nombre de porte-clés">
                                 <button type="button" class="quantity-choice PorteCles-choice selected" data-target="PorteClesRange" data-label="porte-clés" data-empty-label="Sans porte-clés" data-value="0">Sans</button>
@@ -207,7 +207,7 @@
                                 </small>
                             </div>
 
-                            <input type="hidden" value="0" name="MagnetsSimple_range" id="MagnetsSimpleRange">
+                            <input type="hidden" value="{{ form.MagnetsSimple_range|default:'0' }}" name="MagnetsSimple_range" id="MagnetsSimpleRange">
 
                             <div class="quantity-line-actions magnetssimple-line-actions" aria-label="Choix du nombre de magnets simples">
                                 <button type="button" class="quantity-choice MagnetsSimple-choice selected" data-target="MagnetsSimpleRange" data-label="magnets simples" data-empty-label="Sans magnets simples" data-value="0">Sans</button>
@@ -347,7 +347,7 @@
                         <strong><span id="heureValue">5</span> h</strong>
                     </div>
 
-                    <input type="range" class="form-range" min="3" max="7" step="1" value="5" name="heure_range" id="heureRange">
+                    <input type="range" class="form-range" min="3" max="7" step="1" value="{{ form.heure_range|default:'5' }}" name="heure_range" id="heureRange">
 
                     <div class="duration-labels">
                         <span>3h</span>
@@ -375,12 +375,12 @@
 
                 <div class="custom-radio-container">
                     <div class="custom-radio-button">
-                        <input type="radio" id="id_personne" name="type" value="personne" checked>
+                        <input type="radio" id="id_personne" name="type" value="personne" {% if not form.raison_sociale %}checked{% endif %}>
                         <label for="id_personne">Particulier</label>
                     </div>
 
                     <div class="custom-radio-button">
-                        <input type="radio" id="id_entreprise" name="type" value="entreprise">
+                        <input type="radio" id="id_entreprise" name="type" value="entreprise" {% if form.raison_sociale %}checked{% endif %}>
                         <label for="id_entreprise">Entreprise</label>
                     </div>
                 </div>
@@ -1987,6 +1987,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    ["MagnetsRange", "PorteClesRange", "MagnetsSimpleRange"].forEach(function (inputId) {
+        const input = document.getElementById(inputId);
+        const value = getQuantityValue(inputId);
+        document.querySelectorAll(".quantity-choice[data-target='" + inputId + "']").forEach(function (button) {
+            button.classList.toggle("selected", Number(button.dataset.value) === value);
+        });
+        const wrapper = input.closest(".quantity-line-option");
+        if (wrapper) wrapper.classList.toggle("has-value", value > 0);
+        updateQuantityDisplay(inputId);
+    });
     applySelectionsFromUrl();
     toggleClientType();
     updateRelatedOptionsVisibility();

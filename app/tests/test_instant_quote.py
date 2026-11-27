@@ -1,6 +1,6 @@
 import unittest
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from app.module.data_bdd.instant_quote import (
     calculer_devis_instantane,
@@ -39,13 +39,15 @@ class InstantQuoteTests(unittest.TestCase):
             event = exemple(source=source, photobooth=True)
             envoyer = Mock(return_value=True)
             self.assertFalse(devis_automatique_autorise(event.client))
-            self.assertFalse(preparer_et_envoyer_devis(event, envoyer))
+            with patch.dict("sys.modules", {"quote_control.service": SimpleNamespace(process_instant_quote=Mock(return_value=False))}):
+                self.assertFalse(preparer_et_envoyer_devis(event, envoyer))
             envoyer.assert_not_called()
             event.save.assert_not_called()
 
     def test_professionnel_reste_manuel(self):
         event = exemple(entreprise=True, photobooth=True)
-        self.assertFalse(preparer_et_envoyer_devis(event, Mock()))
+        with patch.dict("sys.modules", {"quote_control.service": SimpleNamespace(process_instant_quote=Mock(return_value=False))}):
+            self.assertFalse(preparer_et_envoyer_devis(event, Mock()))
         event.save.assert_not_called()
 
     def test_photobooth_standard_et_transport_inclus(self):
@@ -60,22 +62,21 @@ class InstantQuoteTests(unittest.TestCase):
 
     def test_pack_plusieurs_prestations(self):
         event = exemple(photobooth=True, miroirbooth=True)
-        result = calculer_devis_instantane(event)
-        self.assertEqual(result["prix_brut"], 1000)
-        self.assertEqual(result["prix_proposed"], 1000)
+        with self.assertRaises(ValueError):
+            calculer_devis_instantane(event)
 
-    def test_envoi_reussi_change_le_statut(self):
+    def test_ancien_envoi_delegue_au_catalogue(self):
         event = exemple(photobooth=True)
         mail = Mock(return_value=True)
-        self.assertTrue(preparer_et_envoyer_devis(event, mail))
-        mail.assert_called_once_with(event, "devis")
-        self.assertEqual(event.status, "Sended")
-        self.assertEqual(event.prix_proposed, 400)
+        service = Mock(return_value=True)
+        with patch.dict("sys.modules", {"quote_control.service": SimpleNamespace(process_instant_quote=service)}):
+            self.assertTrue(preparer_et_envoyer_devis(event, mail))
+            service.assert_called_once_with(event, mail)
 
     def test_envoi_echoue_conserve_le_devis_en_calcul_pour_suivi(self):
         event = exemple(photobooth=True)
-        self.assertFalse(preparer_et_envoyer_devis(event, Mock(return_value=False)))
-        self.assertEqual(event.status, "Calculed")
+        with patch.dict("sys.modules", {"quote_control.service": SimpleNamespace(process_instant_quote=Mock(return_value=False))}):
+            self.assertFalse(preparer_et_envoyer_devis(event, Mock(return_value=False)))
 
     def test_sources_inconnues_et_code_postal_douteux_sont_manuel(self):
         self.assertFalse(devis_automatique_autorise(exemple(source="").client))

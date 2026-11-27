@@ -31,9 +31,8 @@ PRIX_VENTE_PAR_DEFAUT = {
     "ipadbooth": 250,
 }
 
-# (Identifiant, nom, machines, options requises, quantités minimales, tarif TTC).
-# Les frais de livraison hors zones incluses et les options supplémentaires
-# restent en supplément.
+# (Identifiant, nom, machines, options requises, quantités exactes, tarif TTC).
+# Les frais de livraison restent en supplément ; toute option hors pack est manuelle.
 PACKS = (
     ("souvenirs", "Pack Souvenirs", ("photobooth",),
      ("Phonebooth",), (("PorteCles", 100),), 600),

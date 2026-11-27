@@ -112,3 +112,20 @@ jobs:
             "https://${PA_API_HOST}/api/v0/user/${PA_USERNAME}/webapps/${PA_WEBAPP_DOMAIN}/reload/" \
             > /dev/null
           echo "Rechargement demandé à PythonAnywhere pour ${PA_WEBAPP_DOMAIN}."
+
+      - name: Vérifier le formulaire réellement servi après rechargement (sans demande client)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent --show-error --connect-timeout 10 --max-time 20 \
+                --header 'Cache-Control: no-cache' "https://${PA_WEBAPP_DOMAIN}/" \
+                -o "$RUNNER_TEMP/reservation-smoke.html" && \
+                grep -q 'data-auto-quote-policy="exact-composition-v1"' "$RUNNER_TEMP/reservation-smoke.html"; then
+              echo "Formulaire corrigé servi en production (HTTP GET uniquement)."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Le formulaire corrigé n'a pas été confirmé en production."
+          exit 1

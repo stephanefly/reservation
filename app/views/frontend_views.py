@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db import transaction
 from django.utils import timezone
 
 from django.http import HttpResponseBadRequest, QueryDict
@@ -15,6 +16,7 @@ from datetime import timedelta, datetime
 
 from ..models import Event
 from ..module.data_bdd.post_form import initialize_event, get_confirmation_data
+from app.module.data_bdd.event_pricing import OPTION_NAMES
 from quote_control.service import process_instant_quote
 from quote_control.public_pricing import get_public_catalogue
 from app.module.mail.send_mail_event import send_mail_event
@@ -56,6 +58,13 @@ def _validate_quote_fields(post):
     products = set(post['selectedImages'].split(','))
     if not products or not products <= allowed:
         raise ValueError('Sélectionnez une prestation valide.')
+    if 'selectedOption' not in post:
+        raise ValueError('Sélection des options manquante : veuillez reprendre le formulaire.')
+    options = {code.strip() for code in (post.get('selectedOption') or '').split(',') if code.strip()}
+    if not options <= set(OPTION_NAMES):
+        raise ValueError('Sélection des options invalide : veuillez reprendre le formulaire.')
+    if post.get('type') == 'entreprise' and not str(post.get('raison_sociale') or '').strip():
+        raise ValueError('Veuillez renseigner votre société.')
 
 
 def demande_devis(request):
@@ -120,19 +129,22 @@ def confirmation(request):
         except (ValueError, TypeError, KeyError, ValidationError):
             return HttpResponseBadRequest('Demande invalide : veuillez reprendre le formulaire.')
 
-        draft_id = request.session.get('draft_event_id')
-        if draft_id:
-            event = Event.objects.filter(pk=draft_id, status='Initied',
-                                         history_status__startswith=FORM_PENDING,
-                                         event_token__isnull=True).first()
-            if event is None:
-                return HttpResponseBadRequest('Cette demande a déjà été traitée ou a expiré.')
-        else:
-            # Compatibilité avec les sessions créées avant la mise à jour du site.
-            event = initialize_event(post_data)
-        event.event_token = secrets.token_hex(32)
-        event.history_status = 'Formulaire : demande confirmée'
-        event.save(update_fields=['event_token', 'history_status'])
+        with transaction.atomic():
+            draft_id = request.session.get('draft_event_id')
+            if draft_id:
+                draft = Event.objects.select_for_update().filter(pk=draft_id, status='Initied',
+                                             history_status__startswith=FORM_PENDING,
+                                             event_token__isnull=True).first()
+                if draft is None:
+                    return HttpResponseBadRequest('Cette demande a déjà été traitée ou a expiré.')
+                # La sélection confirmée en session est sauvegardée avant toute décision.
+                event = initialize_event(post_data, existing=draft)
+            else:
+                # Compatibilité avec les sessions créées avant la mise à jour du site.
+                event = initialize_event(post_data)
+            event.event_token = secrets.token_hex(32)
+            event.history_status = 'Formulaire : demande confirmée'
+            event.save(update_fields=['event_token', 'history_status'])
 
         try:
             create_google_contact(event)
