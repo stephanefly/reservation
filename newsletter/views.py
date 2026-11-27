@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms import AudienceForm, ConfigurationForm, ContentForm, ScheduleForm, TemplateForm, TestForm
+from .forms import AudienceForm, CampaignTestForm, ConfigurationForm, ContentForm, ScheduleForm, TemplateForm, TestForm
 from .models import Attribution, Campaign, Configuration, Delivery, Template, TestAttempt, Unsubscribe
 from .services import CLICK_SALT, build_message, eligible, has_capacity, http_url, smtp_settings
 
@@ -111,6 +111,26 @@ def save_step(request, campaign, context):
         campaign.save()
         return redirect("newsletter:edit", pk=campaign.pk, step=campaign.step)
     return render(request, "newsletter/wizard.html", context)
+
+
+@staff
+@require_http_methods(["GET", "POST"])
+def smtp_test(request):
+    recipient = "faure_stephane@hotmail.fr"
+    form = CampaignTestForm(request.POST if request.method == "POST" else None)
+    if request.method == "POST" and form.is_valid():
+        campaign = form.cleaned_data["campaign"] or Campaign(
+            subject="Vérification SMTP MySelfieBooth",
+            html="<p>Cet email vérifie le SMTP marketing du CRM MySelfieBooth.</p>",
+        )
+        result = {}
+        send_test(campaign, recipient, result)
+        request.session["newsletter_smtp_test_result"] = result
+        return redirect("newsletter:test")
+    return render(request, "newsletter/test.html", {
+        "form": form, "recipient": recipient,
+        **request.session.pop("newsletter_smtp_test_result", {}),
+    })
 
 
 def send_test(campaign, email, context):

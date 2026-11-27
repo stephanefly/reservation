@@ -48,6 +48,10 @@ L’envoi immédiat rejoint la file dès sa confirmation et part au prochain pas
 
 L’historique affiche les adresses exclues, les refus SMTP et les résultats incertains. Une interruption après la prise en charge d’un destinataire reste incertaine et ne déclenche pas de renvoi automatique. Vérifier les journaux du relais SMTP pour établir si le message a été accepté. Les autres destinataires restent traitables.
 
+## Vérifier le SMTP depuis le CRM
+
+Dans **Newsletter → Test**, envoyer le message de vérification SMTP ou sélectionner une campagne déjà renseignée. Le destinataire est fixé à l’adresse de Stéphane côté serveur. Ce test utilise le même compte SMTP et le même quota horaire que les campagnes. Il ne crée aucun envoi dans leur file.
+
 ## Mesure des résultats
 
 Les taux distinguent chaque destinataire une seule fois et prennent pour dénominateur les messages acceptés par le SMTP. Les bloqueurs d’images, proxys et robots de messagerie peuvent affecter les chiffres. Pour l’attribution, insérer un lien HTTPS absolu vers le CRM dans le HTML. Le dernier clic vers le CRM peut être attribué à une demande confirmée depuis le même navigateur avec la même adresse dans les 30 jours. Le tableau distingue les demandes et les devis chiffrés. Le chiffre d’affaires est la somme des montants validés des dossiers signés.

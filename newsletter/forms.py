@@ -80,6 +80,23 @@ class TestForm(forms.Form):
     email = forms.EmailField(label="Adresse de test")
 
 
+class CampaignTestForm(forms.Form):
+    campaign = forms.ModelChoiceField(
+        queryset=Campaign.objects.exclude(subject="").exclude(html="").order_by("-pk"),
+        required=False,
+        label="Campagne",
+        empty_label="Message de vérification SMTP",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["campaign"].label_from_instance = self.campaign_label
+
+    @staticmethod
+    def campaign_label(campaign):
+        return f"{campaign.name} · {campaign.subject}"
+
+
 class ConfigurationForm(forms.ModelForm):
     class Meta:
         model = Configuration

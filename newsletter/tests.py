@@ -128,6 +128,30 @@ class NewsletterTests(TestCase):
         self.assertEqual(Delivery.objects.get().status, Delivery.Status.PENDING)
         self.messages.assert_called_once()
 
+    def test_smtp_test_tab_sends_only_to_the_configured_recipient(self):
+        url = reverse("newsletter:test")
+        self.assertEqual(self.public.get(url).status_code, 302)
+        self.assertContains(self.client.get(url), "faure_stephane@hotmail.fr")
+        self.messages.assert_not_called()
+        response = self.client.post(url, {"email": "other@example.invalid"}, follow=True)
+        self.assertContains(response, "Email de test accepté")
+        message = self.messages.call_args.args[0][0]
+        self.assertEqual(message.to, ["faure_stephane@hotmail.fr"])
+        self.assertIn("Vérification SMTP", message.subject)
+        self.client.get(url)
+        self.messages.assert_called_once()
+        self.assertFalse(Delivery.objects.exists())
+        self.assertFalse(Campaign.objects.exists())
+
+    def test_smtp_test_tab_can_use_campaign_content(self):
+        campaign = self.campaign()
+        url = reverse("newsletter:test")
+        self.client.post(url, {"campaign": campaign.pk})
+        message = self.messages.call_args.args[0][0]
+        self.assertEqual(message.to, ["faure_stephane@hotmail.fr"])
+        self.assertEqual(message.alternatives[0][0], campaign.html)
+        self.assertFalse(Delivery.objects.exists())
+
     def test_worker_checks_schedule_enabled_consent_and_rolling_limit(self):
         campaign = self.campaign(timezone.now() + timedelta(minutes=5), queued=True)
         for email in ("a@example.invalid", "b@example.invalid", "c@example.invalid"):
